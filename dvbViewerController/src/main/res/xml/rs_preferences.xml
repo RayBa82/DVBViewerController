@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/pref_seperator_rs_con" >
+        <EditTextPreference
+            android:defaultValue="http://"
+            android:key="KEY_RS_URL"
+            android:summary="@string/pref_item_rs_url_summary"
+            android:title="@string/pref_item_rs_url" />
+        <EditTextPreference
+            android:defaultValue="8089"
+            android:key="KEY_RS_PORT"
+            android:summary="@string/pref_item_rs_port_summary"
+            android:title="@string/pref_item_rs_port" />
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="KEY_RS_USERNAME"
+            android:summary="@string/pref_item_username_summary"
+            android:title="@string/pref_item_username" />
+        <EditTextPreference
+            android:key="KEY_RS_PASSWORD"
+            android:password="true"
+            android:summary="@string/pref_item_password_summary"
+            android:title="@string/pref_item_password" />
+        <CheckBoxPreference
+            android:key="KEY_RS_WOL_ON_START"
+            android:defaultValue="true"
+            android:summary="@string/pref_item_rs_wol_on_start_summary"
+            android:title="@string/pref_item_rs_wol_on_start" />
+        <EditTextPreference
+            android:key="KEY_RS_LIVE_STREAM_PORT"
+            android:defaultValue="7522"
+            android:numeric="integer"
+            android:summary="@string/pref_item_rs_live_stream_port_summary"
+            android:title="@string/pref_item_rs_live_stream_port" />
+        <EditTextPreference
+            android:key="KEY_RS_MEDIA_STREAM_PORT"
+            android:defaultValue="8090"
+            android:numeric="integer"
+            android:summary="@string/pref_item_rs_media_stream_port_summary"
+            android:title="@string/pref_item_rs_media_stream_port" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

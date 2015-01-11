@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/pref_seperator_dvbv_con" >
+        <EditTextPreference
+            android:defaultValue="http://"
+            android:key="KEY_DVBV_URL"
+            android:summary="@string/pref_item_dvbv_url_summary"
+            android:title="@string/pref_item_dvbv_url" />
+        <EditTextPreference
+            android:defaultValue="80"
+            android:key="KEY_DVBV_PORT"
+            android:summary="@string/pref_item_dvbv_port_summary"
+            android:title="@string/pref_item_dvbv_port" />
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="KEY_DVBV_USERNAME"
+            android:summary="@string/pref_item_username_summary"
+            android:title="@string/pref_item_username" />
+        <EditTextPreference
+            android:key="KEY_DVBV_PASSWORD"
+            android:password="true"
+            android:singleLine="true"
+            android:summary="@string/pref_item_password_summary"
+            android:title="@string/pref_item_password" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

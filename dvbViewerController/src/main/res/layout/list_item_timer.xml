@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.dvbviewer.controller.ui.widget.ClickableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/checkable"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_selector_holo_dark"
+    android:minHeight="?android:attr/listPreferredItemHeight" >
+
+    <CheckBox
+        android:id="@id/checkIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:duplicateParentState="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:gravity="center_vertical|center_horizontal"
+        android:padding="5dp" />
+
+    <ImageView
+        android:id="@+id/recIndicator"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@+id/date"
+        android:layout_alignLeft="@+id/title"
+        android:layout_alignParentTop="true"
+        android:layout_alignTop="@+id/date"
+        android:layout_toRightOf="@id/checkIndicator"
+        android:paddingRight="2dp"
+        android:paddingTop="2dp" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/contextMenu"
+        android:layout_toRightOf="@+id/recIndicator"
+        android:ellipsize="marquee"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/commonTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/date"
+        android:layout_toLeftOf="@+id/contextMenu"
+        android:layout_toRightOf="@id/checkIndicator"
+        android:gravity="center_vertical"
+        android:maxLines="2"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/title"
+        android:layout_below="@+id/title"
+        android:gravity="center_vertical"
+        android:paddingBottom="5dp" >
+
+        <TextView
+            android:id="@+id/channelName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:singleLine="true" />
+    </LinearLayout>
+
+</org.dvbviewer.controller.ui.widget.ClickableRelativeLayout>

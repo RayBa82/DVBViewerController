@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:dvb="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_refresh_now_playing"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_refresh"
+        dvb:showAsAction="never"
+        android:title="@string/refresh_now_playing"
+        android:visible="true"/>
+    <item
+        android:id="@+id/menuChannelList"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_list"
+        dvb:showAsAction="always"
+        android:title="@string/channelList"
+        android:visible="true"/>
+    <item
+        android:id="@+id/menuFavourties"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_favourite"
+        dvb:showAsAction="always"
+        android:title="@string/favourites"
+        android:visible="true"/>
+    <item
+        android:id="@+id/menuRefreshChannels"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_refresh"
+        dvb:showAsAction="never"
+        android:title="@string/refreshChannels"
+        android:visible="true"/>
+</menu>

@@ -1,0 +1,49 @@
+<org.dvbviewer.controller.ui.widget.DashboardLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="8dp" >
+
+    <Button
+        android:id="@+id/home_btn_remote"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_dash_remote"
+        android:text="@string/remote" />
+
+    <Button
+        android:id="@+id/home_btn_channels"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_dash_tvguide"
+        android:text="@string/channelList" />
+
+    <Button
+        android:id="@+id/home_btn_timers"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_dash_timer"
+        android:text="@string/timer" />
+
+    <Button
+        android:id="@+id/home_btn_recordings"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_dash_recservice"
+        android:text="@string/recordings" />
+
+    <Button
+        android:id="@+id/home_btn_settings"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_dash_conf"
+        android:text="@string/preferences" />
+    
+    <Button
+        android:id="@+id/home_btn_tasks"
+        android:drawableTop="@drawable/btn_dash_task"
+        style="@style/DashboardButton"
+        android:text="@string/tasks" />
+    
+    <Button
+        android:id="@+id/home_btn_status"
+        android:drawableTop="@drawable/btn_dash_status"
+        style="@style/DashboardButton"
+        android:text="@string/status" />
+
+
+</org.dvbviewer.controller.ui.widget.DashboardLayout>

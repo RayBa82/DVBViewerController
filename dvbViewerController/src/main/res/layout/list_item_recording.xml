@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.dvbviewer.controller.ui.widget.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/checkable"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_selector_holo_dark"
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:padding="5dp" >
+
+    <CheckBox
+        android:id="@id/checkIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:duplicateParentState="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:paddingLeft="5dp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingLeft="5dp" >
+        
+        <LinearLayout
+            android:id="@+id/titleSmall"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/title"
+            android:gravity="center_vertical" >
+
+            <TextView
+                android:id="@+id/channelName"
+                style="@style/commonSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:paddingRight="5dp"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/date"
+                style="@style/commonSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_below="@+id/titleSmall"
+            style="@style/commonTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:maxLines="3" />
+
+        <TextView
+            android:id="@+id/subTitle"
+            style="@style/commonSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:maxLines="2"
+            android:paddingTop="1dp"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </RelativeLayout>
+
+    <!-- Preference should place its actual preference widget here. -->
+
+    <LinearLayout
+        android:id="@+id/widget_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/contextMenu"
+            android:layout_width="35dp"
+            android:layout_height="fill_parent"
+            android:background="@drawable/btn_context_menu"
+            android:duplicateParentState="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:scaleType="centerInside" />
+    </LinearLayout>
+
+</org.dvbviewer.controller.ui.widget.CheckableLinearLayout>

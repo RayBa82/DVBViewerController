@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="postRecoridngActions">
+        <item name="nothing">Keine Aktion</item>
+        <item name="shutDown">Herunterfahren</item>
+        <item name="standby">Standby</item>
+        <item name="hibernate">Ruhemodus</item>
+    </string-array>
+
+</resources>

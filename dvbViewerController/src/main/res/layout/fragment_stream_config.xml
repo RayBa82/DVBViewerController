@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollview"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/list_preferred_item_height_small"
+            android:orientation="vertical"
+            android:paddingRight="?android:attr/scrollbarSize" >
+
+            <TextView
+                android:id="@+id/directStreamTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:singleLine="true"
+                android:text="@string/streamDirect"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@drawable/primary_text_holo_dark" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dip"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/divider" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/startDirectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="15dp"
+            android:text="@string/streamStart" />
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/list_preferred_item_height_small"
+            android:orientation="vertical"
+            android:paddingRight="?android:attr/scrollbarSize" >
+
+            <TextView
+                android:id="@+id/transcodeStreamTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:singleLine="true"
+                android:text="@string/streamTranscoded"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@drawable/primary_text_holo_dark" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dip"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/divider" />
+        </RelativeLayout>
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp" >
+
+            <TableRow
+                style="@style/StreamDialogTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/quality" >
+                </TextView>
+
+                <Spinner
+                    android:id="@+id/qualitySpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/presets" />
+            </TableRow>
+
+            <TableRow
+                style="@style/StreamDialogTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/aspectRatio" />
+
+                <Spinner
+                    android:id="@+id/aspectSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/aspect" />
+            </TableRow>
+
+            <TableRow
+                style="@style/StreamDialogTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/ffmpegpreset" />
+
+                <Spinner
+                    android:id="@+id/ffmpegSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/ffmpegPresets" />
+            </TableRow>
+
+            <TableRow
+                style="@style/StreamDialogTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/maxWidth" />
+
+                <Spinner
+                    android:id="@+id/widthSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/width" />
+            </TableRow>
+
+            <TableRow
+                style="@style/StreamDialogTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/maxHeight" />
+
+                <Spinner
+                    android:id="@+id/heightSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:entries="@array/height" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/streamPositionContainer"
+                style="@style/StreamDialogTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/stream_position" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal" >
+
+                    <EditText
+                        android:id="@+id/stream_hours"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/stream_hours_hint"
+                        android:inputType="number" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_colon" />
+
+                    <EditText
+                        android:id="@+id/stream_minutes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/stream_minutes_hint"
+                        android:inputType="number" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/common_colon" />
+
+                    <EditText
+                        android:id="@+id/stream_seconds"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/stream_seconds_hint"
+                        android:inputType="number" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+        <Button
+            android:id="@+id/startTranscodedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="15dp"
+            android:text="@string/streamStart" />
+    </LinearLayout>
+
+</ScrollView>

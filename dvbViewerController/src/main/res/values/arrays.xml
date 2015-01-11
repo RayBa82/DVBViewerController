@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="presets">
+        <item name="hd5120">HD 5120 kbit</item>
+        <item name="high2560">High 2560 kbit</item>
+        <item name="high2048">High 2048 kbit</item>
+        <item name="high1536">High 1536 kbit</item>
+        <item name="med1280">Medium 1280 kbit</item>
+        <item name="med1024">Medium 1024 kbit</item>
+        <item name="med768">Medium 768 kbit</item>
+        <item name="low512">Low 512 kbit</item>
+        <item name="low348">Low 348 kbit</item>
+        <item name="low348">Low 265 kbit</item>
+    </string-array>
+    <string-array name="postRecoridngActions">
+        <item name="nothing">No Action</item>
+        <item name="shutDown">Shut Down</item>
+        <item name="standby">Standby</item>
+        <item name="hibernate">Hibernate</item>
+    </string-array>
+    <string-array name="aspect">
+        <item name="sixteenToNine">16:9</item>
+        <item name="fourToThree">4:3</item>
+    </string-array>
+    <string-array name="ffmpegPresets">
+        <item name="medium">medium</item>
+        <item name="fast">fast</item>
+        <item name="faster">faster</item>
+        <item name="veryfast">veryfast</item>
+        <item name="superfast">superfast"</item>
+        <item name="ultrafast">ultrafast</item>
+        <item name="slow">slow</item>
+        <item name="slower">slower</item>
+        <item name="veryslow">veryslow</item>
+        <item name="placebo">placebo</item>
+    </string-array>
+    <string-array name="width">
+        <item name="default">Default</item>
+        <item name="width180">180</item>
+        <item name="width240">240</item>
+        <item name="width320">320</item>
+        <item name="width480">480</item>
+        <item name="width640">640</item>
+        <item name="width720">720</item>
+        <item name="width800">800</item>
+        <item name="width1024">1024</item>
+        <item name="width1280">1280</item>
+    </string-array>
+    <string-array name="height">
+        <item name="default">Default</item>
+        <item name="height160">160</item>
+        <item name="height200">200</item>
+        <item name="height240">240</item>
+        <item name="height280">280</item>
+        <item name="height360">360</item>
+        <item name="height480">480</item>
+        <item name="height576">576</item>
+        <item name="height640">640</item>
+        <item name="height720">720</item>
+    </string-array>
+
+</resources>

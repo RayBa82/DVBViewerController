@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/pref_seperator_connection" >
+        <Preference
+            android:key="KEY_RS_SETTINGS"
+            android:summary="@string/pref_item_rs_conn_summary"
+            android:title="@string/pref_item_rs_conn" >
+            <intent
+                android:targetClass="org.dvbviewer.controller.ui.phone.ConnectionPreferencesActivity"
+                android:targetPackage="org.dvbviewer.controller" />
+        </Preference>
+        <Preference
+            android:key="KEY_DVBV_SETTINGS"
+            android:summary="@string/pref_item_dvbv_conn_summary"
+            android:title="@string/pref_item_dvbv_conn" >
+            <intent
+                android:targetClass="org.dvbviewer.controller.ui.phone.ConnectionPreferencesActivity"
+                android:targetPackage="org.dvbviewer.controller" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_seperator_channel" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="KEY_CHANNELS_SHOW_NOW_PLAYING"
+            android:summary="@string/pref_item_channel_show_current_program_summary"
+            android:title="@string/pref_item_channel_show_current_program" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="KEY_CHANNELS_SHOW_NOW_PLAYING"
+            android:key="KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY"
+            android:summary="@string/pref_item_channel_show_current_program_wifi_summary"
+            android:title="@string/pref_item_channel_show_current_program_wifi" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="KEY_CHANNELS_USE_FAVS"
+            android:summary="@string/pref_item_channel_fav_summary"
+            android:title="@string/pref_item_channel_fav" />
+    </PreferenceCategory>
+</PreferenceScreen>

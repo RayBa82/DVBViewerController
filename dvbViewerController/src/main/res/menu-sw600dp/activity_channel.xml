@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:dvb="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/menuRefresh"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_refresh"
+        dvb:showAsAction="ifRoom"
+        android:title="@string/refresh"
+        android:visible="true">
+    </item>
+    <item
+        android:id="@+id/menuToday"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_today"
+        dvb:showAsAction="always"
+        android:title="@string/today"
+        android:visible="true"/>
+    <item
+        android:id="@+id/menuTime"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_time"
+        dvb:showAsAction="always"
+        android:title="@string/time"
+        android:visible="true">
+        <menu>
+            <item
+                android:id="@+id/menuNow"
+                android:title="@string/now"/>
+            <item
+                android:id="@+id/menuEvening"
+                android:title="@string/evening"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menuPrev"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_previous"
+        dvb:showAsAction="always"
+        android:title="@string/previousDay"
+        android:visible="true"/>
+    <item
+        android:id="@+id/menuNext"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_next"
+        dvb:showAsAction="always"
+        android:title="@string/nextDay"
+        android:visible="true"/>
+    
+     <item
+        android:id="@+id/menuChannelList"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_list"
+        dvb:showAsAction="never"
+        android:title="@string/channelList"
+        android:visible="true"/>
+    <item
+        android:id="@+id/menuFavourties"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_favourite"
+        dvb:showAsAction="never"
+        android:title="@string/favourites"
+        android:visible="true"/>
+    <item
+        android:id="@+id/menuRefreshChannels"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_refresh"
+        dvb:showAsAction="never"
+        android:title="@string/refreshChannels"
+        android:visible="true"/>
+
+</menu>

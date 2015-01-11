@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.dvbviewer.controller"
+    android:versionCode="14"
+    android:versionName="1.0.10" >
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name="App"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.DVB"
+        android:windowSoftInputMode="stateHidden" >
+        <activity
+            android:name=".ui.HomeActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.phone.RemoteActivity"
+            android:label="@string/remote" >
+        </activity>
+        <activity
+            android:name=".ui.phone.RecordinglistActivity"
+            android:label="@string/recordings" >
+        </activity>
+        <activity
+            android:name=".ui.phone.ChannelListActivity" >
+        </activity>
+        <activity
+            android:name=".ui.phone.TimerlistActivity"
+            android:label="@string/timer" >
+        </activity>
+        <activity
+            android:name=".ui.phone.TaskActivity"
+            android:label="@string/tasks" >
+        </activity>
+        <activity
+            android:name=".ui.phone.StatusActivity"
+            android:label="@string/status" >
+        </activity>
+        <activity
+            android:name=".ui.phone.SyncPreferencesActivity"
+            android:label="@string/preferences" >
+        </activity>
+        <activity
+            android:name=".ui.phone.PreferencesActivity"
+            android:label="@string/preferences" >
+        </activity>
+        <activity
+            android:name=".ui.phone.ConnectionPreferencesActivity"
+            android:label="@string/preferences" >
+        </activity>
+        <activity
+            android:name=".ui.phone.EpgPagerActivity"
+            android:label="@string/channelEPG"
+            android:uiOptions="splitActionBarWhenNarrow" >
+        </activity>
+        <activity
+            android:name=".ui.phone.TimerDetailsActivity"
+            android:label="@string/timer"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name=".ui.phone.StreamConfigActivity"
+            android:label="@string/streamConfig"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name=".ui.phone.IEpgDetailsActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.ALTERNATIVE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.phone.AboutActivity" >
+        </activity>
+        <!-- Tablet -->
+        <activity
+            android:name=".ui.tablet.ChannelListMultiActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.ALTERNATIVE" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".service.SyncService" >
+            <intent-filter>
+                <action android:name="org.dvbviewer.controller.service.SyncService" />
+            </intent-filter>
+        </service>
+
+        <provider
+            android:name=".data.DvbProvider"
+            android:exported="false"
+            android:authorities="org.dvbviewer.controller.provider" >
+        </provider>
+    </application>
+
+</manifest>

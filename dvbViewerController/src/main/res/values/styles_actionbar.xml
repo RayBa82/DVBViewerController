@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+
+
+    <style name="ThemeDialogWhenLarge" parent="android:style/Theme"></style>
+
+    <style name="ActionBarStyle" parent="Widget.AppCompat.Light.ActionBar">
+        <item name="background">@drawable/ab_background</item>
+        <item name="backgroundSplit">@drawable/ab_background_split</item>
+        <!--  -->
+        <item name="android:background">@drawable/ab_background</item>
+        <item name="android:backgroundSplit" tools:ignore="NewApi">@drawable/ab_background_split</item>
+    </style>
+
+    <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
+        <item name="android:background">@drawable/ab_background</item>
+        <item name="background">@drawable/ab_background</item>
+        <item name="android:backgroundSplit" tools:ignore="NewApi">@drawable/ab_background_split</item>
+        <item name="backgroundSplit">@drawable/ab_background_split</item>
+    </style>
+
+    <!-- Action Mode Overflow List -->
+    <style name="PopupMenu" parent="Widget.AppCompat.ListView.Menu"></style>
+
+</resources>

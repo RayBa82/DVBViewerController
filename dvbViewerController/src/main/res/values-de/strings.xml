@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Common -->
+    <string name="app_name">DVBViewer Controller</string>
+    <string name="expired_message">Diese Version ist Abgelaufen!</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="copy">Kopieren</string>
+    <string name="remote">Fernbedienung</string>
+    <string name="title">Titel</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="ok">OK</string>
+    <string name="delete">Löschen</string>
+    <string name="refresh">Aktualisieren</string>
+    <string name="record">Aufnehmen</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="selected">ausgewählt</string>
+    <string name="switch_to">Zu Sender wechseln</string>
+    <string name="minutes">Minuten</string>
+    <string name="gmt">GMT</string>
+    <string name="details">Details</string>
+    <string name="about">Über</string>
+    <string name="common_colon">:&#160;</string>
+    <string name="common_hyphen">&#160;-&#160;</string>
+    <string name="about_app">Über DVBViewer Controller</string>
+    <string name="version">App Version:</string>
+
+    <!-- Channels -->
+    <string name="channelList">Senderliste</string>
+    <string name="refreshChannels">Sender syncronisieren</string>
+    <string name="refresh_now_playing">EPG aktualisieren</string>
+    <string name="favourites">Favoriten</string>
+    <string name="no_channels">Keine Sender gefunden</string>
+    <string name="no_favourites">Keine Favoriten gefunden</string>
+
+    <!-- EPG -->
+    <string name="channelEPG">Sender EPG</string>
+    <string name="epg_update_started">EPG Update gestartet</string>
+    <string name="epg_update_running">EPG Update läuft</string>
+    <string name="today">Heute</string>
+    <string name="time">Zeit</string>
+    <string name="now">Jetzt</string>
+    <string name="evening">Abends</string>
+    <string name="tomorrow">Morgen</string>
+    <string name="previousDay">Tag zurück</string>
+    <string name="nextDay">Tag vorwärts</string>
+    <string name="no_epg">Keine EPG Daten gefunden</string>
+
+    <!-- Recordings -->
+    <string name="recordings">Aufnahmen</string>
+    <string name="no_recordings">Keine Aufnahmen gefunden</string>
+    <string name="busyDeleteRecordings">Aufnahmen werden gelöscht&#8230;</string>
+
+    <!-- Timer -->
+    <string name="timer">Timer</string>
+    <string name="createTimer">Timer anlegen</string>
+    <string name="editTimer">Timer bearbeiten</string>
+    <string name="date">Datum</string>
+    <string name="active">Aktiv</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="channel">Sender</string>
+    <string name="epgBefore">Vorlauf</string>
+    <string name="epgAfter">Nachlauf</string>
+    <string name="postTimerAction">Nach Aufnahme</string>
+    <string name="busyDeleteTimer">Timer werden gelöscht&#8230;</string>
+    <string name="no_timer">Keine Timer gefunden</string>
+
+    <!-- Streaming -->
+    <string name="streamConfig">Stream Konfiguration</string>
+    <string name="stream">Stream</string>
+    <string name="quality">Qualität</string>
+    <string name="aspectRatio">Seitenverhältnis</string>
+    <string name="ffmpegpreset">FFMPEG Preset</string>
+    <string name="maxHeight">Max. Höhe</string>
+    <string name="maxWidth">Max. Breite</string>
+    <string name="streamStart">Streaming starten</string>
+    <string name="streamTranscoded">Transcodiertes Streaming</string>
+    <string name="streamDirect">Direktes Streaming</string>
+    <string name="stream_position">Position</string>
+    <string name="stream_hours_hint">HH</string>
+    <string name="stream_minutes_hint">MM</string>
+    <string name="stream_seconds_hint">SS</string>
+
+    <!-- Tasks -->
+    <string name="tasks">Aufgaben</string>
+    <string name="task_execute_security_question">Aufgabe \"{0}\" ausführen?</string>
+    <string name="EPGStart">Start EPG Scan</string>
+    <string name="EPGStop">Stop EPG Scan</string>
+    <string name="AutoTimer">AutoTimer</string>
+    <string name="RefreshDB">Auffrischen Aufnahme DB</string>
+    <string name="CleanupDB">Aufräumen Aufnahme DB</string>
+    <string name="RebuildRecordedHistory">Aufnahmehistorie wieder aufbauen</string>
+    <string name="ClearRecordingHistory">Aufnahmehistorie endgültig löschen</string>
+    <string name="ClearRecordingStats">Lösche Aufnahmenstatistik</string>
+    <string name="UpdateMediaLibrary">Update alle Mediasammlung DBs</string>
+    <string name="CleanupPhotoDB">Bildersammlung DB aufräumen</string>
+    <string name="CleanupVideoDB">Videosammlung DB aufräumen</string>
+    <string name="RebuildVideoDB">Videosammlung DB neu aufbauen</string>
+    <string name="RebuildAudioDB">Audiosammlung DB neu aufbauen</string>
+    <string name="RebuildPhotoDB">Bildersammlung DB neu aufbauen</string>
+    <string name="ClearAudioStats">Lösche Audiosammlung Statistik</string>
+    <string name="ClearVideoStats">Lösche Videosammlung Statistik</string>
+    <string name="ClearPhotoStats">Lösche Bildersammlung Statistik</string>
+    <string name="Hibernate">Hibernate</string>
+    <string name="Standby">Standby</string>
+    <string name="Shutdown">Shutdown</string>
+    <string name="WOL">Recording Service wecken</string>
+
+    <!-- Status -->
+    <string name="status">Status</string>
+    <string name="status_rs_version">Recording Service Version</string>
+    <string name="status_current_recordings">Laufende Aufnahmen</string>
+    <string name="status_current_clients">Verbundene Clients</string>
+    <string name="status_epg_update_running">EPG update läuft</string>
+    <string name="status_epg_before">Timer Vorlauf</string>
+    <string name="status_epg_after">Timer Nachlauf</string>
+    <string name="status_timezone">Zeitzone</string>
+    <string name="status_def_after_record">Standardaktion nach Aufnahme</string>
+    <string name="status_folder_free">Frei</string>
+    <string name="status_folder_total">Gesamt</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_confirmation_title">Bestätigung</string>
+    <string name="firstStartMessageTitle">Keine Verbindungseinstellungen gefunden</string>
+    <string name="firstStartMessage">Es wurden keine Verbindungseinstellungen gefunden.\n\nMöchten Sie zu den Einstellungen wechseln</string>
+    <string name="confirmDelete">Ausgewählte Elemente löschen?</string>
+    <string name="noFlashPlayerFound">Es wurde kein geeigneter VideoPlayer gefunden.\nBitte einen Mpeg/Flashfähigen player installieren! </string>
+
+    <!-- Preferences -->
+    <string name="preferences">Einstellungen</string>
+    <string name="pref_seperator_connection">Verbindungseinstellungen</string>
+    <string name="pref_seperator_channel">Kanal und Favoritenliste</string>
+    <string name="pref_seperator_stream">Streaming</string>
+    <string name="pref_seperator_rs_con">Recording Service Einstellungen</string>
+    <string name="pref_seperator_dvbv_con">DVBViewer Einstellungen</string>
+    <string name="pref_item_rs_conn">Recording Service</string>
+    <string name="pref_item_rs_conn_summary">Verbindungseinstellungen für den Recordingservice</string>
+    <string name="pref_item_dvbv_conn">DVBViewer</string>
+    <string name="pref_item_dvbv_conn_summary">Verbindungseinstellungen für den DVBViewer</string>
+    <string name="pref_item_rs_url">Recording Service URL</string>
+    <string name="pref_item_rs_url_summary">URL für den Recording Service</string>
+    <string name="pref_item_rs_port">Recording Service Port</string>
+    <string name="pref_item_rs_port_summary">Port für den Recording Service</string>
+    <string name="pref_item_dvbv_url">DVBViewer URL</string>
+    <string name="pref_item_dvbv_url_summary">URL für den DVBViewer</string>
+    <string name="pref_item_dvbv_port">DVBViewer Port</string>
+    <string name="pref_item_dvbv_port_summary">Port für den DVBViewer</string>
+    <string name="pref_item_username">Benutzername</string>
+    <string name="pref_item_username_summary">Benutzername, falls benötigt</string>
+    <string name="pref_item_password">Passwort</string>
+    <string name="pref_item_password_summary">Passwort, falls benötigt</string>
+    <string name="pref_item_rs_wol_on_start">Sende WOL beim App start </string>
+    <string name="pref_item_rs_wol_on_start_summary">Versucht den Recording Service beim App start zu wecken</string>
+    <string name="pref_item_rs_live_stream_port">Live Streaming Port</string>
+    <string name="pref_item_rs_live_stream_port_summary">Port zum streamen von Live TV</string>
+    <string name="pref_item_rs_media_stream_port">Media Streaming Port</string>
+    <string name="pref_item_rs_media_stream_port_summary">Port zum streamen von Medien</string>
+    <string name="pref_item_channel_show_current_program">Zeige laufendes Programm</string>
+    <string name="pref_item_channel_show_current_program_summary">Das laufende Programm wird in der Senderliste angezeigt</string>
+    <string name="pref_item_channel_show_current_program_wifi">Nur bei Wlan</string>
+    <string name="pref_item_channel_show_current_program_wifi_summary">Zeigt das laufende Programm nur bei aktiver Wlan Verbindung an</string>
+    <string name="pref_item_channel_fav">Favoriten benutzen</string>
+    <string name="pref_item_channel_fav_summary">Zeigt die Favoriten anstatt der Sender</string>
+    <string name="pref_item_stream_use_external_player">Ext. Player benutzen</string>
+    <string name="pref_item_stream_use_external_player_summary">Zum Streamen von Inhalten wird eine externe Videoanwendung gestartet</string>
+    <string name="pref_item_stream_use_time_before">Aufnahmevorlauf als Startposition</string>
+    <string name="pref_item_stream_use_time_before_summary">Legt fest ob für Aufnahmen der Aufnahmevorlauf als Startposition vorausgewählt werden soll.</string>
+    <string name="pref_seperator_syncsettings">Synchronisierungs Einstellungen</string>
+    <string name="pref_item_epg_settings">EPG Einstellungen</string>
+    <string name="pref_item_epg_settings_sync">EPG Synchronisieren</string>
+    <string name="pref_item_epg_settings_sync_summary">Legt fest ob das EPG bei update lokal gespeichert werden soll. !Achtung! wenn aktiviert wird das EPG nur aus dem lokalen Speicher geladen</string>
+    <string name="pref_item_epg_settings_days">Zu synchronisierende Tage</string>
+    <string name="pref_item_epg_settings_days_summary">Legt fest für wieviele Tage das EPG abgerufen werden soll</string>
+    <string name="pref_item_epg_settings_fav_only">Nur Favoriten synchronisieren</string>
+    <string name="pref_item_epg_settings_fav_only_summary">Legt fest ob nur die Favoriten synchronisisert werden sollen.</string>
+
+    <!-- Error -->
+    <string name="expiration_title">Version abgelaufen</string>
+    <string name="error_common">Fehler</string>
+    <string name="error_unknonwn_host">Unbekannter Host</string>
+    <string name="error_no_connection">Keine Verbindung</string>
+    <string name="error_connection_timeout">Verbindungs timeout</string>
+    <string name="error_parsing_xml">Fehler beim verarbeiten des XMLs</string>
+    <string name="error_sending_report">Fehlerbericht wird gesendet</string>
+    <string name="error_invalid_url">Ungültige URL</string>
+    <string name="error_invalid_credentials">Authentifizierung fehlgeschlagen</string>
+     <string name="support_this_app">Die App unterstützen</string>
+     
+     <string name="quick_stream_hint_title">Sender streamen</string>
+     <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
+
+</resources>

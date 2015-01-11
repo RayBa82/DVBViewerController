@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/org.dvbviewer.controller" android:exitFadeDuration="@android:integer/config_mediumAnimTime">
+
+<!--     <item android:drawable="@color/transparent" android:state_window_focused="false"/> -->
+
+    <!-- Even though these two point to the same resource, have two states so the drawable will invalidate itself when coming out of pressed state. -->
+    <item android:drawable="@color/selectorDisabledHoloDark" android:state_enabled="false" android:state_focused="true" android:state_pressed="true"/>
+    <item android:drawable="@color/selectorDisabledHoloDark" android:state_enabled="false" android:state_focused="true"/>
+    <item android:drawable="@drawable/selector_background_transition_holo_dark" android:state_focused="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/selector_background_transition_holo_dark" android:state_focused="false" android:state_pressed="true"/>
+
+</selector>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item
+        android:id="@+id/menuSave"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_save"
+        android:showAsAction="always"
+        android:title="@string/edit"
+        android:visible="true"/>
+    
+    
+    <item
+        android:id="@+id/menuCancel"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_cancel"
+        android:showAsAction="ifRoom"
+        android:title="@string/cancel"
+        android:visible="true"/>
+    
+    
+</menu>
