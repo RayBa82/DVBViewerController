@@ -41,5 +41,6 @@ public class ServerConsts {
 	public static String	URL_SWITCH_COMMAND				= "/fb.html?swcommand=";
 	public static String	URL_DELETE_RECORDING			= "/rec_listnew.html?aktion=delete_rec&recid=";
 	public static String	URL_FLASHSTREAM					= "/flashstream/stream.flv?";
+	public static String	URL_TARGETS					    = "/api/dvbcommand.html";
 
 }
