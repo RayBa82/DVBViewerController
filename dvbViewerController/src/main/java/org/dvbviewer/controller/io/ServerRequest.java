@@ -392,7 +392,6 @@ public class ServerRequest {
 	/**
 	 * Gets the rS entity.
 	 *
-	 * @param request the request
 	 * @return the rS entity
 	 * @throws IllegalStateException the illegal state exception
 	 * @throws URISyntaxException the URI syntax exception
@@ -576,7 +575,7 @@ public class ServerRequest {
 		@Override
 		public void run() {
 			try {
-				ServerRequest.sendCommand(request);
+                ServerRequest.executeRSGet(request);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

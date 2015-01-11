@@ -38,6 +38,7 @@ public class ServerConsts {
 	public static String	URL_TIMER_DELETE				= "/api/timerdelete.html?id=";
 	public static String	URL_EXECUTE_TASK				= "/tasks.html?aktion=tasks&task=";
 	public static String	URL_SEND_COMMAND				= "/fb.html?command=";
+	public static String	URL_SEND_COMMAND_NEW			= "/api/dvbcommand.html?target={0}&cmd=-x{1}";
 	public static String	URL_SWITCH_COMMAND				= "/fb.html?swcommand=";
 	public static String	URL_DELETE_RECORDING			= "/rec_listnew.html?aktion=delete_rec&recid=";
 	public static String	URL_FLASHSTREAM					= "/flashstream/stream.flv?";

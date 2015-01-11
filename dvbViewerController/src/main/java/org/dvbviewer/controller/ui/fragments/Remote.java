@@ -59,6 +59,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -438,8 +439,8 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
             default:
                 break;
         }
-
-        DVBViewerCommand httpCommand = new DVBViewerCommand(ServerConsts.URL_SEND_COMMAND + command);
+        String request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND_NEW, mClientSpinner.getSelectedItem(), command);
+        DVBViewerCommand httpCommand = new DVBViewerCommand(request);
         Thread executionThread = new Thread(httpCommand);
         executionThread.start();
     }
@@ -453,9 +454,9 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         String command = "";
         switch (v.getId()) {
             case R.id.ButtonMenu:
-                command = ActionID.CMD_EXIT;
-                DVBViewerCommand cmd = new DVBViewerCommand(ServerConsts.URL_SEND_COMMAND + command);
-                Thread executionThread = new Thread(cmd);
+                String request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND_NEW, mClientSpinner.getSelectedItem(), command);
+                DVBViewerCommand httpCommand = new DVBViewerCommand(request);
+                Thread executionThread = new Thread(httpCommand);
                 executionThread.start();
                 return true;
 
