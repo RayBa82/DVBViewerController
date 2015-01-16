@@ -2,18 +2,17 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.0.2"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.github.espiandev.showcaseview"
-        minSdkVersion 4
-        targetSdkVersion 19
+        minSdkVersion 7
+        targetSdkVersion 21
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg'
         }
     }
 }
