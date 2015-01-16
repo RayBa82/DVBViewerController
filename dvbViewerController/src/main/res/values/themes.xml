@@ -14,10 +14,6 @@
         <item name="android:checkboxStyle">@style/CheckBoxHoloDark</item>
         <item name="android:buttonStyle">@style/ButtonHoloDark</item>
         <item name="android:imageButtonStyle">@style/ImageButtonHoloDark</item>
-        <item name="android:spinnerStyle">@style/SpinnerHoloDark</item>
-        <item name="android:spinnerItemStyle">@style/SpinnerItemHoloDark</item>
-        <item name="android:dropDownSpinnerStyle" tools:ignore="NewApi">@style/SpinnerDropDown</item>
-        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemHoloDark</item>
         <item name="android:progressBarStyleHorizontal">@style/ProgressBarHoloDark</item>
         <item name="android:listViewStyle">@style/ListViewHoloDark</item>
         <item name="android:radioButtonStyle">@style/RadioButtonHoloDark</item>
