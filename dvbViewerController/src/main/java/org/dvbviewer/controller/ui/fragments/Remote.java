@@ -557,9 +557,11 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
 
     @Override
     public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
-        String[] arr = new String[data.size()];
-        mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, data.toArray(arr) );
-        mClientSpinner.setAdapter(mSpinnerAdapter);
+        if (data != null && !data.isEmpty()){
+            String[] arr = new String[data.size()];
+            mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, data.toArray(arr) );
+            mClientSpinner.setAdapter(mSpinnerAdapter);
+        }
     }
 
     @Override
