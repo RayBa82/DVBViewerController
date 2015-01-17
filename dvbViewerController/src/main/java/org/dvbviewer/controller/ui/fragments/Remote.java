@@ -19,7 +19,6 @@ import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
-import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.io.data.TargetHandler;
 import org.dvbviewer.controller.io.data.VersionHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
@@ -27,6 +26,7 @@ import org.dvbviewer.controller.ui.base.BaseActivity.ErrorToastRunnable;
 import org.dvbviewer.controller.utils.ActionID;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.UIUtils;
 import org.xml.sax.SAXException;
 
 import android.app.AlertDialog;
@@ -52,17 +52,21 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
@@ -126,9 +130,12 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     private GestureDetector detector = null;
     private View content;
     private Toolbar mToolbar;
-    private SpinnerAdapter mSpinnerAdapter;
+    private ArrayAdapter mSpinnerAdapter;
     private Spinner mClientSpinner;
     private String version;
+    private int spinnerPosition;
+    private static final String KEY_SPINNER_POS = "spinnerPosition";
+    private DVBViewerPreferences prefs;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -136,6 +143,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     /* (non-Javadoc)
@@ -144,12 +152,16 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
+        if (!UIUtils.isTablet(getActivity())){
+            ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
+        }
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inititalize();
-        DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+        prefs = new DVBViewerPreferences(getActivity());
         version = prefs.getString(DVBViewerPreferences.KEY_RS_VERSION);
-        version = "1.30";
+        if (savedInstanceState != null) {
+            spinnerPosition = savedInstanceState.getInt(KEY_SPINNER_POS, 0);
+        }
     }
 
     /* (non-Javadoc)
@@ -171,12 +183,27 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
 
         mToolbar.setTitle(R.string.remote);
         mClientSpinner = (Spinner) content.findViewById(R.id.clientSpinner);
-        String[] myStringArray = new String[]{""};
-        mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, myStringArray);
-        mClientSpinner.setAdapter(mSpinnerAdapter);
         mClientSpinner.setVisibility(View.GONE);
+        mClientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedClient = (String) mSpinnerAdapter.getItem(position);
+                prefs.getPrefs().edit().putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient).commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         // Inflate a menu to be displayed in the toolbar
         return content;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(KEY_SPINNER_POS, mClientSpinner.getSelectedItemPosition());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -361,6 +388,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
      */
     @Override
     public void onClick(View v) {
+        boolean isSwitchCommand = false;
         String command = "";
         switch (v.getId()) {
             case R.id.ButtonMoveUp:
@@ -416,33 +444,43 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                 break;
             case R.id.ButtonOne:
                 command = ActionID.CMD_REMOTE_1;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonTwo:
                 command = ActionID.CMD_REMOTE_2;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonThree:
                 command = ActionID.CMD_REMOTE_3;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonFour:
                 command = ActionID.CMD_REMOTE_4;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonFive:
                 command = ActionID.CMD_REMOTE_5;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonSix:
                 command = ActionID.CMD_REMOTE_6;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonSeven:
                 command = ActionID.CMD_REMOTE_7;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonEight:
                 command = ActionID.CMD_REMOTE_8;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonNine:
                 command = ActionID.CMD_REMOTE_9;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonZero:
                 command = ActionID.CMD_REMOTE_0;
+                isSwitchCommand = true;
                 break;
             case R.id.ButtonStepBack_Numbers:
                 command = ActionID.CMD_MOVE_LEFT;
@@ -454,7 +492,12 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
             default:
                 break;
         }
-        String request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND_NEW, mClientSpinner.getSelectedItem(), command);
+        String request = "";
+        if (isSwitchCommand) {
+            request = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, mClientSpinner.getSelectedItem(), command);
+        } else {
+            request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
+        }
         DVBViewerCommand httpCommand = new DVBViewerCommand(request);
         Thread executionThread = new Thread(httpCommand);
         executionThread.start();
@@ -469,7 +512,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         String command = "";
         switch (v.getId()) {
             case R.id.ButtonMenu:
-                String request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND_NEW, mClientSpinner.getSelectedItem(), command);
+                String request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
                 DVBViewerCommand httpCommand = new DVBViewerCommand(request);
                 Thread executionThread = new Thread(httpCommand);
                 executionThread.start();
@@ -510,18 +553,27 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
             @Override
             public List<String> loadInBackground() {
                 List<String> result = null;
+                String jsonClients = prefs.getPrefs().getString(DVBViewerPreferences.KEY_RS_CLIENTS, "");
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<String>>() {}.getType();
+                result = gson.fromJson(jsonClients, type);
+                if (result != null && !result.isEmpty()) {
+                    String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);
+                    int index = result.indexOf(activeClient);
+                    spinnerPosition = index > -1 ? index : 0;
+                    return result;
+                }
                 try {
-                    if (TextUtils.isEmpty(version)){
-                        Log.i(Remote.class.getSimpleName(), "version: "+version);
+                    if (TextUtils.isEmpty(version)) {
+                        Log.i(Remote.class.getSimpleName(), "version: " + version);
                         String versionXml = ServerRequest.getRSString(ServerConsts.URL_VERSION);
                         VersionHandler versionHandler = new VersionHandler();
                         version = versionHandler.parse(versionXml);
-                        DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
                         SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
                         prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
                         prefEditor.commit();
                     }
-                    if (!Config.isRemoteSupported(version)){
+                    if (!Config.isRemoteSupported(version)) {
                         result = new ArrayList<>();
                         result.add(getString(R.string.version_unsupported_title));
                         return result;
@@ -530,6 +582,10 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                     TargetHandler handler = new TargetHandler();
                     result = handler.parse(xml);
                     Collections.sort(result);
+                    SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
+                    jsonClients = gson.toJson(result, type);
+                    prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+                    prefEditor.commit();
                 } catch (AuthenticationException e) {
                     e.printStackTrace();
                     showToast(getString(R.string.error_invalid_credentials));
@@ -587,24 +643,31 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
 
     @Override
     public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
-        if (data != null && !data.isEmpty()&& !data.get(0).equals(getString(R.string.version_unsupported_title))) {
-            String[] arr = new String[data.size()];
-            mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, data.toArray(arr));
-            mClientSpinner.setAdapter(mSpinnerAdapter);
-            mClientSpinner.setVisibility(View.VISIBLE);
-        }else {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.version_unsupported_title)
-                    .setMessage(R.string.version_unsupported_text)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            dialog.dismiss();
-                        }
-                    })
-                    .setCancelable(false)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+        try {
+
+            if (data != null && !data.isEmpty() && !data.get(0).equals(getString(R.string.version_unsupported_title))) {
+                String[] arr = new String[data.size()];
+                mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
+                mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                mClientSpinner.setAdapter(mSpinnerAdapter);
+                mClientSpinner.setSelection(spinnerPosition);
+                mClientSpinner.setVisibility(View.VISIBLE);
+            } else {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.version_unsupported_title)
+                        .setMessage(R.string.version_unsupported_text)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                dialog.dismiss();
+                            }
+                        })
+                        .setCancelable(false)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        }catch (Exception e){
+
         }
 
     }

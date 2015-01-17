@@ -11,6 +11,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg'
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg'
@@ -26,6 +30,7 @@ dependencies {
     compile project(':androidsupportv4preferencefragment')
     compile project(':showCaseView')
     compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.google.code.gson:gson:1.7.2'
     compile files('libs/acra-4.2.3.jar')
     compile files('libs/httpclientandroidlib-1.1.2.jar')
     compile files('libs/universal-image-loader-1.9.1.jar')

@@ -16,9 +16,12 @@
 package org.dvbviewer.controller.ui.fragments;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +43,7 @@ import org.dvbviewer.controller.io.data.ChannelListParser;
 import org.dvbviewer.controller.io.data.EpgEntryHandler;
 import org.dvbviewer.controller.io.data.FavouriteHandler;
 import org.dvbviewer.controller.io.data.StatusHandler;
+import org.dvbviewer.controller.io.data.TargetHandler;
 import org.dvbviewer.controller.io.data.VersionHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
@@ -61,6 +65,7 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -98,6 +103,8 @@ import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.ViewTarget;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
@@ -315,17 +322,27 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 						 */
 						String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
 						ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress;
-						/**
-						 * Save the data in sharedpreferences
-						 */
-						Editor prefEditor = prefs.getPrefs().edit();
-						if (s != null) {
-							prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, s.getEpgBefore());
-							prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, s.getEpgAfter());
-							prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, s.getDefAfterRecord());
-						}
-						prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
-						prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
+
+                        String xml = ServerRequest.getRSString(ServerConsts.URL_TARGETS);
+                        TargetHandler handler = new TargetHandler();
+                        List<String> targets = handler.parse(xml);
+                        Collections.sort(targets);
+                        Gson gson = new Gson();
+
+                        /**
+                         * Save the data in sharedpreferences
+                         */
+                        Editor prefEditor = prefs.getPrefs().edit();
+                        if (s != null) {
+                            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, s.getEpgBefore());
+                            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, s.getEpgAfter());
+                            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, s.getDefAfterRecord());
+                        }
+                        Type type = new TypeToken<List<String>>(){}.getType();
+                        String jsonClients = gson.toJson(targets, type);
+                        prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+                        prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
+                        prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
                         prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
 						prefEditor.commit();
 						Config.CHANNELS_SYNCED = true;
@@ -490,7 +507,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		getActivity().getMenuInflater().inflate(R.menu.context_menu_channellist, menu);
-		menu.findItem(R.id.menuSwitch).setVisible(URLUtil.isValidUrl(ServerConsts.DVBVIEWER_URL));
 	}
 
 	/*
@@ -551,7 +567,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 			}	
 			return true;
 		case R.id.menuSwitch:
-			String switchRequest = ServerConsts.URL_SWITCH_COMMAND+chan.getPosition();
+            String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), chan.getPosition());
 			DVBViewerCommand command = new DVBViewerCommand(switchRequest);
 			Thread exexuterTHread = new Thread(command);
 			exexuterTHread.start();
@@ -859,7 +875,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 	/**
 	 * Cursor to channellist.
 	 *
-	 * @param position the position
 	 * @return the array list©
 	 * @author RayBa
 	 * @date 07.04.2013
@@ -999,7 +1014,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 	 * the onChannelSelected event occurs, that object's appropriate
 	 * method is invoked.
 	 *
-	 * @see OnChannelSelectedEvent
 	 * @author RayBa
 	 * @date 05.07.2012
 	 */

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_awesome_toolbar"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:layout_gravity="right"
+        android:background="@drawable/ab_background"
         android:minHeight="?attr/actionBarSize">
 
         <Spinner
             android:id="@+id/clientSpinner"
-            style="@style/Widget.AppCompat.DropDownItem.Spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:minWidth="150dp" />
+            android:gravity="right" />
 
     </android.support.v7.widget.Toolbar>
 
