@@ -20,16 +20,12 @@ public class DVBViewerPreferenceFragment extends  PreferenceFragment implements 
 		addPreferencesFromResource(R.xml.preferences);
 		Preference rsSettings = (Preference) findPreference(DVBViewerPreferences.KEY_RS_SETTINGS);
 		rsSettings.setOnPreferenceClickListener(this);
-		Preference dvbvSettings = (Preference) findPreference(DVBViewerPreferences.KEY_DVBV_SETTINGS);
-		dvbvSettings.setOnPreferenceClickListener(this);
 	}
 
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 		if (preference.getKey().equals(DVBViewerPreferences.KEY_RS_SETTINGS)) {
 			preference.getIntent().putExtra("id", R.xml.rs_preferences);
-		}else if (preference.getKey().equals(DVBViewerPreferences.KEY_DVBV_SETTINGS)) {
-			preference.getIntent().putExtra("id", R.xml.dvbv_preferences);
 		}
 		return false;
 	}
