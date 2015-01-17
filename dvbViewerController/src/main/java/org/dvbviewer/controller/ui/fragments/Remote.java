@@ -16,24 +16,30 @@
 package org.dvbviewer.controller.ui.fragments;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
+import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.io.data.TargetHandler;
-import org.dvbviewer.controller.io.data.TimerHandler;
+import org.dvbviewer.controller.io.data.VersionHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseActivity.ErrorToastRunnable;
 import org.dvbviewer.controller.utils.ActionID;
-import org.dvbviewer.controller.utils.ArrayListAdapter;
+import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.xml.sax.SAXException;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
@@ -60,7 +66,7 @@ import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -122,6 +128,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     private Toolbar mToolbar;
     private SpinnerAdapter mSpinnerAdapter;
     private Spinner mClientSpinner;
+    private String version;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -129,7 +136,6 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     /* (non-Javadoc)
@@ -141,7 +147,9 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inititalize();
-        getLoaderManager().initLoader(0, savedInstanceState, this);
+        DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+        version = prefs.getString(DVBViewerPreferences.KEY_RS_VERSION);
+        version = "1.30";
     }
 
     /* (non-Javadoc)
@@ -164,10 +172,17 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         mToolbar.setTitle(R.string.remote);
         mClientSpinner = (Spinner) content.findViewById(R.id.clientSpinner);
         String[] myStringArray = new String[]{""};
-        mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, myStringArray );
+        mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, myStringArray);
         mClientSpinner.setAdapter(mSpinnerAdapter);
+        mClientSpinner.setVisibility(View.GONE);
         // Inflate a menu to be displayed in the toolbar
         return content;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().initLoader(0, null, this);
     }
 
     /**
@@ -496,6 +511,21 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
             public List<String> loadInBackground() {
                 List<String> result = null;
                 try {
+                    if (TextUtils.isEmpty(version)){
+                        Log.i(Remote.class.getSimpleName(), "version: "+version);
+                        String versionXml = ServerRequest.getRSString(ServerConsts.URL_VERSION);
+                        VersionHandler versionHandler = new VersionHandler();
+                        version = versionHandler.parse(versionXml);
+                        DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+                        SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
+                        prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
+                        prefEditor.commit();
+                    }
+                    if (!Config.isRemoteSupported(version)){
+                        result = new ArrayList<>();
+                        result.add(getString(R.string.version_unsupported_title));
+                        return result;
+                    }
                     String xml = ServerRequest.getRSString(ServerConsts.URL_TARGETS);
                     TargetHandler handler = new TargetHandler();
                     result = handler.parse(xml);
@@ -557,15 +587,31 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
 
     @Override
     public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
-        if (data != null && !data.isEmpty()){
+        if (data != null && !data.isEmpty()&& !data.get(0).equals(getString(R.string.version_unsupported_title))) {
             String[] arr = new String[data.size()];
-            mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, data.toArray(arr) );
+            mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, data.toArray(arr));
             mClientSpinner.setAdapter(mSpinnerAdapter);
+            mClientSpinner.setVisibility(View.VISIBLE);
+        }else {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.version_unsupported_title)
+                    .setMessage(R.string.version_unsupported_text)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            dialog.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
+
     }
 
     @Override
     public void onLoaderReset(Loader<List<String>> loader) {
 
     }
+
 }

@@ -326,6 +326,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 						}
 						prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
 						prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
+                        prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
 						prefEditor.commit();
 						Config.CHANNELS_SYNCED = true;
 					} catch (AuthenticationException e) {
