@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center_vertical"
-    android:orientation="vertical" >
+    android:layout_gravity="center"
+    android:gravity="center">
+
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/header_container"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingRight="?android:attr/scrollbarSize" >
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/position"
@@ -22,7 +26,7 @@
             android:id="@+id/iconContainer"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:background="@drawable/bg_white" >
+            android:background="@drawable/bg_white">
 
             <include layout="@layout/common_icon" />
         </LinearLayout>
@@ -34,7 +38,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="6dip"
             android:layout_marginTop="6dip"
-            android:layout_weight="1" >
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/title"
@@ -57,8 +61,27 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <ImageView style="@style/VerticalDivider" />
-    
-   <include layout="@layout/list" />
+    <ImageView
+        android:id="@+id/divider"
+        style="@style/VerticalDivider"
+        android:layout_below="@+id/header_container" />
 
-</LinearLayout>
+    <include
+        android:id="@+id/list_container"
+        layout="@layout/list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_container"
+        android:layout_below="@+id/header_container" />
+
+    <LinearLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <include layout="@layout/bottom_toolbar" />
+    </LinearLayout>
+
+</RelativeLayout>
