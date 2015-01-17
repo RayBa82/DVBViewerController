@@ -26,6 +26,7 @@
         </activity>
         <activity
             android:name=".ui.phone.RemoteActivity"
+            android:theme="@style/Theme.DVB.NoActionBar"
             android:label="@string/remote" >
         </activity>
         <activity

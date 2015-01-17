@@ -82,15 +82,6 @@ public class App extends Application {
 		Config.CHANNELS_SYNCED = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, false);
 
 		/**
-		 * Read DVBViewer preferences
-		 */
-		ServerConsts.DVBVIEWER_URL = prefs.getString(DVBViewerPreferences.KEY_DVBV_URL, "http://");
-		ServerConsts.DVBVIEWER_PORT = prefs.getString(DVBViewerPreferences.KEY_DVBV_PORT, "80");
-		URLUtil.setViewerAddress(ServerConsts.DVBVIEWER_URL, ServerConsts.DVBVIEWER_PORT);
-		ServerConsts.DVBVIEWER_USER_NAME = prefs.getString(DVBViewerPreferences.KEY_DVBV_USERNAME, "");
-		ServerConsts.DVBVIEWER_PASSWORD = prefs.getString(DVBViewerPreferences.KEY_DVBV_PASSWORD, "");
-		
-		/**
 		 * Read Recordingservice Preferences
 		 */
 		String serviceUrl = prefs.getString(DVBViewerPreferences.KEY_RS_URL, "http://");

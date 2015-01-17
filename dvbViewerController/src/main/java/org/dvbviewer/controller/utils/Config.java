@@ -57,6 +57,16 @@ public class Config {
         return cmp < 0;
     }
 
+    public static boolean isRemoteSupported (String version) {
+        if (TextUtils.isEmpty(version)) {
+            return false;
+        }
+        String s1 = normalisedVersion(version);
+        String s2 = normalisedVersion("1.30.1.0");
+        int cmp = s1.compareTo(s2);
+        return cmp >= 0;
+    }
+
     /**
      * Normalised version.
      *

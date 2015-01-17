@@ -18,6 +18,7 @@ package org.dvbviewer.controller.ui.fragments;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -450,13 +451,14 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
 		if (getUserVisibleHint()) {
 			super.onCreateContextMenu(menu, v, menuInfo);
 			getActivity().getMenuInflater().inflate(R.menu.context_menu_epg, menu);
-			MenuItem switchItem = menu.findItem(R.id.menuSwitch).setVisible(URLUtil.isValidUrl(ServerConsts.DVBVIEWER_URL));
+			MenuItem switchItem = menu.findItem(R.id.menuSwitch);
 			switchItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 				
 				@Override
 				public boolean onMenuItemClick(MenuItem item) {
 					if (getUserVisibleHint()) {
-						String switchRequest = ServerConsts.URL_SWITCH_COMMAND+mCHannel.getPosition();
+                        DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+                        String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), mCHannel.getPosition());
 						DVBViewerCommand command = new DVBViewerCommand(switchRequest);
 						Thread exexuterTHread = new Thread(command);
 						exexuterTHread.start();
