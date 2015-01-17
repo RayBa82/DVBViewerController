@@ -36,21 +36,8 @@ public class ConnectionPreferenceFragment extends PreferenceFragment implements 
 			ServerConsts.REC_SERVICE_LIVE_STREAM_PORT = sharedPreferences.getString(key, ServerConsts.REC_SERVICE_LIVE_STREAM_PORT);
 		} else if (key.equals(DVBViewerPreferences.KEY_RS_MEDIA_STREAM_PORT)) {
 			ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT = sharedPreferences.getString(key, ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT);
-		} else if (key.equals(DVBViewerPreferences.KEY_DVBV_URL)) {
-			ServerConsts.DVBVIEWER_URL = sharedPreferences.getString(key, "http://");
-			ServerConsts.DVBVIEWER_PORT = sharedPreferences.getString(DVBViewerPreferences.KEY_DVBV_PORT, "80");
-			ServerConsts.DVBVIEWER_URL = ServerConsts.DVBVIEWER_URL + ":" + ServerConsts.DVBVIEWER_PORT;
-		} else if (key.equals(DVBViewerPreferences.KEY_DVBV_PORT)) {
-			ServerConsts.DVBVIEWER_PORT = sharedPreferences.getString(key, "80");
-			ServerConsts.DVBVIEWER_URL = sharedPreferences.getString(DVBViewerPreferences.KEY_DVBV_URL, "http://");
-			ServerConsts.DVBVIEWER_URL = ServerConsts.DVBVIEWER_URL + ":" + ServerConsts.DVBVIEWER_PORT;
-		} else if (key.equals(DVBViewerPreferences.KEY_DVBV_USERNAME)) {
-			ServerConsts.DVBVIEWER_USER_NAME = sharedPreferences.getString(key, "");
-		} else if (key.equals(DVBViewerPreferences.KEY_DVBV_PASSWORD)) {
-			ServerConsts.DVBVIEWER_PASSWORD = sharedPreferences.getString(key, "");
 		}
 		URLUtil.setRecordingServicesAddress(ServerConsts.REC_SERVICE_URL, ServerConsts.REC_SERVICE_PORT);
-		URLUtil.setViewerAddress(ServerConsts.DVBVIEWER_URL, ServerConsts.DVBVIEWER_PORT);
 		ServerRequest.resetHttpCLient();
 	}
 

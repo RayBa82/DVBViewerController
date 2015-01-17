@@ -78,19 +78,6 @@ public class URLUtil {
 		}
 	}
 	
-	public static void setViewerAddress(String url, String port) {
-		try {
-			String prefUrl = guessUrl(url);
-			URL baseUrl = new URL(prefUrl);
-			ServerConsts.DVBVIEWER_PROTOCOL = baseUrl.getProtocol();
-			ServerConsts.DVBVIEWER_HOST = baseUrl.getHost();
-			ServerConsts.DVBVIEWER_PORT = port;
-			ServerConsts.DVBVIEWER_URL = ServerConsts.DVBVIEWER_PROTOCOL + "://" + ServerConsts.DVBVIEWER_HOST + ":" + ServerConsts.DVBVIEWER_PORT;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * Sets the recording services address.
 	 *

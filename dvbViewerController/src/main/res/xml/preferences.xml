@@ -10,14 +10,6 @@
                 android:targetClass="org.dvbviewer.controller.ui.phone.ConnectionPreferencesActivity"
                 android:targetPackage="org.dvbviewer.controller" />
         </Preference>
-        <Preference
-            android:key="KEY_DVBV_SETTINGS"
-            android:summary="@string/pref_item_dvbv_conn_summary"
-            android:title="@string/pref_item_dvbv_conn" >
-            <intent
-                android:targetClass="org.dvbviewer.controller.ui.phone.ConnectionPreferencesActivity"
-                android:targetPackage="org.dvbviewer.controller" />
-        </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_seperator_channel" >
         <CheckBoxPreference

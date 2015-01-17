@@ -28,6 +28,7 @@ import javax.net.ssl.HttpsURLConnection;
 import org.dvbviewer.controller.utils.Base64;
 import org.dvbviewer.controller.utils.ServerConsts;
 
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.webkit.URLUtil;
 import ch.boye.httpclientandroidlib.Consts;
@@ -75,45 +76,8 @@ import ch.boye.httpclientandroidlib.util.EntityUtils;
 public class ServerRequest {
 
 	private static DefaultHttpClient	httpClient;
-	private static Credentials			clientCredentials;
 	private static Credentials			rsCredentials;
-	private static AuthScope			clientAuthScope;
 	private static AuthScope			rsAuthScope;
-
-	/**
-	 * Sends an command to the DVBViewer Client. Every ActionID will be
-	 * accepted.
-	 *
-	 * @param command ActionID
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws URISyntaxException the URI syntax exception
-	 * @throws ClientProtocolException the client protocol exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws AuthenticationException the authentication exception
-	 * @author RayBa
-	 * @date 06.04.2012
-	 */
-	public static void sendCommand(String command) throws Exception {
-		URI uri = null;
-		uri = new URI(ServerConsts.DVBVIEWER_URL + command);
-		Log.d(ServerRequest.class.getSimpleName(), "executing DVBViewer command: " + uri);
-		HttpClient client = getHttpClient();
-		HttpGet request = new HttpGet(uri);
-		HttpResponse response = executeGet(client, request, true);
-		StatusLine status = response.getStatusLine();
-
-		switch (status.getStatusCode()) {
-
-		case HttpStatus.SC_OK:
-			HttpEntity entity = response.getEntity();
-			EntityUtils.consume(entity);
-			break;
-
-		default:
-			break;
-		}
-
-	}
 
 	/**
 	 * Execute get.
@@ -185,10 +149,6 @@ public class ServerRequest {
 				CacheConfig cacheConfig = new CacheConfig();
 				cacheConfig.setMaxCacheEntries(1000);
 				cacheConfig.setMaxObjectSize(8192);
-
-				if (getClientAuthScope() != null) {
-					httpClient.getCredentialsProvider().setCredentials(getClientAuthScope(), getClientCredentials());
-				}
 				if (getRsAuthScope() != null) {
 					httpClient.getCredentialsProvider().setCredentials(getRsAuthScope(), getRsCredentials());
 				}
@@ -209,9 +169,7 @@ public class ServerRequest {
 	public static void resetHttpCLient() {
 		httpClient = null;
 		rsAuthScope = null;
-		clientAuthScope = null;
 		rsCredentials = null;
-		clientCredentials = null;
 	}
 
 	/**
@@ -392,7 +350,6 @@ public class ServerRequest {
 	/**
 	 * Gets the rS entity.
 	 *
-	 * @param request the request
 	 * @return the rS entity
 	 * @throws IllegalStateException the illegal state exception
 	 * @throws URISyntaxException the URI syntax exception
@@ -448,20 +405,6 @@ public class ServerRequest {
 	}
 
 	/**
-	 * Gets the client credentials.
-	 * 
-	 * @return the client credentials
-	 * @author RayBa
-	 * @date 13.04.2012
-	 */
-	private static Credentials getClientCredentials() {
-		if (clientCredentials == null) {
-			clientCredentials = new UsernamePasswordCredentials(ServerConsts.DVBVIEWER_USER_NAME, ServerConsts.DVBVIEWER_PASSWORD);
-		}
-		return clientCredentials;
-	}
-
-	/**
 	 * Gets the Recording service credentials.
 	 * 
 	 * @return the rs credentials
@@ -473,28 +416,6 @@ public class ServerRequest {
 			rsCredentials = new UsernamePasswordCredentials(ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
 		}
 		return rsCredentials;
-	}
-
-	/**
-	 * Gets the client auth scope.
-	 * 
-	 * @return the client auth scope
-	 * @author RayBa
-	 * @date 13.04.2012
-	 */
-	private static AuthScope getClientAuthScope() {
-		if (clientAuthScope == null) {
-			if (URLUtil.isValidUrl(ServerConsts.DVBVIEWER_URL)) {
-				URI uri;
-				try {
-					uri = new URI(ServerConsts.DVBVIEWER_URL);
-					clientAuthScope = new AuthScope(uri.getHost(), uri.getPort());
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return clientAuthScope;
 	}
 
 	/**
@@ -563,20 +484,19 @@ public class ServerRequest {
 	 */
 	public static class DVBViewerCommand implements Runnable {
 		String	request;
-
-		public DVBViewerCommand(String request) {
+        public DVBViewerCommand(String request) {
 			this.request = request;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Runnable#run()
 		 */
 		@Override
 		public void run() {
 			try {
-				ServerRequest.sendCommand(request);
+                ServerRequest.executeRSGet(request);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
