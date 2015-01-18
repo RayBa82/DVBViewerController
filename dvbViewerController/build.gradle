@@ -1,13 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "org.dvbviewer.controller"
-        minSdkVersion 7
-        targetSdkVersion 21
+        applicationId rootProject.ext.applicationId
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionName rootProject.versionName
+        versionCode rootProject.versionCode
     }
 
     buildTypes {
@@ -29,7 +31,7 @@ android {
 dependencies {
     compile project(':androidsupportv4preferencefragment')
     compile project(':showCaseView')
-    compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.android.support:appcompat-v7:'+rootProject.ext.appcompatVersion
     compile 'com.google.code.gson:gson:1.7.2'
     compile files('libs/acra-4.2.3.jar')
     compile files('libs/httpclientandroidlib-1.1.2.jar')
