@@ -1,4 +1,25 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+def majorVersion = 1
+def minorVersion = 0
+def patchVersion = 11
+def buildNumber = 0
+def buildVersionCode;
+def buildVersionName
+def propertiesFile = file('gradle.properties')
+
+if (propertiesFile.canRead()) {
+    def Properties properties = new Properties()
+    properties.load(new FileInputStream(propertiesFile))
+
+    //Increment buildnumber and save it to file
+    buildNumber = properties['buildNumber'].toInteger() + 1
+    properties['buildNumber'] = buildNumber.toString()
+    properties.store(propertiesFile.newWriter(), null)
+
+}
+buildVersionCode = majorVersion * 100000 + minorVersion * 10000 + patchVersion * 1000 + buildNumber
+buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion}"
+
 buildscript {
     repositories {
         jcenter()
@@ -14,8 +35,8 @@ ext {
     minSdkVersion = 7
     targetSdkVersion = 21
     appcompatVersion = "21.0.3"
-    versionCode = 15
-    versionName = "1.0.11"
+    versionCode = buildVersionCode
+    versionName = buildVersionName
 }
 allprojects {
     repositories {
