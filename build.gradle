@@ -2,21 +2,9 @@
 def majorVersion = 1
 def minorVersion = 0
 def patchVersion = 11
-def buildNumber = 0
+def buildNumber = 1
 def buildVersionCode;
 def buildVersionName
-def propertiesFile = file('gradle.properties')
-
-if (propertiesFile.canRead()) {
-    def Properties properties = new Properties()
-    properties.load(new FileInputStream(propertiesFile))
-
-    //Increment buildnumber and save it to file
-    buildNumber = properties['buildNumber'].toInteger() + 1
-    properties['buildNumber'] = buildNumber.toString()
-    properties.store(propertiesFile.newWriter(), null)
-
-}
 buildVersionCode = majorVersion * 100000 + minorVersion * 10000 + patchVersion * 1000 + buildNumber
 buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion}"
 
