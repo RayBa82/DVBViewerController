@@ -15,9 +15,9 @@
  */
 package org.dvbviewer.controller.ui.base;
 
-import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
-
 import android.content.Context;
+
+import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
 
 /**
  * The Class EpgLoader.

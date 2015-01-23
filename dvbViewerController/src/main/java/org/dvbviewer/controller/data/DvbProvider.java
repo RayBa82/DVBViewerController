@@ -1,12 +1,12 @@
 /*
  * Copyright © 2013 dvbviewer-controller Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,14 +15,6 @@
  */
 package org.dvbviewer.controller.data;
 
-import java.util.Date;
-import java.util.HashMap;
-
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
-import org.dvbviewer.controller.data.DbConsts.EpgTbl;
-import org.dvbviewer.controller.data.DbConsts.FavTbl;
-import org.dvbviewer.controller.data.DbConsts.NowTbl;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -30,6 +22,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+
+import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
+import org.dvbviewer.controller.data.DbConsts.EpgTbl;
+import org.dvbviewer.controller.data.DbConsts.FavTbl;
+import org.dvbviewer.controller.data.DbConsts.GroupTbl;
+import org.dvbviewer.controller.data.DbConsts.NowTbl;
+
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * The Class DvbProvider.
@@ -50,14 +51,16 @@ public class DvbProvider extends ContentProvider {
 	private static final int		NOW_PLAYING_FAVS		= 103;
 
 	private static final int		EPG						= 200;
+	
+	private static final int		GROUPS					= 300;
 
 	private static final UriMatcher	sUriMatcher				= buildUriMatcher();
 
 	/**
-	 * Build and return a {@link UriMatcher} that catches all {@link Uri}
-	 * variations supported by this {@link ContentProvider}.
+	 * Build and return a {@link android.content.UriMatcher} that catches all {@link android.net.Uri}
+	 * variations supported by this {@link android.content.ContentProvider}.
 	 *
-	 * @return the uri matcher©
+	 * @return the uri matcher�
 	 * @author RayBa
 	 * @date 07.04.2013
 	 */
@@ -69,6 +72,7 @@ public class DvbProvider extends ContentProvider {
 		matcher.addURI(authority, ChannelTbl.NOW_PLAYING_FAVS, NOW_PLAYING_FAVS);
 		matcher.addURI(authority, FavTbl.TABLE_NAME, FAVOURITES);
 		matcher.addURI(authority, EpgTbl.TABLE_NAME, EPG);
+		matcher.addURI(authority, GroupTbl.TABLE_NAME, GROUPS);
 		return matcher;
 	}
 
@@ -93,6 +97,13 @@ public class DvbProvider extends ContentProvider {
 		case CHANNELS:
 			qb = new SQLiteQueryBuilder();
 			qb.setTables(ChannelTbl.TABLE_NAME);
+			projectionMap = new HashMap<String, String>();
+			projectionMap.put(ChannelTbl._ID, ChannelTbl._ID);
+			projectionMap.put(ChannelTbl.CHANNEL_ID, ChannelTbl.CHANNEL_ID);
+			projectionMap.put(ChannelTbl.EPG_ID, ChannelTbl.EPG_ID);
+			projectionMap.put(ChannelTbl.POSITION, ChannelTbl.POSITION);
+			projectionMap.put(ChannelTbl.FAV_POSITION, ChannelTbl.FAV_POSITION);
+			projectionMap.put(ChannelTbl.LOGO_URL, ChannelTbl.LOGO_URL);
 			break;
 		case FAVOURITES:
 			qb = new SQLiteQueryBuilder();
@@ -118,6 +129,10 @@ public class DvbProvider extends ContentProvider {
 		case EPG:
 			qb = new SQLiteQueryBuilder();
 			qb.setTables(EpgTbl.TABLE_NAME);
+			break;
+		case GROUPS:
+			qb = new SQLiteQueryBuilder();
+			qb.setTables(GroupTbl.TABLE_NAME);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);

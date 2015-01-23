@@ -15,9 +15,9 @@
  */
 package org.dvbviewer.controller.utils;
 
-import java.util.regex.Pattern;
-
 import android.text.TextUtils;
+
+import java.util.regex.Pattern;
 
 /**
  * * @author RayBa

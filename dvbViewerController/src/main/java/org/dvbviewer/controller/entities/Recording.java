@@ -15,10 +15,10 @@
  */
 package org.dvbviewer.controller.entities;
 
-import java.util.Date;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.util.Date;
 
 /**
  * The Class Recording.

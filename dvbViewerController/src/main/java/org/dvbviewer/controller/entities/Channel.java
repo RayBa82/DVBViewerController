@@ -1,12 +1,12 @@
 /*
- * Copyright © 2013 dvbviewer-controller Project
- * 
+ * Copyright © 2015 dvbviewer-controller Project
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,12 +15,12 @@
  */
 package org.dvbviewer.controller.entities;
 
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
-
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+
+import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -57,6 +57,12 @@ public class Channel implements Comparable<Channel>, Parcelable {
 
 	/** The fav id. */
 	private long			favID;
+	
+	/** The group id. */
+	private long			groupId;
+	
+	/** The fav group id. */
+	private long			favGroupId;
 
 	/** The fav position. */
 	private int				favPosition				= -1;
@@ -91,6 +97,28 @@ public class Channel implements Comparable<Channel>, Parcelable {
 	}
 
 	/**
+	 * Gets the channel id.
+	 *
+	 * @return the channel id
+	 * @author RayBa
+	 * @date 29.09.2013
+	 */
+	public long getChannelID() {
+		return channelID;
+	}
+
+	/**
+	 * Sets the channel id.
+	 *
+	 * @param channelID the new channel id
+	 * @author RayBa
+	 * @date 29.09.2013
+	 */
+	public void setChannelID(long channelID) {
+		this.channelID = channelID;
+	}
+
+	/**
 	 * Gets the epg id.
 	 * 
 	 * @return the epg id
@@ -99,28 +127,6 @@ public class Channel implements Comparable<Channel>, Parcelable {
 	 */
 	public long getEpgID() {
 		return epgID;
-	}
-	
-	/**
-	 * Gets the channel id.
-	 *
-	 * @return the channel id
-	 * @author RayBa
-	 * @date 07.09.2013
-	 */
-	public Long getChannelID() {
-		return channelID;
-	}
-	
-	/**
-	 * Sets the channel id.
-	 *
-	 * @param channelID the new channel id
-	 * @author RayBa
-	 * @date 07.09.2013
-	 */
-	public void setChannelID(Long channelID) {
-		this.channelID = channelID;
 	}
 
 	/**
@@ -142,7 +148,7 @@ public class Channel implements Comparable<Channel>, Parcelable {
 	 * @author RayBa
 	 * @date 07.04.2013
 	 */
-	public long getFavID() { 
+	public long getFavID() {
 		return favID;
 	}
 
@@ -215,7 +221,7 @@ public class Channel implements Comparable<Channel>, Parcelable {
 	/**
 	 * To content values.
 	 *
-	 * @return the content values©
+	 * @return the content values�
 	 * @author RayBa
 	 * @date 07.04.2013
 	 */
@@ -239,6 +245,12 @@ public class Channel implements Comparable<Channel>, Parcelable {
 		if (this.favID != 0l) { 
 			result.put(ChannelTbl.FAV_ID, this.favID);
 		}
+		if (this.groupId != 0l) { 
+			result.put(ChannelTbl.GROUP_ID, this.groupId);
+		}
+		if (this.favGroupId != 0l) { 
+			result.put(ChannelTbl.FAV_GROUP_ID, this.favGroupId);
+		}
 		if (this.favPosition >= 0) {
 			result.put(ChannelTbl.FAV_POSITION, this.favPosition);
 		}
@@ -249,7 +261,9 @@ public class Channel implements Comparable<Channel>, Parcelable {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.os.Parcelable#describeContents()
 	 */
 	@Override
@@ -258,13 +272,6 @@ public class Channel implements Comparable<Channel>, Parcelable {
 		return 0;
 	}
 
-	/**
-	 * Read from parcel.
-	 *
-	 * @param src the src
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
 	private void readFromParcel(Parcel src) {
 		long id = src.readLong();
 		this.channelID = id == -1 ? null : id;
@@ -311,7 +318,7 @@ public class Channel implements Comparable<Channel>, Parcelable {
 	}
 
 	/** The Constant CREATOR. */
-	public static final Parcelable.Creator<Channel>	CREATOR	= new Parcelable.Creator<Channel>() {
+	public static final Creator<Channel>	CREATOR	= new Creator<Channel>() {
 																public Channel createFromParcel(Parcel src) {
 
 																	return new Channel(src);
@@ -332,10 +339,10 @@ public class Channel implements Comparable<Channel>, Parcelable {
 
 		/** The position. */
 		public int		position;
-		
+
 		/** The id. */
 		public long		id;
-		
+
 		/** The name. */
 		public String	name;
 
@@ -439,6 +446,50 @@ public class Channel implements Comparable<Channel>, Parcelable {
 	 */
 	public void setLogoUrl(String logoUrl) {
 		this.logoUrl = logoUrl;
+	}
+
+	/**
+	 * Gets the group id.
+	 *
+	 * @return the group id
+	 * @author RayBa
+	 * @date 24.08.2013
+	 */
+	public long getGroupId() {
+		return groupId;
+	}
+
+	/**
+	 * Sets the group id.
+	 *
+	 * @param groupId the new group id
+	 * @author RayBa
+	 * @date 24.08.2013
+	 */
+	public void setGroupId(long groupId) {
+		this.groupId = groupId;
+	}
+
+	/**
+	 * Gets the fav group id.
+	 *
+	 * @return the fav group id
+	 * @author RayBa
+	 * @date 24.08.2013
+	 */
+	public long getFavGroupId() {
+		return favGroupId;
+	}
+
+	/**
+	 * Sets the fav group id.
+	 *
+	 * @param favGroupId the new fav group id
+	 * @author RayBa
+	 * @date 24.08.2013
+	 */
+	public void setFavGroupId(long favGroupId) {
+		this.favGroupId = favGroupId;
 	}
 
 }

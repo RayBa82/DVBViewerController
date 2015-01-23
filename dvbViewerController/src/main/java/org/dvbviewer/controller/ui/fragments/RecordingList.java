@@ -15,33 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.IEPG;
-import org.dvbviewer.controller.entities.Recording;
-import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.io.data.RecordingHandler;
-import org.dvbviewer.controller.ui.base.AsyncLoader;
-import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback;
-import org.dvbviewer.controller.ui.base.BaseListFragment;
-import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
-import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
-import org.dvbviewer.controller.ui.widget.CheckableLinearLayout;
-import org.dvbviewer.controller.utils.ArrayListAdapter;
-import org.dvbviewer.controller.utils.DateUtils;
-import org.dvbviewer.controller.utils.ServerConsts;
-import org.dvbviewer.controller.utils.UIUtils;
-import org.xml.sax.SAXException;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -71,6 +44,34 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.entities.IEPG;
+import org.dvbviewer.controller.entities.Recording;
+import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.data.RecordingHandler;
+import org.dvbviewer.controller.ui.base.AsyncLoader;
+import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback;
+import org.dvbviewer.controller.ui.base.BaseListFragment;
+import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
+import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
+import org.dvbviewer.controller.ui.widget.CheckableLinearLayout;
+import org.dvbviewer.controller.utils.ArrayListAdapter;
+import org.dvbviewer.controller.utils.DateUtils;
+import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.UIUtils;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import ch.boye.httpclientandroidlib.ParseException;
 import ch.boye.httpclientandroidlib.auth.AuthenticationException;
 import ch.boye.httpclientandroidlib.client.ClientProtocolException;

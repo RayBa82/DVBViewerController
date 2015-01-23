@@ -21,8 +21,6 @@
     <string name="gmt">GMT</string>
     <string name="details">Details</string>
     <string name="about">Über</string>
-    <string name="common_colon">:&#160;</string>
-    <string name="common_hyphen">&#160;-&#160;</string>
     <string name="about_app">Über DVBViewer Controller</string>
     <string name="version">App Version:</string>
 
@@ -134,19 +132,12 @@
     <string name="pref_seperator_channel">Kanal und Favoritenliste</string>
     <string name="pref_seperator_stream">Streaming</string>
     <string name="pref_seperator_rs_con">Recording Service Einstellungen</string>
-    <string name="pref_seperator_dvbv_con">DVBViewer Einstellungen</string>
     <string name="pref_item_rs_conn">Recording Service</string>
     <string name="pref_item_rs_conn_summary">Verbindungseinstellungen für den Recordingservice</string>
-    <string name="pref_item_dvbv_conn">DVBViewer</string>
-    <string name="pref_item_dvbv_conn_summary">Verbindungseinstellungen für den DVBViewer</string>
     <string name="pref_item_rs_url">Recording Service URL</string>
     <string name="pref_item_rs_url_summary">URL für den Recording Service</string>
     <string name="pref_item_rs_port">Recording Service Port</string>
     <string name="pref_item_rs_port_summary">Port für den Recording Service</string>
-    <string name="pref_item_dvbv_url">DVBViewer URL</string>
-    <string name="pref_item_dvbv_url_summary">URL für den DVBViewer</string>
-    <string name="pref_item_dvbv_port">DVBViewer Port</string>
-    <string name="pref_item_dvbv_port_summary">Port für den DVBViewer</string>
     <string name="pref_item_username">Benutzername</string>
     <string name="pref_item_username_summary">Benutzername, falls benötigt</string>
     <string name="pref_item_password">Passwort</string>
@@ -177,19 +168,17 @@
     <string name="pref_item_epg_settings_fav_only_summary">Legt fest ob nur die Favoriten synchronisisert werden sollen.</string>
 
     <!-- Error -->
-    <string name="expiration_title">Version abgelaufen</string>
     <string name="error_common">Fehler</string>
     <string name="error_unknonwn_host">Unbekannter Host</string>
     <string name="error_no_connection">Keine Verbindung</string>
     <string name="error_connection_timeout">Verbindungs timeout</string>
     <string name="error_parsing_xml">Fehler beim verarbeiten des XMLs</string>
-    <string name="error_sending_report">Fehlerbericht wird gesendet</string>
     <string name="error_invalid_url">Ungültige URL</string>
     <string name="error_invalid_credentials">Authentifizierung fehlgeschlagen</string>
-     <string name="support_this_app">Die App unterstützen</string>
-     
-     <string name="quick_stream_hint_title">Sender streamen</string>
-     <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
+    <string name="support_this_app">Die App unterstützen</string>
+
+    <string name="quick_stream_hint_title">Sender streamen</string>
+    <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
     <string name="version_unsupported_text">Die Recording Service Version muss höher als 1.30.1.0 sein um die Ferbedienungfunktion zu Nutzen</string>
     <string name="version_unsupported_title">Version zu alt</string>
 </resources>

@@ -16,8 +16,6 @@
 package org.dvbviewer.controller.ui.base;
 
 
-import org.dvbviewer.controller.utils.UIUtils;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
@@ -38,6 +36,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.dvbviewer.controller.utils.UIUtils;
 
 /**
  * Static library support version of the framework's {@link android.app.ListFragment}.

@@ -15,8 +15,9 @@
  */
 package org.dvbviewer.controller.ui.tablet;
 
-import java.util.Date;
-import java.util.List;
+import android.os.Bundle;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.MenuItem;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Channel;
@@ -28,9 +29,8 @@ import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.EpgPager;
 
-import android.os.Bundle;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.view.MenuItem;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class ChannelListMultiActivity.

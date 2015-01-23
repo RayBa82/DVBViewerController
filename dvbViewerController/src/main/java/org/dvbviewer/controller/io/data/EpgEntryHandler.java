@@ -15,8 +15,12 @@
  */
 package org.dvbviewer.controller.io.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.sax.Element;
+import android.sax.EndElementListener;
+import android.sax.EndTextElementListener;
+import android.sax.RootElement;
+import android.sax.StartElementListener;
+import android.util.Xml;
 
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.utils.DateUtils;
@@ -24,12 +28,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.sax.Element;
-import android.sax.EndElementListener;
-import android.sax.EndTextElementListener;
-import android.sax.RootElement;
-import android.sax.StartElementListener;
-import android.util.Xml;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class EpgEntryHandler.

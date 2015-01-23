@@ -15,17 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.utils.ServerConsts;
-import org.dvbviewer.controller.utils.UIUtils;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -50,6 +39,17 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.UIUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class StreamConfig.

@@ -1,9 +1,9 @@
 package org.dvbviewer.controller.ui.phone;
 
+import android.support.v4.app.Fragment;
+
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.AboutFragment;
-
-import android.support.v4.app.Fragment;
 
 public class AboutActivity extends BaseSinglePaneActivity{
 

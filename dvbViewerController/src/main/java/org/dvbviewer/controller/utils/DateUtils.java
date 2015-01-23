@@ -15,15 +15,15 @@
  */
 package org.dvbviewer.controller.utils;
 
+import android.text.format.Time;
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-
-import android.text.format.Time;
-import android.util.Log;
 
 /**
  * The Class DateUtils.

@@ -15,8 +15,6 @@
  */
 package org.dvbviewer.controller.ui.widget;
 
-import org.dvbviewer.controller.R;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -26,6 +24,8 @@ import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import org.dvbviewer.controller.R;
 
 /**
  * The Class BooleanPref.

@@ -15,13 +15,13 @@
  */
 package org.dvbviewer.controller.ui.widget;
 
-import org.dvbviewer.controller.R;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+
+import org.dvbviewer.controller.R;
 
 /**
  * The Class ActionBarBackground.

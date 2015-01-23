@@ -15,12 +15,12 @@
  */
 package org.dvbviewer.controller.ui.phone;
 
-import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
-import org.dvbviewer.controller.ui.fragments.StatusList;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
+
+import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
+import org.dvbviewer.controller.ui.fragments.StatusList;
 
 /**
  * Phone Activity for {@link StatusFragment}

@@ -15,17 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import java.util.Date;
-import java.util.List;
-
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
-import org.dvbviewer.controller.entities.Channel;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
-import org.dvbviewer.controller.utils.DateUtils;
-import org.dvbviewer.controller.utils.UIUtils;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.Cursor;
@@ -45,6 +34,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
+import org.dvbviewer.controller.entities.Channel;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
+import org.dvbviewer.controller.utils.DateUtils;
+import org.dvbviewer.controller.utils.UIUtils;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class EpgPager.
