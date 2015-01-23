@@ -15,23 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.entities.Timer;
-import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
-import org.dvbviewer.controller.ui.widget.DateField;
-import org.dvbviewer.controller.utils.DateUtils;
-import org.dvbviewer.controller.utils.ServerConsts;
-
 import android.app.Activity;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.TimePickerDialog.OnTimeSetListener;
@@ -50,6 +33,23 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
+import org.dvbviewer.controller.ui.widget.DateField;
+import org.dvbviewer.controller.utils.DateUtils;
+import org.dvbviewer.controller.utils.ServerConsts;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 
 /**

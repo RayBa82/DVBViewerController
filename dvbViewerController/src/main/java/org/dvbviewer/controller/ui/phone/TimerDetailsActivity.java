@@ -15,12 +15,12 @@
  */
 package org.dvbviewer.controller.ui.phone;
 
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.TimerDetails;
 import org.dvbviewer.controller.ui.fragments.TimerDetails.OnTimerEditedListener;
-
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 /**
  * The Class TimerDetailsActivity.

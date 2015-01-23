@@ -1,13 +1,13 @@
 package org.dvbviewer.controller.ui.fragments;
 
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceManager;
 import android.support.v4.preference.PreferenceFragment;
+
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
 
 public class DVBViewerPreferenceFragment extends  PreferenceFragment implements OnPreferenceClickListener{
 	

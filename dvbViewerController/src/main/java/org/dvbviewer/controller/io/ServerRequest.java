@@ -15,6 +15,12 @@
  */
 package org.dvbviewer.controller.io;
 
+import android.util.Log;
+import android.webkit.URLUtil;
+
+import org.dvbviewer.controller.utils.Base64;
+import org.dvbviewer.controller.utils.ServerConsts;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -25,12 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.dvbviewer.controller.utils.Base64;
-import org.dvbviewer.controller.utils.ServerConsts;
-
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.webkit.URLUtil;
 import ch.boye.httpclientandroidlib.Consts;
 import ch.boye.httpclientandroidlib.HttpEntity;
 import ch.boye.httpclientandroidlib.HttpException;

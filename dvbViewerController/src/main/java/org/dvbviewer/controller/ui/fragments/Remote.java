@@ -15,20 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
-import org.dvbviewer.controller.io.data.TargetHandler;
-import org.dvbviewer.controller.io.data.VersionHandler;
-import org.dvbviewer.controller.ui.base.AsyncLoader;
-import org.dvbviewer.controller.ui.base.BaseActivity.ErrorToastRunnable;
-import org.dvbviewer.controller.utils.ActionID;
-import org.dvbviewer.controller.utils.Config;
-import org.dvbviewer.controller.utils.ServerConsts;
-import org.dvbviewer.controller.utils.UIUtils;
-import org.xml.sax.SAXException;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -61,6 +47,20 @@ import android.widget.ViewFlipper;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
+import org.dvbviewer.controller.io.data.TargetHandler;
+import org.dvbviewer.controller.io.data.VersionHandler;
+import org.dvbviewer.controller.ui.base.AsyncLoader;
+import org.dvbviewer.controller.ui.base.BaseActivity.ErrorToastRunnable;
+import org.dvbviewer.controller.utils.ActionID;
+import org.dvbviewer.controller.utils.Config;
+import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.UIUtils;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.PrintWriter;

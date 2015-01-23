@@ -15,17 +15,17 @@
  */
 package org.dvbviewer.controller.utils;
 
+import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 /**
  * The Class URLUtil.

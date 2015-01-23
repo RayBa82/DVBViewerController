@@ -15,12 +15,12 @@
  */
 package org.dvbviewer.controller.ui.widget;
 
-import java.util.Date;
-
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.widget.EditText;
+
+import java.util.Date;
 
 // TODO: Auto-generated Javadoc
 /**

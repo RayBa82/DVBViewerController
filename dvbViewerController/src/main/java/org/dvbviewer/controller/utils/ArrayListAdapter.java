@@ -15,11 +15,11 @@
  */
 package org.dvbviewer.controller.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class ArrayListAdapter.

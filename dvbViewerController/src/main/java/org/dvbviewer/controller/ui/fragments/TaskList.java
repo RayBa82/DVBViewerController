@@ -15,22 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.text.MessageFormat;
-
-import org.apache.http.ParseException;
-import org.apache.http.auth.AuthenticationException;
-import org.apache.http.client.ClientProtocolException;
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.Task;
-import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.ui.base.BaseListFragment;
-import org.dvbviewer.controller.utils.ArrayListAdapter;
-import org.dvbviewer.controller.utils.CategoryAdapter;
-import org.dvbviewer.controller.utils.NetUtils;
-import org.dvbviewer.controller.utils.ServerConsts;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -44,6 +28,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.apache.http.ParseException;
+import org.apache.http.auth.AuthenticationException;
+import org.apache.http.client.ClientProtocolException;
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.entities.Task;
+import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.ui.base.BaseListFragment;
+import org.dvbviewer.controller.utils.ArrayListAdapter;
+import org.dvbviewer.controller.utils.CategoryAdapter;
+import org.dvbviewer.controller.utils.NetUtils;
+import org.dvbviewer.controller.utils.ServerConsts;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.MessageFormat;
 
 /**
  * The Class TaskList.

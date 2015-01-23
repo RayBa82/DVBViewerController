@@ -17,11 +17,11 @@
 package org.dvbviewer.controller.ui.base;
 
 
-import org.dvbviewer.controller.R;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
+import org.dvbviewer.controller.R;
 
 /**
  * A {@link BaseActivity} that simply contains a single fragment. The intent used to invoke this

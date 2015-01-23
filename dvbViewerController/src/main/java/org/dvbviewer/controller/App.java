@@ -15,15 +15,14 @@
  */
 package org.dvbviewer.controller;
 
-import java.util.HashMap;
-import java.util.Map;
+import android.app.Application;
+import android.text.TextUtils;
 
-import org.acra.ACRA;
-import org.acra.ErrorReporter;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
-import org.acra.sender.HttpPostSender;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.io.imageloader.AuthImageDownloader;
 import org.dvbviewer.controller.utils.Config;
@@ -31,21 +30,12 @@ import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.URLUtil;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-
-import android.app.Application;
-import android.text.TextUtils;
-
 /**
  * The Class App.
  *
  * @author RayBa
  * @date 11.08.2012
  */
-@ReportsCrashes(formKey = "", mode = ReportingInteractionMode.TOAST, resToastText = R.string.error_sending_report)
 public class App extends Application {
 	
 
@@ -54,28 +44,6 @@ public class App extends Application {
 	 */
 	@Override
 	public void onCreate() {
-		
-		/**
-		 * Acra initialisation
-		 */
-		boolean initAcra = getResources().getBoolean(R.bool.init_acra);
-		String acraUrl = getResources().getString(R.string.url_acra_error);
-		if (initAcra && !TextUtils.isEmpty(acraUrl)) {
-			ACRA.init(this);
-			Map<ReportField, String> mapping = new HashMap<ReportField, String>();
-			mapping.put(ReportField.INSTALLATION_ID, "installationId");
-			mapping.put(ReportField.PACKAGE_NAME, "package");
-			mapping.put(ReportField.ANDROID_VERSION, "androidVersion");
-			mapping.put(ReportField.BRAND, "brand");
-			mapping.put(ReportField.PHONE_MODEL, "phoneModel");
-			mapping.put(ReportField.APP_VERSION_CODE, "appVerCode");
-			mapping.put(ReportField.APP_VERSION_NAME, "appVerName");
-			mapping.put(ReportField.STACK_TRACE, "stackTrace");
-			// remove any default report sender
-			ErrorReporter.getInstance().removeAllReportSenders();
-			// create your own instance with your specific mapping
-			ErrorReporter.getInstance().addReportSender(new HttpPostSender(acraUrl, mapping));
-		}
 		
 		DVBViewerPreferences prefs = new DVBViewerPreferences(this);
 		Config.IS_FIRST_START = prefs.getBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, true);

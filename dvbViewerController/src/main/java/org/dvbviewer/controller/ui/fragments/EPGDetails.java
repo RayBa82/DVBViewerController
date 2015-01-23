@@ -15,10 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.IEPG;
-import org.dvbviewer.controller.utils.DateUtils;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -27,6 +23,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.entities.IEPG;
+import org.dvbviewer.controller.utils.DateUtils;
 
 /**
  * The Class EPGDetails.

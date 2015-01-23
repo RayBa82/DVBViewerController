@@ -15,12 +15,12 @@
  */
 package org.dvbviewer.controller.io.data;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.util.Xml;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * The Class VersionHandler.

@@ -15,34 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts.EpgTbl;
-import org.dvbviewer.controller.entities.Channel;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.entities.EpgEntry;
-import org.dvbviewer.controller.entities.IEPG;
-import org.dvbviewer.controller.entities.Timer;
-import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
-import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
-import org.dvbviewer.controller.io.data.EpgEntryHandler;
-import org.dvbviewer.controller.ui.base.BaseListFragment;
-import org.dvbviewer.controller.ui.base.EpgLoader;
-import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
-import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
-import org.dvbviewer.controller.utils.DateUtils;
-import org.dvbviewer.controller.utils.ServerConsts;
-import org.dvbviewer.controller.utils.UIUtils;
-import org.xml.sax.SAXException;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -65,13 +37,43 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.webkit.URLUtil;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.data.DbConsts.EpgTbl;
+import org.dvbviewer.controller.entities.Channel;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.entities.EpgEntry;
+import org.dvbviewer.controller.entities.IEPG;
+import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
+import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
+import org.dvbviewer.controller.io.data.EpgEntryHandler;
+import org.dvbviewer.controller.ui.base.BaseListFragment;
+import org.dvbviewer.controller.ui.base.EpgLoader;
+import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
+import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
+import org.dvbviewer.controller.utils.DateUtils;
+import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.UIUtils;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import ch.boye.httpclientandroidlib.NameValuePair;
 import ch.boye.httpclientandroidlib.ParseException;
 import ch.boye.httpclientandroidlib.auth.AuthenticationException;
@@ -79,8 +81,6 @@ import ch.boye.httpclientandroidlib.client.ClientProtocolException;
 import ch.boye.httpclientandroidlib.client.utils.URLEncodedUtils;
 import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * The Class ChannelEpg.

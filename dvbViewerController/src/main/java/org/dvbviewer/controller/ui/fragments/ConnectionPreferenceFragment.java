@@ -1,15 +1,15 @@
 package org.dvbviewer.controller.ui.fragments;
 
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.utils.ServerConsts;
-import org.dvbviewer.controller.utils.URLUtil;
-
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.preference.PreferenceFragment;
+
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.URLUtil;
 
 public class ConnectionPreferenceFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 

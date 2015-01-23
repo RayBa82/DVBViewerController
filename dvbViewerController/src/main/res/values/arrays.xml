@@ -24,7 +24,7 @@
         <item name="fourToThree">4:3</item>
     </string-array>
     <string-array name="ffmpegPresets">
-        <item name="medium">medium</item>
+        <item name="medium" translatable="false">medium</item>
         <item name="fast">fast</item>
         <item name="faster">faster</item>
         <item name="veryfast">veryfast</item>
