@@ -421,56 +421,6 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Delete epg.
-	 *
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void deleteEPG() {
-		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("DELETE FROM " + EpgTbl.TABLE_NAME);
-		db.close();
-	}
-
-	/**
-	 * Delete epg for channel.
-	 *
-	 * @param epgId the epg id
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void deleteEpgForChannel(long epgId) {
-		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("DELETE FROM " + EpgTbl.TABLE_NAME + WHERE + EpgTbl.EPG_ID + EQUALS + epgId);
-		db.close();
-	}
-
-	/**
-	 * Mark channels for update.
-	 *
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void markChannelsForUpdate() {
-		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " | " + Channel.FLAG_PENDING_UPDATE + ";");
-		db.close();
-	}
-
-	/**
-	 * Mark channel updated.
-	 *
-	 * @param channelId the channel id
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void markChannelUpdated(long channelId) {
-		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " &~ " + Channel.FLAG_PENDING_UPDATE + WHERE + ChannelTbl._ID + EQUALS + channelId + ";");
-		db.close();
-	}
-
-	/**
 	 * Save favs.
 	 *
 	 * @param favs the favs
@@ -485,9 +435,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		db.beginTransaction();
 		try {
             for (Fav fav : favs) {
-                String subSelect = "Select "+ChannelTbl.CHANNEL_ID+" from " + ChannelTbl.TABLE_NAME + " where " + ChannelTbl.CHANNEL_ID + " = '" + fav.id + "' LIMIT 1";
-                String select = "update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FAV_POSITION + " = " + fav.position + ", " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " | " + Channel.FLAG_FAV + " where "+ChannelTbl.CHANNEL_ID+" in ("+subSelect+");";
-                db.execSQL(select);
+                saveFav(db, fav);
 			}
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -498,7 +446,20 @@ public class DbHelper extends SQLiteOpenHelper {
 		}
 	}
 
-	/**
+    /**
+     *
+     * @param db
+     * @param fav
+     * @author RayBa
+     * @date 23.01.2015
+     */
+    private void saveFav(SQLiteDatabase db, Fav fav) {
+        String subSelect = "Select "+ ChannelTbl.CHANNEL_ID+" from " + ChannelTbl.TABLE_NAME + " where " + ChannelTbl.CHANNEL_ID + " = '" + fav.id + "' LIMIT 1";
+        String select = "update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FAV_POSITION + " = " + fav.position + ", " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " | " + Channel.FLAG_FAV + " where "+ ChannelTbl.CHANNEL_ID+" in ("+subSelect+");";
+        db.execSQL(select);
+    }
+
+    /**
 	 * Save favs.
 	 *
 	 * @param groups the groups
@@ -515,8 +476,8 @@ public class DbHelper extends SQLiteOpenHelper {
 			for (ChannelGroup channelGroup : groups) {
 				long groupId = db.insert(GroupTbl.TABLE_NAME, null, channelGroup.toContentValues());
 				for (Fav fav : channelGroup.getFavs()) {
-					db.execSQL("update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FAV_POSITION + " = " + fav.position + ", " + ChannelTbl.FAV_GROUP_ID + " = " + groupId + ", " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " | " + Channel.FLAG_FAV + " where " + ChannelTbl.CHANNEL_ID + " = '" + fav.id + "';");
-				}
+                    saveFav(db,fav);
+                }
 			}
 			db.setTransactionSuccessful();
 		} catch (Exception e) {

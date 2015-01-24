@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector_holo_dark"
-    android:layout_margin="18dp"
+    android:paddingEnd="?android:attr/scrollbarSize"
+    android:paddingRight="?android:attr/scrollbarSize"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight">
 
@@ -99,8 +100,8 @@
         <ImageView
             android:id="@+id/contextMenu"
             style="@style/Base.Widget.AppCompat.Spinner.DropDown.ActionBar"
-            android:layout_width="35dp"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:duplicateParentState="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
