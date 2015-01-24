@@ -56,8 +56,7 @@
         </activity>
         <activity
             android:name=".ui.phone.EpgPagerActivity"
-            android:label="@string/channelEPG"
-            android:uiOptions="splitActionBarWhenNarrow" >
+            android:label="@string/channelEPG" >
         </activity>
         <activity
             android:name=".ui.phone.TimerDetailsActivity"

@@ -25,6 +25,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -59,6 +60,7 @@ import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.base.EpgLoader;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
+import org.dvbviewer.controller.ui.widget.ActionToolbar;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
@@ -391,6 +393,14 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             return view;
         }
 
+    }
+
+    public class ToolbarActionClickListener implements Toolbar.OnMenuItemClickListener {
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            return false;
+        }
     }
 
     /**

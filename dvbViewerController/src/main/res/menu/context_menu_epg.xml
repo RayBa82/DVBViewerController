@@ -15,12 +15,10 @@
         android:id="@+id/menuTimer"
         android:enabled="true"
         android:title="@string/createTimer"
-        android:showAsAction="always"
         android:visible="true"/>
     <item
         android:id="@+id/menuDetails"
         android:enabled="true"
-        android:showAsAction="always"
         android:title="@string/details"
         android:visible="true"/>
 

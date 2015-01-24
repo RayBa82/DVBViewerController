@@ -5,7 +5,6 @@
         android:id="@+id/menuStream"
         android:enabled="true"
         android:title="@string/stream"
-        android:showAsAction="always"
         android:visible="true"/>
 
 </menu>

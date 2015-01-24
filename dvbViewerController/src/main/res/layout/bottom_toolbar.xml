@@ -1,7 +1,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/bottom_toolbar"
+    <org.dvbviewer.controller.ui.widget.ActionToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ab_background_split"/>
