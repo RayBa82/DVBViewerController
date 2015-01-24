@@ -115,11 +115,14 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (checkIndicator != null && checkIndicator.getVisibility() == View.VISIBLE && isPointInsideView(event, checkIndicator)) {
+        int width = getWidth();
+        int leftBound = width/7;
+        int rightbound = width/7*6;
+		if (checkIndicator != null && contextMenuButton.getVisibility() == View.VISIBLE && event.getX() < leftBound) {
 			event.setLocation(1, 1);
 			checkIndicator.onTouchEvent(event);
 			return true;
-		} else if (contextMenuButton != null && contextMenuButton.getVisibility() == View.VISIBLE && isPointInsideView(event, contextMenuButton)) {
+		} else if (contextMenuButton != null && contextMenuButton.getVisibility() == View.VISIBLE &&  event.getX() > rightbound) {
 			event.setLocation(1, 1);
 			contextMenuButton.onTouchEvent(event);
 			return true;

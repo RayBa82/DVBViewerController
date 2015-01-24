@@ -206,6 +206,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	 */
 	@Override
 	public void onLoaderReset(Loader<List<Timer>> arg0) {
+        arg0.reset();
 		if (isVisible()) {
 			setListShown(true);
 		}

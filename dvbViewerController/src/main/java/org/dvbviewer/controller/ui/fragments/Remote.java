@@ -24,8 +24,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
@@ -70,7 +68,6 @@ import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -136,6 +133,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     private int spinnerPosition;
     private static final String KEY_SPINNER_POS = "spinnerPosition";
     private DVBViewerPreferences prefs;
+    private boolean versionSupported = true;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -152,7 +150,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (!UIUtils.isTablet(getActivity())){
+        if (!UIUtils.isTablet(getActivity())) {
             ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
         }
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -555,7 +553,8 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                 List<String> result = null;
                 String jsonClients = prefs.getPrefs().getString(DVBViewerPreferences.KEY_RS_CLIENTS, "");
                 Gson gson = new Gson();
-                Type type = new TypeToken<List<String>>() {}.getType();
+                Type type = new TypeToken<List<String>>() {
+                }.getType();
                 result = gson.fromJson(jsonClients, type);
                 if (result != null && !result.isEmpty()) {
                     String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);
@@ -564,20 +563,11 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                     return result;
                 }
                 try {
-                    if (TextUtils.isEmpty(version)) {
-                        Log.i(Remote.class.getSimpleName(), "version: " + version);
-                        String versionXml = ServerRequest.getRSString(ServerConsts.URL_VERSION);
-                        VersionHandler versionHandler = new VersionHandler();
-                        version = versionHandler.parse(versionXml);
-                        SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
-                        prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-                        prefEditor.commit();
-                    }
-                    if (!Config.isRemoteSupported(version)) {
-                        result = new ArrayList<>();
-                        result.add(getString(R.string.version_unsupported_title));
-                        return result;
-                    }
+
+                    String versionXml = ServerRequest.getRSString(ServerConsts.URL_VERSION);
+                    VersionHandler versionHandler = new VersionHandler();
+                    String version = versionHandler.parse(versionXml);
+                    versionSupported = Config.isRemoteSupported(version);
                     String xml = ServerRequest.getRSString(ServerConsts.URL_TARGETS);
                     TargetHandler handler = new TargetHandler();
                     result = handler.parse(xml);
@@ -643,38 +633,32 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
 
     @Override
     public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
-        try {
-
-            if (data != null && !data.isEmpty() && !data.get(0).equals(getString(R.string.version_unsupported_title))) {
-                String[] arr = new String[data.size()];
-                mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
-                mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                mClientSpinner.setAdapter(mSpinnerAdapter);
-                mClientSpinner.setSelection(spinnerPosition);
-                mClientSpinner.setVisibility(View.VISIBLE);
-            } else {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.version_unsupported_title)
-                        .setMessage(R.string.version_unsupported_text)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                                dialog.dismiss();
-                            }
-                        })
-                        .setCancelable(false)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        }catch (Exception e){
-
+        if (!versionSupported) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.version_unsupported_title)
+                    .setMessage(R.string.version_unsupported_text)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            dialog.dismiss();
+                        }
+                    })
+                    .setCancelable(false)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }else if (data != null && !data.isEmpty()) {
+            String[] arr = new String[data.size()];
+            mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
+            mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+            mClientSpinner.setAdapter(mSpinnerAdapter);
+            mClientSpinner.setSelection(spinnerPosition);
+            mClientSpinner.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
     public void onLoaderReset(Loader<List<String>> loader) {
-
+        loader.reset();;
     }
 
 }

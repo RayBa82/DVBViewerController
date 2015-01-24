@@ -43,6 +43,7 @@ import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 
+import java.nio.channels.Channels;
 import java.util.Date;
 import java.util.List;
 
@@ -223,7 +224,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor> {
 		 */
 		@Override
 		public int getCount() {
-			return CHANNELS.size();
+            return CHANNELS != null ? CHANNELS.size() : 0;
 		}
 
 	}

@@ -4,7 +4,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector_holo_dark"
-    android:minHeight="?android:attr/listPreferredItemHeight" >
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:paddingEnd="?android:attr/scrollbarSize"
+    android:paddingRight="?android:attr/scrollbarSize">
 
     <CheckBox
         android:id="@id/checkIndicator"
@@ -59,7 +61,7 @@
         android:layout_alignLeft="@+id/title"
         android:layout_below="@+id/title"
         android:gravity="center_vertical"
-        android:paddingBottom="5dp" >
+        android:paddingBottom="5dp">
 
         <TextView
             android:id="@+id/channelName"

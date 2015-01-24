@@ -57,8 +57,8 @@
         <ImageView
             android:id="@+id/contextMenu"
             style="@style/Base.Widget.AppCompat.Spinner.DropDown.ActionBar"
-            android:layout_width="35dp"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:duplicateParentState="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
