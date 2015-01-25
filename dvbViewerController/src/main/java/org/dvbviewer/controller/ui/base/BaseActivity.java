@@ -29,31 +29,34 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.google.android.gms.analytics.GoogleAnalytics;
 
 import org.dvbviewer.controller.App;
+import org.dvbviewer.controller.BuildConfig;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.utils.Config;
 
 /**
  * A base activity that defers common functionality across app activities to an.
  *
- * {@link ActivityHelper}. This class shouldn't be used directly; instead,
+ * This class shouldn't be used directly; instead,
  * activities should inherit from {@link BaseSinglePaneActivity} or
  * {@link BaseMultiPaneActivity}.
  */
 public abstract class BaseActivity extends ActionBarActivity {
 
 	public static final String	DATA	= "_uri";
+    public static final String TAG = BaseActivity.class.getSimpleName();
 
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
-	 */
+    /* (non-Javadoc)
+     * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
+     */
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-        ((App) getApplication()).getTracker();
+        if (!BuildConfig.DEBUG){
+            ((App) getApplication()).getTracker();
+        }
 	}
 
     /* (non-Javadoc)
@@ -62,7 +65,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     public void onStart() {
         super.onStart();
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        if (!BuildConfig.DEBUG){
+            GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        }
     }
 
     /* (non-Javadoc)
@@ -71,7 +76,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     @Override
     public void onStop() {
         super.onStop();
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        if (!BuildConfig.DEBUG){
+            GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        }
     }
 
 	/* (non-Javadoc)
