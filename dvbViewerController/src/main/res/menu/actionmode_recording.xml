@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dvb="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menuDelete"
         android:enabled="true"
         android:icon="@drawable/ic_action_discard"
-        android:showAsAction="always"
         android:title="@string/channelList"
-        android:visible="true"/>
+        android:visible="true"
+        dvb:showAsAction="always" />
 </menu>

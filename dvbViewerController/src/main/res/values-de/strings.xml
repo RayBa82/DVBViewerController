@@ -3,14 +3,10 @@
 
     <!-- Common -->
     <string name="app_name">DVBViewer Controller</string>
-    <string name="expired_message">Diese Version ist Abgelaufen!</string>
-    <string name="edit">Bearbeiten</string>
-    <string name="copy">Kopieren</string>
     <string name="remote">Fernbedienung</string>
     <string name="title">Titel</string>
     <string name="cancel">Abbrechen</string>
     <string name="ok">OK</string>
-    <string name="delete">Löschen</string>
     <string name="refresh">Aktualisieren</string>
     <string name="record">Aufnehmen</string>
     <string name="yes">Ja</string>
@@ -34,8 +30,6 @@
 
     <!-- EPG -->
     <string name="channelEPG">Sender EPG</string>
-    <string name="epg_update_started">EPG Update gestartet</string>
-    <string name="epg_update_running">EPG Update läuft</string>
     <string name="today">Heute</string>
     <string name="time">Zeit</string>
     <string name="now">Jetzt</string>
@@ -59,8 +53,6 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="channel">Sender</string>
-    <string name="epgBefore">Vorlauf</string>
-    <string name="epgAfter">Nachlauf</string>
     <string name="postTimerAction">Nach Aufnahme</string>
     <string name="busyDeleteTimer">Timer werden gelöscht&#8230;</string>
     <string name="no_timer">Keine Timer gefunden</string>
@@ -130,7 +122,6 @@
     <string name="preferences">Einstellungen</string>
     <string name="pref_seperator_connection">Verbindungseinstellungen</string>
     <string name="pref_seperator_channel">Kanal und Favoritenliste</string>
-    <string name="pref_seperator_stream">Streaming</string>
     <string name="pref_seperator_rs_con">Recording Service Einstellungen</string>
     <string name="pref_item_rs_conn">Recording Service</string>
     <string name="pref_item_rs_conn_summary">Verbindungseinstellungen für den Recordingservice</string>
@@ -154,23 +145,10 @@
     <string name="pref_item_channel_show_current_program_wifi_summary">Zeigt das laufende Programm nur bei aktiver Wlan Verbindung an</string>
     <string name="pref_item_channel_fav">Favoriten benutzen</string>
     <string name="pref_item_channel_fav_summary">Zeigt die Favoriten anstatt der Sender</string>
-    <string name="pref_item_stream_use_external_player">Ext. Player benutzen</string>
-    <string name="pref_item_stream_use_external_player_summary">Zum Streamen von Inhalten wird eine externe Videoanwendung gestartet</string>
-    <string name="pref_item_stream_use_time_before">Aufnahmevorlauf als Startposition</string>
-    <string name="pref_item_stream_use_time_before_summary">Legt fest ob für Aufnahmen der Aufnahmevorlauf als Startposition vorausgewählt werden soll.</string>
-    <string name="pref_seperator_syncsettings">Synchronisierungs Einstellungen</string>
-    <string name="pref_item_epg_settings">EPG Einstellungen</string>
-    <string name="pref_item_epg_settings_sync">EPG Synchronisieren</string>
-    <string name="pref_item_epg_settings_sync_summary">Legt fest ob das EPG bei update lokal gespeichert werden soll. !Achtung! wenn aktiviert wird das EPG nur aus dem lokalen Speicher geladen</string>
-    <string name="pref_item_epg_settings_days">Zu synchronisierende Tage</string>
-    <string name="pref_item_epg_settings_days_summary">Legt fest für wieviele Tage das EPG abgerufen werden soll</string>
-    <string name="pref_item_epg_settings_fav_only">Nur Favoriten synchronisieren</string>
-    <string name="pref_item_epg_settings_fav_only_summary">Legt fest ob nur die Favoriten synchronisisert werden sollen.</string>
 
     <!-- Error -->
     <string name="error_common">Fehler</string>
     <string name="error_unknonwn_host">Unbekannter Host</string>
-    <string name="error_no_connection">Keine Verbindung</string>
     <string name="error_connection_timeout">Verbindungs timeout</string>
     <string name="error_parsing_xml">Fehler beim verarbeiten des XMLs</string>
     <string name="error_invalid_url">Ungültige URL</string>
@@ -181,4 +159,5 @@
     <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
     <string name="version_unsupported_text">Die Recording Service Version muss höher als 1.30.1.0 sein um die Ferbedienungfunktion zu Nutzen</string>
     <string name="version_unsupported_title">Version zu alt</string>
+    <string name="common_colon">:&#160;</string>
 </resources>

@@ -3,8 +3,7 @@
     
 	<dimen name="text_size_small">18sp</dimen>
 	<dimen name="text_size_medium">22sp</dimen>
-	<dimen name="text_size_large">26sp</dimen>
-	
+
 	 <dimen name="alert_dialog_button_bar_height">48dip</dimen>
 	
 </resources>

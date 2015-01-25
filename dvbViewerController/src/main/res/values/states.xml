@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
  
-    <declare-styleable name="MessageStateChecked">
+    <declare-styleable name="StateChecked">
         <attr name="state_checked" format="boolean"/>
     </declare-styleable>
-    <declare-styleable name="MessageStateError">
+    <declare-styleable name="StateError">
         <attr name="state_error" format="boolean"/>
     </declare-styleable>
-    <declare-styleable name="MessageStateDisabled">
+    <declare-styleable name="StateDisabled">
         <attr name="state_disabled" format="boolean"/>
     </declare-styleable>
  
