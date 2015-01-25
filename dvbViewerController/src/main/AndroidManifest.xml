@@ -16,6 +16,9 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.DVB"
         android:windowSoftInputMode="stateHidden">
+        <meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/analytics_global_config" />
         <activity
             android:name=".ui.HomeActivity"
             android:label="@string/app_name">
