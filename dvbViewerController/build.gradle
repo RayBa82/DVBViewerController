@@ -22,15 +22,13 @@ android {
             proguardFile '../proguard.cfg'
         }
     }
-    lintOptions {
-        disable 'MissingTranslation', 'ExtraTranslation'
-    }
 }
 
 dependencies {
     compile project(':androidsupportv4preferencefragment')
     compile project(':showCaseView')
     compile 'com.android.support:appcompat-v7:'+rootProject.ext.appcompatVersion
+    compile 'com.google.android.gms:play-services:4.3.23'
     compile 'com.google.code.gson:gson:1.7.2'
     compile files('libs/acra-4.2.3.jar')
     compile files('libs/httpclientandroidlib-1.1.2.jar')

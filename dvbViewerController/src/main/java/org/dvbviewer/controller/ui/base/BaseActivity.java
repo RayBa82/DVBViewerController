@@ -29,9 +29,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.google.android.gms.analytics.GoogleAnalytics;
+
+import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.utils.Config;
-
 
 /**
  * A base activity that defers common functionality across app activities to an.
@@ -45,16 +48,34 @@ public abstract class BaseActivity extends ActionBarActivity {
 	public static final String	DATA	= "_uri";
 
 	/* (non-Javadoc)
-	 * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
+	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
 	 */
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-
+        ((App) getApplication()).getTracker();
 	}
 
+    /* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onStart()
+	 */
+    @Override
+    public void onStart() {
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    /* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onStop()
+	 */
+    @Override
+    public void onStop() {
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
+
 	/* (non-Javadoc)
-	 * @see android.support.v4.app.FragmentActivity#onResume()
+	 * @see android.support.v4.app.Fragment#onResume()
 	 */
 	@Override
 	protected void onResume() {

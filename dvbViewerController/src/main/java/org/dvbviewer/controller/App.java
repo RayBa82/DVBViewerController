@@ -18,6 +18,8 @@ package org.dvbviewer.controller;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -30,6 +32,8 @@ import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.URLUtil;
 
+
+
 /**
  * The Class App.
  *
@@ -37,6 +41,8 @@ import org.dvbviewer.controller.utils.URLUtil;
  * @date 11.08.2012
  */
 public class App extends Application {
+
+    private Tracker tracker;
 	
 
 	/* (non-Javadoc)
@@ -92,6 +98,14 @@ public class App extends Application {
 
 		ImageLoader.getInstance().init(config);
 	}
+
+    public synchronized Tracker getTracker(){
+        if (tracker == null){
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            tracker = analytics.newTracker(R.xml.analytics);
+        }
+        return tracker;
+    }
 
 	
 }
