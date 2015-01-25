@@ -41,7 +41,7 @@ public class DVBViewerPreferences {
 	public static final String	KEY_IS_FIRST_START						= "KEY_IS_FIRST_START";
 	public static final String	KEY_SHOW_QUICK_STREAM_HINT				= "KEY_SHOW_QUICK_STREAM_HINT";
 	public static final String	KEY_RS_SETTINGS							= "KEY_RS_SETTINGS";
-	public static final String	KEY_DVBV_SETTINGS						= "KEY_DVBV_SETTINGS";
+	public static final String	KEY_RS_VERSION							= "KEY_RS_VERSION";
 	public static final String	KEY_RS_URL								= "KEY_RS_URL";
 	public static final String	KEY_RS_PORT								= "KEY_RS_PORT";
 	public static final String	KEY_RS_MAC_ADDRESS						= "KEY_RS_MAC_ADDRESS";
@@ -51,22 +51,15 @@ public class DVBViewerPreferences {
 	public static final String	KEY_RS_PASSWORD							= "KEY_RS_PASSWORD";
 	public static final String	KEY_RS_LIVE_STREAM_PORT					= "KEY_RS_LIVE_STREAM_PORT";
 	public static final String	KEY_RS_MEDIA_STREAM_PORT				= "KEY_RS_MEDIA_STREAM_PORT";
-	public static final String	KEY_DVBV_URL							= "KEY_DVBV_URL";
-	public static final String	KEY_DVBV_PORT							= "KEY_DVBV_PORT";
-	public static final String	KEY_DVBV_USERNAME						= "KEY_DVBV_USERNAME";
-	public static final String	KEY_DVBV_PASSWORD						= "KEY_DVBV_PASSWORD";
+	public static final String	KEY_RS_CLIENTS				            = "KEY_RS_CLIENTS";
+	public static final String	KEY_SELECTED_CLIENT			            = "KEY_SELECTED_CLIENT";
 	public static final String	KEY_CHANNELS_SHOW_NOW_PLAYING			= "KEY_CHANNELS_SHOW_NOW_PLAYING";
 	public static final String	KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY	= "KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY";
 	public static final String	KEY_CHANNELS_USE_FAVS					= "KEY_CHANNELS_USE_FAVS";
-	public static final String	KEY_CHANNELS_SYNCED						= "KEY_CHANNELS_SYNCED_1_0_9";
-	public static final String	KEY_STREAM_USE_TIME_BEFORE				= "KEY_STREAM_USE_TIME_BEFORE";
+	public static final String	KEY_CHANNELS_SYNCED						= "KEY_CHANNELS_SYNCED_1_0_11";
 	public static final String	KEY_TIMER_TIME_BEFORE					= "KEY_TIMER_TIME_BEFORE";
 	public static final String	KEY_TIMER_TIME_AFTER					= "KEY_TIMER_TIME_AFTER";
 	public static final String	KEY_TIMER_DEF_AFTER_RECORD				= "KEY_TIMER_DEF_AFTER_RECORD";
-	public static final String	KEY_EXPIRE_DATE							= "KEY_EXPIRE_DATE";
-	public static final String	KEY_EXPIRE_Message						= "KEY_EXPIRE_Message";
-	public static final String	KEY_PROFILE_ACTIVE						= "KEY_PROFILE_ACTIVE";
-	public static final String	KEY_PROFILE_NAMES						= "KEY_PROFILE_NAMES";
 
 	/**
 	 * Streaming Preferences Keys

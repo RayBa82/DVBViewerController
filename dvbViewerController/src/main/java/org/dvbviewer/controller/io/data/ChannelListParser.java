@@ -15,6 +15,11 @@
  */
 package org.dvbviewer.controller.io.data;
 
+import android.content.Context;
+
+import org.dvbviewer.controller.data.DbHelper;
+import org.dvbviewer.controller.entities.Channel;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -24,13 +29,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
-import java.util.UUID;
-
-import org.dvbviewer.controller.data.DbHelper;
-import org.dvbviewer.controller.entities.Channel;
-
-import android.content.Context;
-import android.util.Log;
 
 /**
  * The Class ChannelListParser.

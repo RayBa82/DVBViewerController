@@ -1,13 +1,31 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+def majorVersion = 1
+def minorVersion = 1
+def patchVersion = 0
+def buildNumber = 1
+def buildVersionCode;
+def buildVersionName
+buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
+buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion}"
+
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.14.4'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
-
+ext {
+    applicationId = "org.dvbviewer.controller"
+    compileSdkVersion = 21
+    buildToolsVersion = "21.1.2"
+    minSdkVersion = 7
+    targetSdkVersion = 21
+    appcompatVersion = "21.0.3"
+    versionCode = buildVersionCode
+    versionName = buildVersionName
+}
 allprojects {
     repositories {
         jcenter()

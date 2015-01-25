@@ -15,14 +15,14 @@
  */
 package org.dvbviewer.controller.utils;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-
-import android.util.Log;
 
 /**
  * The Class NetUtils.

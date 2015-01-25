@@ -16,9 +16,6 @@
 
 package org.dvbviewer.controller.ui.base;
 
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.utils.Config;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,29 +29,60 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+
+import org.dvbviewer.controller.App;
+import org.dvbviewer.controller.BuildConfig;
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.utils.Config;
 
 /**
  * A base activity that defers common functionality across app activities to an.
  *
- * {@link ActivityHelper}. This class shouldn't be used directly; instead,
+ * This class shouldn't be used directly; instead,
  * activities should inherit from {@link BaseSinglePaneActivity} or
  * {@link BaseMultiPaneActivity}.
  */
 public abstract class BaseActivity extends ActionBarActivity {
 
 	public static final String	DATA	= "_uri";
+    public static final String TAG = BaseActivity.class.getSimpleName();
 
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
-	 */
+    /* (non-Javadoc)
+     * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
+     */
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-
+        if (!BuildConfig.DEBUG){
+            ((App) getApplication()).getTracker();
+        }
 	}
 
+    /* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onStart()
+	 */
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!BuildConfig.DEBUG){
+            GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        }
+    }
+
+    /* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onStop()
+	 */
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (!BuildConfig.DEBUG){
+            GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        }
+    }
+
 	/* (non-Javadoc)
-	 * @see android.support.v4.app.FragmentActivity#onResume()
+	 * @see android.support.v4.app.Fragment#onResume()
 	 */
 	@Override
 	protected void onResume() {

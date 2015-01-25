@@ -15,11 +15,11 @@
  */
 package org.dvbviewer.controller.ui.phone;
 
-import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
-import org.dvbviewer.controller.ui.fragments.ChannelList;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
+import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
+import org.dvbviewer.controller.ui.fragments.ChannelList;
 
 /**
  * The Class ChannelListActivity.

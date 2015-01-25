@@ -15,17 +15,16 @@
  */
 package org.dvbviewer.controller.io.imageloader;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
-import org.dvbviewer.controller.io.ServerRequest;
-
 import android.content.Context;
-import android.util.Log;
 
 import com.nostra13.universalimageloader.core.assist.FlushedInputStream;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
+
+import org.dvbviewer.controller.io.ServerRequest;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 
 /**
  * Imagedownloader which supports https connections and

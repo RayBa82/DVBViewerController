@@ -1,7 +1,5 @@
 package org.dvbviewer.controller.ui.fragments;
 
-import org.dvbviewer.controller.R;
-
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
@@ -13,6 +11,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import org.dvbviewer.controller.R;
 
 public class AboutFragment extends Fragment{
 	

@@ -15,14 +15,14 @@
  */
 package org.dvbviewer.controller.entities;
 
-import java.util.Date;
-
-import org.dvbviewer.controller.data.DbConsts.EpgTbl;
-
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+
+import org.dvbviewer.controller.data.DbConsts.EpgTbl;
+
+import java.util.Date;
 
 /**
  * The Class EpgEntry.

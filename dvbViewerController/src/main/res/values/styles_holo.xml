@@ -32,26 +32,6 @@
         <item name="android:button">@drawable/btn_radio_holo_dark</item>
     </style>
 
-    <style name="SpinnerHoloDark" parent="android:Widget.Spinner">
-        <item name="android:popupBackground">@drawable/abc_menu_dropdown_panel_holo_dark</item>
-        <item name="android:background">@drawable/spinner_background_holo_dark</item>
-        <item name="android:dropDownSelector">@drawable/list_selector_holo_dark</item>
-    </style>
-
-    <style name="SpinnerItemHoloDark" parent="android:Widget.DropDownItem.Spinner">
-        <item name="android:textColor">@drawable/primary_text_holo_dark</item>
-    </style>
-
-    <style name="SpinnerDropDown">
-        <item name="android:spinnerMode" tools:ignore="NewApi">dropdown</item>
-    </style>
-
-    <style name="SpinnerDropDownItemHoloDark" parent="android:Widget.DropDownItem.Spinner">
-        <item name="android:background">@color/menu_background_holo_dark</item>
-        <item name="android:textColor">@drawable/primary_text_holo_dark</item>
-        <item name="android:checkMark">@drawable/btn_radio_holo_dark</item>
-    </style>
-
     <style name="ProgressBarHoloDark" parent="android:Widget.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_holo_dark</item>
         <item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_holo_dark</item>
@@ -59,12 +39,5 @@
         <item name="android:maxHeight">16dip</item>
     </style>
 
-    <style name="ListViewHoloDark" parent="android:Widget.ListView">
-        <item name="android:listSelector">@drawable/list_selector_holo_dark</item>
-        <item name="android:divider">@color/white_transparent</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:cacheColorHint">@android:color/transparent</item>
-        <item name="android:dividerHeight">1dp</item>
-    </style>
-    
+
 </resources>

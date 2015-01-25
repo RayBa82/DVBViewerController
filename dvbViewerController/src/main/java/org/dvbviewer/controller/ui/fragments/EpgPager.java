@@ -15,17 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import java.util.Date;
-import java.util.List;
-
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
-import org.dvbviewer.controller.entities.Channel;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
-import org.dvbviewer.controller.utils.DateUtils;
-import org.dvbviewer.controller.utils.UIUtils;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.Cursor;
@@ -38,6 +27,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,13 +36,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
+import org.dvbviewer.controller.entities.Channel;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
+import org.dvbviewer.controller.ui.widget.ActionToolbar;
+import org.dvbviewer.controller.utils.DateUtils;
+import org.dvbviewer.controller.utils.UIUtils;
+
+import java.nio.channels.Channels;
+import java.util.Date;
+import java.util.List;
+
 /**
  * The Class EpgPager.
  *
  * @author RayBa
  * @date 07.04.2013
  */
-public class EpgPager extends Fragment implements LoaderCallbacks<Cursor> {
+public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolbar.OnMenuItemClickListener {
 
 	public static List<Channel>		CHANNELS;
 	int								mPosition	= AdapterView.INVALID_POSITION;
@@ -127,31 +130,25 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor> {
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.pager, null);
+        View v = inflater.inflate(R.layout.pager, null);
+        ActionToolbar bootomBar = (ActionToolbar)v.findViewById(R.id.toolbar);
+        bootomBar.inflateMenu(R.menu.channel_epg_bottom_bar);
+        bootomBar.setOnMenuItemClickListener(this);
+		return v;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.actionbarsherlock.app.SherlockFragment#onCreateOptionsMenu(android
-	 * .view.Menu, android.view.MenuInflater)
 	 */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.channel_epg, menu);
-		// menu.findItem(R.id.menuPrev).setEnabled(!DateUtils.isToday(epgDate.getTime()));
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.actionbarsherlock.app.SherlockFragment#onOptionsItemSelected(android
-	 * .view.MenuItem)
 	 */
-	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
@@ -159,21 +156,6 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor> {
 		int itemId = item.getItemId();
 		switch (itemId) {
 		case R.id.menuRefresh:
-			break;
-		case R.id.menuPrev:
-			info.setEpgDate(DateUtils.substractDay(info.getEpgDate()));
-			info.setEpgDate(DateUtils.substractDay(info.getEpgDate()));
-		case R.id.menuNext:
-			info.setEpgDate(DateUtils.addDay(info.getEpgDate()));
-			break;
-		case R.id.menuToday:
-			info.setEpgDate(new Date());
-			break;
-		case R.id.menuNow:
-			info.setEpgDate(DateUtils.setCurrentTime(info.getEpgDate()));
-			break;
-		case R.id.menuEvening:
-			info.setEpgDate(DateUtils.setEveningTime(info.getEpgDate()));
 			break;
 		default:
 			return false;
@@ -185,7 +167,40 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor> {
 		return true;
 	}
 
-	/**
+    /*
+	 * (non-Javadoc)
+	 */
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        EpgDateInfo info = (EpgDateInfo) getActivity();
+        int itemId = menuItem.getItemId();
+        switch (itemId) {
+            case R.id.menuPrev:
+                info.setEpgDate(DateUtils.substractDay(info.getEpgDate()));
+                info.setEpgDate(DateUtils.substractDay(info.getEpgDate()));
+            case R.id.menuNext:
+                info.setEpgDate(DateUtils.addDay(info.getEpgDate()));
+                break;
+            case R.id.menuToday:
+                info.setEpgDate(new Date());
+                break;
+            case R.id.menuNow:
+                info.setEpgDate(DateUtils.setCurrentTime(info.getEpgDate()));
+                break;
+            case R.id.menuEvening:
+                info.setEpgDate(DateUtils.setEveningTime(info.getEpgDate()));
+                break;
+            default:
+                return false;
+        }
+        getActivity().supportInvalidateOptionsMenu();
+        ChannelEpg mCurrent;
+        mCurrent = (ChannelEpg) mAdapter.instantiateItem(mPager, mPager.getCurrentItem());
+        mCurrent.refresh(true);
+        return true;
+    }
+
+    /**
 	 * The Class PagerAdapter.
 	 *
 	 * @author RayBa
@@ -223,7 +238,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor> {
 		 */
 		@Override
 		public int getCount() {
-			return CHANNELS.size();
+            return CHANNELS != null ? CHANNELS.size() : 0;
 		}
 
 	}

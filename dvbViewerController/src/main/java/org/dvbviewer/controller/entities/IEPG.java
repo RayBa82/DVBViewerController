@@ -15,9 +15,9 @@
  */
 package org.dvbviewer.controller.entities;
 
-import java.util.Date;
-
 import android.os.Parcelable;
+
+import java.util.Date;
 
 /**
  * The Interface IEPG.

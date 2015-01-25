@@ -15,10 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
@@ -27,6 +23,10 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * The Class DateDialogFragment.

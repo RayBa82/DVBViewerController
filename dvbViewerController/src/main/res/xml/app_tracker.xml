@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Replace placeholder ID with your tracking ID -->
+    <string name="ga_trackingId">UA-58940601-1</string>
+
+    <!-- Percentage of events to include in reports -->
+    <string name="ga_sampleFrequency">100.0</string>
+
+    <!-- Enable automatic Activity measurement -->
+    <bool name="ga_autoActivityTracking">true</bool>
+
+    <!-- catch and report uncaught exceptions from the app -->
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+
+    <!-- How long a session exists before giving up -->
+    <integer name="ga_sessionTimeout">-1</integer>
+
+    <screenName name="org.dvbviewer.controller.ui.HomeActivity">HomeActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.AboutActivity">AboutActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.ChannelListActivity">ChannelListActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.ConnectionPreferencesActivity">ConnectionPreferencesActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.EpgPagerActivity">EpgPagerActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.PreferencesActivity">PreferencesActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.PreferencesActivity">PreferencesActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.PreferencesActivity">PreferencesActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.RecordinglistActivity">RecordinglistActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.RemoteActivity">RemoteActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.StatusActivity">StatusActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.StreamConfigActivity">StreamConfigActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.TaskActivity">TaskActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.TimerDetailsActivity">TimerDetailsActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.phone.TimerlistActivity">TimerlistActivity</screenName>
+    <screenName name="org.dvbviewer.controller.ui.tablet.ChannelListMultiActivity">ChannelListMultiActivity</screenName>
+
+</resources>

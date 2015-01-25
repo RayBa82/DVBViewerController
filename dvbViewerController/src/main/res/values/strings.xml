@@ -3,14 +3,10 @@
 
     <!-- Common -->
     <string name="app_name">DVBViewer Controller</string>
-    <string name="expired_message">This version is expired!</string>
-    <string name="edit">EDIT</string>
-    <string name="copy">Copy</string>
     <string name="remote">Remote</string>
     <string name="title">Title</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="delete">Delete</string>
     <string name="refresh">Refresh</string>
     <string name="record">Record</string>
     <string name="yes">Yes</string>
@@ -35,8 +31,6 @@
 
     <!-- EPG -->
     <string name="channelEPG">Channel EPG</string>
-    <string name="epg_update_started">EPG update started</string>
-    <string name="epg_update_running">EPG update running</string>
     <string name="today">Today</string>
     <string name="time">Time</string>
     <string name="now">Now</string>
@@ -60,8 +54,6 @@
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="channel">Channel</string>
-    <string name="epgBefore">Time Before</string>
-    <string name="epgAfter">Time After</string>
     <string name="postTimerAction">After Recording</string>
     <string name="busyDeleteTimer">Deleting Timer&#8230;</string>
     <string name="no_timer">No timer found</string>
@@ -131,21 +123,13 @@
     <string name="preferences">Settings</string>
     <string name="pref_seperator_connection">Connection Settings</string>
     <string name="pref_seperator_channel">Channellist</string>
-    <string name="pref_seperator_stream">Streaming</string>
     <string name="pref_seperator_rs_con">Recording Service Settings</string>
-    <string name="pref_seperator_dvbv_con">DVBViewer Settings</string>
     <string name="pref_item_rs_conn">Recording Service</string>
     <string name="pref_item_rs_conn_summary">Connection Settings for the Recordingservice</string>
-    <string name="pref_item_dvbv_conn">DVBViewer</string>
-    <string name="pref_item_dvbv_conn_summary">Connection Settings for the DVBViewer</string>
     <string name="pref_item_rs_url">Recording Service URL</string>
     <string name="pref_item_rs_url_summary">URL for the Recording Service</string>
     <string name="pref_item_rs_port">Recording Service Port</string>
     <string name="pref_item_rs_port_summary">Port for the Recording Service</string>
-    <string name="pref_item_dvbv_url">DVBViewer URL</string>
-    <string name="pref_item_dvbv_summary">URL for the DVBViewer</string>
-    <string name="pref_item_dvbv_port">DVBViewer Port</string>
-    <string name="pref_item_dvbv_port_summary">Port for the DVBViewer</string>
     <string name="pref_item_username">Username</string>
     <string name="pref_item_username_summary">Username if required</string>
     <string name="pref_item_password">Password</string>
@@ -162,31 +146,18 @@
     <string name="pref_item_channel_show_current_program_wifi_summary">Shows the current program in the channel list only if WIFI is connected</string>
     <string name="pref_item_channel_fav">Use Favourites</string>
     <string name="pref_item_channel_fav_summary">Shows the favourites instead of the channels</string>
-    <string name="pref_item_stream_use_external_player">Use external player</string>
-    <string name="pref_item_stream_use_external_player_summary">Streams content with another video application</string>
-    <string name="pref_item_stream_use_time_before">Time Before As Streamstart</string>
-    <string name="pref_item_stream_use_time_before_summary">Specifies whether the Time Before will be pre-selected as Start Position to Stream Recordings.</string>
-    <string name="pref_seperator_syncsettings">Synchronisation Settings</string>
-    <string name="pref_item_epg_settings">EPG Settings</string>
-    <string name="pref_item_epg_settings_sync">Synchronize EPG</string>
-    <string name="pref_item_epg_settings_sync_summary">Specifies if the EPG will be saved to local DB. !Attention! IF this option is active no epg will only be loaded from local DB. Option is quite useless Right now.</string>
-    <string name="pref_item_epg_settings_days">Days to Sync</string>
-    <string name="pref_item_epg_settings_days_summary">Specifies how many days of EPG will be saved in local DB</string>
-    <string name="pref_item_epg_settings_fav_only">Synchronize only Favourites</string>
-    <string name="pref_item_epg_settings_fav_only_summary">Specifies if only the EPG for Favourites will be saved in local DB.</string>
 
     <!-- Error -->
-    <string name="expiration_title">Version expired</string>
     <string name="error_common">Error</string>
     <string name="error_unknonwn_host">Unknown Host</string>
-    <string name="error_no_connection">No Connection</string>
     <string name="error_connection_timeout">Connection timeout</string>
     <string name="error_parsing_xml">Failed to parse the xml data</string>
-    <string name="error_sending_report">Error report is sent</string>
     <string name="error_invalid_url">Invalid URL</string>
     <string name="error_invalid_credentials">Authentication failed</string>
     <string name="support_this_app">Support this App</string>
     <string name="quick_stream_hint_title">Stream Channel</string>
     <string name="quick_stream_hint_text">Start a stream by clicking on the channel logo</string>
+    <string name="version_unsupported_text">Your Recording Service Version is unsupported. You must run a Version higher than 1.30.1.0 to use the remote function</string>
+    <string name="version_unsupported_title">Version unsupported</string>
 
 </resources>

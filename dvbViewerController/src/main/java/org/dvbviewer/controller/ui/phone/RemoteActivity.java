@@ -15,11 +15,11 @@
  */
 package org.dvbviewer.controller.ui.phone;
 
-import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
-import org.dvbviewer.controller.ui.fragments.Remote;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
+import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
+import org.dvbviewer.controller.ui.fragments.Remote;
 
 /**
  * The Class RemoteActivity.
@@ -34,7 +34,9 @@ public class RemoteActivity extends BaseSinglePaneActivity {
 	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 	}
 
 	/* (non-Javadoc)

@@ -1,12 +1,12 @@
 /*
  * Copyright © 2013 dvbviewer-controller Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -15,17 +15,6 @@
  */
 package org.dvbviewer.controller.data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
-import org.dvbviewer.controller.data.DbConsts.EpgTbl;
-import org.dvbviewer.controller.data.DbConsts.NowTbl;
-import org.dvbviewer.controller.entities.Channel;
-import org.dvbviewer.controller.entities.Channel.Fav;
-import org.dvbviewer.controller.entities.EpgEntry;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,6 +22,21 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
+
+import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
+import org.dvbviewer.controller.data.DbConsts.EpgTbl;
+import org.dvbviewer.controller.data.DbConsts.GroupTbl;
+import org.dvbviewer.controller.data.DbConsts.NowTbl;
+import org.dvbviewer.controller.data.DbConsts.RootTbl;
+import org.dvbviewer.controller.entities.Channel;
+import org.dvbviewer.controller.entities.Channel.Fav;
+import org.dvbviewer.controller.entities.ChannelGroup;
+import org.dvbviewer.controller.entities.ChannelRoot;
+import org.dvbviewer.controller.entities.EpgEntry;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The Class DbHelper.
@@ -44,27 +48,29 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	private static final String	DATABASE_NAME		= "dvbviewer.db";
 
-	private static final int	DATABASE_VERSION	= 3;
+	private static final int	DATABASE_VERSION	= 4;
 
 	CursorFactory				mCursorFactory;
 
 	public static String		SMALLER_OR_EQUALS	= " <= ";
-	
+
 	public static String		BIGGER_OR_EQUALS	= " >= ";
-	
+
 	public static String		EQUALS				= " = ";
-	
+
 	public static String		NOT_EQUALS			= " != ";
-	
+
 	public static String		AND					= " AND ";
-	
+
 	public static String		BETWEEN				= " BETWEEN ";
-	
+
 	public static String		WHERE				= " WHERE ";
-	
+
 	public static String		ORDER_BY			= " ORDER BY ";
-	
+
 	public static String		BIT_AND				= " & ";
+
+	private Context				mContext;
 
 	/**
 	 * Instantiates a new dB helper.
@@ -76,10 +82,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	 */
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		mContext = context;
 	}
 
-	
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -92,13 +97,12 @@ public class DbHelper extends SQLiteOpenHelper {
 		createChannelTable(db);
 		db.execSQL("CREATE TABLE " + EpgTbl.TABLE_NAME + "(" + EpgTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + EpgTbl.EPG_ID + " INTEGER," + EpgTbl.START + " INTEGER, " + EpgTbl.END + " INTEGER," + EpgTbl.TITLE + " TEXT," + EpgTbl.SUBTITLE + " TEXT," + EpgTbl.DESC + " TEXT);");
 		db.execSQL("CREATE TABLE " + NowTbl.TABLE_NAME + "(" + NowTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + NowTbl.EPG_ID + " INTEGER," + NowTbl.START + " INTEGER, " + NowTbl.END + " INTEGER," + NowTbl.TITLE + " TEXT," + NowTbl.SUBTITLE + " TEXT," + NowTbl.DESC + " TEXT);");
-
+		db.execSQL("CREATE TABLE " + RootTbl.TABLE_NAME + "(" + RootTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + RootTbl.NAME + " TEXT);");
+		db.execSQL("CREATE TABLE " + GroupTbl.TABLE_NAME + "(" + GroupTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + GroupTbl.ROOT_ID + " INTEGER," + GroupTbl.NAME + " TEXT," + GroupTbl.TYPE + " INTEGER);");
 	}
 
-
-
 	public void createChannelTable(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE " + ChannelTbl.TABLE_NAME + "(" + ChannelTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + ChannelTbl.CHANNEL_ID + " INTEGER," + ChannelTbl.NAME + " TEXT," + ChannelTbl.POSITION + " INTEGER, " + ChannelTbl.FAV_POSITION + " INTEGER, " + ChannelTbl.FAV_ID + " INTEGER,"  + ChannelTbl.EPG_ID + " INTEGER," + ChannelTbl.LOGO_URL + " TEXT," + ChannelTbl.FLAGS + " INTEGER);");
+		db.execSQL("CREATE TABLE " + ChannelTbl.TABLE_NAME + "(" + ChannelTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + ChannelTbl.CHANNEL_ID + " INTEGER," + ChannelTbl.GROUP_ID + " INTEGER," + ChannelTbl.FAV_GROUP_ID + " INTEGER," + ChannelTbl.NAME + " TEXT," + ChannelTbl.POSITION + " INTEGER, " + ChannelTbl.FAV_POSITION + " INTEGER, " + ChannelTbl.FAV_ID + " INTEGER," + ChannelTbl.EPG_ID + " INTEGER," + ChannelTbl.LOGO_URL + " TEXT," + ChannelTbl.FLAGS + " INTEGER);");
 	}
 
 	/*
@@ -110,10 +114,10 @@ public class DbHelper extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.d(getClass().getSimpleName(), "Upgrading database from version " + oldVersion + " to " + newVersion);
+		Log.i(this.getClass().getSimpleName(), "Upgrading database from version " + oldVersion + " to " + newVersion);
 		switch (newVersion) {
 		case 2:
-			db.execSQL("ALTER TABLE " + ChannelTbl.TABLE_NAME + " ADD COLUMN "+ ChannelTbl.LOGO_URL + " TEXT");
+			db.execSQL("ALTER TABLE " + ChannelTbl.TABLE_NAME + " ADD COLUMN " + ChannelTbl.LOGO_URL + " TEXT");
 			break;
 		case 3:
 			List<Channel> result = new ArrayList<Channel>();
@@ -143,8 +147,17 @@ public class DbHelper extends SQLiteOpenHelper {
 				db.endTransaction();
 			}
 			break;
+		case 4:
+			db.execSQL("ALTER TABLE " + ChannelTbl.TABLE_NAME + " ADD COLUMN " + ChannelTbl.GROUP_ID + " INTEGER");
+			db.execSQL("ALTER TABLE " + ChannelTbl.TABLE_NAME + " ADD COLUMN " + ChannelTbl.FAV_GROUP_ID + " INTEGER");
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + RootTbl.TABLE_NAME + "(" + RootTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + RootTbl.NAME + " TEXT);");
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + GroupTbl.TABLE_NAME + "(" + GroupTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + GroupTbl.ROOT_ID + " INTEGER," + GroupTbl.NAME + " TEXT," + GroupTbl.TYPE + " INTEGER);");
+			break;
 
 		default:
+			// db.execSQL("DROP TABLE IF EXISTS " + ChannelTbl.TABLE_NAME);
+			// db.execSQL("DROP TABLE IF EXISTS " + EpgTbl.TABLE_NAME);
+			break;
 		}
 	}
 
@@ -306,15 +319,42 @@ public class DbHelper extends SQLiteOpenHelper {
 	/**
 	 * Save epg entries.
 	 * 
-	 * @param channels
-	 *            the channels
+	 * @param rootElements
+	 *            the rootElements
 	 * @author RayBa
 	 * @date 26.04.2012
 	 */
-	public void saveChannels(List<Channel> channels) {
-		if (channels == null || channels.isEmpty()) {
+	public void saveChannelRoots(List<ChannelRoot> rootElements) {
+		if (rootElements == null || rootElements.size() <= 0) {
 			return;
 		}
+		SQLiteDatabase db = getWritableDatabase();
+		try {
+			db.execSQL("DELETE FROM " + RootTbl.TABLE_NAME);
+			db.execSQL("DELETE FROM " + GroupTbl.TABLE_NAME);
+			db.execSQL("DELETE FROM " + ChannelTbl.TABLE_NAME);
+			db.beginTransaction();
+
+			for (ChannelRoot channelRoot : rootElements) {
+				long rootId = db.insert(RootTbl.TABLE_NAME, null, channelRoot.toContentValues());
+				for (ChannelGroup group : channelRoot.getGroups()) {
+					group.setRootId(rootId);
+					long groupId = db.insert(GroupTbl.TABLE_NAME, null, group.toContentValues());
+					for (Channel chan : group.getChannels()) {
+						chan.setGroupId(groupId);
+						db.insert(ChannelTbl.TABLE_NAME, null, chan.toContentValues());
+					}
+				}
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+			db.close();
+		}
+		mContext.getContentResolver().notifyChange(GroupTbl.CONTENT_URI, null);
+	}
+
+	public void saveChannels(List<Channel> channels) {
 		SQLiteDatabase db = getWritableDatabase();
 		db.beginTransaction();
 		db.execSQL("DELETE FROM " + ChannelTbl.TABLE_NAME);
@@ -353,7 +393,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			db.close();
 		}
 	}
-	
+
 	/**
 	 * Save now playing.
 	 *
@@ -367,7 +407,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		}
 		SQLiteDatabase db = getWritableDatabase();
 		db.beginTransaction();
-		 db.execSQL("DELETE FROM " + NowTbl.TABLE_NAME);
+		db.execSQL("DELETE FROM " + NowTbl.TABLE_NAME);
 		try {
 			for (EpgEntry epgEntrie : epgEntries) {
 				db.insert(NowTbl.TABLE_NAME, null, epgEntrie.toContentValues());
@@ -377,56 +417,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			db.endTransaction();
 			db.close();
 		}
-	}
-
-	/**
-	 * Delete epg.
-	 *
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void deleteEPG() {
-		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("DELETE FROM " + EpgTbl.TABLE_NAME);
-		db.close();
-	}
-
-	/**
-	 * Delete epg for channel.
-	 *
-	 * @param epgId the epg id
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void deleteEpgForChannel(long epgId) {
-		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("DELETE FROM " + EpgTbl.TABLE_NAME + WHERE + EpgTbl.EPG_ID + EQUALS + epgId);
-		db.close();
-	}
-
-	/**
-	 * Mark channels for update.
-	 *
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void markChannelsForUpdate() {
-		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " | " + Channel.FLAG_PENDING_UPDATE + ";");
-		db.close();
-	}
-
-	/**
-	 * Mark channel updated.
-	 *
-	 * @param channelId the channel id
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void markChannelUpdated(long channelId) {
-		SQLiteDatabase db = getWritableDatabase();
-		db.execSQL("update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " &~ " + Channel.FLAG_PENDING_UPDATE + WHERE + ChannelTbl._ID + EQUALS + channelId + ";");
-		db.close();
+		mContext.getContentResolver().notifyChange(ChannelTbl.CONTENT_URI_NOW, null);
 	}
 
 	/**
@@ -443,8 +434,50 @@ public class DbHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		db.beginTransaction();
 		try {
-			for (Fav fav : favs) {
-				db.execSQL("update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FAV_POSITION + " = " + fav.position + ", " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " | " + Channel.FLAG_FAV + " where " + ChannelTbl.CHANNEL_ID + " = '" + fav.id + "';");
+            for (Fav fav : favs) {
+                saveFav(db, fav);
+			}
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+			db.close();
+		}
+	}
+
+    /**
+     *
+     * @param db
+     * @param fav
+     * @author RayBa
+     * @date 23.01.2015
+     */
+    private void saveFav(SQLiteDatabase db, Fav fav) {
+        String subSelect = "Select "+ ChannelTbl.CHANNEL_ID+" from " + ChannelTbl.TABLE_NAME + " where " + ChannelTbl.CHANNEL_ID + " = '" + fav.id + "' LIMIT 1";
+        String select = "update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FAV_POSITION + " = " + fav.position + ", " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " | " + Channel.FLAG_FAV + " where "+ ChannelTbl.CHANNEL_ID+" in ("+subSelect+");";
+        db.execSQL(select);
+    }
+
+    /**
+	 * Save favs.
+	 *
+	 * @param groups the groups
+	 * @author RayBa
+	 * @date 26.04.2012
+	 */
+	public void saveFavGroups(List<ChannelGroup> groups) {
+		if (groups == null || groups.size() <= 0) {
+			return;
+		}
+		SQLiteDatabase db = getWritableDatabase();
+		db.beginTransaction();
+		try {
+			for (ChannelGroup channelGroup : groups) {
+				long groupId = db.insert(GroupTbl.TABLE_NAME, null, channelGroup.toContentValues());
+				for (Fav fav : channelGroup.getFavs()) {
+                    saveFav(db,fav);
+                }
 			}
 			db.setTransactionSuccessful();
 		} catch (Exception e) {

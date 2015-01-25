@@ -15,10 +15,16 @@
  */
 package org.dvbviewer.controller.ui;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Channel;
@@ -41,16 +47,10 @@ import org.dvbviewer.controller.ui.phone.TimerlistActivity;
 import org.dvbviewer.controller.ui.tablet.ChannelListMultiActivity;
 import org.dvbviewer.controller.utils.Config;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * The Class HomeActivity.
@@ -63,7 +63,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 	SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 	private View		multiContainer;
 	private TextView	multiContainerIndicator;
-	boolean expired = false;
 	private AlertDialog	expirationDialog;
 	String expirationMessage;
 
@@ -97,28 +96,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		}
 		
 		
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (expired) {
-			expirationDialog.dismiss();
-		}
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (expired) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setNeutralButton(R.string.ok, this);
-			builder.setTitle(R.string.expiration_title);
-			builder.setMessage(expirationMessage);
-			builder.setCancelable(false);
-			expirationDialog = builder.create();
-			expirationDialog.show();
-		}
 	}
 
 	/* (non-Javadoc)
@@ -219,11 +196,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		expired = savedInstanceState.getBoolean("expired", false);
-		expirationMessage= savedInstanceState.getString("expirationMessage");
-		if (savedInstanceState != null && savedInstanceState.containsKey("indicatorText")) {
-			setTitle(savedInstanceState.getString("indicatorText"));
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -232,11 +204,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putBoolean("expired", expired);
-		outState.putString("expirationMessage", expirationMessage);
-		if (multiContainerIndicator != null) {
-			outState.putString("indicatorText", multiContainerIndicator.getText().toString());
-		}
 	}
 	
 	@Override
