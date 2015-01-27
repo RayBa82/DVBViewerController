@@ -454,13 +454,14 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        int pos = AdapterView.INVALID_POSITION;
         if (item.getMenuInfo() != null) {
             AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-            selectedPosition = info.position;
+            pos = info.position;
         }
         Cursor c;
         c = mAdapter.getCursor();
-        c.moveToPosition(selectedPosition);
+        c.moveToPosition(pos);
         Timer timer;
         if (getUserVisibleHint()) {
             switch (item.getItemId()) {
@@ -543,6 +544,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.contextMenu:
+                selectedPosition = (int) v.getTag();
                 PopupMenu popup = new PopupMenu(getActivity(), v);
                 popup.getMenuInflater().inflate(R.menu.context_menu_epg, popup.getMenu());
                 popup.setOnMenuItemClickListener(this);
@@ -555,11 +557,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        Cursor c;
-        c = mAdapter.getCursor();
+        final Cursor c = mAdapter.getCursor();
         c.moveToPosition(selectedPosition);
+        final int pos = selectedPosition;
         Timer timer;
-        if (getUserVisibleHint()) {
             switch (item.getItemId()) {
                 case R.id.menuRecord:
                     timer = cursorToTimer(c);
@@ -603,8 +604,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     return true;
                 case R.id.menuDetails:
                     Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
-                    c = mAdapter.getCursor();
-                    c.moveToPosition(selectedPosition);
+                    c.moveToPosition(pos);
                     IEPG entry = cursorToEpgEntry(c);
                     details.putExtra(IEPG.class.getSimpleName(), entry);
                     startActivity(details);
@@ -619,7 +619,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                 default:
                     break;
             }
-        }
         return false;
     }
 
