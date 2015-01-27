@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 def majorVersion = 1
 def minorVersion = 1
-def patchVersion = 0
+def patchVersion = 1
 def buildNumber = 1
 def buildVersionCode;
 def buildVersionName
