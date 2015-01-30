@@ -2,15 +2,13 @@
 
 <p>
 With DVBViewer Controller you can browse the EPG, manage your timers and recordings and even stream live TV from <a title="DVBViewer Recording Service" href="http://en.dvbviewer.tv/wiki/DVBViewer_Recording_Service">DVBViewer Recording Service</a> on your Android device.
-
-If you install the additional <a title="Webinterface Plugin" href="https://www.dvbviewer.tv/members/download.php?id=829">Webinterface Plugin</a> , which is available in the DVBViewer Customer area, you can also remote control a DVBViewer client.
 </p>
 
 <p>
 The highlights of DVBViewer Controller are:
 
 <ul>
-  <li>remote control DVBViewer (Webinterface Plugin required)</li>
+  <li>remote control DVBViewer (Recording Service 1.30.1.0 required)</li>
   <li>browse EPG and schedule timers (Recording Service required)</li>
   <li>manage timer and recordings (Recording Service required)</li>
   <li>direct streaming of live TV and recordings (Recording Service required)</li>
