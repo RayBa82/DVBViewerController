@@ -27,32 +27,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Status;
 import org.dvbviewer.controller.entities.Status.Folder;
 import org.dvbviewer.controller.entities.Status.StatusItem;
+import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.StatusHandler;
-import org.dvbviewer.controller.io.data.TargetHandler;
-import org.dvbviewer.controller.io.data.VersionHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.CategoryAdapter;
+import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.FileUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.List;
 
 import ch.boye.httpclientandroidlib.ParseException;
 import ch.boye.httpclientandroidlib.auth.AuthenticationException;
@@ -119,24 +113,21 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                     String statusXml = ServerRequest.getRSString(ServerConsts.URL_STATUS);
                     StatusHandler statusHandler = new StatusHandler();
                     result = statusHandler.parse(statusXml);
-                    String versionXml = ServerRequest.getRSString(ServerConsts.URL_VERSION);
-                    VersionHandler versionHandler = new VersionHandler();
-                    String version = versionHandler.parse(versionXml);
+                    String version = RecordingService.getVersionString();
                     StatusItem versionItem = new StatusItem();
                     versionItem.setNameRessource(R.string.status_rs_version);
                     versionItem.setValue(version);
                     result.getItems().add(0, versionItem);
-                    String xml = ServerRequest.getRSString(ServerConsts.URL_TARGETS);
-                    TargetHandler handler = new TargetHandler();
-                    List<String> targets = handler.parse(xml);
-                    Collections.sort(targets);
-                    Gson gson = new Gson();
+                    String jsonClients = null;
+                    if (Config.isRemoteSupported(version)) {
+                        jsonClients = RecordingService.getDVBViewerTargets();
+                    }
 
                     DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
                     SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
-                    Type type = new TypeToken<List<String>>(){}.getType();
-                    String jsonClients = gson.toJson(targets, type);
-                    prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+                    if (jsonClients != null) {
+                        prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+                    }
                     prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
                     prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, result.getEpgBefore());
                     prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, result.getEpgAfter());

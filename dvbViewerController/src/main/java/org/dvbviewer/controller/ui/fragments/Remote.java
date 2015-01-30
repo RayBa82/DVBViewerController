@@ -24,6 +24,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
@@ -46,35 +47,21 @@ import android.widget.ViewFlipper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.http.client.HttpResponseException;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
-import org.dvbviewer.controller.io.data.TargetHandler;
-import org.dvbviewer.controller.io.data.VersionHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseActivity.ErrorToastRunnable;
 import org.dvbviewer.controller.utils.ActionID;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.Type;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.List;
-
-import ch.boye.httpclientandroidlib.ParseException;
-import ch.boye.httpclientandroidlib.auth.AuthenticationException;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
-import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
 
 /**
  * The Class Remote.
@@ -133,7 +120,10 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     private int spinnerPosition;
     private static final String KEY_SPINNER_POS = "spinnerPosition";
     private DVBViewerPreferences prefs;
-    private boolean versionSupported = true;
+    private boolean isVersionSupported = true;
+    private final Gson gson = new Gson();
+    private final Type type = new TypeToken<List<String>>() {
+    }.getType();
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -551,79 +541,10 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
             @Override
             public List<String> loadInBackground() {
                 List<String> result = null;
-                String jsonClients = prefs.getPrefs().getString(DVBViewerPreferences.KEY_RS_CLIENTS, "");
-                Gson gson = new Gson();
-                Type type = new TypeToken<List<String>>() {
-                }.getType();
-                result = gson.fromJson(jsonClients, type);
-                if (result != null && !result.isEmpty()) {
-                    String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);
-                    int index = result.indexOf(activeClient);
-                    spinnerPosition = index > -1 ? index : 0;
-                    return result;
-                }
                 try {
-
-                    String versionXml = ServerRequest.getRSString(ServerConsts.URL_VERSION);
-                    VersionHandler versionHandler = new VersionHandler();
-                    String version = versionHandler.parse(versionXml);
-                    versionSupported = Config.isRemoteSupported(version);
-                    String xml = ServerRequest.getRSString(ServerConsts.URL_TARGETS);
-                    TargetHandler handler = new TargetHandler();
-                    result = handler.parse(xml);
-                    Collections.sort(result);
-                    SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
-                    jsonClients = gson.toJson(result, type);
-                    prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
-                    prefEditor.commit();
-                } catch (AuthenticationException e) {
+                    result = getDVBViewerClients();
+                } catch (HttpResponseException e) {
                     e.printStackTrace();
-                    showToast(getString(R.string.error_invalid_credentials));
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                    showToast(getString(R.string.error_unknonwn_host) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (ConnectTimeoutException e) {
-                    e.printStackTrace();
-                    showToast(getString(R.string.error_connection_timeout));
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                    showToast(getString(R.string.error_parsing_xml));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    Writer writer = new StringWriter();
-                    PrintWriter printWriter = new PrintWriter(writer);
-                    e.printStackTrace(printWriter);
-                    String s = writer.toString();
-                    showToast(getString(R.string.error_common) + "\n\n" + s);
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                    Writer writer = new StringWriter();
-                    PrintWriter printWriter = new PrintWriter(writer);
-                    e.printStackTrace(printWriter);
-                    String s = writer.toString();
-                    showToast(getString(R.string.error_common) + "\n\n" + s);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Writer writer = new StringWriter();
-                    PrintWriter printWriter = new PrintWriter(writer);
-                    e.printStackTrace(printWriter);
-                    String s = writer.toString();
-                    showToast(getString(R.string.error_common) + "\n\n" + s);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                    showToast(getString(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                    showToast(getString(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (IllegalArgumentException e) {
-                    showToast(getString(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Writer writer = new StringWriter();
-                    PrintWriter printWriter = new PrintWriter(writer);
-                    e.printStackTrace(printWriter);
-                    String s = writer.toString();
-                    showToast(getString(R.string.error_common) + "\n\n" + s);
                 }
                 return result;
             }
@@ -633,7 +554,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
 
     @Override
     public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
-        if (!versionSupported) {
+        if (!isVersionSupported) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.version_unsupported_title)
                     .setMessage(R.string.version_unsupported_text)
@@ -646,11 +567,14 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                     .setCancelable(false)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
-        }else if (data != null && !data.isEmpty()) {
+        } else if (data != null && !data.isEmpty()) {
             String[] arr = new String[data.size()];
             mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
             mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             mClientSpinner.setAdapter(mSpinnerAdapter);
+            String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);
+            int index = data.indexOf(activeClient);
+            spinnerPosition = index > Spinner.INVALID_POSITION ? index : Spinner.INVALID_POSITION;
             mClientSpinner.setSelection(spinnerPosition);
             mClientSpinner.setVisibility(View.VISIBLE);
         }
@@ -658,7 +582,26 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
 
     @Override
     public void onLoaderReset(Loader<List<String>> loader) {
-        loader.reset();;
+        loader.reset();
+    }
+
+    private List<String> getDVBViewerClients() throws HttpResponseException {
+        List<String> result = null;
+        String version = RecordingService.getVersionString();
+        if (TextUtils.isEmpty(version)) {
+            throw new HttpResponseException(503, "Could not connect to Recording Service");
+        }
+        isVersionSupported = Config.isRemoteSupported(version);
+        if (isVersionSupported) {
+            String jsonClients = RecordingService.getDVBViewerTargets();
+            if (!TextUtils.isEmpty(jsonClients)) {
+                result = gson.fromJson(jsonClients, type);
+                SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
+                prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+                prefEditor.commit();
+            }
+        }
+        return result;
     }
 
 }

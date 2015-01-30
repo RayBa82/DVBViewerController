@@ -21,50 +21,63 @@ import java.util.regex.Pattern;
 
 /**
  * * @author RayBa
+ *
  * @date 13.04.2012
  */
-public class Config { 
-	/** The is first start. */
-	public static boolean	IS_FIRST_START			= false;
-	
-	/** The rs profile names. */
-	public static String[]	RS_PROFILE_NAMES		= null;
-	
-	/** The channels synced. */
-	public static boolean	CHANNELS_SYNCED			= false;
-	
-	/** The current rs profile. */
-	public static String	CURRENT_RS_PROFILE		= "";
-	
-	/** The current dvbv profile. */
-	public static String	CURRENT_DVBV_PROFILE	= "";
+public class Config {
+    /**
+     * The is first start.
+     */
+    public static boolean IS_FIRST_START = false;
 
-	/**
-	 * Checks if is old rs version.
-	 *
-	 * @param version the version
-	 * @return true, if is old rs version
-	 * @author RayBa
-	 * @date 18.08.2013
-	 */
-	public static boolean isOldRsVersion (String version) {
-		if (TextUtils.isEmpty(version)) {
-			return true;
-		}
+    /**
+     * The rs profile names.
+     */
+    public static String[] RS_PROFILE_NAMES = null;
+
+    /**
+     * The channels synced.
+     */
+    public static boolean CHANNELS_SYNCED = false;
+
+    /**
+     * The current rs profile.
+     */
+    public static String CURRENT_RS_PROFILE = "";
+
+    /**
+     * The current dvbv profile.
+     */
+    public static String CURRENT_DVBV_PROFILE = "";
+
+    /**
+     * Checks if is old rs version.
+     *
+     * @param version the version
+     * @return true, if is old rs version
+     * @author RayBa
+     * @date 18.08.2013
+     */
+    public static boolean isOldRsVersion(String version) {
+        if (TextUtils.isEmpty(version)) {
+            return true;
+        }
         String s1 = normalisedVersion(version);
         String s2 = normalisedVersion("1.24");
         int cmp = s1.compareTo(s2);
         return cmp < 0;
     }
 
-    public static boolean isRemoteSupported (String version) {
+    public static boolean isRemoteSupported(String version) {
+        boolean result = false;
         if (TextUtils.isEmpty(version)) {
-            return false;
+            return result;
         }
         String s1 = normalisedVersion(version);
         String s2 = normalisedVersion("1.30.1.0");
         int cmp = s1.compareTo(s2);
-        return cmp >= 0;
+        result = cmp >= 0;
+        return result;
     }
 
     /**
@@ -82,8 +95,8 @@ public class Config {
     /**
      * Normalised version.
      *
-     * @param version the version
-     * @param sep the sep
+     * @param version  the version
+     * @param sep      the sep
      * @param maxWidth the max width
      * @return the string©
      * @author RayBa
@@ -97,5 +110,5 @@ public class Config {
         }
         return sb.toString();
     }
-	
+
 }
