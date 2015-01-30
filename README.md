@@ -17,10 +17,6 @@ The highlights of DVBViewer Controller are:
 </ul>
 </p>
 <p>
-<a title="Download Recording Service" href="https://www.dvbviewer.tv/members/download.php?id=1265">Download Recording Service</a><br>
-<a title="Installation instruction" href="http://en.dvbviewer.tv/wiki/Recording_Service_Installation_Guide">Installation instruction</a>
-</p>
-<p>
 If you want to the keep the developers motivated to fix bugs, add new features and fight against the limited Recording Service API feel free to buy them a coffee or a beer :-)
 </div>
 </p>
