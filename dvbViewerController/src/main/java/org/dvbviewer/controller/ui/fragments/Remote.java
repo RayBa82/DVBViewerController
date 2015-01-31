@@ -124,6 +124,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     private final Gson gson = new Gson();
     private final Type type = new TypeToken<List<String>>() {
     }.getType();
+    private boolean useFavs;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -132,6 +133,8 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+        useFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
     }
 
     /* (non-Javadoc)
@@ -431,40 +434,31 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                 command = ActionID.CMD_BLUE;
                 break;
             case R.id.ButtonOne:
-                command = ActionID.CMD_REMOTE_1;
-                isSwitchCommand = true;
+                command = useFavs ? ActionID.CMD_FAV_1 : ActionID.CMD_REMOTE_1;
                 break;
             case R.id.ButtonTwo:
-                command = ActionID.CMD_REMOTE_2;
-                isSwitchCommand = true;
-                break;
+				command = useFavs ? ActionID.CMD_FAV_2 : ActionID.CMD_REMOTE_2;
+				break;
             case R.id.ButtonThree:
-                command = ActionID.CMD_REMOTE_3;
-                isSwitchCommand = true;
+				command = useFavs ? ActionID.CMD_FAV_3 : ActionID.CMD_REMOTE_3;
                 break;
             case R.id.ButtonFour:
-                command = ActionID.CMD_REMOTE_4;
-                isSwitchCommand = true;
+				command = useFavs ? ActionID.CMD_FAV_4 : ActionID.CMD_REMOTE_4;
                 break;
             case R.id.ButtonFive:
-                command = ActionID.CMD_REMOTE_5;
-                isSwitchCommand = true;
+				command = useFavs ? ActionID.CMD_FAV_5 : ActionID.CMD_REMOTE_5;
                 break;
             case R.id.ButtonSix:
-                command = ActionID.CMD_REMOTE_6;
-                isSwitchCommand = true;
+				command = useFavs ? ActionID.CMD_FAV_6 : ActionID.CMD_REMOTE_6;
                 break;
             case R.id.ButtonSeven:
-                command = ActionID.CMD_REMOTE_7;
-                isSwitchCommand = true;
+				command = useFavs ? ActionID.CMD_FAV_7 : ActionID.CMD_REMOTE_7;
                 break;
             case R.id.ButtonEight:
-                command = ActionID.CMD_REMOTE_8;
-                isSwitchCommand = true;
+				command = useFavs ? ActionID.CMD_FAV_8 : ActionID.CMD_REMOTE_8;
                 break;
             case R.id.ButtonNine:
-                command = ActionID.CMD_REMOTE_9;
-                isSwitchCommand = true;
+				command = useFavs ? ActionID.CMD_FAV_9 : ActionID.CMD_REMOTE_9;
                 break;
             case R.id.ButtonZero:
                 command = ActionID.CMD_REMOTE_0;
@@ -481,11 +475,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                 break;
         }
         String request = "";
-        if (isSwitchCommand) {
-            request = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, mClientSpinner.getSelectedItem(), command);
-        } else {
-            request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
-        }
+        request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
         DVBViewerCommand httpCommand = new DVBViewerCommand(request);
         Thread executionThread = new Thread(httpCommand);
         executionThread.start();
