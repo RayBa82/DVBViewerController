@@ -23,95 +23,125 @@ package org.dvbviewer.controller.utils;
  */
 public class ActionID {
 
-	
+
 
 	/** The Constant CMD_MOVE_RIGHT. */
 	public static final String CMD_MOVE_RIGHT 		= 		"2100";
-	
+
 	/** The Constant CMD_MOVE_LEFT. */
 	public static final String CMD_MOVE_LEFT 		= 		"2000";
-	
+
 	/** The Constant CMD_MOVE_UP. */
 	public static final String CMD_MOVE_UP 			= 		"78";
-	
+
 	/** The Constant CMD_MOVE_DOWN. */
 	public static final String CMD_MOVE_DOWN 		= 		"79";
-	
+
 	/** The Constant CMD_SELECT_ITEM. */
 	public static final String CMD_SELECT_ITEM 		= 		"73";
-	
+
 	/** The Constant CMD_SHOW_VIDEO. */
 	public static final String CMD_SHOW_VIDEO		= 		"8204";
-	
+
 	/** The Constant CMD_PREVIOUS_MENU. */
 	public static final String CMD_PREVIOUS_MENU	= 		"84";
-	
+
 	/** The Constant CMD_SHOW_OSD. */
 	public static final String CMD_SHOW_OSD			= 		"111";
-	
+
 	/** The Constant CMD_STEP_FORWARD. */
 	public static final String CMD_STEP_FORWARD		= 		"103";
-	
+
 	/** The Constant CMD_STEP_BACK. */
 	public static final String CMD_STEP_BACK		= 		"102";
-	
+
 	/** The Constant CMD_STOP. */
 	public static final String CMD_STOP		  		= 		"114";
-	
+
 	/** The Constant CMD_PAUSE. */
 	public static final String CMD_PAUSE	  		= 		"0";
-	
+
 	/** The Constant CMD_RED. */
 	public static final String CMD_RED	  			= 		Integer.valueOf(0x0000004A).toString();
-	
+
 	/** The Constant CMD_GREEN. */
 	public static final String CMD_GREEN	  		= 		"75";
-	
+
 	/** The Constant CMD_YELLOW. */
 	public static final String CMD_YELLOW			= 		"76";
-	
+
 	/** The Constant CMD_BLUE. */
 	public static final String CMD_BLUE				= 		Integer.valueOf(0x0000004D).toString();
-	
+
 	/** The Constant CMD_SHOW_TELETEXT. */
 	public static final String CMD_SHOW_TELETEXT	= 		Integer.valueOf(0x00000065).toString();
-	
+
 	/** The Constant CMD_REMOTE_0. */
-	public static final String CMD_REMOTE_0 		= 		Integer.valueOf(0x00000028).toString(); 
-	
+	public static final String CMD_REMOTE_0 		= 		"40";
+
 	/** The Constant CMD_REMOTE_1. */
-	public static final String CMD_REMOTE_1 		= 		Integer.valueOf(0x00000029).toString();  
-	
+	public static final String CMD_REMOTE_1 		= 		"41";
+
 	/** The Constant CMD_REMOTE_2. */
-	public static final String CMD_REMOTE_2 		= 		Integer.valueOf(0x0000002A).toString();  
-	
+	public static final String CMD_REMOTE_2 		= 		"42";
+
 	/** The Constant CMD_REMOTE_3. */
-	public static final String CMD_REMOTE_3 		=	 	Integer.valueOf(0x0000002B).toString();  
-	
+	public static final String CMD_REMOTE_3 		=	 	"43";
+
 	/** The Constant CMD_REMOTE_4. */
-	public static final String CMD_REMOTE_4 		= 		Integer.valueOf(0x0000002C).toString();  
-	
+	public static final String CMD_REMOTE_4 		= 		"44";
+
 	/** The Constant CMD_REMOTE_5. */
-	public static final String CMD_REMOTE_5 		= 		Integer.valueOf(0x0000002D).toString();  
-	
+	public static final String CMD_REMOTE_5 		= 		"45";
+
 	/** The Constant CMD_REMOTE_6. */
-	public static final String CMD_REMOTE_6 		= 		Integer.valueOf(0x0000002E).toString();  
-	
+	public static final String CMD_REMOTE_6 		= 		"46";
+
 	/** The Constant CMD_REMOTE_7. */
-	public static final String CMD_REMOTE_7 		= 		Integer.valueOf(0x0000002F).toString();  
-	
+	public static final String CMD_REMOTE_7 		= 		"47";
+
 	/** The Constant CMD_REMOTE_8. */
-	public static final String CMD_REMOTE_8 		= 		Integer.valueOf(0x00000030).toString(); 
-	
+	public static final String CMD_REMOTE_8 		= 		"48";
+
 	/** The Constant CMD_REMOTE_9. */
-	public static final String CMD_REMOTE_9 		= 		Integer.valueOf(0x00000031).toString(); 
-	
+	public static final String CMD_REMOTE_9 		= 		"49";
+
+    /** The Constant CMD_REMOTE_0. */
+    public static final String CMD_FAV_0 		    = 		"";
+
+    /** The Constant CMD_REMOTE_1. */
+    public static final String CMD_FAV_1 		= 		"11";
+
+    /** The Constant CMD_REMOTE_2. */
+    public static final String CMD_FAV_2 		= 		"12";
+
+    /** The Constant CMD_REMOTE_3. */
+    public static final String CMD_FAV_3 		=	 	"13";
+
+    /** The Constant CMD_REMOTE_4. */
+    public static final String CMD_FAV_4 		= 		"14";
+
+    /** The Constant CMD_REMOTE_5. */
+    public static final String CMD_FAV_5 		= 		"15";
+
+    /** The Constant CMD_REMOTE_6. */
+    public static final String CMD_FAV_6 		= 		"16";
+
+    /** The Constant CMD_REMOTE_7. */
+    public static final String CMD_FAV_7 		= 		"17";
+
+    /** The Constant CMD_REMOTE_8. */
+    public static final String CMD_FAV_8 		= 		"18";
+
+    /** The Constant CMD_REMOTE_9. */
+    public static final String CMD_FAV_9 		= 		"19";
+
 	/** The Constant CMD_EXIT. */
-	public static final String CMD_EXIT  			= 		Integer.valueOf(0x00003006).toString(); 
-	
+	public static final String CMD_EXIT  			= 		Integer.valueOf(0x00003006).toString();
+
 	/** The Constant CMD_SHOW_RECORDINGS. */
-	public static final String CMD_SHOW_RECORDINGS  = 		Integer.valueOf(0x00002004).toString(); 
-	
+	public static final String CMD_SHOW_RECORDINGS  = 		Integer.valueOf(0x00002004).toString();
+
 //	CMD_PAGE_UP: 0x00000052; 
 //	CMD_PAGE_DOWN: 0x00000053; 
 //	CMD_FORWARD: 0x00003010 
