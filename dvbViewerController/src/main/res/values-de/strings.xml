@@ -160,4 +160,5 @@
     <string name="version_unsupported_text">Die Recording Service Version muss höher als 1.30.1.0 sein um die Ferbedienungfunktion zu Nutzen</string>
     <string name="version_unsupported_title">Version zu alt</string>
     <string name="common_colon">:&#160;</string>
+    <string name="recording_folder">Aufnahmeordner</string>
 </resources>

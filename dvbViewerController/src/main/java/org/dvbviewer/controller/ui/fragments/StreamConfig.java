@@ -40,9 +40,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.utils.ServerConsts;
@@ -239,6 +243,12 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				} else {
 					getActivity().finish();
 				}
+				Tracker t = ((App) getActivity().getApplication()).getTracker();
+				// Build and send an Event.
+				t.send(new HitBuilders.EventBuilder()
+						.setCategory("Streaming")
+						.setAction("Transcoded stream")
+						.build());
 			} catch (ActivityNotFoundException e) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
@@ -256,6 +266,12 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				} else {
 					getActivity().finish();
 				}
+				Tracker t = ((App) getActivity().getApplication()).getTracker();
+				// Build and send an Event.
+				t.send(new HitBuilders.EventBuilder()
+						.setCategory("Streaming")
+						.setAction("Direct stream")
+						.build());
 			} catch (ActivityNotFoundException e) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();

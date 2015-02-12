@@ -52,8 +52,11 @@ import android.widget.TextView;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.ViewTarget;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -1020,6 +1023,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     videoIntent = new Intent(Intent.ACTION_VIEW);
                     videoIntent.setDataAndType(Uri.parse(videoUrl), videoType);
                     getActivity().startActivity(videoIntent);
+					// Get tracker.
+					Tracker t = ((App) getActivity().getApplication()).getTracker();
+					// Build and send an Event.
+					t.send(new HitBuilders.EventBuilder()
+							.setCategory("Streaming")
+							.setAction("Quickstream")
+							.build());
                 } catch (ActivityNotFoundException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();

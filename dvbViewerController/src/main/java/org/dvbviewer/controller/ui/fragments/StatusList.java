@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -62,7 +61,6 @@ import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
 public class StatusList extends BaseListFragment implements LoaderCallbacks<Status> {
 
     CategoryAdapter mAdapter;
-    ProgressDialog progressDialog;
     Resources mRes;
     private StatusAdapter mStatusAdapter;
 
@@ -89,14 +87,6 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         mRes = getResources();
         Loader<Status> loader = getLoaderManager().initLoader(0, savedInstanceState, this);
         setListShown(!(!isResumed() || loader.isStarted()));
-    }
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.ListFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-     */
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     /* (non-Javadoc)
@@ -182,8 +172,8 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             mStatusAdapter.setItems(status.getItems());
             FolderAdapter folderAdapter = new FolderAdapter(getActivity());
             folderAdapter.setItems(status.getFolders());
-            mAdapter.addSection("Status", mStatusAdapter);
-            mAdapter.addSection("Aufnahmeordner", folderAdapter);
+            mAdapter.addSection(getString(R.string.status), mStatusAdapter);
+            mAdapter.addSection(getString(R.string.recording_folder), folderAdapter);
             mAdapter.notifyDataSetChanged();
         }
         setListAdapter(mAdapter);
