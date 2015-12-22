@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -49,11 +50,18 @@ import org.apache.http.message.BasicNameValuePair;
 import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.boye.httpclientandroidlib.auth.AuthenticationException;
+import ch.boye.httpclientandroidlib.client.ClientProtocolException;
 
 /**
  * The Class StreamConfig.
@@ -92,6 +100,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private int					mStreamType				= 0;
 	private int					mFileId					= -1;
 	private Context				mContext;
+	private List<String> 		ffmpegprefs;
 	
 	private SharedPreferences	prefs;
 
@@ -111,10 +120,51 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		mFileType = getArguments().getInt(EXTRA_FILE_TYPE, FILE_TYPE_LIVE);
 		mStreamType = getArguments().getInt(EXTRA_FILE_TYPE, STREAM_TYPE_DIRECT);
 		seekable = mFileType != FILE_TYPE_LIVE && mStreamType != STREAM_TYPE_DIRECT;
+
+		if((!ServerConsts.REC_SERVICE_USER_NAME.equals("")) && (!ServerConsts.REC_SERVICE_PASSWORD.equals(""))) {
+			flashUrl = ServerConsts.REC_SERVICE_PROTOCOL + "://" +
+					   ServerConsts.REC_SERVICE_USER_NAME + ":" +
+					   ServerConsts.REC_SERVICE_PASSWORD + "@" +
+					   ServerConsts.REC_SERVICE_HOST + ":" +
+					   ServerConsts.REC_SERVICE_PORT +
+					   ServerConsts.URL_FLASHSTREAM;
+		}
 		if (seekable) {
 			DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 			preTime = String.valueOf(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 0));
 		}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					String ffmpegprefsString = ServerRequest.getRSString(ServerConsts.URL_FFMPEGPREFS);
+					FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
+					ffmpegprefs = prefsHandler.parse(ffmpegprefsString);
+					final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, ffmpegprefs);
+					dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							qualitySpinner.setAdapter(dataAdapter);
+							int pos = dataAdapter.getPosition("TS Mid 1200 kbit");
+							qualitySpinner.setSelection(pos);
+						}
+					});
+
+				} catch (AuthenticationException e) {
+					e.printStackTrace();
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
 	}
 
 	/* (non-Javadoc)

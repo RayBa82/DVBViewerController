@@ -579,7 +579,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 }
                 return true;
             case R.id.menuSwitch:
-                String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), chan.getPosition());
+                String cid = ":" + String.valueOf(chan.getChannelID());
+                String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                 DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                 Thread exexuterTHread = new Thread(command);
                 exexuterTHread.start();
@@ -646,7 +647,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 }
                 return true;
             case R.id.menuSwitch:
-                String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), chan.getPosition());
+                String cid = ":" + String.valueOf(chan.getChannelID());
+                String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                 DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                 Thread exexuterTHread = new Thread(command);
                 exexuterTHread.start();
