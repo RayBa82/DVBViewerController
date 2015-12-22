@@ -291,6 +291,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					holder.subTitle.setVisibility(View.VISIBLE);
 					holder.subTitle.setText(o.getSubTitle());
 				}
+				holder.thumbNail.setImageDrawable(null);
 				imageLoader.displayImage(ServerConsts.REC_SERVICE_URL+ ServerConsts.THUMBNAILS_VIDEO_URL +o.getThumbNail(), holder.thumbNail);
 				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());
