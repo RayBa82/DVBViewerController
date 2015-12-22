@@ -2,7 +2,7 @@ package org.dvbviewer.controller.utils;
 
 /**
  * The Class ServerConsts.
- * 
+ *
  * @author RayBa
  * @date 13.04.2012
  */
@@ -35,5 +35,6 @@ public class ServerConsts {
 	public static String	URL_FLASHSTREAM					= "/flashstream/stream.ts?";
 	public static String	URL_TARGETS					    = "/api/dvbcommand.html";
 	public static String 	URL_FFMPEGPREFS					= "/api/getconfigfile.html?file=config%5Cffmpegprefs.ini";
+	public static String 	THUMBNAILS_VIDEO_URL 			= "/thumbnails/video/";
 
 }

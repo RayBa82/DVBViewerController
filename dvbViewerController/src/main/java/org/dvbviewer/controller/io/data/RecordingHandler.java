@@ -40,8 +40,9 @@ import java.util.List;
  */
 public class RecordingHandler extends DefaultHandler {
 
-	List<Recording>	recordingList		= null;
-	Recording		currentRecording	= null;
+	List<Recording> recordingList    = null;
+	Recording       currentRecording = null;
+	private String imageURL = "";
 
 	/**
 	 * Parses the.
@@ -49,16 +50,18 @@ public class RecordingHandler extends DefaultHandler {
 	 * @param xml the xml
 	 * @return the list©
 	 * @author RayBa
-	 * @throws SAXException 
+	 * @throws SAXException
 	 * @date 05.07.2012
 	 */
 	public List<Recording> parse(String xml) throws SAXException {
 		RootElement root = new RootElement("recordings");
+		Element imageURLElement = root.getChild("imageURL");
 		Element recordingElement = root.getChild("recording");
 		Element chanElement = recordingElement.getChild("channel");
 		Element titleElement = recordingElement.getChild("title");
 		Element infoElement = recordingElement.getChild("info");
 		Element descElement = recordingElement.getChild("desc");
+		Element imageElement = recordingElement.getChild("image");
 
 		root.setStartElementListener(new StartElementListener() {
 
@@ -68,6 +71,13 @@ public class RecordingHandler extends DefaultHandler {
 			}
 		});
 
+		imageURLElement.setEndTextElementListener(new EndTextElementListener() {
+
+			@Override
+			public void end(String body) {
+				imageURL = body;
+			}
+		});
 		recordingElement.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
 				currentRecording = new Recording();
@@ -119,6 +129,13 @@ public class RecordingHandler extends DefaultHandler {
 			@Override
 			public void end(String body) {
 				currentRecording.setDescription(body);
+			}
+		});
+		imageElement.setEndTextElementListener(new EndTextElementListener() {
+
+			@Override
+			public void end(String body) {
+				currentRecording.setThumbNail(body);
 			}
 		});
 

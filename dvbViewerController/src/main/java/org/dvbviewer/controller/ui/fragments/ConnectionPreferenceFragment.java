@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.preference.PreferenceFragment;
 
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.URLUtil;
 
@@ -38,7 +37,6 @@ public class ConnectionPreferenceFragment extends PreferenceFragment implements 
 			ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT = sharedPreferences.getString(key, ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT);
 		}
 		URLUtil.setRecordingServicesAddress(ServerConsts.REC_SERVICE_URL, ServerConsts.REC_SERVICE_PORT);
-		ServerRequest.resetHttpCLient();
 	}
 
 	@Override

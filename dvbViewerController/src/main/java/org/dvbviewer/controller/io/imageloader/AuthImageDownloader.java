@@ -16,15 +16,14 @@
 package org.dvbviewer.controller.io.imageloader;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.nostra13.universalimageloader.core.assist.FlushedInputStream;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 
 import org.dvbviewer.controller.io.ServerRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
 /**
  * Imagedownloader which supports https connections and
@@ -49,16 +48,13 @@ public class AuthImageDownloader extends BaseImageDownloader {
 		super(context);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nostra13.universalimageloader.core.download.BaseImageDownloader#getStreamFromNetwork(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	protected InputStream getStreamFromNetwork(String imageUri, Object extra) throws IOException {
-		FlushedInputStream result = null;
+		InputStream result = null;
 		try {
-			result = new FlushedInputStream(ServerRequest.getInputStream(imageUri));
-		} catch (URISyntaxException e) {
-			throw new IOException("Invalid Uri "+imageUri);
+			result = ServerRequest.getInputStream(imageUri);
+		} catch (Exception e) {
+			Log.i(TAG, "Error loading image from "+imageUri, e);
 		}
 		return result;
 	}

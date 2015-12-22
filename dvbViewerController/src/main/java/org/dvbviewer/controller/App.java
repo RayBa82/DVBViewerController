@@ -88,7 +88,7 @@ public class App extends Application {
 		
 		DisplayImageOptions options = new DisplayImageOptions.Builder()
 		.cacheInMemory(true)
-		.cacheOnDisc(true)
+		.cacheOnDisk(true)
 		.displayer(new FadeInBitmapDisplayer(500, true, true, false))
 		.build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
