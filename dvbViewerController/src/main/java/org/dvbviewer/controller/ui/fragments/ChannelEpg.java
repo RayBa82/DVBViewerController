@@ -464,7 +464,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     return true;
                 case R.id.menuSwitch:
                     DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-                    String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), mCHannel.getPosition());
+                    String cid = ":" + String.valueOf(mCHannel.getChannelID());
+                    String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                     DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                     Thread exexuterTHread = new Thread(command);
                     exexuterTHread.start();
@@ -563,7 +564,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     return true;
                 case R.id.menuSwitch:
                     DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-                    String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), mCHannel.getPosition());
+                    String cid = ":" + String.valueOf(mCHannel.getChannelID());
+                    String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                     DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                     Thread exexuterTHread = new Thread(command);
                     exexuterTHread.start();
