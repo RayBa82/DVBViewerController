@@ -76,7 +76,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	public static final int		FILE_TYPE_RECORDING		= 1;
 	public static final int		STREAM_TYPE_DIRECT		= 0;
 	public static final int		STREAM_TYPE_TRANSCODE	= 1;
-	private String				flashUrl				= ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM;
+	private static String		flashUrl				= ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM;
 	private String				liveUrl					= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_LIVE_STREAM_PORT + "/upnp/channelstream/";
 	private String				mediaUrl				= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT + "/upnp/recordings/";
 	private Spinner				qualitySpinner;
@@ -117,14 +117,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		mStreamType = getArguments().getInt(EXTRA_FILE_TYPE, STREAM_TYPE_DIRECT);
 		seekable = mFileType != FILE_TYPE_LIVE && mStreamType != STREAM_TYPE_DIRECT;
 
-		if((!ServerConsts.REC_SERVICE_USER_NAME.equals("")) && (!ServerConsts.REC_SERVICE_PASSWORD.equals(""))) {
-			flashUrl = ServerConsts.REC_SERVICE_PROTOCOL + "://" +
-					   ServerConsts.REC_SERVICE_USER_NAME + ":" +
-					   ServerConsts.REC_SERVICE_PASSWORD + "@" +
-					   ServerConsts.REC_SERVICE_HOST + ":" +
-					   ServerConsts.REC_SERVICE_PORT +
-					   ServerConsts.URL_FLASHSTREAM;
-		}
+		rebuildProtectedFlashUrl();
 		if (seekable) {
 			DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 			preTime = String.valueOf(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 0));
@@ -159,6 +152,18 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			}
 		}).start();
 
+	}
+
+	private static String rebuildProtectedFlashUrl() {
+		if((!TextUtils.isEmpty(ServerConsts.REC_SERVICE_USER_NAME)) && (!TextUtils.isEmpty(ServerConsts.REC_SERVICE_PASSWORD))) {
+			flashUrl = ServerConsts.REC_SERVICE_PROTOCOL + "://" +
+					   ServerConsts.REC_SERVICE_USER_NAME + ":" +
+					   ServerConsts.REC_SERVICE_PASSWORD + "@" +
+					   ServerConsts.REC_SERVICE_HOST + ":" +
+					   ServerConsts.REC_SERVICE_PORT +
+					   ServerConsts.URL_FLASHSTREAM;
+		}
+		return flashUrl;
 	}
 
 	/* (non-Javadoc)
@@ -469,14 +474,13 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		if (direct) {
 			return getDirectUrl(position);
 		}else {
-			return getTranscodedUrl(context, position, prefs, result);
+			return getTranscodedUrl(context, position, prefs);
 		}
 	}
 
-	private static String getTranscodedUrl(Context context, int position, SharedPreferences prefs, StringBuffer result) {
-		HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM);
+	private static String getTranscodedUrl(Context context, int position, SharedPreferences prefs) {
+		HttpUrl httpUrl = HttpUrl.parse(rebuildProtectedFlashUrl());
 		HttpUrl.Builder builder = httpUrl.newBuilder();
-		result.append(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM);
 		int qualityIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_QUALITY, 7);
 		int aspectIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_ASPECT_RATIO, 0);
 		int ffmpegIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_FFMPEG_PRESET, 5);
