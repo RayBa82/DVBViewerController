@@ -142,8 +142,8 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 						@Override
 						public void run() {
 							qualitySpinner.setAdapter(dataAdapter);
-							int pos = dataAdapter.getPosition("TS Mid 1200 kbit");
-							qualitySpinner.setSelection(pos);
+							int pos = prefs.getInt(DVBViewerPreferences.KEY_STREAM_QUALITY, 0);
+							qualitySpinner.setSelection(pos >= dataAdapter.getCount() ? dataAdapter.getPosition("TS Mid 1200 kbit") : pos);
 						}
 					});
 
@@ -391,6 +391,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				break;
 			}
 			videoUrl = builder.build().toString();
+			videoType = "video/mpeg";
 			break;
 
 		default:
@@ -435,8 +436,8 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		case R.id.qualitySpinner:
 			editor.putInt(DVBViewerPreferences.KEY_STREAM_QUALITY, position);
 			break;
-		case R.id.aspectSpinner:
-			editor.putInt(DVBViewerPreferences.KEY_STREAM_ASPECT_RATIO, position);
+			case R.id.aspectSpinner:
+				editor.putInt(DVBViewerPreferences.KEY_STREAM_ASPECT_RATIO, position);
 			break;
 		case R.id.ffmpegSpinner:
 			editor.putInt(DVBViewerPreferences.KEY_STREAM_FFMPEG_PRESET, position);
@@ -462,7 +463,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	
 	
 	public static String buildLiveUrl(Context context, int position){
-		DVBViewerPreferences prefs = new DVBViewerPreferences(context);
+		SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
 		boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
 		StringBuffer result = new StringBuffer();
 		if (direct) {
@@ -472,7 +473,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		}
 	}
 
-	private static String getTranscodedUrl(Context context, int position, DVBViewerPreferences prefs, StringBuffer result) {
+	private static String getTranscodedUrl(Context context, int position, SharedPreferences prefs, StringBuffer result) {
 		HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM);
 		HttpUrl.Builder builder = httpUrl.newBuilder();
 		result.append(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM);
