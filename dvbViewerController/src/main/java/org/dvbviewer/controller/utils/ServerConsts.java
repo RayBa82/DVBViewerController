@@ -35,6 +35,7 @@ public class ServerConsts {
 	public static String	URL_FLASHSTREAM					= "/flashstream/stream.ts?";
 	public static String	URL_TARGETS					    = "/api/dvbcommand.html";
 	public static String 	URL_FFMPEGPREFS					= "/api/getconfigfile.html?file=config%5Cffmpegprefs.ini";
+	public static String 	URL_RECORIDNGS 					= "/api/recordings.html?utf8=255&images=1";
 	public static String 	THUMBNAILS_VIDEO_URL 			= "/thumbnails/video/";
 
 }

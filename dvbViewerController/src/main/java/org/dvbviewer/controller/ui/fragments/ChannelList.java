@@ -56,9 +56,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
@@ -538,27 +535,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 return true;
             case R.id.menuRecord:
                 timer = cursorToTimer(c);
-                String url = timer.getId() <= 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT;
-                String title = timer.getTitle();
-                String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-                String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-                String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-                String endAction = String.valueOf(timer.getTimerAction());
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("ch", String.valueOf(timer.getChannelId())));
-                params.add(new BasicNameValuePair("dor", days));
-                params.add(new BasicNameValuePair("encoding", "255"));
-                params.add(new BasicNameValuePair("enable", "1"));
-                params.add(new BasicNameValuePair("start", start));
-                params.add(new BasicNameValuePair("stop", stop));
-                params.add(new BasicNameValuePair("title", title));
-                params.add(new BasicNameValuePair("endact", endAction));
-                if (timer.getId() > 0) {
-                    params.add(new BasicNameValuePair("id", String.valueOf(timer.getId())));
-                }
-
-                String query = URLEncodedUtils.format(params, "utf-8");
-                String request = url + query;
+                String request = TimerDetails.buildTimerUrl(timer);
                 RecordingServiceGet rsGet = new RecordingServiceGet(request);
                 Thread executionThread = new Thread(rsGet);
                 executionThread.start();
@@ -617,27 +594,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void recordChannel(Cursor c) {
         Timer timer;
         timer = cursorToTimer(c);
-        String url = timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT;
-        String title = timer.getTitle();
-        String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-        String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-        String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-        String endAction = String.valueOf(timer.getTimerAction());
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("ch", String.valueOf(timer.getChannelId())));
-        params.add(new BasicNameValuePair("dor", days));
-        params.add(new BasicNameValuePair("encoding", "255"));
-        params.add(new BasicNameValuePair("enable", "1"));
-        params.add(new BasicNameValuePair("start", start));
-        params.add(new BasicNameValuePair("stop", stop));
-        params.add(new BasicNameValuePair("title", title));
-        params.add(new BasicNameValuePair("endact", endAction));
-        if (timer.getId() >= 0) {
-            params.add(new BasicNameValuePair("id", String.valueOf(timer.getId())));
-        }
-
-        String query = URLEncodedUtils.format(params, "utf-8");
-        String request = url + query;
+        String request = TimerDetails.buildTimerUrl(timer);
         RecordingServiceGet rsGet = new RecordingServiceGet(request);
         Thread executionThread = new Thread(rsGet);
         executionThread.start();

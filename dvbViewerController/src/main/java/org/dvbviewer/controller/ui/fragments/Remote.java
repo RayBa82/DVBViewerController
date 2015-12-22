@@ -47,13 +47,12 @@ import android.widget.ViewFlipper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.client.HttpResponseException;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
-import org.dvbviewer.controller.ui.base.BaseActivity.ErrorToastRunnable;
 import org.dvbviewer.controller.utils.ActionID;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.ServerConsts;
@@ -510,19 +509,6 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         return detector.onTouchEvent(event);
     }
 
-    /**
-     * Show toast.
-     *
-     * @param message the message
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    protected void showToast(String message) {
-        if (getActivity() != null) {
-            ErrorToastRunnable errorRunnable = new ErrorToastRunnable(getActivity(), message);
-            getActivity().runOnUiThread(errorRunnable);
-        }
-    }
 
     @Override
     public Loader<List<String>> onCreateLoader(int id, Bundle args) {
@@ -533,7 +519,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                 List<String> result = null;
                 try {
                     result = getDVBViewerClients();
-                } catch (HttpResponseException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return result;
@@ -575,11 +561,11 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         loader.reset();
     }
 
-    private List<String> getDVBViewerClients() throws HttpResponseException {
+    private List<String> getDVBViewerClients() throws DefaultHttpException {
         List<String> result = null;
         String version = RecordingService.getVersionString();
         if (TextUtils.isEmpty(version)) {
-            throw new HttpResponseException(503, "Could not connect to Recording Service");
+            throw new DefaultHttpException(ServerConsts.REC_SERVICE_URL);
         }
         isVersionSupported = Config.isRemoteSupported(version);
         if (isVersionSupported) {
