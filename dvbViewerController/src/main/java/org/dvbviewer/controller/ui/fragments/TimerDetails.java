@@ -323,7 +323,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	}
 
 	public static String buildTimerUrl(Timer timer) {
-		HttpUrl httpUrl = HttpUrl.parse(timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT);
+		HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL + (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
 		HttpUrl.Builder builder = httpUrl.newBuilder();
 		String title = timer.getTitle();
 		String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));

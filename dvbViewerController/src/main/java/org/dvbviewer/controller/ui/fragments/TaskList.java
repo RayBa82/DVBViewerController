@@ -216,7 +216,7 @@ public class TaskList extends BaseListFragment implements OnClickListener {
 		@Override
 		public void run() {
 			try {
-				ServerRequest.getRSString(ServerConsts.URL_EXECUTE_TASK + task);
+				ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EXECUTE_TASK + task);
 			} catch (AuthenticationException e) {
 				e.printStackTrace();
 				showToast(getStringSafely(R.string.error_invalid_credentials));

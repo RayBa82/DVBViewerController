@@ -21,7 +21,7 @@ public class RecordingService {
     public static String getVersionString() {
         String version = null;
         try {
-            String versionXml = ServerRequest.getRSString(ServerConsts.URL_VERSION);
+            String versionXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_VERSION);
             VersionHandler versionHandler = new VersionHandler();
             version = versionHandler.parse(versionXml);
             //here is a regex required!
@@ -39,7 +39,7 @@ public class RecordingService {
     public static String getDVBViewerTargets() {
         String jsonClients = null;
         try {
-            String xml = ServerRequest.getRSString(ServerConsts.URL_TARGETS);
+            String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TARGETS);
             TargetHandler handler = new TargetHandler();
             List<String> targets = handler.parse(xml);
             Collections.sort(targets);

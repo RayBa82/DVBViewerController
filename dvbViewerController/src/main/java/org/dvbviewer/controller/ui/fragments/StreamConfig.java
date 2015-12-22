@@ -133,7 +133,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			@Override
 			public void run() {
 				try {
-					String ffmpegprefsString = ServerRequest.getRSString(ServerConsts.URL_FFMPEGPREFS);
+					String ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
 					FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
 					ffmpegprefs = prefsHandler.parse(ffmpegprefsString);
 					final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, ffmpegprefs);

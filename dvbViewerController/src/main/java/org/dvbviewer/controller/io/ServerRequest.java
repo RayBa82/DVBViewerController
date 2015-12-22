@@ -46,7 +46,7 @@ public class ServerRequest {
 	 * @date 13.04.2012
 	 */
 	public static String getRSString(String request) throws Exception {
-		return HTTPUtil.getString(ServerConsts.REC_SERVICE_URL + request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
+		return HTTPUtil.getString(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
 	}
 
 
@@ -67,7 +67,7 @@ public class ServerRequest {
 	 */
 	public static void executeRSGet(String request) throws Exception {
 		Log.d(ServerRequest.class.getSimpleName(), "request: " + request);
-		HTTPUtil.executeGet(ServerConsts.REC_SERVICE_URL + request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
+		HTTPUtil.executeGet(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
 	}
 
 	public static InputStream getInputStream(String request) throws Exception {
@@ -75,7 +75,7 @@ public class ServerRequest {
 	}
 
 	public static byte[] getRSBytes(String request) throws Exception{
-		return HTTPUtil.getByteArrray(ServerConsts.REC_SERVICE_URL + request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
+		return HTTPUtil.getByteArrray(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
 	}
 
 

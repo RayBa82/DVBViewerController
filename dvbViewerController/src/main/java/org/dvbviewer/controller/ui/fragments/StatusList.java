@@ -93,7 +93,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             public Status loadInBackground() {
                 Status result = null;
                 try {
-                    String statusXml = ServerRequest.getRSString(ServerConsts.URL_STATUS);
+                    String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
                     StatusHandler statusHandler = new StatusHandler();
                     result = statusHandler.parse(statusXml);
                     String version = RecordingService.getVersionString();

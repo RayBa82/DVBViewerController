@@ -25,8 +25,9 @@ public class ServerConsts {
 	public static String	URL_STATUS						= "/api/status.html";
 	public static String	URL_CHANNEL_EPG					= "/api/epg.html?lvl=2&channel=";
 	public static String	URL_EPG							= "/api/epg.html?lvl=2";
-	public static String	URL_TIMER_CREATE				= "/api/timeradd.html?";
-	public static String	URL_TIMER_EDIT					= "/api/timeredit.html?";
+	public static String	URL_TIMER_CREATE				= "/api/timeradd.html";
+	public static String	URL_TIMER_EDIT					= "/api/timeredit.html";
+	public static String	URL_TIMER_LIST					= "/api/timerlist.html?utf8=255";
 	public static String	URL_TIMER_DELETE				= "/api/timerdelete.html?id=";
 	public static String	URL_EXECUTE_TASK				= "/tasks.html?aktion=tasks&task=";
 	public static String    URL_SEND_COMMAND                = "/api/dvbcommand.html?target={0}&cmd=-x{1}";

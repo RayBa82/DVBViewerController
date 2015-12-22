@@ -132,7 +132,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			public List<Recording> loadInBackground() {
 				List<Recording> result = null;
 				try {
-					String xml = ServerRequest.getRSString(ServerConsts.URL_RECORIDNGS);
+					String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_RECORIDNGS);
 					RecordingHandler hanler = new RecordingHandler();
 					result = hanler.parse(xml);
 					Collections.sort(result);
@@ -499,7 +499,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			}
 			for (int i = 0; i < count; i++) {
 				try {
-					ServerRequest.getRSString(ServerConsts.URL_DELETE_RECORDING + params[i].getId());
+					ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_DELETE_RECORDING + params[i].getId());
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
 				} catch (DefaultHttpException e) {

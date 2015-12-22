@@ -223,7 +223,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                         String url = ServerConsts.URL_EPG + "&start=" + nowFloat + "&end=" + nowFloat;
                         try {
                             EpgEntryHandler handler = new EpgEntryHandler();
-                            String xml = ServerRequest.getRSString(url);
+                            String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
                             result = handler.parse(xml);
                             DbHelper helper = new DbHelper(getContext());
                             helper.saveNowPlaying(result);
@@ -256,7 +256,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                             /**
                              * Request the Status.xml to get some default Recordingservice Configs
                              */
-                            String statusXml = ServerRequest.getRSString(ServerConsts.URL_STATUS);
+                            String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
                             StatusHandler statusHandler = new StatusHandler();
                             Status s = statusHandler.parse(statusXml);
                             String version = RecordingService.getVersionString();
@@ -266,11 +266,11 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                              * Request the Channels
                              */
                             if (Config.isOldRsVersion(version)) {
-                                byte[] rawData = ServerRequest.getRSBytes(ServerConsts.URL_CHANNELS_OLD);
+                                byte[] rawData = ServerRequest.getRSBytes(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS_OLD);
                                 List<Channel> chans = ChannelListParser.parseChannelList(getContext(), rawData);
                                 mDbHelper.saveChannels(chans);
                             } else {
-                                String chanXml = ServerRequest.getRSString(ServerConsts.URL_CHANNELS);
+                                String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
                                 ChannelHandler channelHandler = new ChannelHandler();
                                 List<ChannelRoot> chans = channelHandler.parse(chanXml);
                                 mDbHelper.saveChannelRoots(chans);
@@ -279,7 +279,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                             /**
                              * Request the Favourites
                              */
-                            String favXml = ServerRequest.getRSString(ServerConsts.URL_FAVS);
+                            String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
                             if (!TextUtils.isEmpty(favXml)) {
                                 FavouriteHandler handler = new FavouriteHandler();
                                 List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);

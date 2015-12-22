@@ -124,7 +124,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			public List<Timer> loadInBackground() {
 				List<Timer> result = null;
 				try {
-					String xml = ServerRequest.getRSString("/api/timerlist.html?utf8=255");
+					String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_LIST);
 					TimerHandler hanler = new TimerHandler();
 					result = hanler.parse(xml);
 					Collections.sort(result);
@@ -427,7 +427,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 					e1.printStackTrace();
 				}
 				try {
-					ServerRequest.getRSString(ServerConsts.URL_TIMER_DELETE + params[i].getId());
+					ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_DELETE + params[i].getId());
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
 				} catch (DefaultHttpException e) {

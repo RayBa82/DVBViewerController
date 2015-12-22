@@ -186,7 +186,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                 try {
                     List<EpgEntry> result = null;
                     EpgEntryHandler handler = new EpgEntryHandler();
-                    String xml = ServerRequest.getRSString(url);
+                    String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
                     result = handler.parse(xml);
                     if (result != null && !result.isEmpty()) {
                         String[] columnNames = new String[]{EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END};
@@ -478,7 +478,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     }
 
     private String buildTimerUrl(Timer timer) {
-        HttpUrl httpUrl = HttpUrl.parse(timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT);
+        HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL+ (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
         HttpUrl.Builder builder = httpUrl.newBuilder();
         String title = timer.getTitle();
         String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
