@@ -44,6 +44,8 @@ import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.TimerHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
@@ -57,20 +59,9 @@ import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import ch.boye.httpclientandroidlib.ParseException;
-import ch.boye.httpclientandroidlib.auth.AuthenticationException;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
-import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
 
 
 /**
@@ -140,51 +131,15 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
 					showToast(getStringSafely(R.string.error_invalid_credentials));
-				} catch (UnknownHostException e) {
+				} catch (DefaultHttpException e) {
 					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_unknonwn_host) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-				} catch (ConnectTimeoutException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_connection_timeout));
+					showToast(e.getMessage());
 				} catch (SAXException e) {
 					e.printStackTrace();
 					showToast(getStringSafely(R.string.error_parsing_xml));
-				} catch (ParseException e) {
-					e.printStackTrace();
-					Writer writer = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(writer);
-					e.printStackTrace(printWriter);
-					String s = writer.toString();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + s);
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
-					Writer writer = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(writer);
-					e.printStackTrace(printWriter);
-					String s = writer.toString();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + s);
-				} catch (IOException e) {
-					e.printStackTrace();
-					Writer writer = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(writer);
-					e.printStackTrace(printWriter);
-					String s = writer.toString();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + s);
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-				} catch (IllegalStateException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-				} catch (IllegalArgumentException e) {
-					showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
 				} catch (Exception e) {
 					e.printStackTrace();
-					Writer writer = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(writer);
-					e.printStackTrace(printWriter);
-					String s = writer.toString();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + s);
+					showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
 				}
 				return result;
 			}
@@ -473,13 +428,9 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 				}
 				try {
 					ServerRequest.getRSString(ServerConsts.URL_TIMER_DELETE + params[i].getId());
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
 				} catch (AuthenticationException e) {
+					e.printStackTrace();
+				} catch (DefaultHttpException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
 					e.printStackTrace();

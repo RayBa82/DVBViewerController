@@ -31,6 +31,8 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Status;
 import org.dvbviewer.controller.entities.Status.Folder;
 import org.dvbviewer.controller.entities.Status.StatusItem;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.StatusHandler;
@@ -42,15 +44,6 @@ import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.FileUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-
-import ch.boye.httpclientandroidlib.ParseException;
-import ch.boye.httpclientandroidlib.auth.AuthenticationException;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
-import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
 
 /**
  * The Class StatusList.
@@ -126,35 +119,15 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                 } catch (AuthenticationException e) {
                     e.printStackTrace();
                     showToast(getStringSafely(R.string.error_invalid_credentials));
-                } catch (UnknownHostException e) {
+                } catch (DefaultHttpException e) {
                     e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_unknonwn_host) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (ConnectTimeoutException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_connection_timeout));
+                    showToast(e.getMessage());
                 } catch (SAXException e) {
                     e.printStackTrace();
                     showToast(getStringSafely(R.string.error_parsing_xml));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (IllegalArgumentException e) {
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
+                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
                 }
                 return result;
             }

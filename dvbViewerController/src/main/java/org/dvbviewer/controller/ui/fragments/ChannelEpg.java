@@ -44,6 +44,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -52,6 +53,8 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
@@ -60,27 +63,14 @@ import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.base.EpgLoader;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
-import org.dvbviewer.controller.ui.widget.ActionToolbar;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import ch.boye.httpclientandroidlib.NameValuePair;
-import ch.boye.httpclientandroidlib.ParseException;
-import ch.boye.httpclientandroidlib.auth.AuthenticationException;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
-import ch.boye.httpclientandroidlib.client.utils.URLEncodedUtils;
-import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
-import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 
 /**
  * The Class ChannelEpg.
@@ -209,35 +199,15 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                 } catch (AuthenticationException e) {
                     e.printStackTrace();
                     showToast(getStringSafely(R.string.error_invalid_credentials));
-                } catch (UnknownHostException e) {
+                } catch (DefaultHttpException e) {
                     e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_unknonwn_host) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (ConnectTimeoutException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_connection_timeout));
+                    showToast(e.getMessage());
                 } catch (SAXException e) {
                     e.printStackTrace();
                     showToast(getStringSafely(R.string.error_parsing_xml));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (IllegalArgumentException e) {
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
+                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
                 }
                 return cursor;
             }
@@ -467,28 +437,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             switch (item.getItemId()) {
                 case R.id.menuRecord:
                     timer = cursorToTimer(c);
-                    StringBuffer url = new StringBuffer();
-                    url.append(timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT);
-                    String title = timer.getTitle();
-                    String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-                    String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-                    String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-                    String endAction = String.valueOf(timer.getTimerAction());
-                    List<NameValuePair> params = new ArrayList<NameValuePair>();
-                    params.add(new BasicNameValuePair("ch", String.valueOf(timer.getChannelId())));
-                    params.add(new BasicNameValuePair("dor", days));
-                    params.add(new BasicNameValuePair("encoding", "255"));
-                    params.add(new BasicNameValuePair("enable", "1"));
-                    params.add(new BasicNameValuePair("start", start));
-                    params.add(new BasicNameValuePair("stop", stop));
-                    params.add(new BasicNameValuePair("title", title));
-                    params.add(new BasicNameValuePair("endact", endAction));
-                    if (timer.getId() >= 0) {
-                        params.add(new BasicNameValuePair("id", String.valueOf(timer.getId())));
-                    }
-                    String query = URLEncodedUtils.format(params, "utf-8");
-                    String request = url + query;
-                    RecordingServiceGet rsGet = new RecordingServiceGet(request);
+                    String url = buildTimerUrl(timer);
+                    RecordingServiceGet rsGet = new RecordingServiceGet(url);
                     Thread executionThread = new Thread(rsGet);
                     executionThread.start();
 
@@ -524,6 +474,28 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             }
         }
         return false;
+    }
+
+    private String buildTimerUrl(Timer timer) {
+        HttpUrl httpUrl = HttpUrl.parse(timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT);
+        HttpUrl.Builder builder = httpUrl.newBuilder();
+        String title = timer.getTitle();
+        String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
+        String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
+        String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
+        String endAction = String.valueOf(timer.getTimerAction());
+        builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
+        builder.addQueryParameter("dor", days);
+        builder.addQueryParameter("encoding", "255");
+        builder.addQueryParameter("enable", "1");
+        builder.addQueryParameter("start", start);
+        builder.addQueryParameter("stop", stop);
+        builder.addQueryParameter("title", title);
+        builder.addQueryParameter("endact", endAction);
+        if (timer.getId() >= 0) {
+            builder.addQueryParameter("id", String.valueOf(timer.getId()));
+        }
+        return builder.build().toString();
     }
 
     /* (non-Javadoc)
@@ -564,28 +536,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             switch (item.getItemId()) {
                 case R.id.menuRecord:
                     timer = cursorToTimer(c);
-                    String url = timer.getId() <= 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT;
-                    String title = timer.getTitle();
-                    String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-                    String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-                    String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-                    String endAction = String.valueOf(timer.getTimerAction());
-                    List<NameValuePair> params = new ArrayList<NameValuePair>();
-                    params.add(new BasicNameValuePair("ch", String.valueOf(timer.getChannelId())));
-                    params.add(new BasicNameValuePair("dor", days));
-                    params.add(new BasicNameValuePair("encoding", "255"));
-                    params.add(new BasicNameValuePair("enable", "1"));
-                    params.add(new BasicNameValuePair("start", start));
-                    params.add(new BasicNameValuePair("stop", stop));
-                    params.add(new BasicNameValuePair("title", title));
-                    params.add(new BasicNameValuePair("endact", endAction));
-                    if (timer.getId() > 0) {
-                        params.add(new BasicNameValuePair("id", String.valueOf(timer.getId())));
-                    }
-
-                    String query = URLEncodedUtils.format(params, "utf-8");
-                    String request = url + query;
-                    RecordingServiceGet rsGet = new RecordingServiceGet(request);
+                    String url = buildTimerUrl(timer);
+                    RecordingServiceGet rsGet = new RecordingServiceGet(url);
                     Thread executionThread = new Thread(rsGet);
                     executionThread.start();
                     return true;
@@ -629,7 +581,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * @author RayBa
      * @date 07.04.2013
      */
-    public static interface EpgDateInfo {
+    public interface EpgDateInfo {
 
         /**
          * Sets the epg date.
@@ -638,7 +590,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
          * @author RayBa
          * @date 07.04.2013
          */
-        public void setEpgDate(Date date);
+        void setEpgDate(Date date);
 
         /**
          * Gets the epg date.
@@ -647,7 +599,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
          * @author RayBa
          * @date 07.04.2013
          */
-        public Date getEpgDate();
+        Date getEpgDate();
 
     }
 
