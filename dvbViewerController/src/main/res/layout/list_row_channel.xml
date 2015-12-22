@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector_holo_dark"
+                                                          android:descendantFocusability="blocksDescendants"
     android:paddingEnd="?android:attr/scrollbarSize"
     android:paddingRight="?android:attr/scrollbarSize"
     android:gravity="center_vertical"
@@ -94,18 +95,20 @@
         android:id="@+id/widget_frame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="vertical" >
+        android:gravity="top"
+        android:orientation="vertical">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/contextMenu"
-            style="@style/Base.Widget.AppCompat.Spinner.DropDown.ActionBar"
+            android:src="@drawable/ic_more_vert_white_16dp"
+            android:background="?attr/selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="top"
             android:duplicateParentState="false"
             android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:scaleType="centerInside" />
+            android:focusableInTouchMode="false"/>
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.CheckableLinearLayout>

@@ -44,9 +44,11 @@ public class Recording implements IEPG, Comparable<Recording> {
 
 	private Date				end;
 
+	private String thumbNail;
+
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return the id
 	 * @author RayBa
 	 * @date 09.04.2012
@@ -57,7 +59,7 @@ public class Recording implements IEPG, Comparable<Recording> {
 
 	/**
 	 * Sets the id.
-	 * 
+	 *
 	 * @param id
 	 *            the new id
 	 * @author RayBa
@@ -69,7 +71,7 @@ public class Recording implements IEPG, Comparable<Recording> {
 
 	/**
 	 * Gets the title.
-	 * 
+	 *
 	 * @return the title
 	 * @author RayBa
 	 * @date 09.04.2012
@@ -80,7 +82,7 @@ public class Recording implements IEPG, Comparable<Recording> {
 
 	/**
 	 * Sets the title.
-	 * 
+	 *
 	 * @param title
 	 *            the new title
 	 * @author RayBa
@@ -92,7 +94,7 @@ public class Recording implements IEPG, Comparable<Recording> {
 
 	/**
 	 * Gets the channel.
-	 * 
+	 *
 	 * @return the channel
 	 * @author RayBa
 	 * @date 09.04.2012
@@ -103,7 +105,7 @@ public class Recording implements IEPG, Comparable<Recording> {
 
 	/**
 	 * Sets the channel.
-	 * 
+	 *
 	 * @param channel
 	 *            the new channel
 	 * @author RayBa
@@ -307,6 +309,14 @@ public class Recording implements IEPG, Comparable<Recording> {
 	 */
 	public void setChannelLogo(String channelLogo) {
 		this.channelLogo = channelLogo;
+	}
+
+	public String getThumbNail() {
+		return thumbNail;
+	}
+
+	public void setThumbNail(String thumbNail) {
+		this.thumbNail = thumbNail;
 	}
 
 }
