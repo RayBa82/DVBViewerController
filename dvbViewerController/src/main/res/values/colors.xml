@@ -16,7 +16,8 @@
 -->
 <resources>
 
-	<color name="selectorPressed">#99D37629</color>
+	<color name="dark_orange">#fd7208</color>
+    <color name="light_orange">#f79428</color>
 	<color name="selectorLongclickHoloDark">#CC0099CC</color>
 	
 	<color name="selectorDisabledHoloDark">#80000000</color>

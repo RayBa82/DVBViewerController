@@ -16,13 +16,6 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="PreferenceCategory">
-        <item name="android:layout">@layout/preference_category</item>
-        <!-- The title should not dim if the category is disabled, instead only the preference children should dim. -->
-        <item name="android:shouldDisableView">false</item>
-        <item name="android:selectable">false</item>
-    </style>
-
     <style name="DashboardButton">
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_width">wrap_content</item>
