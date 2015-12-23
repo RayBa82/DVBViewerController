@@ -9,13 +9,6 @@
         <item name="android:actionBarStyle" tools:ignore="NewApi">@style/ActionBarStyle</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
         <item name="android:preferenceCategoryStyle">@style/PreferenceCategory</item>
-        <item name="android:editTextStyle">@style/EditTextHoloDark</item> 
-        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewHoloDark</item>
-        <item name="android:checkboxStyle">@style/CheckBoxHoloDark</item>
-        <item name="android:buttonStyle">@style/ButtonHoloDark</item>
-        <item name="android:imageButtonStyle">@style/ImageButtonHoloDark</item>
-        <item name="android:progressBarStyleHorizontal">@style/ProgressBarHoloDark</item>
-        <item name="android:radioButtonStyle">@style/RadioButtonHoloDark</item>
     </style>
 
     <style name="Theme.DVB.NoActionBar" parent="@style/Theme.AppCompat.NoActionBar">
@@ -25,13 +18,6 @@
         <item name="android:actionBarStyle" tools:ignore="NewApi">@style/ActionBarStyle</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
         <item name="android:preferenceCategoryStyle">@style/PreferenceCategory</item>
-        <item name="android:editTextStyle">@style/EditTextHoloDark</item>
-        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewHoloDark</item>
-        <item name="android:checkboxStyle">@style/CheckBoxHoloDark</item>
-        <item name="android:buttonStyle">@style/ButtonHoloDark</item>
-        <item name="android:imageButtonStyle">@style/ImageButtonHoloDark</item>
-        <item name="android:progressBarStyleHorizontal">@style/ProgressBarHoloDark</item>
-        <item name="android:radioButtonStyle">@style/RadioButtonHoloDark</item>
     </style>
 
 </resources>

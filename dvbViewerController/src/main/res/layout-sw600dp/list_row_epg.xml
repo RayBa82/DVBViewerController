@@ -20,7 +20,7 @@
 
         <TextView
             android:id="@+id/startTime"
-            style="@style/commonTitle"
+            style="@style/commonSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -30,6 +30,7 @@
 
         <TextView
             android:id="@+id/title"
+            style="@style/commonTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/startTime"
@@ -37,20 +38,18 @@
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:maxLines="2"
-            android:text="Test"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="Test" />
 
         <TextView
             android:id="@+id/description"
+            style="@style/commonSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/title"
             android:layout_below="@+id/title"
             android:ellipsize="end"
             android:maxLines="4"
-            android:text="Test"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:text="Test" />
     </RelativeLayout>
 
     <LinearLayout
