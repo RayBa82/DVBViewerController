@@ -544,7 +544,19 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     return true;
                 case R.id.menuTimer:
                     timer = cursorToTimer(c);
-                    if (!UIUtils.isTablet(getActivity())) {
+                    if (UIUtils.isTablet(getActivity())) {
+                        TimerDetails timerdetails = TimerDetails.newInstance();
+                        Bundle args = new Bundle();
+                        args.putString(TimerDetails.EXTRA_TITLE, timer.getTitle());
+                        args.putString(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
+                        args.putLong(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
+                        args.putLong(TimerDetails.EXTRA_START, timer.getStart().getTime());
+                        args.putLong(TimerDetails.EXTRA_END, timer.getEnd().getTime());
+                        args.putInt(TimerDetails.EXTRA_ACTION, timer.getTimerAction());
+                        args.putBoolean(TimerDetails.EXTRA_ACTIVE, true);
+                        timerdetails.setArguments(args);
+                        timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
+                    }else{
                         Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
                         timerIntent.putExtra(TimerDetails.EXTRA_TITLE, timer.getTitle());
                         timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
