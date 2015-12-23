@@ -63,14 +63,11 @@ import java.util.List;
  * The Class StreamConfig.
  *
  * @author RayBa
- * @date 07.04.2013
  */
 public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener {
 
-	public static final String	TAG_URI					= "_uri";
 	public static final String	EXTRA_FILE_ID			= "_fileID";
 	public static final String	EXTRA_FILE_TYPE			= "_fileType";
-	public static final String	EXTRA_STREAM_TYPE		= "_streamType";
 	public static final String	EXTRA_DIALOG_TITLE_RES	= "_dialog_title_res";
 	public static final int		FILE_TYPE_LIVE			= 0;
 	public static final int		FILE_TYPE_RECORDING		= 1;
@@ -125,33 +122,39 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					String ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
-					FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
-					ffmpegprefs = prefsHandler.parse(ffmpegprefsString);
-					final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, ffmpegprefs);
-					dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					getActivity().runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							qualitySpinner.setAdapter(dataAdapter);
-							int pos = prefs.getInt(DVBViewerPreferences.KEY_STREAM_QUALITY, 0);
-							qualitySpinner.setSelection(pos >= dataAdapter.getCount() ? dataAdapter.getPosition("TS Mid 1200 kbit") : pos);
-						}
-					});
-
-				} catch (AuthenticationException e) {
-					e.printStackTrace();
-				} catch (DefaultHttpException e) {
-					e.printStackTrace();
-				} catch (SAXException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				updateQualitySpinner();
 			}
 		}).start();
 
+	}
+
+	private void updateQualitySpinner() {
+		try {
+            String ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+            if (!TextUtils.isEmpty(ffmpegprefsString)){
+                FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
+                ffmpegprefs = prefsHandler.parse(ffmpegprefsString);
+                final ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, ffmpegprefs);
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        qualitySpinner.setAdapter(dataAdapter);
+                        int pos = prefs.getInt(DVBViewerPreferences.KEY_STREAM_QUALITY, 0);
+                        qualitySpinner.setSelection(pos >= dataAdapter.getCount() ? dataAdapter.getPosition("TS Mid 1200 kbit") : pos);
+                    }
+                });
+            }
+
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        } catch (DefaultHttpException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 
 	private static String rebuildProtectedFlashUrl() {
