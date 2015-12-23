@@ -18,6 +18,8 @@
 
 	<color name="dark_orange">#fd7208</color>
     <color name="light_orange">#f79428</color>
+    <color name="primary_text_color">@android:color/white</color>
+    <color name="secondary_text_color">#fff3f3f3</color>
 	<color name="selectorLongclickHoloDark">#CC0099CC</color>
 	
 	<color name="selectorDisabledHoloDark">#80000000</color>
@@ -34,6 +36,6 @@
     <color name="dim_foreground_holo_dark">#bebebe</color>
     <color name="dim_foreground_disabled_holo_dark">#80bebebe</color>
     <color name="holo_red_dark">#ffcc0000</color>
-	
+
 
 </resources>

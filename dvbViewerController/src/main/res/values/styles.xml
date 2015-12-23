@@ -29,7 +29,7 @@
     <style name="commonTitle" parent="@android:style/TextAppearance">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@drawable/primary_text_holo_dark</item>
+        <item name="android:textColor">@color/primary_text_color</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:maxLines">2</item>
     </style>
