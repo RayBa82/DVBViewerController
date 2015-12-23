@@ -1,34 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" xmlns:tools="http://schemas.android.com/tools">
+    android:minHeight="480dp"
+    android:minWidth="320dp"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:fillViewport="true" >
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="5dp" >
+            android:padding="5dp">
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:padding="5dp" >
+                android:padding="5dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:orientation="vertical"
-                    android:padding="5dp" >
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/titleCaption"
@@ -36,22 +41,40 @@
                         android:layout_height="wrap_content"
                         android:text="@string/title" />
 
-                    <TextView
+                    <EditText
                         android:id="@+id/titleField"
                         style="@style/EditTextHoloDark"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
+                        android:nextFocusLeft="@id/titleField"
+                        android:nextFocusUp="@id/titleField"
                         android:text="@string/title" />
 
                 </LinearLayout>
+
+
+                <CheckBox
+                    android:id="@+id/activeBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/active" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:padding="5dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:padding="5dp" >
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/dateCaption"
@@ -70,27 +93,12 @@
                         android:inputType="none" />
                 </LinearLayout>
 
-                <CheckBox
-                    android:id="@+id/activeBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/active" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:padding="5dp" >
-
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:padding="5dp" >
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/startCaption"
@@ -112,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:padding="5dp" >
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/stopCaption"
@@ -129,12 +137,21 @@
                         android:inputType="none" />
                 </LinearLayout>
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:padding="5dp" >
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/channelCaption"
@@ -147,27 +164,27 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|center_horizontal"
-                        android:padding="5dp" >
-                    </TextView>
+                        android:padding="5dp"></TextView>
                 </LinearLayout>
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="5dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/postTimerAction" />
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="5dp">
 
-                <Spinner
-                    android:id="@+id/postRecordingSpinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/postRecoridngActions" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/postTimerAction" />
+
+                    <Spinner
+                        android:id="@+id/postRecordingSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/postRecoridngActions" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -183,7 +200,7 @@
         android:minHeight="@dimen/alert_dialog_button_bar_height"
         android:orientation="vertical"
         android:showDividers="beginning"
-        tools:ignore="NewApi" >
+        tools:ignore="NewApi">
 
         <LinearLayout
             android:id="@+id/buttonPanel1"
@@ -193,7 +210,7 @@
             android:dividerPadding="0dip"
             android:minHeight="@dimen/alert_dialog_button_bar_height"
             android:orientation="horizontal"
-            android:showDividers="middle" >
+            android:showDividers="middle">
 
             <Button
                 android:id="@+id/buttonCancel"
