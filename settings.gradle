@@ -1,3 +1,2 @@
 include ':showCaseView'
-include ':androidsupportv4preferencefragment'
 include ':dvbViewerController'
