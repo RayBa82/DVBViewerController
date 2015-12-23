@@ -25,7 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
 import android.util.SparseBooleanArray;
@@ -98,7 +98,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		setEmptyText(getResources().getString(R.string.no_timer));
 		if (mode != null) {
-			ActionBarActivity activty = (ActionBarActivity) getActivity();
+			AppCompatActivity activty = (AppCompatActivity) getActivity();
 			mode = activty.startSupportActionMode(this);
 		}
 	}
@@ -318,7 +318,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		getListView().setItemChecked((Integer) buttonView.getTag(), isChecked);
 		int checkedCount = getCheckedItemCount();
 		if (mode == null && checkedCount > 0) {
-			ActionBarActivity activity = (ActionBarActivity) getActivity();
+			AppCompatActivity activity = (AppCompatActivity) getActivity();
 			mode = activity.startSupportActionMode(TimerList.this);
 		} else if (checkedCount <= 0) {
 			if (mode != null) {

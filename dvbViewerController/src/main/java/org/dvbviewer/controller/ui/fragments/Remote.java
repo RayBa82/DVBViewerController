@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -143,9 +143,9 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (!UIUtils.isTablet(getActivity())) {
-            ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
+            ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         }
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inititalize();
         prefs = new DVBViewerPreferences(getActivity());
         version = prefs.getString(DVBViewerPreferences.KEY_RS_VERSION);

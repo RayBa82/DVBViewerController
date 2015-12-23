@@ -25,7 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
@@ -115,7 +115,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		getListView().setOnItemLongClickListener(this);
 		if (savedInstanceState != null && savedInstanceState.getBoolean(ACTION_MODE, false)) {
-			ActionBarActivity activity = (ActionBarActivity) getActivity();
+			AppCompatActivity activity = (AppCompatActivity) getActivity();
 			mode = activity.startSupportActionMode(this);
 			updateActionModeTitle(savedInstanceState.getInt(CHECKED_ITEM_COUNT));
 		}
@@ -180,7 +180,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		int count = getCheckedItemCount();
 		if (actionMode == false) {
 			actionMode = true;
-			ActionBarActivity activty = (ActionBarActivity) getActivity();
+			AppCompatActivity activty = (AppCompatActivity) getActivity();
 			mode = activty.startSupportActionMode(RecordingList.this);
 		}
 		updateActionModeTitle(count);

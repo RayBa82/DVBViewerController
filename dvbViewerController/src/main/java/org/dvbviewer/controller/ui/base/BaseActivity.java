@@ -22,7 +22,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +43,7 @@ import org.dvbviewer.controller.utils.Config;
  * activities should inherit from {@link BaseSinglePaneActivity} or
  * {@link BaseMultiPaneActivity}.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
 	public static final String	DATA	= "_uri";
     public static final String TAG = BaseActivity.class.getSimpleName();
@@ -167,7 +167,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 	 * @author RayBa
 	 * @date 07.04.2013
 	 */
-	public static interface AsyncCallback {
+	public interface AsyncCallback {
 
 		/**
 		 * On async action start.
@@ -175,7 +175,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 		 * @author RayBa
 		 * @date 07.04.2013
 		 */
-		public void onAsyncActionStart();
+		void onAsyncActionStart();
 
 		/**
 		 * On async action stop.
@@ -183,7 +183,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 		 * @author RayBa
 		 * @date 07.04.2013
 		 */
-		public void onAsyncActionStop();
+		void onAsyncActionStop();
 
 	}
 
