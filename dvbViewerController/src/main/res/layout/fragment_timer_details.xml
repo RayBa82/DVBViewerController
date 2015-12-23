@@ -125,24 +125,37 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/channelCaption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/channel" />
-
-            <TextView
-                android:id="@+id/channelField"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:padding="5dp"></TextView>
-
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/channelCaption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/channel" />
+
+                <TextView
+                    android:id="@+id/channelField"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:padding="5dp"></TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -156,6 +169,7 @@
                     android:entries="@array/postRecoridngActions" />
             </LinearLayout>
         </LinearLayout>
+</LinearLayout>
     </ScrollView>
 
     <LinearLayout
