@@ -20,7 +20,7 @@ ext {
     applicationId = "org.dvbviewer.controller"
     compileSdkVersion = 23
     buildToolsVersion = "23.0.2"
-    minSdkVersion = 7
+    minSdkVersion = 9
     targetSdkVersion = 23
     appcompatVersion = "23.1.0"
     versionCode = buildVersionCode
