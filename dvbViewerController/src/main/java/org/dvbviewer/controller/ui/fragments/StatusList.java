@@ -35,15 +35,19 @@ import org.dvbviewer.controller.io.AuthenticationException;
 import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.data.Status2Handler;
 import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.CategoryAdapter;
 import org.dvbviewer.controller.utils.Config;
+import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.xml.sax.SAXException;
+
+import java.text.MessageFormat;
 
 /**
  * The Class StatusList.
@@ -93,19 +97,24 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             public Status loadInBackground() {
                 Status result = null;
                 try {
-                    String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
-                    StatusHandler statusHandler = new StatusHandler();
-                    result = statusHandler.parse(statusXml);
                     String version = RecordingService.getVersionString();
+
+                    if (!Config.isRSVersionSupported(version)) {
+                        showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
+                        return null;
+                    }
+                    String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
+                    Status2Handler status2Handler = new Status2Handler();
+                    result = status2Handler.parse(status2Xml);
+                    StatusHandler statusHandler = new StatusHandler();
+                    String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
+                    Status oldStatus = statusHandler.parse(statusXml);
                     StatusItem versionItem = new StatusItem();
                     versionItem.setNameRessource(R.string.status_rs_version);
                     versionItem.setValue(version);
                     result.getItems().add(0, versionItem);
-                    String jsonClients = null;
-                    if (Config.isRemoteSupported(version)) {
-                        jsonClients = RecordingService.getDVBViewerTargets();
-                    }
-
+                    String jsonClients = RecordingService.getDVBViewerTargets();
+                    result.getItems().addAll(oldStatus.getItems());
                     DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
                     SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
                     if (jsonClients != null) {
@@ -275,11 +284,10 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             holder.statusText.setVisibility(View.VISIBLE);
             switch (mItems.get(position).getNameRessource()) {
                 case R.string.status_epg_update_running:
+                case R.string.status_standby_blocked:
                     holder.statusText.setText(Integer.valueOf(mItems.get(position).getValue()) == 0 ? R.string.no : R.string.yes);
                     break;
                 case R.string.status_epg_before:
-                    holder.statusText.setText(mItems.get(position).getValue() + " " + mRes.getString(R.string.minutes));
-                    break;
                 case R.string.status_epg_after:
                     holder.statusText.setText(mItems.get(position).getValue() + " " + mRes.getString(R.string.minutes));
                     break;
@@ -289,6 +297,11 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                     break;
                 case R.string.status_def_after_record:
                     holder.statusText.setText(mRes.getStringArray(R.array.postRecoridngActions)[Integer.valueOf(mItems.get(position).getValue())]);
+                    break;
+                case R.string.status_last_ui_access:
+                case R.string.status_next_Rec:
+                case R.string.status_next_timer:
+                    holder.statusText.setText(DateUtils.secondsToReadableFormat(Long.valueOf(mItems.get(position).getValue())));
                     break;
                 default:
                     holder.statusText.setText(mItems.get(position).getValue());

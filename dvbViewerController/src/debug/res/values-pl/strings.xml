@@ -157,7 +157,7 @@
     <string name="support_this_app">Wsparcie aplikacji</string>
     <string name="quick_stream_hint_title">Strumieniuj kanał</string>
     <string name="quick_stream_hint_text">Strumieniowanie po kliknięciu na logo kanału</string>
-    <string name="version_unsupported_text">Ta Usługa nagrywania nie jest obsługiwana. Musisz mieć wersję nowszą niż 1.30.1.0, aby korzystać z funkcji sterowania.</string>
+    <string name="version_unsupported_text">Nagranie Serwis wersja jest obsługiwana. Jest wymagane w wersji 1.32.0.0 lub nowszej</string>
     <string name="version_unsupported_title">Nieobsługiwana wersja</string>
     <string name="recording_folder">Folder nagrań</string>
 

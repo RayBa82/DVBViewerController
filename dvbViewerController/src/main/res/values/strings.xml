@@ -104,6 +104,16 @@
     <string name="status_rs_version">Recording Service Version</string>
     <string name="status_current_recordings">Running Recordings</string>
     <string name="status_current_clients">Connected Clients</string>
+    <string name="status_current_rtsp_clients">Connected RTSP Clients</string>
+    <string name="status_current_unicast_clients">Connected Unicast Clients</string>
+    <string name="status_next_Rec">Next Recording</string>
+    <string name="status_next_timer">Next Timer</string>
+    <string name="status_last_ui_access">Last Web Access</string>
+    <string name="status_standby_blocked">Standby blocked</string>
+    <string name="status_tunercount">Used tuner</string>
+    <string name="status_stream_tunercount">Streaming Tuner</string>
+    <string name="status_record_tunercount">Recording Tuner</string>
+    <string name="status_recfiles">Recordings</string>
     <string name="status_epg_update_running">EPG Update Running</string>
     <string name="status_epg_before">Time Before</string>
     <string name="status_epg_after">Time After</string>
@@ -157,7 +167,7 @@
     <string name="support_this_app">Support this App</string>
     <string name="quick_stream_hint_title">Stream Channel</string>
     <string name="quick_stream_hint_text">Start a stream by clicking on the channel logo</string>
-    <string name="version_unsupported_text">Your Recording Service Version is unsupported. You must run a Version higher than 1.30.1.0 to use the remote function</string>
+    <string name="version_unsupported_text">Your Recording Service Version is unsupported. Version {0} or higher is required.</string>
     <string name="version_unsupported_title">Version unsupported</string>
     <string name="recording_folder">Recording directory</string>
 

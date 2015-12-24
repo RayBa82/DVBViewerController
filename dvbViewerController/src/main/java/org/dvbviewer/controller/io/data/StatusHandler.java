@@ -16,7 +16,6 @@
 package org.dvbviewer.controller.io.data;
 
 import android.sax.Element;
-import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
@@ -54,15 +53,10 @@ public class StatusHandler extends DefaultHandler {
 	 */
 	public Status parse(String xml) throws SAXException {
 		RootElement root = new RootElement("status");
-		Element recordcount = root.getChild("recordcount");
-		Element clientcount = root.getChild("clientcount");
-		Element epgudate = root.getChild("epgudate");
 		Element epgbefore = root.getChild("epgbefore");
 		Element epgafter = root.getChild("epgafter");
 		Element timezone = root.getChild("timezone");
 		Element defafterrecord = root.getChild("defafterrecord");
-		Element recfolders = root.getChild("recfolders");
-		Element folder = recfolders.getChild("folder");
 
 		root.setStartElementListener(new StartElementListener() {
 
@@ -73,43 +67,6 @@ public class StatusHandler extends DefaultHandler {
 			}
 		});
 
-		recordcount.setEndTextElementListener(new EndTextElementListener() {
-
-			@Override
-			public void end(String body) {
-				status.setRecordCount(Integer.valueOf(body));
-				StatusItem item = new StatusItem();
-				item.setNameRessource(R.string.status_current_recordings);
-				item.setValue(body);
-				status.getItems().add(item);
-			}
-		});
-
-		clientcount.setEndTextElementListener(new EndTextElementListener() {
-
-			@Override
-			public void end(String body) {
-				status.setClientCount(Integer.valueOf(body));
-				StatusItem item = new StatusItem();
-				item.setNameRessource(R.string.status_current_clients);
-				item.setValue(body);
-				status.getItems().add(item);
-			}
-
-		});
-
-		epgudate.setEndTextElementListener(new EndTextElementListener() {
-
-			@Override
-			public void end(String body) {
-				status.setEpgUdate(Integer.valueOf(body));
-				StatusItem item = new StatusItem();
-				item.setNameRessource(R.string.status_epg_update_running);
-				item.setValue(body);
-				status.getItems().add(item);
-			}
-
-		});
 
 		epgbefore.setEndTextElementListener(new EndTextElementListener() {
 
@@ -155,36 +112,6 @@ public class StatusHandler extends DefaultHandler {
 				item.setNameRessource(R.string.status_def_after_record);
 				item.setValue(body);
 				status.getItems().add(item);
-			}
-		});
-		recfolders.setStartElementListener(new StartElementListener() {
-
-			@Override
-			public void start(Attributes attributes) {
-				status.setFolders(new ArrayList<Status.Folder>());
-			}
-		});
-		folder.setStartElementListener(new StartElementListener() {
-
-			@Override
-			public void start(Attributes attributes) {
-				currentFolder = new Folder();
-				currentFolder.setSize(Long.valueOf(attributes.getValue("size")));
-				currentFolder.setFree(Long.valueOf(attributes.getValue("free")));
-			}
-		});
-		folder.setEndTextElementListener(new EndTextElementListener() {
-
-			@Override
-			public void end(String body) {
-				currentFolder.setPath(body);
-			}
-		});
-		folder.setEndElementListener(new EndElementListener() {
-
-			@Override
-			public void end() {
-				status.getFolders().add(currentFolder);
 			}
 		});
 		Xml.parse(xml, root.getContentHandler());
