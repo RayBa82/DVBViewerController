@@ -121,9 +121,9 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                         prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
                     }
                     prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, result.getEpgBefore());
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, result.getEpgAfter());
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, result.getDefAfterRecord());
+                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.getEpgBefore());
+                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
+                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
                     prefEditor.commit();
                 } catch (AuthenticationException e) {
                     e.printStackTrace();

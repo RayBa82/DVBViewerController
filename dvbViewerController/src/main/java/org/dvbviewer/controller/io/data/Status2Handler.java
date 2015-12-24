@@ -83,7 +83,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setRecordCount(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_current_recordings);
                 item.setValue(body);
@@ -95,7 +94,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setClientCount(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_current_clients);
                 item.setValue(body);
@@ -108,7 +106,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setEpgUdate(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_epg_update_running);
                 item.setValue(body);
@@ -121,7 +118,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setEpgBefore(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_current_rtsp_clients);
                 item.setValue(body);
@@ -134,7 +130,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setEpgAfter(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_current_unicast_clients);
                 item.setValue(body);
@@ -145,7 +140,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setTimeZone(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_next_timer);
                 item.setValue(body);
@@ -156,7 +150,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setTimeZone(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_next_Rec);
                 item.setValue(body);
@@ -167,7 +160,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setTimeZone(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_last_ui_access);
                 item.setValue(body);
@@ -178,7 +170,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setDefAfterRecord(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_standby_blocked);
                 item.setValue(body);
@@ -189,7 +180,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setDefAfterRecord(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_tunercount);
                 item.setValue(body);
@@ -200,7 +190,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setDefAfterRecord(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_stream_tunercount);
                 item.setValue(body);
@@ -211,7 +200,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setDefAfterRecord(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_record_tunercount);
                 item.setValue(body);
@@ -222,7 +210,6 @@ public class Status2Handler extends DefaultHandler {
 
             @Override
             public void end(String body) {
-                status.setDefAfterRecord(Integer.valueOf(body));
                 StatusItem item = new StatusItem();
                 item.setNameRessource(R.string.status_recfiles);
                 item.setValue(body);
