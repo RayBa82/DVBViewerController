@@ -286,7 +286,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
                     i.putExtra(TimerDetails.EXTRA_END, timer.getEnd().getTime());
                     i.putExtra(TimerDetails.EXTRA_ACTION, timer.getTimerAction());
                     i.putExtra(TimerDetails.EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
-                    startActivityForResult(i, TimerDetails.TIMER_CHANGED);
+                    startActivityForResult(i, TimerDetails.TIMER_RESULT);
             }
     }
 
@@ -296,7 +296,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == TimerDetails.TIMER_CHANGED && resultCode == TimerDetails.RESULT_CHANGED) {
+		if (requestCode == TimerDetails.TIMER_RESULT && resultCode == TimerDetails.RESULT_CHANGED) {
 			refresh();
 		}
 	}

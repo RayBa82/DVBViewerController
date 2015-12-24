@@ -57,9 +57,8 @@ import java.util.GregorianCalendar;
  */
 public class TimerDetails extends DialogFragment implements OnDateSetListener, OnClickListener, OnLongClickListener {
 
-	public static final int			TIMER_CHANGED		= 0;
+	public static final int			TIMER_RESULT		= 0;
 	public static final int			RESULT_CHANGED		= 1;
-	public static final int			RESULT_NO_CHANGE	= 2;
 
 	public static final String		EXTRA_ID			= "_id";
 	public static final String		EXTRA_TITLE			= "_title";
@@ -300,11 +299,20 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 			break;
 		case R.id.buttonCancel:
 			if (mOntimeredEditedListener != null) {
-				mOntimeredEditedListener.timerEdited(true);
+				mOntimeredEditedListener.timerEdited(false);
 			}
 			dismiss();
 			break;
 		case R.id.buttonOk:
+			timer.setStart(startField.getDate());
+			timer.setEnd(stopField.getDate());
+			timer.setTitle(titleField.getText().toString());
+			timer.setTimerAction(postRecordSpinner.getSelectedItemPosition());
+			if (activeBox.isChecked()){
+				timer.unsetFlag(Timer.FLAG_DISABLED);
+			}else{
+				timer.setFlag(Timer.FLAG_DISABLED);
+			}
 			String query = buildTimerUrl(timer);
 			RecordingServiceGet rsGet = new RecordingServiceGet(query);
 			Thread executionThread = new Thread(rsGet);
@@ -333,7 +341,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
 		builder.addQueryParameter("dor", days);
 		builder.addQueryParameter("encoding", "255");
-		builder.addQueryParameter("enable", "1");
+		builder.addQueryParameter("enable", timer.isFlagSet(Timer.FLAG_DISABLED) ? "0" : "1");
 		builder.addQueryParameter("start", start);
 		builder.addQueryParameter("stop", stop);
 		builder.addQueryParameter("title", title);
