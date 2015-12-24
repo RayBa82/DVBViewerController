@@ -66,7 +66,6 @@ import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
-import org.dvbviewer.controller.entities.Status;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.AuthenticationException;
 import org.dvbviewer.controller.io.DefaultHttpException;
@@ -77,7 +76,6 @@ import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
 import org.dvbviewer.controller.io.data.ChannelHandler;
 import org.dvbviewer.controller.io.data.EpgEntryHandler;
 import org.dvbviewer.controller.io.data.FavouriteHandler;
-import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.EpgPagerActivity;
@@ -206,138 +204,126 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle bundle) {
         Loader<Cursor> loader = null;
-        String version = prefs.getString(DVBViewerPreferences.KEY_RS_VERSION);
-        if (TextUtils.isEmpty(version) || Config.isRSVersionSupported(version)) {
-            switch (loaderId) {
-                case LOADER_CHANNELLIST:
+        switch (loaderId) {
+            case LOADER_CHANNELLIST:
+                String selection = showFavs ? ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0" : ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0";
+                String orderBy = showFavs ? ChannelTbl.FAV_POSITION : ChannelTbl.POSITION;
+                loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection, null, orderBy);
+                break;
+            case LOADER_EPG:
+                loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
 
-                    String selection = showFavs ? ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0" : ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0";
-                    String orderBy = showFavs ? ChannelTbl.FAV_POSITION : ChannelTbl.POSITION;
-                    loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection, null, orderBy);
-                    break;
-                case LOADER_EPG:
-                    loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
+                    @Override
+                    public Cursor loadInBackground() {
+                        loadEpg();
+                        return null;
+                    }
 
-                        @Override
-                        public Cursor loadInBackground() {
-                            List<EpgEntry> result = null;
-                            String nowFloat = org.dvbviewer.controller.utils.DateUtils.getFloatDate(new Date());
-                            String url = ServerConsts.URL_EPG + "&start=" + nowFloat + "&end=" + nowFloat;
-                            try {
-                                EpgEntryHandler handler = new EpgEntryHandler();
-                                String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
-                                result = handler.parse(xml);
-                                DbHelper helper = new DbHelper(getContext());
-                                helper.saveNowPlaying(result);
-                            } catch (AuthenticationException e) {
-                                e.printStackTrace();
-                                showToast(getStringSafely(R.string.error_invalid_credentials));
-                            } catch (DefaultHttpException e) {
-                                e.printStackTrace();
-                                showToast(e.getMessage());
-                            } catch (SAXException e) {
-                                e.printStackTrace();
-                                showToast(getStringSafely(R.string.error_parsing_xml));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
-                            }
-                            return null;
-                        }
+                };
+                break;
+            case LOADER_REFRESH_CHANNELLIST:
+                loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
 
+                    @Override
+                    public Cursor loadInBackground() {
+                        performRefresh();
+                        return null;
+                    }
 
-                    };
-                    break;
-                case LOADER_REFRESH_CHANNELLIST:
-                    loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
-
-                        @Override
-                        public Cursor loadInBackground() {
-
-                            try {
-                                /**
-                                 * Request the Status.xml to get some default Recordingservice Configs
-                                 */
-                                String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
-                                StatusHandler statusHandler = new StatusHandler();
-                                Status s = statusHandler.parse(statusXml);
-                                String version = RecordingService.getVersionString();
-
-                                /**
-                                 * Request the Channels
-                                 */
-                                if (!Config.isRSVersionSupported(version)) {
-                                    showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
-                                    return null;
-                                }
-
-                                DbHelper mDbHelper = new DbHelper(mContext);
-                                String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
-                                ChannelHandler channelHandler = new ChannelHandler();
-                                List<ChannelRoot> chans = channelHandler.parse(chanXml);
-                                mDbHelper.saveChannelRoots(chans);
-                                /**
-                                 * Request the Favourites
-                                 */
-                                String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
-                                if (!TextUtils.isEmpty(favXml)) {
-                                    FavouriteHandler handler = new FavouriteHandler();
-                                    List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
-                                    mDbHelper.saveFavGroups(favGroups);
-                                }
-
-                                mDbHelper.close();
-
-                                /**
-                                 * Get the Mac Address for WOL
-                                 */
-                                String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
-                                ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress;
-
-                                /**
-                                 * Get the DVBViewer Clients
-                                 */
-                                String jsonClients = RecordingService.getDVBViewerTargets();
-
-                                /**
-                                 * Save the data in sharedpreferences
-                                 */
-                                Editor prefEditor = prefs.getPrefs().edit();
-                                if (s != null) {
-                                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, s.getEpgBefore());
-                                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, s.getEpgAfter());
-                                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, s.getDefAfterRecord());
-                                }
-                                if (jsonClients != null) {
-                                    prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
-                                }
-                                prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
-                                prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
-                                prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-                                prefEditor.commit();
-                                Config.CHANNELS_SYNCED = true;
-                            } catch (AuthenticationException e) {
-                                e.printStackTrace();
-                                showToast(getStringSafely(R.string.error_invalid_credentials));
-                            } catch (DefaultHttpException e) {
-                                e.printStackTrace();
-                                showToast(e.getMessage());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                            }
-                            return null;
-                        }
-
-                    };
-                    break;
-                default:
-                    break;
-            }
-        }else{
-            showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
+                };
+                break;
+            default:
+                break;
         }
         return loader;
+    }
+
+    private void loadEpg() {
+        List<EpgEntry> result = null;
+        String nowFloat = DateUtils.getFloatDate(new Date());
+        String url = ServerConsts.URL_EPG + "&start=" + nowFloat + "&end=" + nowFloat;
+        try {
+            EpgEntryHandler handler = new EpgEntryHandler();
+            String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+            result = handler.parse(xml);
+            DbHelper helper = new DbHelper(getContext());
+            helper.saveNowPlaying(result);
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_invalid_credentials));
+        } catch (DefaultHttpException e) {
+            e.printStackTrace();
+            showToast(e.getMessage());
+        } catch (SAXException e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_parsing_xml));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+        }
+    }
+
+    private void performRefresh() {
+        try {
+            String version = RecordingService.getVersionString();
+            if (!Config.isRSVersionSupported(version)) {
+                showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
+                return;
+            }
+            /**
+             * Request the Channels
+             */
+            String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
+            ChannelHandler channelHandler = new ChannelHandler();
+            List<ChannelRoot> chans = channelHandler.parse(chanXml);
+            DbHelper mDbHelper = new DbHelper(mContext);
+            mDbHelper.saveChannelRoots(chans);
+            /**
+             * Request the Favourites
+             */
+            String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
+            if (!TextUtils.isEmpty(favXml)) {
+                FavouriteHandler handler = new FavouriteHandler();
+                List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
+                mDbHelper.saveFavGroups(favGroups);
+            }
+
+            mDbHelper.close();
+
+            /**
+             * Get the Mac Address for WOL
+             */
+            String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
+            ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress;
+
+            /**
+             * Get the DVBViewer Clients
+             */
+            String jsonClients = RecordingService.getDVBViewerTargets();
+
+            /**
+             * Save the data in sharedpreferences
+             */
+            Editor prefEditor = prefs.getPrefs().edit();
+            if (jsonClients != null) {
+                prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+            }
+            StatusList.getStatus(prefs, version);
+            prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
+            prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
+            prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
+            prefEditor.commit();
+            Config.CHANNELS_SYNCED = true;
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_invalid_credentials));
+        } catch (DefaultHttpException e) {
+            e.printStackTrace();
+            showToast(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
+        }
     }
 
 

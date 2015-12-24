@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -98,33 +99,11 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                 Status result = null;
                 try {
                     String version = RecordingService.getVersionString();
-
-                    if (!Config.isRSVersionSupported(version)) {
+                    if (!Config.isRSVersionSupported(version)){
                         showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
-                        return null;
+                        return result;
                     }
-                    String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
-                    Status2Handler status2Handler = new Status2Handler();
-                    result = status2Handler.parse(status2Xml);
-                    StatusHandler statusHandler = new StatusHandler();
-                    String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
-                    Status oldStatus = statusHandler.parse(statusXml);
-                    StatusItem versionItem = new StatusItem();
-                    versionItem.setNameRessource(R.string.status_rs_version);
-                    versionItem.setValue(version);
-                    result.getItems().add(0, versionItem);
-                    String jsonClients = RecordingService.getDVBViewerTargets();
-                    result.getItems().addAll(oldStatus.getItems());
-                    DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-                    SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
-                    if (jsonClients != null) {
-                        prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
-                    }
-                    prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.getEpgBefore());
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
-                    prefEditor.commit();
+                    result = getStatus(new DVBViewerPreferences(getActivity()), version);
                 } catch (AuthenticationException e) {
                     e.printStackTrace();
                     showToast(getStringSafely(R.string.error_invalid_credentials));
@@ -142,6 +121,33 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             }
         };
         return loader;
+    }
+
+    @Nullable
+    public static Status getStatus(DVBViewerPreferences prefs, String version) throws Exception {
+        Status result = null;
+        String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
+        Status2Handler status2Handler = new Status2Handler();
+        result = status2Handler.parse(status2Xml);
+        StatusHandler statusHandler = new StatusHandler();
+        String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
+        Status oldStatus = statusHandler.parse(statusXml);
+        StatusItem versionItem = new StatusItem();
+        versionItem.setNameRessource(R.string.status_rs_version);
+        versionItem.setValue(version);
+        result.getItems().add(0, versionItem);
+        String jsonClients = RecordingService.getDVBViewerTargets();
+        result.getItems().addAll(oldStatus.getItems());
+        SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
+        if (jsonClients != null) {
+            prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+        }
+        prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
+        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.getEpgBefore());
+        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
+        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
+        prefEditor.commit();
+        return result;
     }
 
 

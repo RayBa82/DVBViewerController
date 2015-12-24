@@ -46,9 +46,9 @@ import java.util.List;
  */
 public class DbHelper extends SQLiteOpenHelper {
 
-	private static final String	DATABASE_NAME		= "dvbviewer.db";
+	private static final String	DATABASE_NAME		= "dvbviewercontroller.db";
 
-	private static final int	DATABASE_VERSION	= 4;
+	private static final int	DATABASE_VERSION	= 1;
 
 	CursorFactory				mCursorFactory;
 

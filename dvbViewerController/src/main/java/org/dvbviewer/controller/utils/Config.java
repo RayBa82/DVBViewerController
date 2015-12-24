@@ -30,7 +30,7 @@ public class Config {
      */
     public static boolean IS_FIRST_START = false;
 
-    public static final String SUPPORTED_RS_VERSION = "1.32.0.0";
+    public static final String SUPPORTED_RS_VERSION = "1.32.0.1";
 
     /**
      * The rs profile names.
@@ -68,18 +68,6 @@ public class Config {
         String s2 = normalisedVersion(SUPPORTED_RS_VERSION);
         int cmp = s1.compareTo(s2);
         return cmp >= 0;
-    }
-
-    public static boolean isRemoteSupported(String version) {
-        boolean result = false;
-        if (TextUtils.isEmpty(version)) {
-            return result;
-        }
-        String s1 = normalisedVersion(version);
-        String s2 = normalisedVersion("1.30.1.0");
-        int cmp = s1.compareTo(s2);
-        result = cmp >= 0;
-        return result;
     }
 
     /**
