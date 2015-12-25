@@ -472,7 +472,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                 break;
         }
         String request = "";
-        request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
+        request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
         DVBViewerCommand httpCommand = new DVBViewerCommand(request);
         Thread executionThread = new Thread(httpCommand);
         executionThread.start();
@@ -487,7 +487,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         String command = "";
         switch (v.getId()) {
             case R.id.ButtonMenu:
-                String request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
+                String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
                 DVBViewerCommand httpCommand = new DVBViewerCommand(request);
                 Thread executionThread = new Thread(httpCommand);
                 executionThread.start();
