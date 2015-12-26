@@ -462,7 +462,6 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			p.setTitle("TS Mid 1200 kbit");
 			p.setExtension(".ts");
 			p.setMimeType("video/mpeg");
-			return null;
 		}
 		return p;
 	}
