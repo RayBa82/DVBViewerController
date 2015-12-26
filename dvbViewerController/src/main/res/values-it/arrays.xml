@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="postRecoridngActions">
-        <item>Keine Aktion</item>
-        <item>Herunterfahren</item>
+        <item>Nessuna Azione</item>
+        <item>Spegni</item>
         <item>Standby</item>
-        <item>Ruhemodus</item>
+        <item>Iberna</item>
     </string-array>
 </resources>

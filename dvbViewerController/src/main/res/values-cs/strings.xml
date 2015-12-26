@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="app_name">poznámky</string>
+    <string name="remote">dálkové ovládání</string>
+    <string name="title">název</string>
+    <string name="cancel">zrušit</string>
+    <string name="ok">ok</string>
+    <string name="refresh">obnovit</string>
+    <string name="record">nahrát</string>
+    <string name="yes">ano</string>
+    <string name="no">ne</string>
+    <string name="selected">označit</string>
+    <string name="switch_to">Přepněte na kanál</string>
+    <string name="minutes">minuty</string>
+    <string name="gmt">GMT</string>
+    <string name="details">Podrobnosti</string>
+    <string name="about">informace o</string>
+    <string name="about_app">informace o DVBViewer Controller</string>
+    <string name="version">App Verze:</string>
+    <!-- Channels -->
+    <!-- EPG -->
+    <!-- Recordings -->
+    <!-- Timer -->
+    <!-- Streaming -->
+    <!-- Tasks -->
+    <!-- Status -->
+    <!-- Dialogs -->
+    <!-- Preferences -->
+    <!-- Error -->
+</resources>

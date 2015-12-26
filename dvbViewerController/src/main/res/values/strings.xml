@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- Common -->
     <string name="app_name">DVBViewer Controller</string>
     <string name="remote">Remote</string>
@@ -20,7 +19,6 @@
     <string name="common_colon">:&#160;</string>
     <string name="about_app">About DVBViewer Controller</string>
     <string name="version">App Version:</string>
-
     <!-- Channels -->
     <string name="channelList">Channel List</string>
     <string name="refreshChannels">Synchronize channels</string>
@@ -28,7 +26,6 @@
     <string name="favourites">Favourites</string>
     <string name="no_channels">No channels found</string>
     <string name="no_favourites">No favourites found</string>
-
     <!-- EPG -->
     <string name="channelEPG">Channel EPG</string>
     <string name="today">Today</string>
@@ -39,12 +36,10 @@
     <string name="previousDay">Day back</string>
     <string name="nextDay">Day forward</string>
     <string name="no_epg">No EPG data found</string>
-
     <!-- Recordings -->
     <string name="recordings">Recording List</string>
     <string name="no_recordings">No recordings found</string>
     <string name="busyDeleteRecordings">Deleting Recording&#8230;</string>
-
     <!-- Timer -->
     <string name="timer">Timer</string>
     <string name="createTimer">Create Timer</string>
@@ -57,7 +52,6 @@
     <string name="postTimerAction">After Recording</string>
     <string name="busyDeleteTimer">Deleting Timer&#8230;</string>
     <string name="no_timer">No timer found</string>
-
     <!-- Streaming -->
     <string name="streamConfig">Stream Configuration</string>
     <string name="stream">Stream</string>
@@ -73,7 +67,6 @@
     <string name="stream_hours_hint">HH</string>
     <string name="stream_minutes_hint">MM</string>
     <string name="stream_seconds_hint">SS</string>
-
     <!-- Tasks -->
     <string name="tasks">Tasks</string>
     <string name="task_execute_security_question">Execute \"{0}\"?</string>
@@ -98,7 +91,6 @@
     <string name="Standby">Standby</string>
     <string name="Shutdown">Shutdown</string>
     <string name="WOL">Wake Recording Service</string>
-
     <!-- Status -->
     <string name="status">Status</string>
     <string name="status_rs_version">Recording Service Version</string>
@@ -121,14 +113,12 @@
     <string name="status_def_after_record">Action After Recording</string>
     <string name="status_folder_free">Free</string>
     <string name="status_folder_total">Total</string>
-
     <!-- Dialogs -->
     <string name="dialog_confirmation_title">Confirmation</string>
     <string name="firstStartMessageTitle">No Connection Settings Found</string>
     <string name="firstStartMessage">No conenction settings found.\n\nDo you want to switch to the settings?</string>
     <string name="confirmDelete">Delete selected Items?</string>
     <string name="noFlashPlayerFound">No suitable video player has been found. \nPlease install a Mpeg/Flash-capable player.</string>
-
     <!-- Preferences -->
     <string name="preferences">Settings</string>
     <string name="pref_seperator_connection">Connection Settings</string>
@@ -144,7 +134,7 @@
     <string name="pref_item_username_summary">Username if required</string>
     <string name="pref_item_password">Password</string>
     <string name="pref_item_password_summary">Password if required</string>
-    <string name="pref_item_rs_wol_on_start">Send WOL on App start </string>
+    <string name="pref_item_rs_wol_on_start">Send WOL on App start</string>
     <string name="pref_item_rs_wol_on_start_summary">Tries to wake up the Recording Service on start</string>
     <string name="pref_item_rs_live_stream_port">Live Streaming Port</string>
     <string name="pref_item_rs_live_stream_port_summary">Port for live TV streaming</string>
@@ -156,7 +146,6 @@
     <string name="pref_item_channel_show_current_program_wifi_summary">Shows the current program in the channel list only if WIFI is connected</string>
     <string name="pref_item_channel_fav">Use Favourites</string>
     <string name="pref_item_channel_fav_summary">Shows the favourites instead of the channels</string>
-
     <!-- Error -->
     <string name="error_common">Error</string>
     <string name="error_unknonwn_host">Unknown Host</string>
@@ -170,5 +159,4 @@
     <string name="version_unsupported_text">Your Recording Service Version is unsupported. Version {0} or higher is required.</string>
     <string name="version_unsupported_title">Version unsupported</string>
     <string name="recording_folder">Recording directory</string>
-
 </resources>

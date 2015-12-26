@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="postRecoridngActions">
-        <item>Keine Aktion</item>
-        <item>Herunterfahren</item>
-        <item>Standby</item>
-        <item>Ruhemodus</item>
+        <item>Žádná akce</item>
+        <item>zavřít</item>
+        <item>zapnuto</item>
+        <item>hibernace</item>
     </string-array>
 </resources>

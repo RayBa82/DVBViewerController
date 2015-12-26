@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string-array name="postRecoridngActions">
-        <item name="nothing">No Action</item>
-        <item name="shutDown">Shut Down</item>
-        <item name="standby">Standby</item>
-        <item name="hibernate">Hibernate</item>
+        <item>No Action</item>
+        <item>Shut Down</item>
+        <item>Standby</item>
+        <item>Hibernate</item>
     </string-array>
-
     <string-array name="ffmpegPresets" translatable="false">
-        <item name="medium" translatable="false">medium</item>
-        <item name="fast">fast</item>
-        <item name="faster">faster</item>
-        <item name="veryfast">veryfast</item>
-        <item name="superfast">superfast"</item>
-        <item name="ultrafast">ultrafast</item>
-        <item name="slow">slow</item>
-        <item name="slower">slower</item>
-        <item name="veryslow">veryslow</item>
-        <item name="placebo">placebo</item>
+        <item>fast</item>
+        <item>faster</item>
+        <item>veryfast</item>
+        <item>superfast\"</item>
+        <item>ultrafast</item>
+        <item>slow</item>
+        <item>slower</item>
+        <item>veryslow</item>
+        <item>placebo</item>
     </string-array>
-
 </resources>

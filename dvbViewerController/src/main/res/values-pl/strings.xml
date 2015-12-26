@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- Common -->
     <string name="app_name">DVBViewer Controller</string>
     <string name="remote">Sterowanie</string>
@@ -20,7 +19,6 @@
     <string name="common_colon">:&#160;</string>
     <string name="about_app">DVBViewer Controller</string>
     <string name="version">Wersja:</string>
-
     <!-- Channels -->
     <string name="channelList">Lista kanałów</string>
     <string name="refreshChannels">Synchronizowanie kanałów</string>
@@ -28,7 +26,6 @@
     <string name="favourites">Ulubione</string>
     <string name="no_channels">Brak kanałów</string>
     <string name="no_favourites">Brak ulubionych</string>
-
     <!-- EPG -->
     <string name="channelEPG">EPG kanału</string>
     <string name="today">Dzisiaj</string>
@@ -39,12 +36,10 @@
     <string name="previousDay">Dzień wcześniej</string>
     <string name="nextDay">Dzień później</string>
     <string name="no_epg">Brak danych EPG</string>
-
     <!-- Recordings -->
     <string name="recordings">Lista nagrań</string>
     <string name="no_recordings">Brak nagrań</string>
     <string name="busyDeleteRecordings">Usuń nagranie&#8230;</string>
-
     <!-- Timer -->
     <string name="timer">Programator</string>
     <string name="createTimer">Utwórz nagranie</string>
@@ -57,7 +52,6 @@
     <string name="postTimerAction">Po nagraniu</string>
     <string name="busyDeleteTimer">Usuń nagranie&#8230;</string>
     <string name="no_timer">Brak nagrań</string>
-
     <!-- Streaming -->
     <string name="streamConfig">Konfiguracja strumieniowania</string>
     <string name="stream">Strumieniuj</string>
@@ -73,7 +67,6 @@
     <string name="stream_hours_hint">HH</string>
     <string name="stream_minutes_hint">MM</string>
     <string name="stream_seconds_hint">SS</string>
-
     <!-- Tasks -->
     <string name="tasks">Zadania</string>
     <string name="task_execute_security_question">Wykonaj \"{0}\"?</string>
@@ -98,7 +91,6 @@
     <string name="Standby">Wstrzymanie</string>
     <string name="Shutdown">Wyłącz komputer</string>
     <string name="WOL">Obudź Usługę nagrywania</string>
-
     <!-- Status -->
     <string name="status">Status</string>
     <string name="status_rs_version">Wersja Usługi nagrywania</string>
@@ -111,14 +103,12 @@
     <string name="status_def_after_record">Po nagraniu</string>
     <string name="status_folder_free">Wolne</string>
     <string name="status_folder_total">Razem</string>
-
     <!-- Dialogs -->
     <string name="dialog_confirmation_title">Potwierdzenie</string>
     <string name="firstStartMessageTitle">Brak ustawień połączenia</string>
     <string name="firstStartMessage">Brak ustawień połączenia.\n\nCzy chcesz przejść do ustawień?</string>
     <string name="confirmDelete">Usunąć wybrane pozycje?</string>
     <string name="noFlashPlayerFound">Brak odpowiedniego odtwarzacza wideo. \nProszę zainstalować odtwarzacz kompatybilny z Mpeg/Flash.</string>
-
     <!-- Preferences -->
     <string name="preferences">Ustawienia</string>
     <string name="pref_seperator_connection">Ustawienia połączenia</string>
@@ -146,7 +136,6 @@
     <string name="pref_item_channel_show_current_program_wifi_summary">Pokazuje aktualny program na liście kanałów tylko, kiedy WIFI jest podłączone</string>
     <string name="pref_item_channel_fav">Użyj ulubionych</string>
     <string name="pref_item_channel_fav_summary">Wyświetla ulubione zamiast kanałów</string>
-
     <!-- Error -->
     <string name="error_common">Błąd</string>
     <string name="error_unknonwn_host">Nieznany adres</string>
@@ -160,5 +149,4 @@
     <string name="version_unsupported_text">Nagranie Serwis wersja jest obsługiwana. Jest wymagane w wersji {0} lub nowszej</string>
     <string name="version_unsupported_title">Nieobsługiwana wersja</string>
     <string name="recording_folder">Folder nagrań</string>
-
 </resources>

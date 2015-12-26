@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- Common -->
     <string name="app_name">DVBViewer Controller</string>
     <string name="remote">Fernbedienung</string>
@@ -17,9 +16,9 @@
     <string name="gmt">GMT</string>
     <string name="details">Details</string>
     <string name="about">Über</string>
+    <string name="common_colon">:&#160;</string>
     <string name="about_app">Über DVBViewer Controller</string>
     <string name="version">App Version:</string>
-
     <!-- Channels -->
     <string name="channelList">Senderliste</string>
     <string name="refreshChannels">Sender syncronisieren</string>
@@ -27,7 +26,6 @@
     <string name="favourites">Favoriten</string>
     <string name="no_channels">Keine Sender gefunden</string>
     <string name="no_favourites">Keine Favoriten gefunden</string>
-
     <!-- EPG -->
     <string name="channelEPG">Sender EPG</string>
     <string name="today">Heute</string>
@@ -38,12 +36,10 @@
     <string name="previousDay">Tag zurück</string>
     <string name="nextDay">Tag vorwärts</string>
     <string name="no_epg">Keine EPG Daten gefunden</string>
-
     <!-- Recordings -->
     <string name="recordings">Aufnahmen</string>
     <string name="no_recordings">Keine Aufnahmen gefunden</string>
     <string name="busyDeleteRecordings">Aufnahmen werden gelöscht&#8230;</string>
-
     <!-- Timer -->
     <string name="timer">Timer</string>
     <string name="createTimer">Timer anlegen</string>
@@ -56,7 +52,6 @@
     <string name="postTimerAction">Nach Aufnahme</string>
     <string name="busyDeleteTimer">Timer werden gelöscht&#8230;</string>
     <string name="no_timer">Keine Timer gefunden</string>
-
     <!-- Streaming -->
     <string name="streamConfig">Stream Konfiguration</string>
     <string name="stream">Stream</string>
@@ -72,7 +67,6 @@
     <string name="stream_hours_hint">HH</string>
     <string name="stream_minutes_hint">MM</string>
     <string name="stream_seconds_hint">SS</string>
-
     <!-- Tasks -->
     <string name="tasks">Aufgaben</string>
     <string name="task_execute_security_question">Aufgabe \"{0}\" ausführen?</string>
@@ -97,7 +91,6 @@
     <string name="Standby">Standby</string>
     <string name="Shutdown">Shutdown</string>
     <string name="WOL">Recording Service wecken</string>
-
     <!-- Status -->
     <string name="status">Status</string>
     <string name="status_rs_version">Recording Service Version</string>
@@ -120,14 +113,12 @@
     <string name="status_def_after_record">Standardaktion nach Aufnahme</string>
     <string name="status_folder_free">Frei</string>
     <string name="status_folder_total">Gesamt</string>
-
     <!-- Dialogs -->
     <string name="dialog_confirmation_title">Bestätigung</string>
     <string name="firstStartMessageTitle">Keine Verbindungseinstellungen gefunden</string>
     <string name="firstStartMessage">Es wurden keine Verbindungseinstellungen gefunden.\n\nMöchten Sie zu den Einstellungen wechseln</string>
     <string name="confirmDelete">Ausgewählte Elemente löschen?</string>
-    <string name="noFlashPlayerFound">Es wurde kein geeigneter VideoPlayer gefunden.\nBitte einen Mpeg/Flashfähigen player installieren! </string>
-
+    <string name="noFlashPlayerFound">Es wurde kein geeigneter VideoPlayer gefunden.\nBitte einen Mpeg/Flashfähigen player installieren!</string>
     <!-- Preferences -->
     <string name="preferences">Einstellungen</string>
     <string name="pref_seperator_connection">Verbindungseinstellungen</string>
@@ -143,7 +134,7 @@
     <string name="pref_item_username_summary">Benutzername, falls benötigt</string>
     <string name="pref_item_password">Passwort</string>
     <string name="pref_item_password_summary">Passwort, falls benötigt</string>
-    <string name="pref_item_rs_wol_on_start">Sende WOL beim App start </string>
+    <string name="pref_item_rs_wol_on_start">Sende WOL beim App start</string>
     <string name="pref_item_rs_wol_on_start_summary">Versucht den Recording Service beim App start zu wecken</string>
     <string name="pref_item_rs_live_stream_port">Live Streaming Port</string>
     <string name="pref_item_rs_live_stream_port_summary">Port zum streamen von Live TV</string>
@@ -155,7 +146,6 @@
     <string name="pref_item_channel_show_current_program_wifi_summary">Zeigt das laufende Programm nur bei aktiver Wlan Verbindung an</string>
     <string name="pref_item_channel_fav">Favoriten benutzen</string>
     <string name="pref_item_channel_fav_summary">Zeigt die Favoriten anstatt der Sender</string>
-
     <!-- Error -->
     <string name="error_common">Fehler</string>
     <string name="error_unknonwn_host">Unbekannter Host</string>
@@ -164,11 +154,9 @@
     <string name="error_invalid_url">Ungültige URL</string>
     <string name="error_invalid_credentials">Authentifizierung fehlgeschlagen</string>
     <string name="support_this_app">Die App unterstützen</string>
-
     <string name="quick_stream_hint_title">Sender streamen</string>
     <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
     <string name="version_unsupported_text">Ihre Recording Service Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
     <string name="version_unsupported_title">Version zu alt</string>
-    <string name="common_colon">:&#160;</string>
     <string name="recording_folder">Aufnahmeordner</string>
 </resources>
