@@ -1,14 +1,11 @@
 package org.dvbviewer.controller.io.data;
 
-import android.text.TextUtils;
-
 import org.dvbviewer.controller.entities.FfMpegPrefs;
 import org.dvbviewer.controller.entities.Preset;
-import org.ini4j.Ini;
-import org.ini4j.Profile.Section;
+import org.dvbviewer.controller.utils.INIParser;
 
 import java.io.IOException;
-import java.io.StringReader;
+import java.util.Iterator;
 
 /**
  * Created by karlw on 18.12.2015.
@@ -18,25 +15,34 @@ public class FFMPEGPrefsHandler {
     public FfMpegPrefs parse(String ffmpegprefs) {
         FfMpegPrefs ffPrefs = new FfMpegPrefs();
         try {
-            Ini ini = new Ini(new StringReader(ffmpegprefs));
-            ffPrefs.setVersion(ini.get("Version").get("Version"));
-            for (String sectionName : ini.keySet()){
-                Section section = ini.get(sectionName);
-                final String cmd = section.get("Cmd");
-                if (!TextUtils.isEmpty(cmd)){
+            INIParser iniParser = new INIParser(ffmpegprefs);
+            ffPrefs.setVersion(iniParser.getString("Version", "Version"));
+            Iterator<String> sectionIterator = iniParser.getSections();
+            while(sectionIterator.hasNext()){
+                String sectionName = sectionIterator.next();
+                if (isPreset(iniParser, sectionName)){
                     Preset preset = new Preset();
                     preset.setTitle(sectionName);
-                    preset.setMimeType(section.get("MimeType"));
-                    preset.setExtension(section.get("Ext"));
+                    preset.setMimeType(iniParser.getString(sectionName, "MimeType"));
+                    preset.setExtension(iniParser.getString(sectionName, "Ext"));
                     ffPrefs.getPresets().add(preset);
-                }
-                for (String optionKey: section.keySet()) {
-                    System.out.println("\t"+optionKey+"="+section.get(optionKey));
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return ffPrefs;
+    }
+
+    private boolean isPreset(INIParser iniParser, String sectionName) {
+        Iterator<String> keysIterator = iniParser.getKeys(sectionName);
+        boolean isPreset = false;
+        while(keysIterator.hasNext()){
+            String keyName = keysIterator.next();
+            if ("Cmd".equals(keyName)){
+                isPreset = true;
+            }
+        }
+        return isPreset;
     }
 }
