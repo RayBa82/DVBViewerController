@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="app_name">DVBViewer Controller</string>
+    <string name="remote">Telecomando</string>
+    <string name="title">Titolo</string>
+    <string name="cancel">Annulla</string>
+    <string name="ok">OK</string>
+    <string name="refresh">Aggiorna</string>
+    <string name="record">Registra</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="selected">selezionato</string>
+    <string name="switch_to">Passa al canale</string>
+    <string name="minutes">minuti</string>
+    <string name="gmt">GMT</string>
+    <string name="details">Dettagli</string>
+    <string name="about">Info Su...</string>
+    <string name="common_colon">:&#160;</string>
+    <string name="about_app">Info su DVBViewer Controller</string>
+    <string name="version">Versione App:</string>
+    <!-- Channels -->
+    <string name="channelList">Lista canali</string>
+    <string name="refreshChannels">Sincronizza Canali</string>
+    <string name="refresh_now_playing">Aggiorna EPG</string>
+    <string name="favourites">Preferiti</string>
+    <string name="no_channels">Nessun canale trovato</string>
+    <string name="no_favourites">Nessun preferito trovato</string>
+    <!-- EPG -->
+    <string name="channelEPG">EPG</string>
+    <string name="today">Oggi</string>
+    <string name="time">Tempo</string>
+    <string name="now">Adesso</string>
+    <string name="evening">Sera</string>
+    <string name="tomorrow">Domani</string>
+    <string name="previousDay">Giorni precedenti</string>
+    <string name="nextDay">Giorni successivi</string>
+    <string name="no_epg">EPG non disponibile</string>
+    <!-- Recordings -->
+    <string name="recordings">Registrazioni</string>
+    <string name="no_recordings">Nessuna registrazione trovata</string>
+    <string name="busyDeleteRecordings">Cancellazione Registrazione&#8230;</string>
+    <!-- Timer -->
+    <string name="timer">Timer</string>
+    <string name="createTimer">Crea Timer</string>
+    <string name="editTimer">Modifica Timer</string>
+    <string name="date">Data</string>
+    <string name="active">Attivo</string>
+    <string name="start">Inizia</string>
+    <string name="stop">Ferma</string>
+    <string name="channel">Canale</string>
+    <string name="postTimerAction">Dopo la registrazione</string>
+    <string name="busyDeleteTimer">Cancellazione Timer&#8230;</string>
+    <string name="no_timer">Nessun timer Trovato</string>
+    <!-- Streaming -->
+    <string name="streamConfig">Configurazione Streaming</string>
+    <string name="stream">Stream</string>
+    <string name="quality">Qualità</string>
+    <string name="aspectRatio">Rapporto d\'aspetto</string>
+    <string name="ffmpegpreset">Preset FFMPEG</string>
+    <string name="maxHeight">Altezza Max</string>
+    <string name="maxWidth">Larghezza Max</string>
+    <string name="streamStart">Inizia Stream</string>
+    <string name="streamTranscoded">Stream codificato</string>
+    <string name="streamDirect">Streaming Diretto</string>
+    <string name="stream_position">Posizione</string>
+    <string name="stream_hours_hint">HH</string>
+    <string name="stream_minutes_hint">MM</string>
+    <string name="stream_seconds_hint">SS</string>
+    <!-- Tasks -->
+    <string name="tasks">Tasks</string>
+    <string name="task_execute_security_question">Eseguire \"{0}\"?</string>
+    <string name="EPGStart">Avvia Scansione EPG</string>
+    <string name="EPGStop">Ferma Scansione EPG</string>
+    <string name="AutoTimer">Timer Automatico</string>
+    <string name="RefreshDB">Aggiorna DB Registrazioni</string>
+    <string name="CleanupDB">Azzera DB Registrazioni</string>
+    <string name="RebuildRecordedHistory">Rigenera Cronologia Registrazioni</string>
+    <string name="ClearRecordingHistory">Azzera Cronologia Registrazioni</string>
+    <string name="ClearRecordingStats">Azzera Stat. Registrazione</string>
+    <string name="UpdateMediaLibrary">Aggiorna libreria multimediale</string>
+    <string name="CleanupPhotoDB">Azzera libreria foto</string>
+    <string name="CleanupVideoDB">Azzera DB libreria video</string>
+    <string name="RebuildVideoDB">Rigenera libreria video</string>
+    <string name="RebuildAudioDB">Rigenera libreria audio</string>
+    <string name="RebuildPhotoDB">Rigenera libreria foto</string>
+    <string name="ClearAudioStats">Azzera statistiche audio</string>
+    <string name="ClearVideoStats">Azzera libreria video</string>
+    <string name="ClearPhotoStats">Azzera libreria foto</string>
+    <string name="Hibernate">Iberna</string>
+    <string name="Standby">Standby</string>
+    <string name="Shutdown">Spegni</string>
+    <string name="WOL">Sveglia il Recording Service</string>
+    <!-- Status -->
+    <string name="status">Stato</string>
+    <string name="status_rs_version">Versione Recording Service</string>
+    <string name="status_current_recordings">Registrazioni Avviate</string>
+    <string name="status_current_clients">Client Connessi</string>
+    <string name="status_epg_update_running">Aggiornamento EPG in corso</string>
+    <string name="status_epg_before">Tempo prima</string>
+    <string name="status_epg_after">Tempo dopo</string>
+    <string name="status_timezone">Timezone</string>
+    <string name="status_def_after_record">Azione post-registrazione</string>
+    <string name="status_folder_free">Libero</string>
+    <string name="status_folder_total">Totale</string>
+    <!-- Dialogs -->
+    <string name="dialog_confirmation_title">Conferma</string>
+    <string name="firstStartMessageTitle">Impostazioni di connessione non trovate</string>
+    <string name="firstStartMessage">Impostazioni di connessione non trovate\n\nVuoi passare alle impostazioni?</string>
+    <string name="confirmDelete">Eliminare gli oggetti selezionati?</string>
+    <string name="noFlashPlayerFound">Nessun player compatibile trovato\nInstalla un player che supporti MPEG/FLASH</string>
+    <!-- Preferences -->
+    <string name="preferences">Impostazioni</string>
+    <string name="pref_seperator_connection">Impostazioni Connessione</string>
+    <string name="pref_seperator_channel">Lista canali</string>
+    <string name="pref_seperator_rs_con">Impostazioni Recording Service</string>
+    <string name="pref_item_rs_conn">Recording Service</string>
+    <string name="pref_item_rs_conn_summary">Impostazioni di Connessione del Recording Service</string>
+    <string name="pref_item_rs_url">URL Recording Service</string>
+    <string name="pref_item_rs_url_summary">URL per il Recording Service</string>
+    <string name="pref_item_rs_port">Porta Recording Service</string>
+    <string name="pref_item_rs_port_summary">Porta per il Recording Service</string>
+    <string name="pref_item_username">Username</string>
+    <string name="pref_item_username_summary">Username (se richiesto)</string>
+    <string name="pref_item_password">Password</string>
+    <string name="pref_item_password_summary">Password (se richiesta)</string>
+    <string name="pref_item_rs_wol_on_start">Invia WOL all\'avvio</string>
+    <string name="pref_item_rs_wol_on_start_summary">Prova a svegliare il Recording Service all\'avvio</string>
+    <string name="pref_item_rs_live_stream_port">Porta live streaming</string>
+    <string name="pref_item_rs_live_stream_port_summary">Porta per TV live streaming</string>
+    <string name="pref_item_rs_media_stream_port">Porta media streaming</string>
+    <string name="pref_item_rs_media_stream_port_summary">Porta per il media streaming</string>
+    <string name="pref_item_channel_show_current_program">Mostra programma corrente</string>
+    <string name="pref_item_channel_show_current_program_summary">Mostra il programma corrente nella lista canali</string>
+    <string name="pref_item_channel_show_current_program_wifi">Solo in Wi-Fi</string>
+    <string name="pref_item_channel_show_current_program_wifi_summary">Mostra il programma corrente nella lista canali solo se in Wi-Fi</string>
+    <string name="pref_item_channel_fav">Usa preferiti</string>
+    <string name="pref_item_channel_fav_summary">Mostra i preferiti invece che i canali</string>
+    <!-- Error -->
+    <string name="error_common">Errore</string>
+    <string name="error_unknonwn_host">Host sconosciuto</string>
+    <string name="error_connection_timeout">Timeout Connessione</string>
+    <string name="error_parsing_xml">Parsing dati xml fallito</string>
+    <string name="error_invalid_url">URL non valido</string>
+    <string name="error_invalid_credentials">Autenticazione fallita</string>
+    <string name="support_this_app">Supporta questa App</string>
+    <string name="quick_stream_hint_title">Avvia stream canale</string>
+    <string name="quick_stream_hint_text">Avvia lo stream cliccando sul logo del canale</string>
+    <string name="version_unsupported_text">La tua versione del Recording Service non è supportata. Devi utilizzare una versione superiore a {0}.</string>
+    <string name="version_unsupported_title">Versione non supportata</string>
+    <string name="recording_folder">Directory registrazioni</string>
+</resources>
