@@ -112,7 +112,7 @@
                     android:text="@string/ffmpegpreset" />
 
                 <Spinner
-                    android:id="@+id/ffmpegSpinner"
+                    android:id="@+id/encodingSpeedSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

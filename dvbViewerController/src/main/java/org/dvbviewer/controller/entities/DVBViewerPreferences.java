@@ -66,10 +66,7 @@ public class DVBViewerPreferences {
 	 */
 	public static final String	KEY_STREAM_DIRECT						= "KEY_STREAM_DIRECT";
 	public static final String	KEY_STREAM_PRESET						= "KEY_STREAM_PRESET";
-	public static final String	KEY_STREAM_ASPECT_RATIO					= "KEY_STREAM_ASPECT_RATIO";
-	public static final String	KEY_STREAM_FFMPEG_PRESET				= "KEY_STREAM_FFMPEG_PRESET";
-	public static final String	KEY_STREAM_MAX_WIDTH					= "KEY_STREAM_MAX_WIDTH";
-	public static final String	KEY_STREAM_MAX_HEIGHT					= "KEY_STREAM_MAX_HEIGHT";
+	public static final String  KEY_STREAM_ENCODING_SPEED               = "KEY_STREAM_FFMPEG_PRESET";
 
 	/**
 	 * Instantiates a new dVB viewer preferences.
