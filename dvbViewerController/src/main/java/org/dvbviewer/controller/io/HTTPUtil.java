@@ -44,7 +44,6 @@ public class HTTPUtil {
     public static String getString(String url, String username, String password) throws Exception {
         String result;
         Response response = getResponse(url, username, password);
-        checkResponse(url, response);
         result = response.body().string();
         return result;
     }
@@ -70,18 +69,21 @@ public class HTTPUtil {
                 .header("Authorization", credential)
                 .header("Connection", "close")
                 .build();
-        Response result = getHttpClient().newCall(request).execute();
-        checkResponse(url, result);
+        Response result;
+        try {
+            result = getHttpClient().newCall(request).execute();
+        }catch (Exception e){
+            throw new DefaultHttpException(url, e);
+        }
+        checkResponse(result);
         return result;
     }
 
-    private static void checkResponse(String url, Response response) throws AuthenticationException, DefaultHttpException {
-        if (!response.isSuccessful()) {
+    private static void checkResponse(Response response) throws AuthenticationException, DefaultHttpException {
+        if (response != null && !response.isSuccessful()) {
             switch (response.code()) {
                 case 401:
                     throw new AuthenticationException();
-                default:
-                    throw new DefaultHttpException(url);
             }
         }
     }
