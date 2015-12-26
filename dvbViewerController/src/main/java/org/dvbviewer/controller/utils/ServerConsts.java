@@ -34,7 +34,7 @@ public class ServerConsts {
 	public static String    URL_SEND_COMMAND                = "/api/dvbcommand.html?target={0}&cmd=-x{1}";
 	public static String	URL_SWITCH_COMMAND				= "/api/dvbcommand.html?target={0}&cmd=-c{1}";
 	public static String	URL_DELETE_RECORDING			= "/rec_listnew.html?aktion=delete_rec&recid=";
-	public static String	URL_FLASHSTREAM					= "/flashstream/stream.ts";
+	public static String	URL_FLASHSTREAM					= "/flashstream/stream";
 	public static String	URL_TARGETS					    = "/api/dvbcommand.html";
 	public static String 	URL_FFMPEGPREFS					= "/api/getconfigfile.html?file=config%5Cffmpegprefs.ini";
 	public static String 	URL_RECORIDNGS 					= "/api/recordings.html?utf8=255&images=1";

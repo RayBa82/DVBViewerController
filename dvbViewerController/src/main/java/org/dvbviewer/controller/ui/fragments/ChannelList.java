@@ -25,7 +25,6 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -912,13 +911,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Cursor c = mAdapter.getCursor();
                     c.moveToPosition(selectedPosition);
                     Channel chan = cursorToChannel(c);
-                    String videoUrl = StreamConfig.buildLiveUrl(getActivity(), chan.getPosition());
-                    Log.i("Stream", videoUrl);
-                    Intent videoIntent;
-                    String videoType = "video/mpeg";
-                    videoIntent = new Intent(Intent.ACTION_VIEW);
-                    videoIntent.setDataAndType(Uri.parse(videoUrl), videoType);
-                    getActivity().startActivity(videoIntent);
+                    getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getPosition()));
 					// Get tracker.
 					Tracker t = ((App) getActivity().getApplication()).getTracker();
 					// Build and send an Event.

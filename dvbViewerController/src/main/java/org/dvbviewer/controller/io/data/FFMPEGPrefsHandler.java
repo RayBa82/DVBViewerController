@@ -1,24 +1,42 @@
 package org.dvbviewer.controller.io.data;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.text.TextUtils;
+
+import org.dvbviewer.controller.entities.FfMpegPrefs;
+import org.dvbviewer.controller.entities.Preset;
+import org.ini4j.Ini;
+import org.ini4j.Profile.Section;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * Created by karlw on 18.12.2015.
  */
 public class FFMPEGPrefsHandler {
 
-    public List<String> parse(String ffmpegprefs) {
-
-        List<String> prefs = new ArrayList<String>();
-        Matcher m = Pattern.compile("[\\s\\t]*\\[([^\\[\\]]*)\\][\\s\\t]*\\r?\\n[\\s\\t]*Cmd=.*")
-                .matcher(ffmpegprefs);
-        while (m.find()) {
-            prefs.add(m.group(1));
+    public FfMpegPrefs parse(String ffmpegprefs) {
+        FfMpegPrefs ffPrefs = new FfMpegPrefs();
+        try {
+            Ini ini = new Ini(new StringReader(ffmpegprefs));
+            ffPrefs.setVersion(ini.get("Version").get("Version"));
+            for (String sectionName : ini.keySet()){
+                Section section = ini.get(sectionName);
+                final String cmd = section.get("Cmd");
+                if (!TextUtils.isEmpty(cmd)){
+                    Preset preset = new Preset();
+                    preset.setTitle(sectionName);
+                    preset.setMimeType(section.get("MimeType"));
+                    preset.setExtension(section.get("Ext"));
+                    ffPrefs.getPresets().add(preset);
+                }
+                for (String optionKey: section.keySet()) {
+                    System.out.println("\t"+optionKey+"="+section.get(optionKey));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        return prefs;
+        return ffPrefs;
     }
 }
