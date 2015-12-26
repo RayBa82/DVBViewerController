@@ -36,50 +36,52 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.Gson;
+import com.squareup.okhttp.HttpUrl;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.entities.FfMpegPrefs;
+import org.dvbviewer.controller.entities.Preset;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
+import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
+import org.xml.sax.SAXException;
 
-import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * The Class StreamConfig.
  *
  * @author RayBa
- * @date 07.04.2013
  */
 public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener {
 
-	public static final String	TAG_URI					= "_uri";
+	private static final String	Tag						= StreamConfig.class.getSimpleName();
 	public static final String	EXTRA_FILE_ID			= "_fileID";
 	public static final String	EXTRA_FILE_TYPE			= "_fileType";
-	public static final String	EXTRA_STREAM_TYPE		= "_streamType";
 	public static final String	EXTRA_DIALOG_TITLE_RES	= "_dialog_title_res";
 	public static final int		FILE_TYPE_LIVE			= 0;
 	public static final int		FILE_TYPE_RECORDING		= 1;
 	public static final int		STREAM_TYPE_DIRECT		= 0;
 	public static final int		STREAM_TYPE_TRANSCODE	= 1;
-	private String				flashUrl				= ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM;
+	private static String		flashUrl				= ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM;
 	private String				liveUrl					= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_LIVE_STREAM_PORT + "/upnp/channelstream/";
 	private String				mediaUrl				= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT + "/upnp/recordings/";
 	private Spinner				qualitySpinner;
-	private Spinner				aspectSpinner;
 	private Spinner				ffmpegSpinner;
-	private Spinner				widthSpinner;
-	private Spinner				heightSpinner;
 	private Button				startButton;
 	private Button				startDirectStreamButton;
 	private EditText			startHours;
@@ -92,8 +94,11 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private int					mStreamType				= 0;
 	private int					mFileId					= -1;
 	private Context				mContext;
+	private List<String> 		ffmpegprefs;
+	private static Gson 		gson					= new Gson();
 	
 	private SharedPreferences	prefs;
+	private FfMpegPrefs ffMpegPrefs;
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.DialogFragment#onCreate(android.os.Bundle)
@@ -111,10 +116,61 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		mFileType = getArguments().getInt(EXTRA_FILE_TYPE, FILE_TYPE_LIVE);
 		mStreamType = getArguments().getInt(EXTRA_FILE_TYPE, STREAM_TYPE_DIRECT);
 		seekable = mFileType != FILE_TYPE_LIVE && mStreamType != STREAM_TYPE_DIRECT;
+
+		rebuildProtectedFlashUrl();
 		if (seekable) {
 			DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 			preTime = String.valueOf(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 0));
 		}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				updateQualitySpinner();
+			}
+		}).start();
+
+	}
+
+	private void updateQualitySpinner() {
+		try {
+            String ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+            if (!TextUtils.isEmpty(ffmpegprefsString)){
+                FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
+
+				ffMpegPrefs = prefsHandler.parse(ffmpegprefsString);
+				final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, ffMpegPrefs.getPresets());
+                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						qualitySpinner.setAdapter(dataAdapter);
+						int pos = ffMpegPrefs.getPresets().indexOf(getDefaultPreset(prefs));
+						qualitySpinner.setSelection(pos);
+					}
+				});
+            }
+
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        } catch (DefaultHttpException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+
+	private static String rebuildProtectedFlashUrl() {
+		if((!TextUtils.isEmpty(ServerConsts.REC_SERVICE_USER_NAME)) && (!TextUtils.isEmpty(ServerConsts.REC_SERVICE_PASSWORD))) {
+			flashUrl = ServerConsts.REC_SERVICE_PROTOCOL + "://" +
+					   ServerConsts.REC_SERVICE_USER_NAME + ":" +
+					   ServerConsts.REC_SERVICE_PASSWORD + "@" +
+					   ServerConsts.REC_SERVICE_HOST + ":" +
+					   ServerConsts.REC_SERVICE_PORT +
+					   ServerConsts.URL_FLASHSTREAM;
+		}
+		return flashUrl;
 	}
 
 	/* (non-Javadoc)
@@ -157,30 +213,12 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_stream_config, container, false);
 		qualitySpinner = (Spinner) v.findViewById(R.id.qualitySpinner);
-		int qualityIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_QUALITY, 7);
 		qualitySpinner.setOnItemSelectedListener(this);
-		qualitySpinner.setSelection(qualityIndex);
-		
-		aspectSpinner = (Spinner) v.findViewById(R.id.aspectSpinner);
-		int aspectIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_ASPECT_RATIO, 0);
-		aspectSpinner.setSelection(aspectIndex);
-		aspectSpinner.setOnItemSelectedListener(this);
-		
+
 		ffmpegSpinner = (Spinner) v.findViewById(R.id.ffmpegSpinner);
 		int ffmpegIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_FFMPEG_PRESET, 5);
 		ffmpegSpinner.setSelection(ffmpegIndex);
 		ffmpegSpinner.setOnItemSelectedListener(this);
-		
-		widthSpinner = (Spinner) v.findViewById(R.id.widthSpinner);
-		int widthIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_MAX_WIDTH, 0);
-		widthSpinner.setSelection(widthIndex);
-		widthSpinner.setOnItemSelectedListener(this);
-		
-		heightSpinner = (Spinner) v.findViewById(R.id.heightSpinner);
-		int heightIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_MAX_HEIGHT, 0);
-		heightSpinner.setSelection(heightIndex);
-		heightSpinner.setOnItemSelectedListener(this);
-		
 		
 		startButton = (Button) v.findViewById(R.id.startTranscodedButton);
 		startButton.setOnClickListener(this);
@@ -294,7 +332,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	 */
 	private Intent getVideoIntent() {
 		String videoUrl = null;
-		String videoType = null;
+		String videoType = "video/mpeg";
 		switch (mStreamType) {
 		case STREAM_TYPE_DIRECT:
 			switch (mFileType) {
@@ -308,24 +346,13 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			default:
 				break;
 			}
-			videoType = "video/*";
-
 			break;
 		case STREAM_TYPE_TRANSCODE:
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("Preset", String.valueOf(qualitySpinner.getSelectedItemPosition())));
-			params.add(new BasicNameValuePair("aspect", aspectSpinner.getSelectedItem().toString()));
-			params.add(new BasicNameValuePair("ffPreset", ffmpegSpinner.getSelectedItem().toString()));
-
-			/**
-			 * Check if height is set from user, otherwise the the default values are used
-			 */
-			if (widthSpinner.getSelectedItemPosition() > 0) {
-				params.add(new BasicNameValuePair("maxwidth", widthSpinner.getSelectedItem().toString()));
-			}
-			if (heightSpinner.getSelectedItemPosition() > 0) {
-				params.add(new BasicNameValuePair("maxheight", heightSpinner.getSelectedItem().toString()));
-			}
+			Preset p = (Preset) qualitySpinner.getSelectedItem();
+			HttpUrl httpUrl = HttpUrl.parse(rebuildProtectedFlashUrl()+p.getExtension());
+			HttpUrl.Builder builder = httpUrl.newBuilder();
+			builder.addQueryParameter("preset", p.getTitle());
+			builder.addQueryParameter("ffPreset", ffmpegSpinner.getSelectedItem().toString());
 
 			/**
 			 * Calculate startposition in seconds
@@ -334,30 +361,28 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			int minutes = TextUtils.isEmpty(startMinutes.getText()) ? 0 : Integer.valueOf(startMinutes.getText().toString());
 			int seconds = TextUtils.isEmpty(startSeconds.getText()) ? 0 : Integer.valueOf(startSeconds.getText().toString());
 			int start = 3600 * hours + 60 * minutes + seconds;
-			params.add(new BasicNameValuePair("start", String.valueOf(start)));
+			builder.addQueryParameter("start", String.valueOf(start));
 
 			switch (mFileType) {
 			case FILE_TYPE_LIVE:
-				params.add(new BasicNameValuePair("chid", String.valueOf(mFileId)));
+				builder.addQueryParameter("chid", String.valueOf(mFileId));
 				break;
 			case FILE_TYPE_RECORDING:
-				params.add(new BasicNameValuePair("recid", String.valueOf(mFileId)));
+				builder.addQueryParameter("recid", String.valueOf(mFileId));
 				break;
 
 			default:
 				break;
 			}
-			String query = URLEncodedUtils.format(params, "utf-8");
-			videoUrl = flashUrl + query;
+			videoUrl = builder.build().toString();
+			videoType = p.getMimeType();
 			break;
 
 		default:
 			break;
 		}
 		Log.i(StreamConfig.class.getSimpleName(), "url: " + videoUrl);
-
 		Intent videoIntent;
-		videoType = "video/mpeg";
 		videoIntent = new Intent(Intent.ACTION_VIEW);
 		videoIntent.setDataAndType(Uri.parse(videoUrl), videoType);
 		return videoIntent;
@@ -393,19 +418,11 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		Editor editor = prefs.edit();
 		switch (parent.getId()) {
 		case R.id.qualitySpinner:
-			editor.putInt(DVBViewerPreferences.KEY_STREAM_QUALITY, position);
-			break;
-		case R.id.aspectSpinner:
-			editor.putInt(DVBViewerPreferences.KEY_STREAM_ASPECT_RATIO, position);
+			Preset p = (Preset) qualitySpinner.getSelectedItem();
+			editor.putString(DVBViewerPreferences.KEY_STREAM_PRESET, gson.toJson(p));
 			break;
 		case R.id.ffmpegSpinner:
 			editor.putInt(DVBViewerPreferences.KEY_STREAM_FFMPEG_PRESET, position);
-			break;
-		case R.id.widthSpinner:
-			editor.putInt(DVBViewerPreferences.KEY_STREAM_MAX_WIDTH, position);
-			break;
-		case R.id.heightSpinner:
-			editor.putInt(DVBViewerPreferences.KEY_STREAM_MAX_HEIGHT, position);
 			break;
 
 		default:
@@ -421,47 +438,62 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 	
 	
-	public static String buildLiveUrl(Context context, int position){
-		DVBViewerPreferences dvbPrefs = new DVBViewerPreferences(context);
-		return buildLiveUrl(context, dvbPrefs.getStreamPrefs(), position);
-	}
-	
-	private static String buildLiveUrl(Context context, SharedPreferences prefs, int position){
+	public static Intent buildLiveUrl(Context context, int position){
+		SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
 		boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
 		StringBuffer result = new StringBuffer();
 		if (direct) {
-			result.append("http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_LIVE_STREAM_PORT + "/upnp/channelstream/");
-			result.append(position+".ts");
+			return getDirectUrl(position);
 		}else {
-			result.append(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM);
-			int qualityIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_QUALITY, 7);
-			int aspectIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_ASPECT_RATIO, 0);
-			int ffmpegIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_FFMPEG_PRESET, 5);
-			int widthIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_MAX_WIDTH, 0);
-			int heightIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_MAX_HEIGHT, 0);
-			String quality = String.valueOf(qualityIndex);
-			String aspect = context.getResources().getStringArray(R.array.aspect)[aspectIndex];
-			String ffmpeg = context.getResources().getStringArray(R.array.ffmpegPresets)[ffmpegIndex];
-			String width = context.getResources().getStringArray(R.array.width)[widthIndex];
-			String height = context.getResources().getStringArray(R.array.height)[heightIndex];
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("Preset" ,quality));
-			params.add(new BasicNameValuePair("aspect", aspect));
-			params.add(new BasicNameValuePair("ffPreset", ffmpeg));
-			/**
-			 * Check if height is set from user, otherwise the the default values are used
-			 */
-			if (widthIndex > 0) {
-				params.add(new BasicNameValuePair("maxwidth", width));
-			}
-			if (heightIndex > 0) {
-				params.add(new BasicNameValuePair("maxheight", height));
-			}
-			params.add(new BasicNameValuePair("chid", String.valueOf(position)));
-			String query = URLEncodedUtils.format(params, "utf-8");
-			result.append(query);
+			return getTranscodedUrl(context, position, prefs);
 		}
-		return result.toString();
+	}
+
+	private static Preset getDefaultPreset(SharedPreferences prefs) {
+		Preset p = null;
+		String jsonPreset = prefs.getString(DVBViewerPreferences.KEY_STREAM_PRESET, null);
+		try {
+			p = gson.fromJson(jsonPreset, Preset.class);
+		} catch (Exception e) {
+			Log.d(Tag, "Error parsing default Preset", e);
+		}
+		if (p == null) {
+			p = new Preset();
+			p.setTitle("TS Mid 1200 kbit");
+			p.setExtension(".ts");
+			p.setMimeType("video/mpeg");
+			return null;
+		}
+		return p;
+	}
+
+	private static Intent getTranscodedUrl(Context context, int position, SharedPreferences prefs) {
+		Preset p = getDefaultPreset(prefs);
+		HttpUrl httpUrl = HttpUrl.parse(rebuildProtectedFlashUrl() + p.getExtension());
+		HttpUrl.Builder builder = httpUrl.newBuilder();
+		int ffmpegIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_FFMPEG_PRESET, 5);
+		String quality = p.getTitle();
+		String ffmpeg = context.getResources().getStringArray(R.array.ffmpegPresets)[ffmpegIndex];
+		builder.addQueryParameter("preset", quality);
+		builder.addQueryParameter("ffPreset", ffmpeg);
+		/**
+         * Check if height is set from user, otherwise the the default values are used
+         */
+		builder.addQueryParameter("chid", String.valueOf(position));
+		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+		Log.d(Tag, "playing video: "+builder.build().toString());
+		videoIntent.setDataAndType(Uri.parse(builder.build().toString()), p.getMimeType());
+		return videoIntent;
+	}
+
+	public static Intent getDirectUrl(int position){
+		StringBuffer result = new StringBuffer();
+		result.append("http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_LIVE_STREAM_PORT + "/upnp/channelstream/");
+		result.append(position+".ts");
+		Log.d(Tag, "playing video: "+result.toString());
+		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");
+		return videoIntent;
 	}
 	
 

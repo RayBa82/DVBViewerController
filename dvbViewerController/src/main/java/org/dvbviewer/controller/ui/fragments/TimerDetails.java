@@ -20,7 +20,7 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,9 +34,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
+import com.squareup.okhttp.HttpUrl;
+
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
@@ -45,11 +44,9 @@ import org.dvbviewer.controller.ui.widget.DateField;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 
 /**
@@ -60,9 +57,8 @@ import java.util.List;
  */
 public class TimerDetails extends DialogFragment implements OnDateSetListener, OnClickListener, OnLongClickListener {
 
-	public static final int			TIMER_CHANGED		= 0;
+	public static final int			TIMER_RESULT		= 0;
 	public static final int			RESULT_CHANGED		= 1;
-	public static final int			RESULT_NO_CHANGE	= 2;
 
 	public static final String		EXTRA_ID			= "_id";
 	public static final String		EXTRA_TITLE			= "_title";
@@ -162,7 +158,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		activity.getSupportActionBar().setSubtitle(R.string.details);
 		if (timer != null) {
 			titleField.setText(timer.getTitle());
@@ -290,7 +286,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		DateDialogFragment f;
 		switch (v.getId()) {
 		case R.id.dateField:
-			f = DateDialogFragment.newInstance(getActivity(), (OnDateSetListener) TimerDetails.this, dateField.getDate());
+			f = DateDialogFragment.newInstance(getActivity(), TimerDetails.this, dateField.getDate());
 			f.show(getActivity().getSupportFragmentManager(), "datepicker");
 			break;
 		case R.id.startField:
@@ -303,33 +299,22 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 			break;
 		case R.id.buttonCancel:
 			if (mOntimeredEditedListener != null) {
-				mOntimeredEditedListener.timerEdited(true);
+				mOntimeredEditedListener.timerEdited(false);
 			}
 			dismiss();
 			break;
 		case R.id.buttonOk:
-			StringBuffer url = new StringBuffer();
-			url.append(timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT);
-			String title = titleField.getText().toString();
-			String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(dateField.getDate()));
-			String start = String.valueOf(DateUtils.getMinutesOfDay(startField.getDate()));
-			String stop = String.valueOf(DateUtils.getMinutesOfDay(stopField.getDate()));
-			String endAction = String.valueOf(postRecordSpinner.getSelectedItemPosition());
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("ch", String.valueOf(timer.getChannelId())));
-			params.add(new BasicNameValuePair("dor", days));
-			params.add(new BasicNameValuePair("encoding", "255"));
-			params.add(new BasicNameValuePair("start", start));
-			params.add(new BasicNameValuePair("stop", stop));
-			params.add(new BasicNameValuePair("title", title));
-			params.add(new BasicNameValuePair("endact", endAction));
-			params.add(new BasicNameValuePair("enable", activeBox.isChecked() ? "1" : "0"));
-			if (timer.getId() >= 0) {
-				params.add(new BasicNameValuePair("id", String.valueOf(timer.getId())));
+			timer.setStart(startField.getDate());
+			timer.setEnd(stopField.getDate());
+			timer.setTitle(titleField.getText().toString());
+			timer.setTimerAction(postRecordSpinner.getSelectedItemPosition());
+			if (activeBox.isChecked()){
+				timer.unsetFlag(Timer.FLAG_DISABLED);
+			}else{
+				timer.setFlag(Timer.FLAG_DISABLED);
 			}
-			String query = URLEncodedUtils.format(params, "utf-8");
-			url.append(query);
-			RecordingServiceGet rsGet = new RecordingServiceGet(url.toString());
+			String query = buildTimerUrl(timer);
+			RecordingServiceGet rsGet = new RecordingServiceGet(query);
 			Thread executionThread = new Thread(rsGet);
 			executionThread.start();
 			if (mOntimeredEditedListener != null) {
@@ -343,6 +328,28 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		default:
 			break;
 		}
+	}
+
+	public static String buildTimerUrl(Timer timer) {
+		HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL + (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
+		HttpUrl.Builder builder = httpUrl.newBuilder();
+		String title = timer.getTitle();
+		String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
+		String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
+		String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
+		String endAction = String.valueOf(timer.getTimerAction());
+		builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
+		builder.addQueryParameter("dor", days);
+		builder.addQueryParameter("encoding", "255");
+		builder.addQueryParameter("enable", timer.isFlagSet(Timer.FLAG_DISABLED) ? "0" : "1");
+		builder.addQueryParameter("start", start);
+		builder.addQueryParameter("stop", stop);
+		builder.addQueryParameter("title", title);
+		builder.addQueryParameter("endact", endAction);
+		if (timer.getId() >= 0) {
+			builder.addQueryParameter("id", String.valueOf(timer.getId()));
+		}
+		return builder.build().toString();
 	}
 
 	/* (non-Javadoc)
@@ -362,11 +369,10 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	 * the onTimerEdited event occurs, that object's appropriate
 	 * method is invoked.
 	 *
-	 * @see OnTimerEditedEvent
 	 * @author RayBa
 	 * @date 07.04.2013
 	 */
-	public static interface OnTimerEditedListener{
+	public interface OnTimerEditedListener{
 		
 		/**
 		 * Timer edited.
@@ -375,7 +381,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		 * @author RayBa
 		 * @date 07.04.2013
 		 */
-		public void timerEdited(boolean edited);
+		void timerEdited(boolean edited);
 		
 	}
 	

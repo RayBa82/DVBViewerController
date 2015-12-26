@@ -56,7 +56,7 @@ public class DVBViewerPreferences {
 	public static final String	KEY_CHANNELS_SHOW_NOW_PLAYING			= "KEY_CHANNELS_SHOW_NOW_PLAYING";
 	public static final String	KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY	= "KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY";
 	public static final String	KEY_CHANNELS_USE_FAVS					= "KEY_CHANNELS_USE_FAVS";
-	public static final String	KEY_CHANNELS_SYNCED						= "KEY_CHANNELS_SYNCED_1_0_11";
+	public static final String	KEY_CHANNELS_SYNCED						= "KEY_CHANNELS_SYNCED_1_1_4";
 	public static final String	KEY_TIMER_TIME_BEFORE					= "KEY_TIMER_TIME_BEFORE";
 	public static final String	KEY_TIMER_TIME_AFTER					= "KEY_TIMER_TIME_AFTER";
 	public static final String	KEY_TIMER_DEF_AFTER_RECORD				= "KEY_TIMER_DEF_AFTER_RECORD";
@@ -65,7 +65,7 @@ public class DVBViewerPreferences {
 	 * Streaming Preferences Keys
 	 */
 	public static final String	KEY_STREAM_DIRECT						= "KEY_STREAM_DIRECT";
-	public static final String	KEY_STREAM_QUALITY						= "KEY_STREAM_QUALITY";
+	public static final String	KEY_STREAM_PRESET						= "KEY_STREAM_PRESET";
 	public static final String	KEY_STREAM_ASPECT_RATIO					= "KEY_STREAM_ASPECT_RATIO";
 	public static final String	KEY_STREAM_FFMPEG_PRESET				= "KEY_STREAM_FFMPEG_PRESET";
 	public static final String	KEY_STREAM_MAX_WIDTH					= "KEY_STREAM_MAX_WIDTH";

@@ -25,9 +25,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -37,17 +39,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.CheckBox;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Recording;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.RecordingHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
@@ -62,20 +67,10 @@ import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ch.boye.httpclientandroidlib.ParseException;
-import ch.boye.httpclientandroidlib.auth.AuthenticationException;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
-import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
 
 
 /**
@@ -84,13 +79,17 @@ import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
  * @author RayBa
  * @date 07.04.2013
  */
-public class RecordingList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Recording>>, OnClickListener, ActionMode.Callback, OnCheckedChangeListener, View.OnClickListener {
+public class RecordingList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Recording>>, OnClickListener, ActionMode.Callback, OnCheckedChangeListener, View.OnClickListener, AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
 
-	RecordingAdapter	mAdapter;
-	ActionMode			mode;
-	int					selectedPosition;
-	ProgressDialog		progressDialog;
-	
+	public static final String ACTION_MODE        = "action_mode";
+	public static final String CHECKED_ITEM_COUNT = "checked_item_count";
+
+	RecordingAdapter mAdapter;
+	ActionMode       mode;
+	int              selectedPosition;
+	ProgressDialog   progressDialog;
+	private boolean actionMode;
+
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
 	 */
@@ -99,6 +98,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		super.onCreate(savedInstanceState);
 		mAdapter = new RecordingAdapter(getActivity());
 		setHasOptionsMenu(true);
+		setRetainInstance(true);
 	}
 
 	/* (non-Javadoc)
@@ -109,14 +109,15 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		super.onActivityCreated(savedInstanceState);
 		setListAdapter(mAdapter);
 		getListView().setItemsCanFocus(false);
-		registerForContextMenu(getListView());
 		Loader<List<Recording>> loader = getLoaderManager().initLoader(0, savedInstanceState, this);
 		setListShown(!(!isResumed() || loader.isStarted()));
 		setEmptyText(getResources().getString(R.string.no_recordings));
 		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		if (mode != null) {
-			ActionBarActivity activity = (ActionBarActivity) getActivity();
+		getListView().setOnItemLongClickListener(this);
+		if (savedInstanceState != null && savedInstanceState.getBoolean(ACTION_MODE, false)) {
+			AppCompatActivity activity = (AppCompatActivity) getActivity();
 			mode = activity.startSupportActionMode(this);
+			updateActionModeTitle(savedInstanceState.getInt(CHECKED_ITEM_COUNT));
 		}
 	}
 
@@ -125,69 +126,32 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	@Override
 	public Loader<List<Recording>> onCreateLoader(int arg0, Bundle arg1) {
-		AsyncLoader<List<Recording>> loader = new AsyncLoader<List<Recording>>(getActivity().getApplicationContext()) {
+		return new AsyncLoader<List<Recording>>(getActivity().getApplicationContext()) {
 
 			@Override
 			public List<Recording> loadInBackground() {
 				List<Recording> result = null;
 				try {
-					String xml = ServerRequest.getRSString("/api/recordings.html?utf8=255");
+					String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_RECORIDNGS);
 					RecordingHandler hanler = new RecordingHandler();
 					result = hanler.parse(xml);
 					Collections.sort(result);
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
 					showToast(getStringSafely(R.string.error_invalid_credentials));
-				} catch (UnknownHostException e) {
+				} catch (DefaultHttpException e) {
 					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_unknonwn_host) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-				} catch (ConnectTimeoutException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_connection_timeout));
+					showToast(e.getMessage());
 				} catch (SAXException e) {
 					e.printStackTrace();
 					showToast(getStringSafely(R.string.error_parsing_xml));
-				} catch (ParseException e) {
-					e.printStackTrace();
-					Writer writer = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(writer);
-					e.printStackTrace(printWriter);
-					String s = writer.toString();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + s);
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
-					Writer writer = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(writer);
-					e.printStackTrace(printWriter);
-					String s = writer.toString();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + s);
-				} catch (IOException e) {
-					e.printStackTrace();
-					Writer writer = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(writer);
-					e.printStackTrace(printWriter);
-					String s = writer.toString();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + s);
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-				} catch (IllegalStateException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-				} catch (IllegalArgumentException e) {
-					showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
 				} catch (Exception e) {
 					e.printStackTrace();
-					Writer writer = new StringWriter();
-					PrintWriter printWriter = new PrintWriter(writer);
-					e.printStackTrace(printWriter);
-					String s = writer.toString();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + s);
+					showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
 				}
 				return result;
 			}
 		};
-		return loader;
 	}
 
 	/* (non-Javadoc)
@@ -209,6 +173,50 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		}
 	}
 
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		getListView().setItemChecked(position, true);
+		int count = getCheckedItemCount();
+		if (actionMode == false) {
+			actionMode = true;
+			AppCompatActivity activty = (AppCompatActivity) getActivity();
+			mode = activty.startSupportActionMode(RecordingList.this);
+		}
+		updateActionModeTitle(count);
+		return true;
+	}
+
+	private void updateActionModeTitle(int count) {
+		mode.setTitle(count + " " + getResources().getString(R.string.selected));
+	}
+
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menuStream:
+				if (UIUtils.isTablet(getActivity())) {
+					StreamConfig cfg = StreamConfig.newInstance();
+					Bundle arguments = new Bundle();
+					arguments.putInt(StreamConfig.EXTRA_FILE_ID, (int) mAdapter.getItem(selectedPosition).getId());
+					arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
+					arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+					cfg.setArguments(arguments);
+					cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
+				} else {
+					Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
+					streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, (int) mAdapter.getItem(selectedPosition).getId());
+					streamConfig.putExtra(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
+					startActivity(streamConfig);
+				}
+				return true;
+
+			default:
+				break;
+		}
+		return false;
+	}
+
 	/**
 	 * The Class ViewHolder.
 	 *
@@ -217,11 +225,11 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	private class ViewHolder {
 		CheckableLinearLayout	layout;
+		ImageView thumbNail;
 		TextView				title;
 		TextView				subTitle;
 		TextView				channelName;
 		TextView				date;
-		CheckBox				check;
 		ImageView				contextMenu;
 	}
 
@@ -233,6 +241,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	public class RecordingAdapter extends ArrayListAdapter<Recording> {
 
+		private final ImageLoader imageLoader;
+
 		/**
 		 * The Constructor.
 		 *
@@ -243,6 +253,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		 */
 		public RecordingAdapter(Context context) {
 			super();
+			imageLoader = ImageLoader.getInstance();
 		}
 
 		/*
@@ -259,14 +270,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				convertView = vi.inflate(R.layout.list_item_recording, null);
 				holder = new ViewHolder();
 				holder.layout = (CheckableLinearLayout) convertView;
+				holder.thumbNail = (ImageView) convertView.findViewById(R.id.thumbNail);
 				holder.title = (TextView) convertView.findViewById(R.id.title);
 				holder.subTitle = (TextView) convertView.findViewById(R.id.subTitle);
 				holder.channelName = (TextView) convertView.findViewById(R.id.channelName);
 				holder.date = (TextView) convertView.findViewById(R.id.date);
-				holder.check = (CheckBox) convertView.findViewById(R.id.checkIndicator);
 				holder.contextMenu = (ImageView) convertView.findViewById(R.id.contextMenu);
-				holder.check.setOnCheckedChangeListener(RecordingList.this);
-				holder.check.setOnClickListener(RecordingList.this); 
 				holder.contextMenu.setOnClickListener(RecordingList.this);
 				convertView.setTag(holder);
 			} else {
@@ -274,15 +283,16 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			}
 			Recording o = getItem(position);
 			if (o != null) {
-				holder.check.setTag(position);
 //				holder.layout.setChecked(getListView().isItemChecked(position));
 				holder.title.setText(o.getTitle());
 				if (TextUtils.isEmpty(o.getSubTitle())) {
 					holder.subTitle.setVisibility(View.GONE);
-				}else {
+				} else {
 					holder.subTitle.setVisibility(View.VISIBLE);
 					holder.subTitle.setText(o.getSubTitle());
 				}
+				holder.thumbNail.setImageDrawable(null);
+				imageLoader.displayImage(ServerConsts.REC_SERVICE_URL+ ServerConsts.THUMBNAILS_VIDEO_URL +o.getThumbNail(), holder.thumbNail);
 				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());
 				holder.contextMenu.setTag(position);
@@ -291,17 +301,25 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		}
 	}
 
+
 	/* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseListFragment#onListItemClick(android.widget.ListView, android.view.View, int, long)
 	 */
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		getListView().setItemChecked(position, !getListView().isItemChecked(position));
-		Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
-		IEPG entry = mAdapter.getItem(position);
-		details.putExtra(IEPG.class.getSimpleName(), entry);
-		startActivity(details);
-		if (mode == null) {
+		Log.i("onListItemClick", "onListItemClick ");
+		if (actionMode) {
+			v.setSelected(!v.isSelected());
+			int count = getCheckedItemCount();
+			updateActionModeTitle(count);
+			if (getCheckedItemCount() == 0) {
+				mode.finish();
+			}
+		} else {
+			Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
+			IEPG entry = mAdapter.getItem(position);
+			details.putExtra(IEPG.class.getSimpleName(), entry);
+			startActivity(details);
 			clearSelection();
 		}
 	}
@@ -312,6 +330,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		outState.putBoolean(ACTION_MODE, actionMode);
+		outState.putInt(CHECKED_ITEM_COUNT, getCheckedItemCount());
 	}
 
 	/* (non-Javadoc)
@@ -319,6 +339,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	@Override
 	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		actionMode = true;
 		getActivity().getMenuInflater().inflate(R.menu.actionmode_recording, menu);
 		return true;
 	}
@@ -337,16 +358,16 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuDelete:
-			/**
-			 * Alertdialog to confirm the delete of Recordings
-			 */
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
-			break;
+			case R.id.menuDelete:
+				/**
+				 * Alertdialog to confirm the delete of Recordings
+				 */
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 		return true;
 	}
@@ -356,7 +377,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	@Override
 	public void onDestroyActionMode(ActionMode mode) {
-			clearSelection();
+		clearSelection();
+		actionMode = false;
 	}
 
 	/**
@@ -372,26 +394,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		mAdapter.notifyDataSetChanged();
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see android.widget.CompoundButton.OnCheckedChangeListener#onCheckedChanged(android.widget.CompoundButton, boolean)
 	 */
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		getListView().setItemChecked((Integer) buttonView.getTag(), isChecked);
-		int count = getCheckedItemCount();
-		if (mode == null && count > 0) {
-			ActionBarActivity activty = (ActionBarActivity) getActivity();
-			mode = activty.startSupportActionMode(RecordingList.this);
-		} else if (count <= 0) {
-			if (mode != null) {
-				mode.finish();
-				mode = null;
-			}
-		}
-		if (mode != null) {
-			mode.setTitle(count + " " + getResources().getString(R.string.selected));
-		}
 	}
 
 	/* (non-Javadoc)
@@ -401,42 +409,6 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		getActivity().getMenuInflater().inflate(R.menu.context_menu_recordinglist, menu);
-	}
-
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onContextItemSelected(android.view.MenuItem)
-	 */
-	@Override
-	public boolean onContextItemSelected(android.view.MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menuStream:
-			if (item.getMenuInfo() != null) {
-				AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-				selectedPosition = info.position;
-			}
-			
-			
-			if (UIUtils.isTablet(getActivity())) {
-				StreamConfig cfg = StreamConfig.newInstance();
-				Bundle arguments = new Bundle();
-				arguments.putInt(StreamConfig.EXTRA_FILE_ID, (int) mAdapter.getItem(selectedPosition).getId());
-				arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
-				arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-				cfg.setArguments(arguments);
-				cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
-			} else {
-				Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
-				streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, (int) mAdapter.getItem(selectedPosition).getId());
-				streamConfig.putExtra(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
-				startActivity(streamConfig);
-			}
-			
-			return true;
-
-		default:
-			break;
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)
@@ -455,12 +427,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		switch (itemId) {
-		case R.id.menuRefresh:
-			refresh();
-			return true;
+			case R.id.menuRefresh:
+				refresh();
+				return true;
 
-		default:
-			return false;
+			default:
+				return false;
 		}
 	}
 
@@ -483,7 +455,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	public static class RecordingDeleter extends AsyncTask<Recording, Void, Boolean> {
 
-		AsyncCallback	callback;
+		AsyncCallback callback;
 
 		/**
 		 * Instantiates a new recording deleter.
@@ -495,7 +467,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		public RecordingDeleter(AsyncCallback callback) {
 			this.callback = callback;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see android.os.AsyncTask#onPreExecute()
 		 */
@@ -528,18 +500,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			}
 			for (int i = 0; i < count; i++) {
 				try {
-					ServerRequest.getRSString(ServerConsts.URL_DELETE_RECORDING + params[i].getId());
-				} catch (ClientProtocolException e) {
-					e.printStackTrace();
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+					ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_DELETE_RECORDING + params[i].getId());
 				} catch (AuthenticationException e) {
-					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (DefaultHttpException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -554,27 +520,27 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		switch (which) {
-		case DialogInterface.BUTTON_POSITIVE:
-			SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
-			if (checkedPositions != null && checkedPositions.size() > 0) {
+			case DialogInterface.BUTTON_POSITIVE:
+				SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
+				if (checkedPositions != null && checkedPositions.size() > 0) {
 
-				int size = checkedPositions.size();
-				RecordingDeleter deleter = new RecordingDeleter(this);
-				List<Recording> recordings = new ArrayList<Recording>();
-				for (int i = 0; i < size; i++) {
-					if (checkedPositions.valueAt(i)) {
-						recordings.add(mAdapter.getItem(checkedPositions.keyAt(i)));
+					int size = checkedPositions.size();
+					RecordingDeleter deleter = new RecordingDeleter(this);
+					List<Recording> recordings = new ArrayList<Recording>();
+					for (int i = 0; i < size; i++) {
+						if (checkedPositions.valueAt(i)) {
+							recordings.add(mAdapter.getItem(checkedPositions.keyAt(i)));
+						}
 					}
+					Recording[] array = new Recording[recordings.size()];
+					deleter.execute(recordings.toArray(array));
 				}
-				Recording[] array = new Recording[recordings.size()];
-				deleter.execute(recordings.toArray(array));
-			}
-			mode.finish();
-			break;
+				mode.finish();
+				break;
 
-		case DialogInterface.BUTTON_NEGATIVE:
-			// No button clicked
-			break;
+			case DialogInterface.BUTTON_NEGATIVE:
+				// No button clicked
+				break;
 		}
 	}
 
@@ -595,13 +561,16 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.contextMenu:
-			selectedPosition = (Integer) v.getTag();
-			getListView().showContextMenu();
-			break;
+			case R.id.contextMenu:
+				selectedPosition = (Integer) v.getTag();
+				PopupMenu popup = new PopupMenu(getActivity(), v);
+				popup.getMenuInflater().inflate(R.menu.context_menu_recordinglist, popup.getMenu());
+				popup.setOnMenuItemClickListener(this);
+				popup.show();
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 

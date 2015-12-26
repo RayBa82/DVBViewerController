@@ -15,14 +15,12 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -47,20 +45,19 @@ import android.widget.ViewFlipper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.client.HttpResponseException;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
-import org.dvbviewer.controller.ui.base.BaseActivity.ErrorToastRunnable;
 import org.dvbviewer.controller.utils.ActionID;
-import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -144,9 +141,9 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (!UIUtils.isTablet(getActivity())) {
-            ((ActionBarActivity) getActivity()).setSupportActionBar(mToolbar);
+            ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         }
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inititalize();
         prefs = new DVBViewerPreferences(getActivity());
         version = prefs.getString(DVBViewerPreferences.KEY_RS_VERSION);
@@ -475,7 +472,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                 break;
         }
         String request = "";
-        request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
+        request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
         DVBViewerCommand httpCommand = new DVBViewerCommand(request);
         Thread executionThread = new Thread(httpCommand);
         executionThread.start();
@@ -490,7 +487,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         String command = "";
         switch (v.getId()) {
             case R.id.ButtonMenu:
-                String request = MessageFormat.format(ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
+                String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), command);
                 DVBViewerCommand httpCommand = new DVBViewerCommand(request);
                 Thread executionThread = new Thread(httpCommand);
                 executionThread.start();
@@ -510,19 +507,6 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         return detector.onTouchEvent(event);
     }
 
-    /**
-     * Show toast.
-     *
-     * @param message the message
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    protected void showToast(String message) {
-        if (getActivity() != null) {
-            ErrorToastRunnable errorRunnable = new ErrorToastRunnable(getActivity(), message);
-            getActivity().runOnUiThread(errorRunnable);
-        }
-    }
 
     @Override
     public Loader<List<String>> onCreateLoader(int id, Bundle args) {
@@ -533,7 +517,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
                 List<String> result = null;
                 try {
                     result = getDVBViewerClients();
-                } catch (HttpResponseException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return result;
@@ -544,20 +528,7 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
 
     @Override
     public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
-        if (!isVersionSupported) {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.version_unsupported_title)
-                    .setMessage(R.string.version_unsupported_text)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            dialog.dismiss();
-                        }
-                    })
-                    .setCancelable(false)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        } else if (data != null && !data.isEmpty()) {
+        if (data != null && !data.isEmpty()) {
             String[] arr = new String[data.size()];
             mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
             mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
@@ -575,21 +546,14 @@ public class Remote extends Fragment implements OnTouchListener, OnClickListener
         loader.reset();
     }
 
-    private List<String> getDVBViewerClients() throws HttpResponseException {
-        List<String> result = null;
-        String version = RecordingService.getVersionString();
-        if (TextUtils.isEmpty(version)) {
-            throw new HttpResponseException(503, "Could not connect to Recording Service");
-        }
-        isVersionSupported = Config.isRemoteSupported(version);
-        if (isVersionSupported) {
-            String jsonClients = RecordingService.getDVBViewerTargets();
-            if (!TextUtils.isEmpty(jsonClients)) {
-                result = gson.fromJson(jsonClients, type);
-                SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
-                prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
-                prefEditor.commit();
-            }
+    private List<String> getDVBViewerClients() throws DefaultHttpException {
+        List<String> result = new LinkedList<>();
+        String jsonClients = RecordingService.getDVBViewerTargets();
+        if (!TextUtils.isEmpty(jsonClients)) {
+            result = gson.fromJson(jsonClients, type);
+            SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
+            prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+            prefEditor.commit();
         }
         return result;
     }

@@ -25,7 +25,6 @@ import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -66,17 +65,16 @@ import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
-import org.dvbviewer.controller.entities.Status;
 import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
 import org.dvbviewer.controller.io.data.ChannelHandler;
-import org.dvbviewer.controller.io.data.ChannelListParser;
 import org.dvbviewer.controller.io.data.EpgEntryHandler;
 import org.dvbviewer.controller.io.data.FavouriteHandler;
-import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.EpgPagerActivity;
@@ -91,21 +89,10 @@ import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import ch.boye.httpclientandroidlib.NameValuePair;
-import ch.boye.httpclientandroidlib.ParseException;
-import ch.boye.httpclientandroidlib.auth.AuthenticationException;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
-import ch.boye.httpclientandroidlib.client.utils.URLEncodedUtils;
-import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
-import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 
 /**
  * The Class ChannelList.
@@ -227,51 +214,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
                     @Override
                     public Cursor loadInBackground() {
-                        List<EpgEntry> result = null;
-                        String nowFloat = org.dvbviewer.controller.utils.DateUtils.getFloatDate(new Date());
-                        String url = ServerConsts.URL_EPG + "&start=" + nowFloat + "&end=" + nowFloat;
-                        try {
-                            EpgEntryHandler handler = new EpgEntryHandler();
-                            String xml = ServerRequest.getRSString(url);
-                            result = handler.parse(xml);
-                            DbHelper helper = new DbHelper(getContext());
-                            helper.saveNowPlaying(result);
-                        } catch (AuthenticationException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_invalid_credentials));
-                        } catch (UnknownHostException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_unknonwn_host) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                        } catch (ConnectTimeoutException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_connection_timeout));
-                        } catch (SAXException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_parsing_xml));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                        } catch (ClientProtocolException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                        } catch (URISyntaxException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                        } catch (IllegalArgumentException e) {
-                            showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
-                        }
+                        loadEpg();
                         return null;
                     }
-
 
                 };
                 break;
@@ -280,107 +225,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
                     @Override
                     public Cursor loadInBackground() {
-
-                        try {
-                            /**
-                             * Request the Status.xml to get some default Recordingservice Configs
-                             */
-                            String statusXml = ServerRequest.getRSString(ServerConsts.URL_STATUS);
-                            StatusHandler statusHandler = new StatusHandler();
-                            Status s = statusHandler.parse(statusXml);
-                            String version = RecordingService.getVersionString();
-
-                            DbHelper mDbHelper = new DbHelper(mContext);
-                            /**
-                             * Request the Channels
-                             */
-                            if (Config.isOldRsVersion(version)) {
-                                byte[] rawData = ServerRequest.getRSBytes(ServerConsts.URL_CHANNELS_OLD);
-                                List<Channel> chans = ChannelListParser.parseChannelList(getContext(), rawData);
-                                mDbHelper.saveChannels(chans);
-                            } else {
-                                String chanXml = ServerRequest.getRSString(ServerConsts.URL_CHANNELS);
-                                ChannelHandler channelHandler = new ChannelHandler();
-                                List<ChannelRoot> chans = channelHandler.parse(chanXml);
-                                mDbHelper.saveChannelRoots(chans);
-                            }
-
-                            /**
-                             * Request the Favourites
-                             */
-                            String favXml = ServerRequest.getRSString(ServerConsts.URL_FAVS);
-                            if (!TextUtils.isEmpty(favXml)) {
-                                FavouriteHandler handler = new FavouriteHandler();
-                                List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
-                                mDbHelper.saveFavGroups(favGroups);
-                            }
-
-                            mDbHelper.close();
-
-                            /**
-                             * Get the Mac Address for WOL
-                             */
-                            String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
-                            ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress;
-
-                            /**
-                             * Get the DVBViewer Clients
-                             */
-                            String jsonClients = null;
-                            if (Config.isRemoteSupported(version)) {
-                                jsonClients = RecordingService.getDVBViewerTargets();
-                            }
-
-                            /**
-                             * Save the data in sharedpreferences
-                             */
-                            Editor prefEditor = prefs.getPrefs().edit();
-                            if (s != null) {
-                                prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, s.getEpgBefore());
-                                prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, s.getEpgAfter());
-                                prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, s.getDefAfterRecord());
-                            }
-                            if (jsonClients != null) {
-                                prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
-                            }
-                            prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
-                            prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
-                            prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-                            prefEditor.commit();
-                            Config.CHANNELS_SYNCED = true;
-                        } catch (AuthenticationException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_invalid_credentials));
-                        } catch (UnknownHostException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_unknonwn_host) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                        } catch (ConnectTimeoutException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_connection_timeout));
-                        } catch (SAXException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_parsing_xml));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                        } catch (ClientProtocolException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                        } catch (URISyntaxException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                        } catch (IllegalArgumentException e) {
-                            showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                        }
+                        performRefresh();
                         return null;
                     }
 
@@ -390,6 +235,94 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 break;
         }
         return loader;
+    }
+
+    private void loadEpg() {
+        List<EpgEntry> result = null;
+        String nowFloat = DateUtils.getFloatDate(new Date());
+        String url = ServerConsts.URL_EPG + "&start=" + nowFloat + "&end=" + nowFloat;
+        try {
+            EpgEntryHandler handler = new EpgEntryHandler();
+            String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+            result = handler.parse(xml);
+            DbHelper helper = new DbHelper(getContext());
+            helper.saveNowPlaying(result);
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_invalid_credentials));
+        } catch (DefaultHttpException e) {
+            e.printStackTrace();
+            showToast(e.getMessage());
+        } catch (SAXException e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_parsing_xml));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+        }
+    }
+
+    private void performRefresh() {
+        try {
+            String version = RecordingService.getVersionString();
+            if (!Config.isRSVersionSupported(version)) {
+                showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
+                return;
+            }
+            /**
+             * Request the Channels
+             */
+            String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
+            ChannelHandler channelHandler = new ChannelHandler();
+            List<ChannelRoot> chans = channelHandler.parse(chanXml);
+            DbHelper mDbHelper = new DbHelper(mContext);
+            mDbHelper.saveChannelRoots(chans);
+            /**
+             * Request the Favourites
+             */
+            String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
+            if (!TextUtils.isEmpty(favXml)) {
+                FavouriteHandler handler = new FavouriteHandler();
+                List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
+                mDbHelper.saveFavGroups(favGroups);
+            }
+
+            mDbHelper.close();
+
+            /**
+             * Get the Mac Address for WOL
+             */
+            String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
+            ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress;
+
+            /**
+             * Get the DVBViewer Clients
+             */
+            String jsonClients = RecordingService.getDVBViewerTargets();
+
+            /**
+             * Save the data in sharedpreferences
+             */
+            Editor prefEditor = prefs.getPrefs().edit();
+            if (jsonClients != null) {
+                prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+            }
+            StatusList.getStatus(prefs, version);
+            prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
+            prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
+            prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
+            prefEditor.commit();
+            Config.CHANNELS_SYNCED = true;
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_invalid_credentials));
+        } catch (DefaultHttpException e) {
+            e.printStackTrace();
+            showToast(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
+        }
     }
 
 
@@ -579,34 +512,15 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 }
                 return true;
             case R.id.menuSwitch:
-                String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), chan.getPosition());
+                String cid = ":" + String.valueOf(chan.getChannelID());
+                String switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                 DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                 Thread exexuterTHread = new Thread(command);
                 exexuterTHread.start();
                 return true;
             case R.id.menuRecord:
                 timer = cursorToTimer(c);
-                String url = timer.getId() <= 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT;
-                String title = timer.getTitle();
-                String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-                String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-                String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-                String endAction = String.valueOf(timer.getTimerAction());
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("ch", String.valueOf(timer.getChannelId())));
-                params.add(new BasicNameValuePair("dor", days));
-                params.add(new BasicNameValuePair("encoding", "255"));
-                params.add(new BasicNameValuePair("enable", "1"));
-                params.add(new BasicNameValuePair("start", start));
-                params.add(new BasicNameValuePair("stop", stop));
-                params.add(new BasicNameValuePair("title", title));
-                params.add(new BasicNameValuePair("endact", endAction));
-                if (timer.getId() > 0) {
-                    params.add(new BasicNameValuePair("id", String.valueOf(timer.getId())));
-                }
-
-                String query = URLEncodedUtils.format(params, "utf-8");
-                String request = url + query;
+                String request = TimerDetails.buildTimerUrl(timer);
                 RecordingServiceGet rsGet = new RecordingServiceGet(request);
                 Thread executionThread = new Thread(rsGet);
                 executionThread.start();
@@ -646,7 +560,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 }
                 return true;
             case R.id.menuSwitch:
-                String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), chan.getPosition());
+                String cid = ":" + String.valueOf(chan.getChannelID());
+                String switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                 DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                 Thread exexuterTHread = new Thread(command);
                 exexuterTHread.start();
@@ -664,27 +579,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void recordChannel(Cursor c) {
         Timer timer;
         timer = cursorToTimer(c);
-        String url = timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT;
-        String title = timer.getTitle();
-        String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-        String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-        String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-        String endAction = String.valueOf(timer.getTimerAction());
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("ch", String.valueOf(timer.getChannelId())));
-        params.add(new BasicNameValuePair("dor", days));
-        params.add(new BasicNameValuePair("encoding", "255"));
-        params.add(new BasicNameValuePair("enable", "1"));
-        params.add(new BasicNameValuePair("start", start));
-        params.add(new BasicNameValuePair("stop", stop));
-        params.add(new BasicNameValuePair("title", title));
-        params.add(new BasicNameValuePair("endact", endAction));
-        if (timer.getId() >= 0) {
-            params.add(new BasicNameValuePair("id", String.valueOf(timer.getId())));
-        }
-
-        String query = URLEncodedUtils.format(params, "utf-8");
-        String request = url + query;
+        String request = TimerDetails.buildTimerUrl(timer);
         RecordingServiceGet rsGet = new RecordingServiceGet(request);
         Thread executionThread = new Thread(rsGet);
         executionThread.start();
@@ -961,7 +856,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * @date 07.04.2013
      */
     private ArrayList<Channel> cursorToChannellist() {
-        Cursor c = (Cursor) mAdapter.getCursor();
+        Cursor c = mAdapter.getCursor();
         ArrayList<Channel> chans = new ArrayList<Channel>();
         c.moveToPosition(-1);
         while (c.moveToNext()) {
@@ -1016,13 +911,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Cursor c = mAdapter.getCursor();
                     c.moveToPosition(selectedPosition);
                     Channel chan = cursorToChannel(c);
-                    String videoUrl = StreamConfig.buildLiveUrl(getActivity(), chan.getPosition());
-                    Log.i("Stream", videoUrl);
-                    Intent videoIntent;
-                    String videoType = "video/mpeg";
-                    videoIntent = new Intent(Intent.ACTION_VIEW);
-                    videoIntent.setDataAndType(Uri.parse(videoUrl), videoType);
-                    getActivity().startActivity(videoIntent);
+                    getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getPosition()));
 					// Get tracker.
 					Tracker t = ((App) getActivity().getApplication()).getTracker();
 					// Build and send an Event.
@@ -1107,7 +996,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * @author RayBa
      * @date 05.07.2012
      */
-    public static interface OnChannelSelectedListener {
+    public interface OnChannelSelectedListener {
 
         /**
          * Channel selected.
@@ -1118,7 +1007,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          * @author RayBa
          * @date 05.07.2012
          */
-        public void channelSelected(List<Channel> chans, Channel chan, int position);
+        void channelSelected(List<Channel> chans, Channel chan, int position);
 
     }
 

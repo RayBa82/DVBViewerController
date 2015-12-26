@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="postRecoridngActions">
+        <item name="nothing">Nic nie rób</item>
+        <item name="shutDown">Wyłącz komp.</item>
+        <item name="standby">Wstrzymanie</item>
+        <item name="hibernate">Hibernacja</item>
+    </string-array>
+
+</resources>

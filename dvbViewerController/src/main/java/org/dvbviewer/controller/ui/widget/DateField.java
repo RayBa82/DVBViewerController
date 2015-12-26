@@ -16,57 +16,32 @@
 package org.dvbviewer.controller.ui.widget;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
-import android.widget.EditText;
 
 import java.util.Date;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DateField.
  *
  * @author RayBa
  * @date 07.04.2013
  */
-public class DateField extends EditText {
+public class DateField extends AppCompatEditText {
 
 	private Date	mDate;
 
-	/**
-	 * Instantiates a new date field.
-	 *
-	 * @param context the context
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
 	public DateField(Context context) {
 		super(context);
 	}
 
-	/**
-	 * Instantiates a new date field.
-	 *
-	 * @param context the context
-	 * @param attrs the attrs
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
 	public DateField(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	/**
-	 * Instantiates a new date field.
-	 *
-	 * @param context the context
-	 * @param attrs the attrs
-	 * @param defStyle the def style
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public DateField(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
+	public DateField(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
 	}
 
 	/**

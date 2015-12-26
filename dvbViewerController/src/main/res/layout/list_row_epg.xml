@@ -3,66 +3,69 @@
     android:id="@+id/checkable"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
     android:paddingEnd="?android:attr/scrollbarSize"
-    android:paddingRight="?android:attr/scrollbarSize"
-    android:minHeight="?android:attr/listPreferredItemHeight">
+    android:paddingRight="?android:attr/scrollbarSize">
 
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_weight="1" >
-    <TextView
-        android:id="@+id/startTime"
-        style="@style/commonSubTitle"
-        android:text="Test"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/ic_launcher" />
+        android:layout_weight="1"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/startTime"
+            style="@style/commonSubTitle"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/ic_launcher"
+            android:text="Test" />
 
         <TextView
             android:id="@+id/title"
-            android:text="Test"
-        	android:layout_marginLeft="15dp"
-            android:layout_below="@+id/startTime"
+            style="@style/commonTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/startTime"
+            android:layout_marginLeft="15dp"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:maxLines="2"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="Test" />
 
         <TextView
             android:id="@+id/description"
+            style="@style/commonSubTitle"
             android:layout_width="wrap_content"
-            android:text="Test"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/title"
             android:layout_below="@+id/title"
             android:ellipsize="end"
             android:maxLines="4"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:text="Test" />
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/widget_frame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="vertical" >
+        android:gravity="top"
+        android:orientation="vertical">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/contextMenu"
-            style="@style/Base.Widget.AppCompat.Spinner.DropDown.ActionBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginTop="5dp"
+            android:background="?attr/selectableItemBackground"
             android:duplicateParentState="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:scaleType="centerInside" />
+            android:src="@drawable/ic_more_vert_white_16dp" />
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.CheckableLinearLayout>

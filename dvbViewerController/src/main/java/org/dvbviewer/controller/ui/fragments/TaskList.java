@@ -22,27 +22,24 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.apache.http.ParseException;
-import org.apache.http.auth.AuthenticationException;
-import org.apache.http.client.ClientProtocolException;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Task;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.CategoryAdapter;
 import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.MessageFormat;
 
 /**
@@ -219,34 +216,19 @@ public class TaskList extends BaseListFragment implements OnClickListener {
 		@Override
 		public void run() {
 			try {
-				ServerRequest.getRSString(ServerConsts.URL_EXECUTE_TASK + task);
+				ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EXECUTE_TASK + task);
 			} catch (AuthenticationException e) {
-				Log.e(ChannelEpg.class.getSimpleName(), "AuthenticationException");
 				e.printStackTrace();
-				showToast(getString(R.string.error_invalid_credentials));
-			} catch (ParseException e) {
-				Log.e(ChannelEpg.class.getSimpleName(), "ParseException");
+				showToast(getStringSafely(R.string.error_invalid_credentials));
+			} catch (DefaultHttpException e) {
 				e.printStackTrace();
-			} catch (ClientProtocolException e) {
-				Log.e(ChannelEpg.class.getSimpleName(), "ClientProtocolException");
+				showToast(e.getMessage());
+			} catch (SAXException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
-				Log.e(ChannelEpg.class.getSimpleName(), "IOException");
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				Log.e(ChannelEpg.class.getSimpleName(), "URISyntaxException");
-				e.printStackTrace();
-				showToast(getString(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-			} catch (IllegalStateException e) {
-				Log.e(ChannelEpg.class.getSimpleName(), "IllegalStateException");
-				e.printStackTrace();
-				showToast(getString(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-			} catch (IllegalArgumentException e) {
-				Log.e(ChannelEpg.class.getSimpleName(), "IllegalArgumentException");
-				showToast(getString(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
+				showToast(getStringSafely(R.string.error_parsing_xml));
 			} catch (Exception e) {
-				Log.e(ChannelEpg.class.getSimpleName(), "Exception");
 				e.printStackTrace();
+				showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
 			}
 		}
 	}

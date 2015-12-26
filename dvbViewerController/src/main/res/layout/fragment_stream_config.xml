@@ -3,6 +3,8 @@
     android:id="@+id/scrollview"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:minHeight="480dp"
+    android:minWidth="320dp"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -12,7 +14,7 @@
 
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/list_preferred_item_height_small"
             android:orientation="vertical"
@@ -95,26 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:entries="@array/presets" />
-            </TableRow>
-
-            <TableRow
-                style="@style/StreamDialogTableRow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/aspectRatio" />
-
-                <Spinner
-                    android:id="@+id/aspectSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:entries="@array/aspect" />
+                    android:focusable="true" />
             </TableRow>
 
             <TableRow
@@ -134,44 +117,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:entries="@array/ffmpegPresets" />
-            </TableRow>
-
-            <TableRow
-                style="@style/StreamDialogTableRow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/maxWidth" />
-
-                <Spinner
-                    android:id="@+id/widthSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:entries="@array/width" />
-            </TableRow>
-
-            <TableRow
-                style="@style/StreamDialogTableRow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/maxHeight" />
-
-                <Spinner
-                    android:id="@+id/heightSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:entries="@array/height" />
             </TableRow>
 
             <TableRow

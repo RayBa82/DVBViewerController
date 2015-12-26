@@ -103,6 +103,16 @@
     <string name="status_rs_version">Recording Service Version</string>
     <string name="status_current_recordings">Laufende Aufnahmen</string>
     <string name="status_current_clients">Verbundene Clients</string>
+    <string name="status_current_rtsp_clients">Verbundene RTSP Clients</string>
+    <string name="status_current_unicast_clients">Verbundene Unicast Clients</string>
+    <string name="status_next_Rec">Nächste Aufnahme</string>
+    <string name="status_next_timer">Nächster Timer</string>
+    <string name="status_last_ui_access">Letzter Webzugriff</string>
+    <string name="status_standby_blocked">Standby blockiert</string>
+    <string name="status_tunercount">Benutzte Tuner</string>
+    <string name="status_stream_tunercount">Streamende Tuner</string>
+    <string name="status_record_tunercount">Aufnehmende Tuner</string>
+    <string name="status_recfiles">Aufnahmen</string>
     <string name="status_epg_update_running">EPG update läuft</string>
     <string name="status_epg_before">Timer Vorlauf</string>
     <string name="status_epg_after">Timer Nachlauf</string>
@@ -157,7 +167,7 @@
 
     <string name="quick_stream_hint_title">Sender streamen</string>
     <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
-    <string name="version_unsupported_text">Die Recording Service Version muss höher als 1.30.1.0 sein um die Ferbedienungfunktion zu Nutzen</string>
+    <string name="version_unsupported_text">Ihre Recording Service Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
     <string name="version_unsupported_title">Version zu alt</string>
     <string name="common_colon">:&#160;</string>
     <string name="recording_folder">Aufnahmeordner</string>

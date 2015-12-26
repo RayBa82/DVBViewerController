@@ -4,21 +4,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector_holo_dark"
+    android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:padding="5dp"
     android:paddingEnd="?android:attr/scrollbarSize"
     android:paddingRight="?android:attr/scrollbarSize">
 
-    <CheckBox
-        android:id="@id/checkIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-        android:duplicateParentState="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:paddingLeft="5dp" />
+
+    <FrameLayout
+        android:layout_width="80dp"
+        android:layout_height="45dp"
+        android:layout_margin="0dp"
+        android:padding="0dp">
+
+        <ImageView
+            android:id="@+id/thumbNail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:scaleType="center"
+            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+            android:duplicateParentState="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="0dp" />
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -81,18 +92,19 @@
         android:id="@+id/widget_frame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:gravity="top"
         android:orientation="vertical">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/contextMenu"
-            style="@style/Base.Widget.AppCompat.Spinner.DropDown.ActionBar"
-            android:layout_width="35dp"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="?attr/selectableItemBackground"
             android:duplicateParentState="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:scaleType="centerInside" />
+            android:src="@drawable/ic_more_vert_white_16dp" />
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.CheckableLinearLayout>

@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
@@ -31,26 +32,23 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Status;
 import org.dvbviewer.controller.entities.Status.Folder;
 import org.dvbviewer.controller.entities.Status.StatusItem;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.data.Status2Handler;
 import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.CategoryAdapter;
 import org.dvbviewer.controller.utils.Config;
+import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-
-import ch.boye.httpclientandroidlib.ParseException;
-import ch.boye.httpclientandroidlib.auth.AuthenticationException;
-import ch.boye.httpclientandroidlib.client.ClientProtocolException;
-import ch.boye.httpclientandroidlib.conn.ConnectTimeoutException;
+import java.text.MessageFormat;
 
 /**
  * The Class StatusList.
@@ -100,66 +98,56 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             public Status loadInBackground() {
                 Status result = null;
                 try {
-                    String statusXml = ServerRequest.getRSString(ServerConsts.URL_STATUS);
-                    StatusHandler statusHandler = new StatusHandler();
-                    result = statusHandler.parse(statusXml);
                     String version = RecordingService.getVersionString();
-                    StatusItem versionItem = new StatusItem();
-                    versionItem.setNameRessource(R.string.status_rs_version);
-                    versionItem.setValue(version);
-                    result.getItems().add(0, versionItem);
-                    String jsonClients = null;
-                    if (Config.isRemoteSupported(version)) {
-                        jsonClients = RecordingService.getDVBViewerTargets();
+                    if (!Config.isRSVersionSupported(version)){
+                        showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
+                        return result;
                     }
-
-                    DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-                    SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
-                    if (jsonClients != null) {
-                        prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
-                    }
-                    prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, result.getEpgBefore());
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, result.getEpgAfter());
-                    prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, result.getDefAfterRecord());
-                    prefEditor.commit();
+                    result = getStatus(new DVBViewerPreferences(getActivity()), version);
                 } catch (AuthenticationException e) {
                     e.printStackTrace();
                     showToast(getStringSafely(R.string.error_invalid_credentials));
-                } catch (UnknownHostException e) {
+                } catch (DefaultHttpException e) {
                     e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_unknonwn_host) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (ConnectTimeoutException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_connection_timeout));
+                    showToast(e.getMessage());
                 } catch (SAXException e) {
                     e.printStackTrace();
                     showToast(getStringSafely(R.string.error_parsing_xml));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
-                } catch (IllegalArgumentException e) {
-                    showToast(getStringSafely(R.string.error_invalid_url) + "\n\n" + ServerConsts.REC_SERVICE_URL);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
+                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
                 }
                 return result;
             }
         };
         return loader;
+    }
+
+    @Nullable
+    public static Status getStatus(DVBViewerPreferences prefs, String version) throws Exception {
+        Status result = null;
+        String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
+        Status2Handler status2Handler = new Status2Handler();
+        result = status2Handler.parse(status2Xml);
+        StatusHandler statusHandler = new StatusHandler();
+        String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
+        Status oldStatus = statusHandler.parse(statusXml);
+        StatusItem versionItem = new StatusItem();
+        versionItem.setNameRessource(R.string.status_rs_version);
+        versionItem.setValue(version);
+        result.getItems().add(0, versionItem);
+        String jsonClients = RecordingService.getDVBViewerTargets();
+        result.getItems().addAll(oldStatus.getItems());
+        SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
+        if (jsonClients != null) {
+            prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+        }
+        prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
+        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.getEpgBefore());
+        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
+        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
+        prefEditor.commit();
+        return result;
     }
 
 
@@ -302,11 +290,10 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             holder.statusText.setVisibility(View.VISIBLE);
             switch (mItems.get(position).getNameRessource()) {
                 case R.string.status_epg_update_running:
+                case R.string.status_standby_blocked:
                     holder.statusText.setText(Integer.valueOf(mItems.get(position).getValue()) == 0 ? R.string.no : R.string.yes);
                     break;
                 case R.string.status_epg_before:
-                    holder.statusText.setText(mItems.get(position).getValue() + " " + mRes.getString(R.string.minutes));
-                    break;
                 case R.string.status_epg_after:
                     holder.statusText.setText(mItems.get(position).getValue() + " " + mRes.getString(R.string.minutes));
                     break;
@@ -316,6 +303,11 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                     break;
                 case R.string.status_def_after_record:
                     holder.statusText.setText(mRes.getStringArray(R.array.postRecoridngActions)[Integer.valueOf(mItems.get(position).getValue())]);
+                    break;
+                case R.string.status_last_ui_access:
+                case R.string.status_next_Rec:
+                case R.string.status_next_timer:
+                    holder.statusText.setText(DateUtils.secondsToReadableFormat(Long.valueOf(mItems.get(position).getValue())));
                     break;
                 default:
                     holder.statusText.setText(mItems.get(position).getValue());
