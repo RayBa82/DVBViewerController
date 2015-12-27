@@ -2,8 +2,8 @@
 <resources>
     <string-array name="postRecoridngActions">
         <item>Žádná akce</item>
-        <item>zavřít</item>
-        <item>zapnuto</item>
-        <item>hibernace</item>
+        <item>Ukončit</item>
+        <item>Standby režim</item>
+        <item>Uspat</item>
     </string-array>
 </resources>
