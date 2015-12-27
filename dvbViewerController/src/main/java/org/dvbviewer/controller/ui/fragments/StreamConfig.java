@@ -93,6 +93,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	
 	private SharedPreferences	prefs;
 	private FfMpegPrefs ffMpegPrefs;
+	private View collapsable;
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.DialogFragment#onCreate(android.os.Bundle)
@@ -131,16 +132,19 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
                 FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
 
 				ffMpegPrefs = prefsHandler.parse(ffmpegprefsString);
-				final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, ffMpegPrefs.getPresets());
-                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						qualitySpinner.setAdapter(dataAdapter);
-						int pos = ffMpegPrefs.getPresets().indexOf(getDefaultPreset(prefs));
-						qualitySpinner.setSelection(pos);
-					}
-				});
+				if (!ffMpegPrefs.getPresets().isEmpty()){
+					final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, ffMpegPrefs.getPresets());
+					dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							qualitySpinner.setAdapter(dataAdapter);
+							int pos = ffMpegPrefs.getPresets().indexOf(getDefaultPreset(prefs));
+							qualitySpinner.setSelection(pos);
+							collapsable.setVisibility(View.VISIBLE);
+						}
+					});
+				}
             }
 
         } catch (Exception e) {
@@ -200,6 +204,9 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_stream_config, container, false);
+
+		collapsable = v.findViewById(R.id.collapsable);
+		collapsable.setVisibility(View.GONE);
 		qualitySpinner = (Spinner) v.findViewById(R.id.qualitySpinner);
 		qualitySpinner.setOnItemSelectedListener(this);
 
@@ -423,18 +430,17 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		builder.addQueryParameter("start", String.valueOf(start));
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		final String url = builder.build().toString();
-		Log.d(Tag, "playing video: "+url);
+		Log.d(Tag, "playing video: " + url);
 		videoIntent.setDataAndType(Uri.parse(url), preset.getMimeType());
 		return videoIntent;
 	}
 
 	public static Intent getDirectUrl(int position, boolean recording){
 		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(position+".ts");
-		Log.d(Tag, "playing video: "+result.toString());
+		Log.d(Tag, "playing video: " + result.toString());
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");
 		return videoIntent;
 	}
-	
 
 }
