@@ -45,6 +45,8 @@ import android.widget.Spinner;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
+import com.nineoldandroids.animation.IntEvaluator;
+import com.nineoldandroids.animation.ValueAnimator;
 import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.App;
@@ -141,7 +143,14 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 							qualitySpinner.setAdapter(dataAdapter);
 							int pos = ffMpegPrefs.getPresets().indexOf(getDefaultPreset(prefs));
 							qualitySpinner.setSelection(pos);
+							ViewGroup vg = (ViewGroup) collapsable.getParent();
+							int widthMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(vg.getWidth(), View.MeasureSpec.AT_MOST);
+							int heightMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(1073741823, View.MeasureSpec.AT_MOST);
+							collapsable.measure(widthMeasureSpec, heightMeasureSpec);
 							collapsable.setVisibility(View.VISIBLE);
+							ValueAnimator animator = ValueAnimator.ofObject(new HeightEvaluator(collapsable), 0, collapsable.getMeasuredHeight());
+							animator.setDuration(500);
+							animator.start();
 						}
 					});
 				}
@@ -442,5 +451,24 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");
 		return videoIntent;
 	}
+
+
+	private class HeightEvaluator extends IntEvaluator {
+
+		private View v;
+		public HeightEvaluator(View v) {
+			this.v = v;
+		}
+
+		@Override
+		public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+			int height = super.evaluate(fraction, startValue, endValue);
+			ViewGroup.LayoutParams params = v.getLayoutParams();
+			params.height = height;
+			v.setLayoutParams(params);
+			return height;
+		}
+	}
+
 
 }
