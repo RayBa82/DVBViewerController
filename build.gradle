@@ -2,7 +2,7 @@
 def majorVersion = 1
 def minorVersion = 1
 def patchVersion = 4
-def buildNumber = 10
+def buildNumber = 11
 def buildVersionCode;
 def buildVersionName
 buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
