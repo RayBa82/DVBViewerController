@@ -24,7 +24,7 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void parseChannels() {
-        List<ChannelRoot> channelRoots = getChannels();
+        List<ChannelRoot> channelRoots = getChannels(R.raw.chan_list_user_1);
         assertNotNull(channelRoots);
         assertEquals(1, channelRoots.size());
         ChannelRoot root = channelRoots.get(0);
@@ -34,28 +34,27 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void parseFavourites() {
-        List<ChannelGroup> channelGroups = getFavs();
+        List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_1);
         assertNotNull(channelGroups);
         assertEquals(false, channelGroups.isEmpty());
     }
 
     @Test
     public void matchFavourites() {
-        List<ChannelRoot> channelRoots = getChannels();
-        List<ChannelGroup> channelGroups = getFavs();
+        List<ChannelRoot> channelRoots = getChannels(R.raw.chan_list_user_1);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_1);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         List<Channel> favs = new ArrayList<>();
         for (ChannelGroup favGroup : favGroups){
             favs.addAll(favGroup.getChannels());
         }
-        assertNotNull(favs);
         assertEquals(30, favs.size());
     }
 
     @Nullable
-    private List<ChannelRoot> getChannels() {
-        String chanXml = TestUtils.getStringFromFile(InstrumentationRegistry.getContext(), R.raw.chan_list_user_1);
+    private List<ChannelRoot> getChannels(int resId) {
+        String chanXml = TestUtils.getStringFromFile(InstrumentationRegistry.getContext(), resId);
         ChannelHandler chanHandler = new ChannelHandler();
         List<ChannelRoot> channelRoots = null;
         try {
@@ -67,8 +66,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
     }
 
     @Nullable
-    private List<ChannelGroup> getFavs() {
-        String favXml = TestUtils.getStringFromFile(InstrumentationRegistry.getContext(), R.raw.fav_list_user_1);
+    private List<ChannelGroup> getFavs(int resId) {
+        String favXml = TestUtils.getStringFromFile(InstrumentationRegistry.getContext(), resId);
         FavouriteHandler favHandler = new FavouriteHandler();
         List<ChannelGroup> channelGroups = null;
         try {
