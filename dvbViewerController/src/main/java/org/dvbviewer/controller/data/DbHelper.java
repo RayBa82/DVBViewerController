@@ -18,9 +18,7 @@ package org.dvbviewer.controller.data;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
@@ -34,40 +32,18 @@ import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.EpgEntry;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
  * The Class DbHelper.
  * 
  * @author RayBa
- * @date 26.04.2012
  */
 public class DbHelper extends SQLiteOpenHelper {
 
 	private static final String	DATABASE_NAME		= "dvbviewercontroller.db";
 
 	private static final int	DATABASE_VERSION	= 1;
-
-	CursorFactory				mCursorFactory;
-
-	public static String		SMALLER_OR_EQUALS	= " <= ";
-
-	public static String		BIGGER_OR_EQUALS	= " >= ";
-
-	public static String		EQUALS				= " = ";
-
-	public static String		NOT_EQUALS			= " != ";
-
-	public static String		AND					= " AND ";
-
-	public static String		BETWEEN				= " BETWEEN ";
-
-	public static String		WHERE				= " WHERE ";
-
-	public static String		ORDER_BY			= " ORDER BY ";
-
-	public static String		BIT_AND				= " & ";
 
 	private Context				mContext;
 
@@ -76,8 +52,6 @@ public class DbHelper extends SQLiteOpenHelper {
 	 * 
 	 * @param context
 	 *            the context
-	 * @author RayBa
-	 * @date 26.04.2012
 	 */
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -119,7 +93,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			db.execSQL("ALTER TABLE " + ChannelTbl.TABLE_NAME + " ADD COLUMN " + ChannelTbl.LOGO_URL + " TEXT");
 			break;
 		case 3:
-			List<Channel> result = new ArrayList<Channel>();
+			List<Channel> result = new ArrayList<>();
 			Cursor c = db.rawQuery("SELECT * FROM " + ChannelTbl.TABLE_NAME, null);
 			while (c.moveToNext()) {
 				Channel channel = new Channel();
@@ -161,167 +135,10 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Gets the channellist.
-	 * 
-	 * @return the channellist
-	 * 
-	 * @author RayBa
-	 * @date 20.06.2010
-	 * @description Gets the channellist.
-	 */
-	public List<Channel> loadChannellist() {
-		SQLiteDatabase db = getWritableDatabase();
-		List<Channel> result = new ArrayList<Channel>();
-		Cursor c = db.rawQuery("SELECT * FROM " + ChannelTbl.TABLE_NAME + " ORDER BY " + ChannelTbl.POSITION, null);
-		while (c.moveToNext()) {
-			Channel channel = new Channel();
-			channel.setId(c.getLong(c.getColumnIndex(ChannelTbl._ID)));
-			channel.setEpgID(c.getLong(c.getColumnIndex(ChannelTbl.EPG_ID)));
-			String name = c.getString(c.getColumnIndex(ChannelTbl.NAME));
-			name = name.replaceAll("\\([^\\(]*\\)", "").trim();
-			channel.setName(name);
-			channel.setPosition(c.getInt(c.getColumnIndex(ChannelTbl.POSITION)));
-			result.add(channel);
-		}
-		c.close();
-		db.close();
-		if (result.size() <= 0) {
-			result = null;
-		}
-		return result;
-	}
-
-	/**
-	 * Gets the channellist.
-	 * 
-	 * @return the channellist
-	 * 
-	 * @author RayBa
-	 * @date 20.06.2010
-	 * @description Gets the channellist.
-	 */
-	public List<Channel> loadPendingUpdateChannellist() {
-		SQLiteDatabase db = getWritableDatabase();
-		List<Channel> result = new ArrayList<Channel>();
-		Cursor c = db.rawQuery("SELECT * FROM " + ChannelTbl.TABLE_NAME + WHERE + ChannelTbl.FLAGS + BIT_AND + Channel.FLAG_PENDING_UPDATE + NOT_EQUALS + "0" + ORDER_BY + ChannelTbl.POSITION, null);
-		while (c.moveToNext()) {
-			Channel channel = new Channel();
-			channel.setId(c.getLong(c.getColumnIndex(ChannelTbl._ID)));
-			channel.setEpgID(c.getLong(c.getColumnIndex(ChannelTbl.EPG_ID)));
-			String name = c.getString(c.getColumnIndex(ChannelTbl.NAME));
-			name = name.replaceAll("\\([^\\(]*\\)", "").trim();
-			channel.setName(name);
-			channel.setPosition(c.getInt(c.getColumnIndex(ChannelTbl.POSITION)));
-			result.add(channel);
-		}
-		c.close();
-		db.close();
-		if (result.size() <= 0) {
-			result = null;
-		}
-		return result;
-	}
-
-	/**
-	 * Gets the channel cursor.
-	 *
-	 * @return the channel cursor
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public Cursor getChannelCursor() {
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor c = db.rawQuery("SELECT * FROM " + ChannelTbl.TABLE_NAME + " ORDER BY " + ChannelTbl.POSITION, null);
-		return c;
-	}
-
-	/**
-	 * Gets the fav cursor.
-	 *
-	 * @return the fav cursor
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public Cursor getFavCursor() {
-		SQLiteDatabase db = getReadableDatabase();
-		Cursor c = db.rawQuery("SELECT * FROM " + ChannelTbl.TABLE_NAME + " WHERE " + ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0 ORDER BY " + ChannelTbl.FAV_POSITION, null);
-		return c;
-	}
-
-	/**
-	 * Gets the channellist.
-	 *
-	 * @param epgId the epg id
-	 * @param start the start
-	 * @param stop the stop
-	 * @return the channellist
-	 * @author RayBa
-	 * @date 20.06.2010
-	 * @description Gets the channellist.
-	 */
-	public List<EpgEntry> loadChannelEPG(long epgId, long start, long stop) {
-		SQLiteDatabase db = getWritableDatabase();
-		List<EpgEntry> result = new ArrayList<EpgEntry>();
-		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-		qb.setTables(EpgTbl.TABLE_NAME);
-		Cursor c = qb.query(db, null, EpgTbl.EPG_ID + EQUALS + epgId + AND + EpgTbl.END + BETWEEN + start + AND + stop, null, null, null, EpgTbl.END);
-		while (c.moveToNext()) {
-			EpgEntry epg = new EpgEntry();
-			epg.setId(c.getLong(c.getColumnIndex(EpgTbl._ID)));
-			epg.setEpgID(c.getLong(c.getColumnIndex(EpgTbl.EPG_ID)));
-			epg.setStart(new Date((c.getLong(c.getColumnIndex(EpgTbl.START)))));
-			epg.setEnd(new Date((c.getLong(c.getColumnIndex(EpgTbl.END)))));
-			epg.setTitle(c.getString(c.getColumnIndex(EpgTbl.TITLE)));
-			epg.setSubTitle(c.getString(c.getColumnIndex(EpgTbl.SUBTITLE)));
-			epg.setDescription(c.getString(c.getColumnIndex(EpgTbl.DESC)));
-			result.add(epg);
-		}
-		c.close();
-		db.close();
-		if (result.size() <= 0) {
-			result = null;
-		}
-		return result;
-	}
-
-	/**
-	 * Gets the channellist.
-	 * 
-	 * @return the channellist
-	 * 
-	 * @author RayBa
-	 * @date 20.06.2010
-	 * @description Gets the channellist.
-	 */
-	public List<Channel> loadFavourites() {
-		SQLiteDatabase db = getWritableDatabase();
-		List<Channel> result = new ArrayList<Channel>();
-		Cursor c = db.rawQuery("SELECT * FROM " + ChannelTbl.TABLE_NAME + " WHERE " + ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0 ORDER BY " + ChannelTbl.FAV_POSITION, null);
-		while (c.moveToNext()) {
-			Channel channel = new Channel();
-			channel.setId(c.getLong(c.getColumnIndex(ChannelTbl._ID)));
-			channel.setEpgID(c.getLong(c.getColumnIndex(ChannelTbl.EPG_ID)));
-			String name = c.getString(c.getColumnIndex(ChannelTbl.NAME));
-			name = name.replaceAll("\\([^\\(]*\\)", "").trim();
-			channel.setName(name);
-			channel.setPosition(c.getInt(c.getColumnIndex(ChannelTbl.FAV_POSITION)));
-			result.add(channel);
-		}
-		c.close();
-		db.close();
-		if (result.size() <= 0) {
-			result = null;
-		}
-		return result;
-	}
-
-	/**
 	 * Save epg entries.
 	 * 
 	 * @param rootElements
 	 *            the rootElements
-	 * @author RayBa
-	 * @date 26.04.2012
 	 */
 	public void saveChannelRoots(List<ChannelRoot> rootElements) {
 		if (rootElements == null || rootElements.size() <= 0) {
@@ -369,36 +186,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Save epg.
-	 *
-	 * @param epgEntries the epg entries
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void saveEPG(List<EpgEntry> epgEntries) {
-		if (epgEntries == null || epgEntries.size() <= 0) {
-			return;
-		}
-		SQLiteDatabase db = getWritableDatabase();
-		db.beginTransaction();
-		// db.execSQL("DELETE FROM " + ChannelTbl.TABLE_NAME);
-		try {
-			for (EpgEntry epgEntrie : epgEntries) {
-				db.insert(EpgTbl.TABLE_NAME, null, epgEntrie.toContentValues());
-			}
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-			db.close();
-		}
-	}
-
-	/**
 	 * Save now playing.
 	 *
 	 * @param epgEntries the epg entries
-	 * @author RayBa
-	 * @date 07.04.2013
 	 */
 	public void saveNowPlaying(List<EpgEntry> epgEntries) {
 		if (epgEntries == null || epgEntries.size() <= 0) {
@@ -425,8 +215,6 @@ public class DbHelper extends SQLiteOpenHelper {
 	 * Save favs.
 	 *
 	 * @param groups the groups
-	 * @author RayBa
-	 * @date 26.04.2012
 	 */
 	public void saveFavGroups(List<ChannelGroup> groups) {
 		if (groups == null || groups.size() <= 0) {

@@ -16,13 +16,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by RayBa on 30.01.2015.
+ * @author RayBa
+ * on 30.01.2015.
  */
 public class RecordingService {
 
     private static  final String TAG = RecordingService.class.getSimpleName();
 
-    protected final static Pattern versionPattern    = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])");
+    private final static Pattern versionPattern    = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])");
 
     public static String getVersionString() {
         String version = null;
@@ -34,13 +35,6 @@ public class RecordingService {
             boolean matchFound = matcher.find();
             if (matchFound) {
                 version = getVersionFromMatcher(matcher);
-                Log.d(TAG, "Version number: " + version);
-            } else {
-                // ugly fallback if anything goes wrong,
-                // this will be removed when someone wrote some unit tests for the above regex ;-)
-                version = version.replace("DVBViewer Recording Service ", "");
-                String[] arr = version.split(" ");
-                version = arr[0];
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting version from rs", e);
