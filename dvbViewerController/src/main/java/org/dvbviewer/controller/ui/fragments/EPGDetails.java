@@ -78,8 +78,8 @@ public class EPGDetails extends Fragment  {
 		} else if (DateUtils.isTomorrow(epg.getStart().getTime())) {
 			dateString = getResources().getString(R.string.tomorrow);
 		}
-		String start = DateUtils.getTimeInLocalFormat(epg.getStart());
-		String end = DateUtils.getTimeInLocalFormat(epg.getEnd());
+		String start = DateUtils.getTimeInLocalFormat(getActivity(), epg.getStart());
+		String end = DateUtils.getTimeInLocalFormat(getActivity(), epg.getEnd());
 		date.setText(dateString + "  " + start + " - " + end);
 		channel.setText(epg.getChannel());
 		title.setText(epg.getTitle());
