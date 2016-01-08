@@ -22,7 +22,7 @@ public class RecordingService {
 
     private static  final String TAG = RecordingService.class.getSimpleName();
 
-    private final static Pattern versionPattern    = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])");
+    protected final static Pattern versionPattern    = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])");
 
     public static String getVersionString() {
         String version = null;
@@ -30,10 +30,10 @@ public class RecordingService {
             String versionXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_VERSION);
             VersionHandler versionHandler = new VersionHandler();
             final String rawVersion = versionHandler.parse(versionXml);
-            Matcher matcher    = versionPattern.matcher(rawVersion);
+            Matcher matcher    = getVersionMatcher(rawVersion);
             boolean matchFound = matcher.find();
             if (matchFound) {
-                version = matcher.group(1);
+                version = getVersionFromMatcher(matcher);
                 Log.d(TAG, "Version number: " + version);
             } else {
                 // ugly fallback if anything goes wrong,
@@ -63,6 +63,14 @@ public class RecordingService {
             Log.e(TAG, "Error getting DVBViewer Targets", e);
         }
         return jsonClients;
+    }
+
+    protected static Matcher getVersionMatcher(String version){
+        return  versionPattern.matcher(version);
+    }
+
+    protected static String getVersionFromMatcher(Matcher matcher){
+        return  matcher.group();
     }
 
 
