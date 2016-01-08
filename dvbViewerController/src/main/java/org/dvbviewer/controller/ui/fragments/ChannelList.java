@@ -74,6 +74,7 @@ import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
 import org.dvbviewer.controller.io.data.ChannelHandler;
 import org.dvbviewer.controller.io.data.EpgEntryHandler;
+import org.dvbviewer.controller.io.data.FavMatcher;
 import org.dvbviewer.controller.io.data.FavouriteHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
@@ -284,7 +285,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             if (!TextUtils.isEmpty(favXml)) {
                 FavouriteHandler handler = new FavouriteHandler();
                 List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
-                mDbHelper.saveFavGroups(favGroups);
+                FavMatcher favMatcher = new FavMatcher();
+                List<ChannelGroup> favs = favMatcher.matchFavs(chans, favGroups);
+                mDbHelper.saveFavGroups(favs);
             }
 
             mDbHelper.close();

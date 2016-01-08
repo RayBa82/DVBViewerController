@@ -492,4 +492,18 @@ public class Channel implements Comparable<Channel>, Parcelable {
 		this.favGroupId = favGroupId;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Channel){
+			Channel comparator = (Channel) o;
+			return channelID == comparator.getChannelID();
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return String.valueOf(channelID).hashCode();
+	}
 }

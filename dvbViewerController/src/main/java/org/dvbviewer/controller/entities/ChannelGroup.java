@@ -39,7 +39,7 @@ public class ChannelGroup {
 	public static final int	TYPE_FAV	= 1;
 
 	/** The id. */
-	private Long			id;
+	private Long			id = null;
 
 	/** The root id. */
 	private Long			rootId;
@@ -196,4 +196,26 @@ public class ChannelGroup {
 		this.favs = favs;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ChannelGroup){
+			ChannelGroup cp = (ChannelGroup) o;
+			if (id == null){
+				return name.equals(cp.getName());
+			}else {
+				return id == cp.getId();
+			}
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		if (id == null){
+			return name.hashCode();
+		}else {
+			return String.valueOf(id).hashCode();
+		}
+	}
 }

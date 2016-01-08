@@ -29,7 +29,6 @@ import org.dvbviewer.controller.data.DbConsts.GroupTbl;
 import org.dvbviewer.controller.data.DbConsts.NowTbl;
 import org.dvbviewer.controller.data.DbConsts.RootTbl;
 import org.dvbviewer.controller.entities.Channel;
-import org.dvbviewer.controller.entities.Channel.Fav;
 import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.EpgEntry;
@@ -420,44 +419,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		mContext.getContentResolver().notifyChange(ChannelTbl.CONTENT_URI_NOW, null);
 	}
 
-	/**
-	 * Save favs.
-	 *
-	 * @param favs the favs
-	 * @author RayBa
-	 * @date 26.04.2012
-	 */
-	public void saveFavs(List<Fav> favs) {
-		if (favs == null || favs.size() <= 0) {
-			return;
-		}
-		SQLiteDatabase db = getWritableDatabase();
-		db.beginTransaction();
-		try {
-            for (Fav fav : favs) {
-                saveFav(db, fav);
-			}
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-			db.close();
-		}
-	}
 
-    /**
-     *
-     * @param db
-     * @param fav
-     * @author RayBa
-     * @date 23.01.2015
-     */
-    private void saveFav(SQLiteDatabase db, Fav fav) {
-        String subSelect = "Select "+ ChannelTbl.CHANNEL_ID+" from " + ChannelTbl.TABLE_NAME + " where " + ChannelTbl.CHANNEL_ID + " = '" + fav.id + "' LIMIT 1";
-        String select = "update " + ChannelTbl.TABLE_NAME + " set " + ChannelTbl.FAV_POSITION + " = " + fav.position + ", " + ChannelTbl.FLAGS + " = " + ChannelTbl.FLAGS + " | " + Channel.FLAG_FAV + " where "+ ChannelTbl.CHANNEL_ID+" in ("+subSelect+");";
-        db.execSQL(select);
-    }
 
     /**
 	 * Save favs.
@@ -475,9 +437,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		try {
 			for (ChannelGroup channelGroup : groups) {
 				long groupId = db.insert(GroupTbl.TABLE_NAME, null, channelGroup.toContentValues());
-				for (Fav fav : channelGroup.getFavs()) {
-                    saveFav(db,fav);
-                }
+				updateChannels(db, groupId, channelGroup.getChannels());
 			}
 			db.setTransactionSuccessful();
 		} catch (Exception e) {
@@ -485,6 +445,13 @@ public class DbHelper extends SQLiteOpenHelper {
 		} finally {
 			db.endTransaction();
 			db.close();
+		}
+	}
+
+	private void updateChannels(SQLiteDatabase db, long groupId, List<Channel> channels) {
+		for (Channel channel : channels) {
+			channel.setFavGroupId(groupId);
+			db.update(ChannelTbl.TABLE_NAME, channel.toContentValues(), ChannelTbl.CHANNEL_ID+"="+channel.getChannelID(), null);
 		}
 	}
 }
