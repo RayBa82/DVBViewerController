@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="postRecoridngActions">
+        <item>Nincs művelet</item>
+        <item>Leállítás</item>
+        <item>Készenlét</item>
+        <item>Alvás</item>
+    </string-array>
+</resources>
