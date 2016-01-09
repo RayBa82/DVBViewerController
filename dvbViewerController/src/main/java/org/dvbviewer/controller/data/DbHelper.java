@@ -239,7 +239,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	private void updateChannels(SQLiteDatabase db, long groupId, List<Channel> channels) {
 		for (Channel channel : channels) {
 			channel.setFavGroupId(groupId);
-			db.update(ChannelTbl.TABLE_NAME, channel.toContentValues(), ChannelTbl.CHANNEL_ID+"="+channel.getChannelID(), null);
+			db.update(ChannelTbl.TABLE_NAME, channel.toContentValues(), ChannelTbl.POSITION+"="+channel.getPosition(), null);
 		}
 	}
 }
