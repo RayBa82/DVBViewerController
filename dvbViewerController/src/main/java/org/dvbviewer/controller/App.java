@@ -17,8 +17,11 @@ package org.dvbviewer.controller;
 
 import android.app.Application;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.google.android.gms.analytics.ExceptionReporter;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -97,6 +100,24 @@ public class App extends Application {
 		.build();
 
 		ImageLoader.getInstance().init(config);
+
+		ExceptionReporter myHandler =
+				new ExceptionReporter(getTracker(),
+						Thread.getDefaultUncaughtExceptionHandler(), this);
+
+		StandardExceptionParser exceptionParser =
+				new StandardExceptionParser(getApplicationContext(), null) {
+					@Override
+					public String getDescription(String threadName, Throwable t) {
+						return "{" + threadName + "} " + Log.getStackTraceString(t);
+					}
+				};
+
+		myHandler.setExceptionParser(exceptionParser);
+
+		// Make myHandler the new default uncaught exception handler.
+		Thread.setDefaultUncaughtExceptionHandler(myHandler);
+
 	}
 
     public synchronized Tracker getTracker(){
