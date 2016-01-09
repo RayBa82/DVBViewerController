@@ -15,16 +15,6 @@
  */
 package org.dvbviewer.controller.io.data;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-
-import org.dvbviewer.controller.entities.Channel.Fav;
-import org.dvbviewer.controller.entities.ChannelGroup;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 import android.content.Context;
 import android.sax.Element;
 import android.sax.EndElementListener;
@@ -32,6 +22,16 @@ import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
+
+import org.dvbviewer.controller.entities.Channel.Fav;
+import org.dvbviewer.controller.entities.ChannelGroup;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
 
 /**
  * Handler to parse the favourites from the DVBViewer Recording Service
@@ -62,6 +62,7 @@ public class FavouriteHandler extends DefaultHandler {
      */
     public List<ChannelGroup> parse(Context context, String xml) throws SAXException {
         uncategorized.setType(ChannelGroup.TYPE_FAV);
+        uncategorized.setName("Uncategorized");
         RootElement root = new RootElement("settings");
         Element sectionElement = root.getChild("section");
         Element entryElement = sectionElement.getChild("entry");
