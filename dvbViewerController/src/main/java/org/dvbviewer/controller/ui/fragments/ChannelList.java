@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -216,7 +217,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     @Override
                     public Cursor loadInBackground() {
                         loadEpg();
-                        return null;
+                        return new MatrixCursor(new String[1]);
                     }
 
                 };
@@ -227,7 +228,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     @Override
                     public Cursor loadInBackground() {
                         performRefresh();
-                        return null;
+                        return new MatrixCursor(new String[1]);
                     }
 
                 };
