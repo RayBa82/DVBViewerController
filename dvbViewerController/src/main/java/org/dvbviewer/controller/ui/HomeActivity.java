@@ -21,10 +21,10 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Channel;
@@ -61,7 +61,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 
 	SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 	private View		multiContainer;
-	private TextView	multiContainerIndicator;
+	private Toolbar toolbar;
 	private AlertDialog	expirationDialog;
 	String expirationMessage;
 
@@ -73,7 +73,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		multiContainer = findViewById(R.id.multi_container);
-		multiContainerIndicator = (TextView) findViewById(R.id.multi_container_indicator);
+		toolbar = (Toolbar) findViewById(R.id.home_toolbar);
 		
 		if (savedInstanceState == null) {
 			if (multiContainer != null) {

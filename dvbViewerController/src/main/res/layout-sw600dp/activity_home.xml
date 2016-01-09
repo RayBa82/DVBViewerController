@@ -24,14 +24,23 @@
         android:padding="8dp"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/multi_container_indicator"
-            style="@style/commonTitle"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/home_toolbar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp" />
+            android:layout_gravity="right"
+            android:minHeight="?attr/actionBarSize">
 
-        <ImageView style="@style/VerticalDivider"/>
+            <Spinner
+                android:id="@+id/clientSpinner"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right" />
+
+        </android.support.v7.widget.Toolbar>
+
+        <ImageView style="@style/VerticalDivider" />
 
         <FrameLayout
             android:paddingTop="5dp"
