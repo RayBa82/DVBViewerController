@@ -39,6 +39,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.squareup.okhttp:okhttp:2.7.0'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile 'com.viewpagerindicator:library:2.4.1@aar'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'commons-io:commons-io:2.4'
     androidTestCompile 'junit:junit:4.12'
