@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
@@ -75,6 +76,26 @@ public class SynchronizationTest extends InstrumentationTestCase {
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(15, favGroups.size());
+        assertEquals(429, countFavs(favGroups));
+    }
+
+    @Test
+    public void matchEmptyLists() {
+        List<ChannelRoot> channelRoots = new LinkedList<>();
+        List<ChannelGroup> channelGroups = new LinkedList<>();
+        FavMatcher matcher = new FavMatcher();
+        List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
+        assertEquals(0, favGroups.size());
+        assertEquals(0, countFavs(favGroups));
+    }
+
+    @Test
+    public void matchNullLists() {
+        List<ChannelRoot> channelRoots = null;
+        List<ChannelGroup> channelGroups = null;
+        FavMatcher matcher = new FavMatcher();
+        List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
+        assertEquals(0, favGroups.size());
         assertEquals(0, countFavs(favGroups));
     }
 
