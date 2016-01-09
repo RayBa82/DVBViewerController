@@ -46,6 +46,7 @@ import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import java.text.MessageFormat;
@@ -103,7 +104,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                         showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                         return result;
                     }
-                    result = getStatus(new DVBViewerPreferences(getActivity()), version);
+                    result = getStatus(new DVBViewerPreferences(getActivity()), version, null);
                 } catch (AuthenticationException e) {
                     e.printStackTrace();
                     showToast(getStringSafely(R.string.error_invalid_credentials));
@@ -124,7 +125,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
     }
 
     @Nullable
-    public static Status getStatus(DVBViewerPreferences prefs, String version) throws Exception {
+    public static Status getStatus(DVBViewerPreferences prefs, String version, @Nullable JSONObject trackingData) throws Exception {
         Status result = null;
         String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
         Status2Handler status2Handler = new Status2Handler();
@@ -147,6 +148,10 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
         prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
         prefEditor.commit();
+        if (trackingData != null){
+            trackingData.put("status", statusXml);
+            trackingData.put("status2", status2Xml);
+        }
         return result;
     }
 

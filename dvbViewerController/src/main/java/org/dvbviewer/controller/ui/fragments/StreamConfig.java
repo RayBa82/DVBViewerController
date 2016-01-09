@@ -42,20 +42,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.nineoldandroids.animation.IntEvaluator;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.squareup.okhttp.HttpUrl;
 
-import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.FfMpegPrefs;
 import org.dvbviewer.controller.entities.Preset;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
@@ -282,12 +280,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				} else {
 					getActivity().finish();
 				}
-				Tracker t = ((App) getActivity().getApplication()).getTracker();
-				// Build and send an Event.
-				t.send(new HitBuilders.EventBuilder()
-						.setCategory("Streaming")
-						.setAction("Transcoded stream")
-						.build());
+				AnalyticsTracker.trackTranscodedStream(getActivity().getApplication());
 			} catch (ActivityNotFoundException e) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
@@ -305,16 +298,10 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				} else {
 					getActivity().finish();
 				}
-				Tracker t = ((App) getActivity().getApplication()).getTracker();
-				// Build and send an Event.
-				t.send(new HitBuilders.EventBuilder()
-						.setCategory("Streaming")
-						.setAction("Direct stream")
-						.build());
+				AnalyticsTracker.trackDirectStream(getActivity().getApplication());
 			} catch (ActivityNotFoundException e) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
-
 				e.printStackTrace();
 			}
 			break;

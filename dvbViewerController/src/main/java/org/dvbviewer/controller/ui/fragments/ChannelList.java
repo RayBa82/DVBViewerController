@@ -51,11 +51,8 @@ import android.widget.TextView;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.ViewTarget;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -82,11 +79,13 @@ import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
 import org.dvbviewer.controller.ui.tablet.ChannelListMultiActivity;
 import org.dvbviewer.controller.ui.widget.CheckableLinearLayout;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
+import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import java.text.MessageFormat;
@@ -271,10 +270,14 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                 return;
             }
+
+
             /**
              * Request the Channels
              */
+            JSONObject trackingData = new JSONObject();
             String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
+            trackingData.put("channels", chanXml);
             ChannelHandler channelHandler = new ChannelHandler();
             List<ChannelRoot> chans = channelHandler.parse(chanXml);
             DbHelper mDbHelper = new DbHelper(mContext);
@@ -284,6 +287,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
              */
             String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
             if (!TextUtils.isEmpty(favXml)) {
+                trackingData.put("favourites", favXml);
                 FavouriteHandler handler = new FavouriteHandler();
                 List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
                 FavMatcher favMatcher = new FavMatcher();
@@ -311,12 +315,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             if (jsonClients != null) {
                 prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
             }
-            StatusList.getStatus(prefs, version);
+            StatusList.getStatus(prefs, version, trackingData);
             prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
             prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
             prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
             prefEditor.commit();
             Config.CHANNELS_SYNCED = true;
+            AnalyticsTracker.trackSync(getActivity().getApplication(), trackingData.toString());
         } catch (AuthenticationException e) {
             e.printStackTrace();
             showToast(getStringSafely(R.string.error_invalid_credentials));
@@ -909,12 +914,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Channel chan = cursorToChannel(c);
                     getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getPosition()));
 					// Get tracker.
-					Tracker t = ((App) getActivity().getApplication()).getTracker();
-					// Build and send an Event.
-					t.send(new HitBuilders.EventBuilder()
-                            .setCategory("Streaming")
-                            .setAction("Quickstream")
-                            .build());
+                    AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                 } catch (ActivityNotFoundException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
