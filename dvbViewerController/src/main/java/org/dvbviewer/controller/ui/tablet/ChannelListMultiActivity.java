@@ -30,7 +30,6 @@ import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListen
 import org.dvbviewer.controller.ui.fragments.EpgPager;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * The Class ChannelListMultiActivity.
@@ -147,13 +146,6 @@ public class ChannelListMultiActivity extends BaseMultiPaneActivity implements E
 		epgDate = savedInstanceState != null && savedInstanceState.containsKey(ChannelEpg.KEY_EPG_DAY) ? new Date(savedInstanceState.getLong(ChannelEpg.KEY_EPG_DAY)) : new Date();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener#channelSelected(java.util.List, org.dvbviewer.controller.entities.Channel, int)
-	 */
-	@Override
-	public void channelSelected(List<Channel> chans, Channel chan, int position) {
-		mEpgPager.setPosition(position);
-	}
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.view.ViewPager.OnPageChangeListener#onPageScrollStateChanged(int)
@@ -182,4 +174,8 @@ public class ChannelListMultiActivity extends BaseMultiPaneActivity implements E
 		
 	}
 
+	@Override
+	public void channelSelected(long groupId, int groupIndex, Channel chan, int channelIndex) {
+		mEpgPager.setPosition(channelIndex);
+	}
 }

@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -90,6 +89,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     private TextView dayIndicator;
     EpgDateInfo mDateInfo;
     Date lastRefresh;
+    boolean useFavs;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -102,6 +102,9 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         if (savedInstanceState != null && savedInstanceState.containsKey(Channel.class.getName())) {
             mCHannel = savedInstanceState.getParcelable(Channel.class.getName());
         }
+        DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
+        useFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
+
     }
 
 
@@ -109,10 +112,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * @see com.actionbarsherlock.app.SherlockFragment#onAttach(android.app.Activity)
      */
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mDateInfo = (EpgDateInfo) activity;
+            mDateInfo = (EpgDateInfo) context;
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
@@ -135,7 +138,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             setChannel(mCHannel);
             String url = ServerConsts.REC_SERVICE_URL + "/" + mCHannel.getLogoUrl();
             mImageCacher.displayImage(url, channelLogo);
-            position.setText(mCHannel.getPosition().toString());
+            position.setText(useFavs ? mCHannel.getFavPosition().toString() : mCHannel.getPosition().toString());
             channelName.setText(mCHannel.getName());
         }
         if (DateUtils.isToday(mDateInfo.getEpgDate().getTime())) {
@@ -303,6 +306,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     public void setChannel(Channel channel) {
         this.mCHannel = channel;
+    }
+
+    public Channel getChannel() {
+        return mCHannel;
     }
 
     /**

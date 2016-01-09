@@ -33,6 +33,7 @@ import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
+import org.dvbviewer.controller.ui.fragments.EpgPager;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.TimerList;
@@ -48,8 +49,6 @@ import org.dvbviewer.controller.ui.tablet.ChannelListMultiActivity;
 import org.dvbviewer.controller.utils.Config;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -113,17 +112,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 			finish();
 			break;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener#channelSelected(org.dvbviewer.controller.entities.Channel, int)
-	 */
-	@Override
-	public void channelSelected(List<Channel> chans, Channel chan, int position) {
-		Intent channelListIntent = new Intent(this, ChannelListMultiActivity.class);
-		channelListIntent.putParcelableArrayListExtra(Channel.class.getName(), (ArrayList<Channel>) chans);
-		channelListIntent.putExtra(ChannelList.KEY_SELECTED_POSITION, position);
-		startActivity(channelListIntent);
 	}
 
 	/* (non-Javadoc)
@@ -225,5 +213,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+	@Override
+	public void channelSelected(long groupId, int groupIndex, Channel chan, int channelIndex) {
+		Intent channelListIntent = new Intent(this, ChannelListMultiActivity.class);
+		channelListIntent.putExtra(ChannelList.KEY_GROUP_ID, groupId);
+		channelListIntent.putExtra(EpgPager.KEY_HIDE_OPTIONSMENU, true);
+		channelListIntent.putExtra(ChannelList.KEY_CHANNEL_INDEX, channelIndex);
+		startActivity(channelListIntent);
+
+	}
 }

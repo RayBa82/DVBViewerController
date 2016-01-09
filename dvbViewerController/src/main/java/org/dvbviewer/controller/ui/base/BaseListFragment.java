@@ -215,7 +215,7 @@ public class BaseListFragment extends Fragment {
     }
 
     /**
-     * Provide the cursor for the list view.
+     * Provide the mCursor for the list view.
      *
      * @param adapter the new list adapter
      * @author RayBa
@@ -269,7 +269,7 @@ public class BaseListFragment extends Fragment {
     }
 
     /**
-     * Get the cursor row ID of the currently selected list item.
+     * Get the mCursor row ID of the currently selected list item.
      *
      * @return the selected item id
      * @author RayBa
@@ -534,7 +534,7 @@ public class BaseListFragment extends Fragment {
 		return result;
 	}
 	
-	public static enum LoadingResult {
+	public enum LoadingResult {
 		OK, ERROR, NETWORK_ERROR, INVALID_URL, INVALID_CREDENTIALS
 	}
 	

@@ -16,7 +16,6 @@
 package org.dvbviewer.controller.ui.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -79,7 +78,6 @@ import org.dvbviewer.controller.io.data.FavMatcher;
 import org.dvbviewer.controller.io.data.FavouriteHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
-import org.dvbviewer.controller.ui.phone.EpgPagerActivity;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
 import org.dvbviewer.controller.ui.tablet.ChannelListMultiActivity;
@@ -106,6 +104,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     public static final String KEY_SELECTED_POSITION = "SELECTED_POSITION";
     public static final String KEY_HAS_OPTIONMENU = "HAS_OPTIONMENU";
+    public static final String KEY_GROUP_ID      	= EpgPager.class.getName() + "KEY_GROUP_ID";
+    public static final String KEY_CHANNEL_INDEX 	= EpgPager.class.getName() + "KEY_CHANNEL_INDEX";
     DVBViewerPreferences prefs;
     ChannelAdapter mAdapter;
     int selectedPosition = -1;
@@ -162,10 +162,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * )
      */
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof OnChannelSelectedListener) {
-            mCHannelSelectedListener = (OnChannelSelectedListener) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnChannelSelectedListener) {
+            mCHannelSelectedListener = (OnChannelSelectedListener) context;
         }
     }
 
@@ -799,20 +799,12 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             showQuickstreamHint(position);
         } else {
             ArrayList<Channel> chans = cursorToChannellist();
-            EpgPager.CHANNELS = chans;
             if (mCHannelSelectedListener != null) {
                 Cursor c = mAdapter.getCursor();
                 c.moveToPosition(position);
                 Channel chan = cursorToChannel(c);
-                mCHannelSelectedListener.channelSelected(chans, chan, position);
+                mCHannelSelectedListener.channelSelected(-1, -1, chan, position);
                 getListView().setItemChecked(position, true);
-            } else {
-                Intent epgPagerIntent = new Intent(getActivity(), EpgPagerActivity.class);
-                // long[] feedIds = new long[data.getCount()];
-
-                epgPagerIntent.putExtra("position", position);
-                startActivity(epgPagerIntent);
-                selectedPosition = ListView.INVALID_POSITION;
             }
         }
     }
@@ -920,9 +912,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 					Tracker t = ((App) getActivity().getApplication()).getTracker();
 					// Build and send an Event.
 					t.send(new HitBuilders.EventBuilder()
-							.setCategory("Streaming")
-							.setAction("Quickstream")
-							.build());
+                            .setCategory("Streaming")
+                            .setAction("Quickstream")
+                            .build());
                 } catch (ActivityNotFoundException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
@@ -943,7 +935,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * @author RayBa
      * @date 13.05.2012
      */
-    private Channel cursorToChannel(Cursor c) {
+    public static Channel cursorToChannel(Cursor c) {
         Channel channel = new Channel();
         channel.setId(c.getLong(c.getColumnIndex(ChannelTbl._ID)));
         channel.setChannelID(c.getLong(c.getColumnIndex(ChannelTbl.CHANNEL_ID)));
@@ -952,6 +944,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         String name = c.getString(c.getColumnIndex(ChannelTbl.NAME));
         channel.setName(name);
         channel.setPosition(c.getInt(c.getColumnIndex(ChannelTbl.POSITION)));
+        channel.setFavPosition(c.getInt(c.getColumnIndex(ChannelTbl.FAV_POSITION)));
         return channel;
     }
 
@@ -1011,7 +1004,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          * @author RayBa
          * @date 05.07.2012
          */
-        void channelSelected(List<Channel> chans, Channel chan, int position);
+        void channelSelected(long groupId, int groupIndex, Channel chan, int channelIndex);
 
     }
 
