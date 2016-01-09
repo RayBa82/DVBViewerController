@@ -66,7 +66,7 @@ public class HTTPUtil {
 
     private static Response getResponse(String url, String username, String password) throws Exception {
         final String credential = Credentials.basic(username, password);
-        Log.d("DVBViewerServerRequest", "Accessing: " + url);
+        Log.d("DVBViewerServerRequest", url);
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", credential)
