@@ -140,9 +140,9 @@ public class DbHelper extends SQLiteOpenHelper {
 	 * @param rootElements
 	 *            the rootElements
 	 */
-	public void saveChannelRoots(List<ChannelRoot> rootElements) {
+	public List<ChannelRoot> saveChannelRoots(List<ChannelRoot> rootElements) {
 		if (rootElements == null || rootElements.size() <= 0) {
-			return;
+			return rootElements;
 		}
 		SQLiteDatabase db = getWritableDatabase();
 		try {
@@ -158,7 +158,8 @@ public class DbHelper extends SQLiteOpenHelper {
 					long groupId = db.insert(GroupTbl.TABLE_NAME, null, group.toContentValues());
 					for (Channel chan : group.getChannels()) {
 						chan.setGroupId(groupId);
-						db.insert(ChannelTbl.TABLE_NAME, null, chan.toContentValues());
+						long id = db.insert(ChannelTbl.TABLE_NAME, null, chan.toContentValues());
+						chan.setId(id);
 					}
 				}
 			}
@@ -168,21 +169,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			db.close();
 		}
 		mContext.getContentResolver().notifyChange(GroupTbl.CONTENT_URI, null);
-	}
-
-	public void saveChannels(List<Channel> channels) {
-		SQLiteDatabase db = getWritableDatabase();
-		db.beginTransaction();
-		db.execSQL("DELETE FROM " + ChannelTbl.TABLE_NAME);
-		try {
-			for (Channel channel : channels) {
-				db.insert(ChannelTbl.TABLE_NAME, null, channel.toContentValues());
-			}
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-			db.close();
-		}
+		return rootElements;
 	}
 
 	/**
@@ -239,7 +226,7 @@ public class DbHelper extends SQLiteOpenHelper {
 	private void updateChannels(SQLiteDatabase db, long groupId, List<Channel> channels) {
 		for (Channel channel : channels) {
 			channel.setFavGroupId(groupId);
-			db.update(ChannelTbl.TABLE_NAME, channel.toContentValues(), ChannelTbl.POSITION+"="+channel.getPosition(), null);
+			db.update(ChannelTbl.TABLE_NAME, channel.toContentValues(), ChannelTbl._ID+"="+channel.getId(), null);
 		}
 	}
 }

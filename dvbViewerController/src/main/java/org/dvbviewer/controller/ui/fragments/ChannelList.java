@@ -278,7 +278,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             ChannelHandler channelHandler = new ChannelHandler();
             List<ChannelRoot> chans = channelHandler.parse(chanXml);
             DbHelper mDbHelper = new DbHelper(mContext);
-            mDbHelper.saveChannelRoots(chans);
+            chans = mDbHelper.saveChannelRoots(chans);
             /**
              * Request the Favourites
              */
