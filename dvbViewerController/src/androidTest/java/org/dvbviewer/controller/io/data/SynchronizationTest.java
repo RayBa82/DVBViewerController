@@ -41,7 +41,7 @@ public class SynchronizationTest extends InstrumentationTestCase {
     }
 
     @Test
-    public void matchFavourites() {
+    public void matchFavouritesUser1() {
         List<ChannelRoot> channelRoots = getChannels(R.raw.chan_list_user_1);
         List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_1);
         FavMatcher matcher = new FavMatcher();
@@ -50,7 +50,7 @@ public class SynchronizationTest extends InstrumentationTestCase {
     }
 
     @Test
-    public void matchFavourites2() {
+    public void matchFavouritesUser1MultiGroup() {
         List<ChannelRoot> channelRoots = getChannels(R.raw.chan_list_user_1_multi_group);
         List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_1);
         FavMatcher matcher = new FavMatcher();
@@ -60,7 +60,7 @@ public class SynchronizationTest extends InstrumentationTestCase {
     }
 
     @Test
-    public void matchFavourites3() {
+    public void matchFavouritesUser2() {
         List<ChannelRoot> channelRoots = getChannels(R.raw.chan_list_user_2);
         List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_2);
         FavMatcher matcher = new FavMatcher();
@@ -70,13 +70,23 @@ public class SynchronizationTest extends InstrumentationTestCase {
     }
 
     @Test
-    public void matchFavourites4() {
+    public void matchFavouritesUser3() {
         List<ChannelRoot> channelRoots = getChannels(R.raw.chan_list_user_3);
         List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_3);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(15, favGroups.size());
         assertEquals(429, countFavs(favGroups));
+    }
+
+    @Test
+    public void matchFavouritesUser4() {
+        List<ChannelRoot> channelRoots = getChannels(R.raw.chan_list_user_4);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_4);
+        FavMatcher matcher = new FavMatcher();
+        List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
+        assertEquals(4, favGroups.size());
+        assertEquals(79, countFavs(favGroups));
     }
 
     @Test
