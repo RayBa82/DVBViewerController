@@ -16,7 +16,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by RayBa on 30.01.2015.
+ * @author RayBa
+ * on 30.01.2015.
  */
 public class RecordingService {
 
@@ -30,17 +31,10 @@ public class RecordingService {
             String versionXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_VERSION);
             VersionHandler versionHandler = new VersionHandler();
             final String rawVersion = versionHandler.parse(versionXml);
-            Matcher matcher    = versionPattern.matcher(rawVersion);
+            Matcher matcher    = getVersionMatcher(rawVersion);
             boolean matchFound = matcher.find();
             if (matchFound) {
-                version = matcher.group(1);
-                Log.d(TAG, "Version number: " + version);
-            } else {
-                // ugly fallback if anything goes wrong,
-                // this will be removed when someone wrote some unit tests for the above regex ;-)
-                version = version.replace("DVBViewer Recording Service ", "");
-                String[] arr = version.split(" ");
-                version = arr[0];
+                version = getVersionFromMatcher(matcher);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting version from rs", e);
@@ -63,6 +57,14 @@ public class RecordingService {
             Log.e(TAG, "Error getting DVBViewer Targets", e);
         }
         return jsonClients;
+    }
+
+    protected static Matcher getVersionMatcher(String version){
+        return  versionPattern.matcher(version);
+    }
+
+    protected static String getVersionFromMatcher(Matcher matcher){
+        return  matcher.group();
     }
 
 

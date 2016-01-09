@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+  <section name="0">
+    <entry name="Header">Standard</entry>
+    <entry name="0">3431747430998485852|Das Erste HD (AC3,deu)</entry>
+    <entry name="1">3431747551264123750|ZDF HD (AC3,deu)</entry>
+    <entry name="2">3431743694017945132|DMAX</entry>
+    <entry name="3">3431743608118062918|SAT.1 (AC3)</entry>
+    <entry name="4">3431743736979402572|SPORT1</entry>
+    <entry name="5">3431743608117342021|RTL Television (AC3)</entry>
+    <entry name="6">3431743608118718279|ProSieben (AC3)</entry>
+    <entry name="7">3431743608119897929|RTL2</entry>
+    <entry name="8">3431743608120553290|kabel eins</entry>
+    <entry name="9">3431743608121208651|Super RTL</entry>
+    <entry name="10">3431743608119242568|VOX</entry>
+    <entry name="11">3431743608123174737|ProSieben Maxx</entry>
+    <entry name="12">3431743608123838100|SIXX</entry>
+    <entry name="13">3431743694021882294|Sat.1 Gold</entry>
+    <entry name="14">3431743694022538658|RTL NITRO</entry>
+    <entry name="15">3431743608121864013|n-tv</entry>
+    <entry name="16">3431743736966295374|N24</entry>
+    <entry name="17">3431743736980057935|Tele 5</entry>
+    <entry name="18">3431743736966949728|Nick/Comedy Central</entry>
+    <entry name="19">3431743694015979045|Viva</entry>
+  </section>
+  <section name="1">
+    <entry name="Header">Sky Welt</entry>
+    <entry name="0">3431742942379966587|TNT Serie HD (S) (deu)</entry>
+    <entry name="1">3431742942396743804|Fox HD (S) (deu)</entry>
+    <entry name="2">3431742933907275818|13th Street (S) (deu)</entry>
+    <entry name="3">3431742920955265060|Syfy (S) (deu)</entry>
+    <entry name="4">3431742942430298242|Discovery HD (S)</entry>
+    <entry name="5">3431742963888357489|History HD (S) (deu)</entry>
+    <entry name="6">3431742968166547574|Nat Geo Wild HD (deu)</entry>
+    <entry name="7">3431742921257254940|Disney XD (S) (deu)</entry>
+    <entry name="8">3431742968216879236|Eurosport HD</entry>
+  </section>
+  <section name="2">
+    <entry name="Header">Sky Film</entry>
+    <entry name="0">3431742942447075459|Sky Cinema HD (deu)</entry>
+    <entry name="1">3431742972478292084|Sky Action HD (deu)</entry>
+    <entry name="2">3431742968183324779|Sky Hits HD (deu)</entry>
+    <entry name="3">3431742972511846510|Sky Atlantic HD (deu)</entry>
+    <entry name="4">3431742972444737647|Disney Cinemagic HD (deu)</entry>
+    <entry name="5">3431742925351092232|Sky Comedy (AC3)</entry>
+    <entry name="6">3431742925367869460|Sky Emotion (AC3,deu)</entry>
+    <entry name="7">3431742963854803061|SKY 3D (deu)</entry>
+    <entry name="8">3431742929511645699|MGM (deu)</entry>
+    <entry name="9">3431742933890498583|Sky Krimi</entry>
+    <entry name="10">3431742925300760587|Sky Cinema +1 (AC3,deu)</entry>
+    <entry name="11">3431742925334315051|Sky Cinema +24 (AC3,deu)</entry>
+    <entry name="12">3431742925434782212|Sky Nostalgie</entry>
+  </section>
+  <section name="3">
+    <entry name="Header">Dritte</entry>
+    <entry name="0">3431747645365710283|Bayerisches FS S&#xFC;d (AC3,deu)</entry>
+    <entry name="1">3431747645372001740|hr-fernsehen (deu)</entry>
+    <entry name="2">3431747645391662543|WDR K&#xF6;ln (deu)</entry>
+    <entry name="3">3431745283153909565|SWR BW HD (deu)</entry>
+    <entry name="4">3431747525132578349|rbb Brandenburg (deu)</entry>
+    <entry name="5">3431747525263650370|NDR FS NDS (deu)</entry>
+    <entry name="6">3431747525283311174|MDR Th&#xFC;ringen (deu)</entry>
+    <entry name="7">3431747430695989063|ARD-alpha (AC3,deu)</entry>
+  </section>
+  <section name="4">
+    <entry name="Header">ARD</entry>
+    <entry name="0">3431744724810768526|Einsfestival HD (deu)</entry>
+    <entry name="1">3431747430623899699|EinsPlus (AC3,deu)</entry>
+    <entry name="2">3431743436317934297|arte HD (deu)</entry>
+    <entry name="3">3431747430636744757|PHOENIX (deu)</entry>
+    <entry name="4">3431747430610530353|tagesschau24</entry>
+  </section>
+  <section name="5">
+    <entry name="Header">ZDFvision</entry>
+    <entry name="0">3431744638911553679|ZDF_neo HD (AC3,deu)</entry>
+    <entry name="1">3431747550903561579|ZDFinfo (deu)</entry>
+    <entry name="2">3431747550936329584|zdf.kultur (deu)</entry>
+    <entry name="3">3431744681861226637|3Sat HD (AC3,deu)</entry>
+    <entry name="4">3431747550883900776|KiKa (deu)</entry>
+  </section>
+  <section name="6">
+    <entry name="Header">Sky Bundesliga</entry>
+    <entry name="0">3431742968149704809|Sky Bundesliga HD 1</entry>
+    <entry name="1">3431742942497341707|Sky Bundesliga HD 2</entry>
+    <entry name="2">3431742972562112789|Sky Bundesliga HD 3</entry>
+    <entry name="3">3431742968267145503|Sky Bundesliga HD 4</entry>
+    <entry name="4">3431742929629085988|Sky Bundesliga 5</entry>
+    <entry name="5">3431742929696194862|Sky Bundesliga 6</entry>
+    <entry name="6">3431742921173369144|Sky Bundesliga 7</entry>
+    <entry name="7">3431742920888156482|Sky Bundesliga 8</entry>
+    <entry name="8">3431742920888156492|Sky Bundesliga 9</entry>
+    <entry name="9">3431742925183123708|Sky Bundesliga 10</entry>
+  </section>
+  <section name="7">
+    <entry name="Header">Sky Sport</entry>
+    <entry name="0">3431742968200101996|Sky Sport News HD</entry>
+    <entry name="1">3431742942413455489|Sky Sport HD 1</entry>
+    <entry name="2">3431742972495003762|Sky Sport HD 2</entry>
+    <entry name="3">3431742942514118924|Sky Sport HD 3</entry>
+    <entry name="4">3431742972578890006|Sky Sport HD 4</entry>
+    <entry name="5">3431742968132796704|Sky Sport HD 5</entry>
+    <entry name="6">3431742929729749285|Sky Sport 6</entry>
+    <entry name="7">3431742929712972079|Sky Sport 7</entry>
+    <entry name="8">3431742921139814713|Sky Sport 8</entry>
+    <entry name="9">3431742920888156483|Sky Sport 9</entry>
+    <entry name="10">3431742920888156493|Sky Sport 10</entry>
+    <entry name="11">3431742925183123709|Sky Sport 11</entry>
+  </section>
+</settings>

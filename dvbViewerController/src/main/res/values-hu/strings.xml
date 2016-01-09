@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="app_name">DVBViewer Controller</string>
+    <string name="remote">Távkapcsoló</string>
+    <string name="title">Cím</string>
+    <string name="cancel">Mégsem</string>
+    <string name="ok">OK</string>
+    <string name="refresh">Frissítés</string>
+    <string name="record">Felvétel</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="selected">kiválasztott</string>
+    <string name="switch_to">Kapcsolj a csatornához</string>
+    <string name="minutes">percek</string>
+    <string name="gmt">GMT</string>
+    <string name="details">Részletek</string>
+    <string name="about">Info</string>
+    <string name="common_colon">:&#160;</string>
+    <string name="about_app">A DVBViewer Controller-ről</string>
+    <string name="version">App verzió:</string>
+    <!-- Channels -->
+    <string name="channelList">Csatornalista</string>
+    <string name="refreshChannels">Csatorna szinkronba tartása</string>
+    <string name="refresh_now_playing">EPG frissitése</string>
+    <string name="favourites">Kedvencek</string>
+    <string name="no_channels">Nem találtam csatornát</string>
+    <string name="no_favourites">Nem találtam kedvencet</string>
+    <!-- EPG -->
+    <string name="channelEPG">Csatorna EPG</string>
+    <string name="today">Ma</string>
+    <string name="time">Idő</string>
+    <string name="now">Most</string>
+    <string name="evening">Este</string>
+    <string name="tomorrow">Reggel</string>
+    <string name="previousDay">Nap vissza</string>
+    <string name="nextDay">Nap előre</string>
+    <string name="no_epg">Nem találtam EPG adatot</string>
+    <!-- Recordings -->
+    <string name="recordings">Felvételek</string>
+    <string name="no_recordings">Nem találtam felvételt</string>
+    <string name="busyDeleteRecordings">Felvételeket törlöm&#8230;</string>
+    <!-- Timer -->
+    <string name="timer">Timer</string>
+    <string name="createTimer">Timer létesítése</string>
+    <string name="editTimer">Timer szerkesztése</string>
+    <string name="date">Dátum</string>
+    <string name="active">Aktív</string>
+    <string name="start">Indulás</string>
+    <string name="stop">Megállás</string>
+    <string name="channel">Csatorna</string>
+    <string name="postTimerAction">Felvétel után</string>
+    <string name="busyDeleteTimer">Timereket törlöm&#8230;</string>
+    <string name="no_timer">Timert nem találtam</string>
+    <!-- Streaming -->
+    <string name="streamConfig">Stream Konfiguráció</string>
+    <string name="stream">Stream</string>
+    <string name="quality">Minőség</string>
+    <string name="aspectRatio">Képarány</string>
+    <string name="ffmpegpreset">FFMPEG Preset</string>
+    <string name="maxHeight">Max. magassága</string>
+    <string name="maxWidth">Max. szélessége</string>
+    <string name="streamStart">Stream indítása</string>
+    <string name="streamTranscoded">Átváltott Stream</string>
+    <string name="streamDirect">Változatlan Stream</string>
+    <string name="stream_position">Helyzet</string>
+    <string name="stream_hours_hint">HH</string>
+    <string name="stream_minutes_hint">MM</string>
+    <string name="stream_seconds_hint">SS</string>
+    <!-- Tasks -->
+    <string name="tasks">Feladatok</string>
+    <string name="task_execute_security_question">Feladat \"{0}\" elvégzése?</string>
+    <string name="EPGStart">EPG Scan inditása</string>
+    <string name="EPGStop">EPG Scan megállítása</string>
+    <string name="AutoTimer">AutoTimer</string>
+    <string name="RefreshDB">Felvétel AB frissitése</string>
+    <string name="CleanupDB">Felvétel AB rendbe tétele</string>
+    <string name="RebuildRecordedHistory">Felvételtörténet felújitása</string>
+    <string name="ClearRecordingHistory">Felvételtörténet végérvényes törlése</string>
+    <string name="ClearRecordingStats">Felvételstatisztika törlése</string>
+    <string name="UpdateMediaLibrary">Mediagyüjtemény ABk felújitása</string>
+    <string name="CleanupPhotoDB">Képgyüjtemény AB rendbe tétele</string>
+    <string name="CleanupVideoDB">Videogyüjtemény AB rendbe tétele</string>
+    <string name="RebuildVideoDB">Videogyüjtemény AB felújitása</string>
+    <string name="RebuildAudioDB">Hanggyüjtemény AB felújitása</string>
+    <string name="RebuildPhotoDB">Képgyüjtemény AB felújitása</string>
+    <string name="ClearAudioStats">Hanggyüjtemény statistika törlése</string>
+    <string name="ClearVideoStats">Videogyüjtemény statisztika törlése</string>
+    <string name="ClearPhotoStats">Kégyüjtemény statisztika törlése</string>
+    <string name="Hibernate">Alvás</string>
+    <string name="Standby">Készenlét</string>
+    <string name="Shutdown">Leállítás</string>
+    <string name="WOL">Recordin Service felkeltése</string>
+    <!-- Status -->
+    <string name="status">Státusz</string>
+    <string name="status_rs_version">Recording Service Verzió</string>
+    <string name="status_current_recordings">Folyó felvételek</string>
+    <string name="status_current_clients">Rákapcsolt kliens</string>
+    <string name="status_current_rtsp_clients">Rákapcsolt RTSP kliens</string>
+    <string name="status_current_unicast_clients">Rákapcsolt Unicast kliens</string>
+    <string name="status_next_Rec">Következő felvétel</string>
+    <string name="status_next_timer">Következő Timer</string>
+    <!-- Dialogs -->
+    <!-- Preferences -->
+    <!-- Error -->
+</resources>

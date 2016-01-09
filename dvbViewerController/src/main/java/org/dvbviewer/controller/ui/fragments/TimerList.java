@@ -232,7 +232,6 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			Timer o = getItem(position);
 			if (o != null) {
 				holder.check.setTag(position);
-//				holder.layout.setChecked(getListView().isItemChecked(position));
 				holder.title.setText(o.getTitle());
 				holder.channelName.setText(o.getChannelName());
 				String date = DateUtils.getDateInLocalFormat(o.getStart());
@@ -243,10 +242,9 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 				}
 				holder.layout.setError(o.isFlagSet(Timer.FLAG_EXECUTABLE));
 				holder.layout.setDisabled(o.isFlagSet(Timer.FLAG_DISABLED));
-				String start = DateUtils.getTimeInLocalFormat(o.getStart());
-				String end = DateUtils.getTimeInLocalFormat(o.getEnd());
+				String start = DateUtils.getTimeInLocalFormat(getActivity(), o.getStart());
+				String end = DateUtils.getTimeInLocalFormat(getActivity(), o.getEnd());
 				holder.date.setText(date + "  " + start + " - " + end);
-//				imageChacher.getImage(holder.icon, ServerConsts.URL_CHANNEL_LOGO + URLEncoder.encode(o.getChannelName()), null, true);
 				holder.recIndicator.setVisibility(o.isFlagSet(Timer.FLAG_RECORDING) ? View.VISIBLE : View.GONE);
 			}
 

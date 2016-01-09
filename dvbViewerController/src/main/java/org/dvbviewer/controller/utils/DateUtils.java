@@ -15,6 +15,7 @@
  */
 package org.dvbviewer.controller.utils;
 
+import android.content.Context;
 import android.text.format.Time;
 import android.util.Log;
 
@@ -332,8 +333,8 @@ public class DateUtils extends android.text.format.DateUtils {
 	 * @date 26.06.2010
 	 * @description Gets the time in local format.
 	 */
-	public static String getTimeInLocalFormat(Date date) {
-		String result = DateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(date);
+	public static String getTimeInLocalFormat(Context context, Date date) {
+		String result = android.text.format.DateFormat.getTimeFormat(context).format(date);
 		return result;
 	}
 

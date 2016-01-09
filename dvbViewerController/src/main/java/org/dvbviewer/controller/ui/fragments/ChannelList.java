@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -74,6 +75,7 @@ import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
 import org.dvbviewer.controller.io.data.ChannelHandler;
 import org.dvbviewer.controller.io.data.EpgEntryHandler;
+import org.dvbviewer.controller.io.data.FavMatcher;
 import org.dvbviewer.controller.io.data.FavouriteHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
@@ -215,7 +217,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     @Override
                     public Cursor loadInBackground() {
                         loadEpg();
-                        return null;
+                        return new MatrixCursor(new String[1]);
                     }
 
                 };
@@ -226,7 +228,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     @Override
                     public Cursor loadInBackground() {
                         performRefresh();
-                        return null;
+                        return new MatrixCursor(new String[1]);
                     }
 
                 };
@@ -276,7 +278,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             ChannelHandler channelHandler = new ChannelHandler();
             List<ChannelRoot> chans = channelHandler.parse(chanXml);
             DbHelper mDbHelper = new DbHelper(mContext);
-            mDbHelper.saveChannelRoots(chans);
+            chans = mDbHelper.saveChannelRoots(chans);
             /**
              * Request the Favourites
              */
@@ -284,7 +286,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             if (!TextUtils.isEmpty(favXml)) {
                 FavouriteHandler handler = new FavouriteHandler();
                 List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
-                mDbHelper.saveFavGroups(favGroups);
+                FavMatcher favMatcher = new FavMatcher();
+                List<ChannelGroup> favs = favMatcher.matchFavs(chans, favGroups);
+                mDbHelper.saveFavGroups(favs);
             }
 
             mDbHelper.close();

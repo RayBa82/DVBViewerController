@@ -18,25 +18,24 @@
 
         <TextView
             android:id="@+id/title"
+            style="@style/commonTitle"
             android:text="Test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
-            android:maxLines="2"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:maxLines="2"/>
 
         <TextView
             android:id="@+id/statusText"
             android:text="Test"
+            style="@style/commonSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_centerHorizontal="true"
-            android:ellipsize="end"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:ellipsize="end" />
     </RelativeLayout>
 
     <LinearLayout

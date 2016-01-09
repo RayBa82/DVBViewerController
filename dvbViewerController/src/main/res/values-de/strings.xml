@@ -57,7 +57,7 @@
     <string name="stream">Stream</string>
     <string name="quality">Qualität</string>
     <string name="aspectRatio">Seitenverhältnis</string>
-    <string name="ffmpegpreset">FFMPEG Preset</string>
+    <string name="ffmpegpreset">Encoder-Geschwindigkeit</string>
     <string name="maxHeight">Max. Höhe</string>
     <string name="maxWidth">Max. Breite</string>
     <string name="streamStart">Streaming starten</string>

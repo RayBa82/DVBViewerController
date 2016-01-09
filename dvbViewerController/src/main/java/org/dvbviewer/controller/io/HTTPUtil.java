@@ -15,6 +15,8 @@
  */
 package org.dvbviewer.controller.io;
 
+import android.util.Log;
+
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -64,6 +66,7 @@ public class HTTPUtil {
 
     private static Response getResponse(String url, String username, String password) throws Exception {
         final String credential = Credentials.basic(username, password);
+        Log.d("DVBViewerServerRequest", "Accessing: " + url);
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", credential)
