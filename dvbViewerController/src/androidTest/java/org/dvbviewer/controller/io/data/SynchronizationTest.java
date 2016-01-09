@@ -45,11 +45,24 @@ public class SynchronizationTest extends InstrumentationTestCase {
         List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_1);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
+        assertEquals(30, countFavs(favGroups));
+    }
+
+    @Test
+    public void matchFavourites2() {
+        List<ChannelRoot> channelRoots = getChannels(R.raw.chan_list_user_1_multi_group);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.fav_list_user_1);
+        FavMatcher matcher = new FavMatcher();
+        List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
+        assertEquals(30, countFavs(favGroups));
+    }
+
+    private int countFavs( List<ChannelGroup> favGroups){
         List<Channel> favs = new ArrayList<>();
         for (ChannelGroup favGroup : favGroups){
             favs.addAll(favGroup.getChannels());
         }
-        assertEquals(30, favs.size());
+        return favs.size();
     }
 
     @Nullable
