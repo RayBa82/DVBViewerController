@@ -21,7 +21,7 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <com.viewpagerindicator.TitlePageIndicator
+    <com.github.jrejaud.viewpagerindicator2.TitlePageIndicator
         android:id="@+id/titles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

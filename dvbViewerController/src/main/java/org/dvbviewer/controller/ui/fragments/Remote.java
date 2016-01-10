@@ -35,9 +35,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.github.jrejaud.viewpagerindicator2.TitlePageIndicator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.viewpagerindicator.TitlePageIndicator;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
