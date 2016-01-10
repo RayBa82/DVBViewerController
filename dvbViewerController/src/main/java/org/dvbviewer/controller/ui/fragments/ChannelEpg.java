@@ -27,8 +27,6 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,13 +35,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -131,7 +127,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         setListAdapter(mAdapter);
         setListShown(false);
         getListView().setOnItemClickListener(this);
-        registerForContextMenu(getListView());
         channelLogo.setImageBitmap(null);
         if (mCHannel != null) {
             mImageCacher.cancelDisplayTask(channelLogo);
@@ -169,8 +164,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-        Loader<Cursor> loader = null;
-        loader = new EpgLoader<Cursor>(getActivity().getApplicationContext(), mDateInfo) {
+        Loader<Cursor> loader = new EpgLoader<Cursor>(getActivity().getApplicationContext(), mDateInfo) {
 
             @Override
             protected void onForceLoad() {
@@ -425,98 +419,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         menu.findItem(R.id.menuPrev).setEnabled(!DateUtils.isToday(mDateInfo.getEpgDate().getTime()));
     }
 
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.Fragment#onContextItemSelected(android.view.MenuItem)
-     */
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        int pos = AdapterView.INVALID_POSITION;
-        if (item.getMenuInfo() != null) {
-            AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-            pos = info.position;
-        }
-        Cursor c;
-        c = mAdapter.getCursor();
-        c.moveToPosition(pos);
-        Timer timer;
-        if (getUserVisibleHint()) {
-            switch (item.getItemId()) {
-                case R.id.menuRecord:
-                    timer = cursorToTimer(c);
-                    String url = buildTimerUrl(timer);
-                    RecordingServiceGet rsGet = new RecordingServiceGet(url);
-                    Thread executionThread = new Thread(rsGet);
-                    executionThread.start();
-
-                    return true;
-                case R.id.menuTimer:
-                    timer = cursorToTimer(c);
-                    Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
-                    timerIntent.putExtra(TimerDetails.EXTRA_TITLE, timer.getTitle());
-                    timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-                    timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-                    timerIntent.putExtra(TimerDetails.EXTRA_START, timer.getStart().getTime());
-                    timerIntent.putExtra(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-                    timerIntent.putExtra(TimerDetails.EXTRA_ACTIVE, true);
-                    startActivity(timerIntent);
-                    return true;
-                case R.id.menuDetails:
-                    Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
-                    c = mAdapter.getCursor();
-                    c.moveToPosition(selectedPosition);
-                    IEPG entry = cursorToEpgEntry(c);
-                    details.putExtra(IEPG.class.getSimpleName(), entry);
-                    startActivity(details);
-                    return true;
-                case R.id.menuSwitch:
-                    DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-                    String cid = ":" + String.valueOf(mCHannel.getChannelID());
-                    String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
-                    DVBViewerCommand command = new DVBViewerCommand(switchRequest);
-                    Thread exexuterTHread = new Thread(command);
-                    exexuterTHread.start();
-                    return true;
-                default:
-                    break;
-            }
-        }
-        return false;
-    }
-
-    private String buildTimerUrl(Timer timer) {
-        HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL+ (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
-        HttpUrl.Builder builder = httpUrl.newBuilder();
-        String title = timer.getTitle();
-        String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-        String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-        String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-        String endAction = String.valueOf(timer.getTimerAction());
-        builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
-        builder.addQueryParameter("dor", days);
-        builder.addQueryParameter("encoding", "255");
-        builder.addQueryParameter("enable", "1");
-        builder.addQueryParameter("start", start);
-        builder.addQueryParameter("stop", stop);
-        builder.addQueryParameter("title", title);
-        builder.addQueryParameter("endact", endAction);
-        if (timer.getId() >= 0) {
-            builder.addQueryParameter("id", String.valueOf(timer.getId()));
-        }
-        return builder.build().toString();
-    }
-
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
-	 */
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        if (getUserVisibleHint()) {
-            super.onCreateContextMenu(menu, v, menuInfo);
-            getActivity().getMenuInflater().inflate(R.menu.context_menu_epg, menu);
-        }
-    }
-
     /* (non-Javadoc)
      * @see android.view.View.OnClickListener#onClick(android.view.View)
      */
@@ -544,7 +446,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             switch (item.getItemId()) {
                 case R.id.menuRecord:
                     timer = cursorToTimer(c);
-                    String url = buildTimerUrl(timer);
+                    String url = TimerDetails.buildTimerUrl(timer);
                     RecordingServiceGet rsGet = new RecordingServiceGet(url);
                     Thread executionThread = new Thread(rsGet);
                     executionThread.start();
