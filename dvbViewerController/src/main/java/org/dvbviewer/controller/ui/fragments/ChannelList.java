@@ -321,7 +321,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
             prefEditor.commit();
             Config.CHANNELS_SYNCED = true;
-            AnalyticsTracker.trackSync(getActivity().getApplication(), trackingData.toString());
+            AnalyticsTracker.trackSync(getContext(), trackingData.toString());
         } catch (AuthenticationException e) {
             e.printStackTrace();
             showToast(getStringSafely(R.string.error_invalid_credentials));
@@ -998,9 +998,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         /**
          * Channel selected.
          *
-         * @param chans    the chans
          * @param chan     the chan
-         * @param position the position
          * @author RayBa
          * @date 05.07.2012
          */
