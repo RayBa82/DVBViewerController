@@ -584,7 +584,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                 case R.id.menuSwitch:
                     DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
                     String cid = ":" + String.valueOf(mCHannel.getChannelID());
-                    String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
+                    String switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                     DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                     Thread exexuterTHread = new Thread(command);
                     exexuterTHread.start();
