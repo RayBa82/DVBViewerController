@@ -226,7 +226,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	private class ViewHolder {
 		CheckableLinearLayout	layout;
-		ImageView thumbNail;
+		ImageView 				thumbNail;
+		View 					thumbNailContainer;
 		TextView				title;
 		TextView				subTitle;
 		TextView				channelName;
@@ -278,6 +279,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				holder.date = (TextView) convertView.findViewById(R.id.date);
 				holder.contextMenu = (ImageView) convertView.findViewById(R.id.contextMenu);
 				holder.contextMenu.setOnClickListener(RecordingList.this);
+				holder.thumbNailContainer = convertView.findViewById(R.id.thumbNailContainer);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -293,7 +295,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					holder.subTitle.setText(o.getSubTitle());
 				}
 				holder.thumbNail.setImageDrawable(null);
-				imageLoader.displayImage(ServerConsts.REC_SERVICE_URL+ ServerConsts.THUMBNAILS_VIDEO_URL +o.getThumbNail(), holder.thumbNail);
+				if (TextUtils.isEmpty(o.getThumbNail())){
+					holder.thumbNailContainer.setVisibility(View.GONE);
+				}else{
+					holder.thumbNailContainer.setVisibility(View.VISIBLE);
+					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL+ ServerConsts.THUMBNAILS_VIDEO_URL +o.getThumbNail(), holder.thumbNail);
+				}
 				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());
 				holder.contextMenu.setTag(position);
