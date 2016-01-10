@@ -15,8 +15,6 @@
  */
 package org.dvbviewer.controller.io;
 
-import android.util.Log;
-
 import org.dvbviewer.controller.utils.ServerConsts;
 
 import java.io.IOException;
@@ -66,18 +64,12 @@ public class ServerRequest {
 	 * @date 13.04.2012
 	 */
 	public static void executeRSGet(String request) throws Exception {
-		Log.d(ServerRequest.class.getSimpleName(), "request: " + request);
 		HTTPUtil.executeGet(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
 	}
 
 	public static InputStream getInputStream(String request) throws Exception {
 		return HTTPUtil.getInputStream(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
 	}
-
-	public static byte[] getRSBytes(String request) throws Exception{
-		return HTTPUtil.getByteArrray(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
-	}
-
 
 	/**
 	 * The Class RecordingServiceGet.

@@ -101,6 +101,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			AppCompatActivity activty = (AppCompatActivity) getActivity();
 			mode = activty.startSupportActionMode(this);
 		}
+		getActivity().setTitle(R.string.timer);
 	}
 
 	/* (non-Javadoc)

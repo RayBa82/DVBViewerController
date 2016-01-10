@@ -15,6 +15,7 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -71,6 +72,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     }.getType();
     private ViewPager mPager;
     private TitlePageIndicator indicator;
+    private OnTargetsChangedListener onTargetsChangedListener;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -97,11 +99,21 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         }
         mPager.setAdapter(new PagerAdapter(getChildFragmentManager()));
         indicator.setViewPager(mPager);
+        mToolbar.setVisibility(onTargetsChangedListener == null ? View.VISIBLE : View.GONE);
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnTargetsChangedListener){
+            onTargetsChangedListener = (OnTargetsChangedListener) context;
+        }
     }
 
     /* (non-Javadoc)
-     * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-     */
+         * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+         */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_remote, null);
@@ -190,7 +202,9 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
 
     @Override
     public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
-        if (data != null && !data.isEmpty()) {
+        if (onTargetsChangedListener != null) {
+            onTargetsChangedListener.targetsChanged(getString(R.string.remote), data);
+        } else if (data != null && !data.isEmpty()) {
             String[] arr = new String[data.size()];
             mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
             mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
@@ -222,7 +236,8 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
 
     @Override
     public void OnRemoteButtonClick(String action) {
-        String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, mClientSpinner.getSelectedItem(), action);
+        Object target = onTargetsChangedListener != null ? onTargetsChangedListener.getSelectedTarget() : mClientSpinner.getSelectedItem();
+        String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, target, action);
         ServerRequest.DVBViewerCommand httpCommand = new ServerRequest.DVBViewerCommand(request);
         Thread executionThread = new Thread(httpCommand);
         executionThread.start();
@@ -270,9 +285,9 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Control";
+                    return getString(R.string.remote_control);
                 case 1:
-                    return "Numbers";
+                    return getString(R.string.remote_numbers);
                 default:
                     return "";
             }
@@ -287,6 +302,14 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         public int getCount() {
             return 2;
         }
+
+    }
+
+    public interface OnTargetsChangedListener {
+
+        void targetsChanged(String title, List<String> tragets);
+
+        Object getSelectedTarget();
 
     }
 

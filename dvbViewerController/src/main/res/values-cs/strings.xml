@@ -57,7 +57,7 @@
     <string name="stream">Proudové vysílání</string>
     <string name="quality">Kvalita</string>
     <string name="aspectRatio">Poměr stran</string>
-    <string name="ffmpegpreset">Předvolba FFMPEG</string>
+    <string name="ffmpegpreset">Rychlost kódování</string>
     <string name="maxHeight">Maximální výška</string>
     <string name="maxWidth">Maximální šířka</string>
     <string name="streamStart">Zahájit proudové vysílání</string>
@@ -140,10 +140,10 @@
     <string name="pref_item_rs_live_stream_port_summary">Port, přes který je odesíláno televizní vysílání</string>
     <string name="pref_item_rs_media_stream_port">Port pro přehrávání médií</string>
     <string name="pref_item_rs_media_stream_port_summary">Port, přes který jsou odesílána média</string>
-    <string name="pref_item_channel_show_current_program">Zobrzovat aktuální pořad</string>
+    <string name="pref_item_channel_show_current_program">Zobrazovat aktuální pořad</string>
     <string name="pref_item_channel_show_current_program_summary">Zobrazovat v seznamu kanálů aktuálně vysílaný pořad</string>
     <string name="pref_item_channel_show_current_program_wifi">Pouze na WIFI připojení</string>
-    <string name="pref_item_channel_show_current_program_wifi_summary">Zobrazit v seznamu kanálů aktuálně vysílaný pouze na WIFI připojení</string>
+    <string name="pref_item_channel_show_current_program_wifi_summary">Aktuálně vysílaný pořad zobrazovat v seznamu kanálů pouze na WIFI připojení</string>
     <string name="pref_item_channel_fav">Používat \"Oblíbené kanály\"</string>
     <string name="pref_item_channel_fav_summary">Místo seznamu všech kanálů zobrazovat pouze oblíbené</string>
     <!-- Error -->
@@ -159,4 +159,5 @@
     <string name="version_unsupported_text">Verze Vaší nahrávací služby není podporována. Je třeba nainstalovat verzi {0} nebo vyšší.</string>
     <string name="version_unsupported_title">Nepodporovaná verze</string>
     <string name="recording_folder">Složka pro nahrávání</string>
+    <!-- Remote -->
 </resources>

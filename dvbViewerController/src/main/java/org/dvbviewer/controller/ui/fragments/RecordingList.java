@@ -119,6 +119,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			mode = activity.startSupportActionMode(this);
 			updateActionModeTitle(savedInstanceState.getInt(CHECKED_ITEM_COUNT));
 		}
+		getActivity().setTitle(R.string.recordings);
 	}
 
 	/* (non-Javadoc)

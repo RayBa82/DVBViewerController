@@ -13,7 +13,7 @@
             android:focusableInTouchMode="true"
             android:hapticFeedbackEnabled="true"
             android:orientation="vertical"
-            android:padding="5dip">
+            android:padding="2dip">
 
             <LinearLayout
                 android:layout_width="fill_parent"
