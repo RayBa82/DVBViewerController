@@ -17,6 +17,7 @@ import com.squareup.okhttp.Response;
 import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.BuildConfig;
 import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.io.SSLUtil;
 
 import java.io.IOException;
 
@@ -25,11 +26,39 @@ import java.io.IOException;
  */
 public class AnalyticsTracker {
 
-    private static final MediaType      JSON        = MediaType.parse("application/json; charset=utf-8");
-    private static final OkHttpClient   client      = new OkHttpClient();
-    private static final String         TAG         = "AnalyticsTracker";
+    private static final MediaType  JSON        = MediaType.parse("application/json; charset=utf-8");
+    private static OkHttpClient     httpClient;
+    private static final String     TAG         = "AnalyticsTracker";
+    private static Callback         callback;
 
-    private static Callback callback;
+
+    private static OkHttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = new OkHttpClient();
+            httpClient.setSslSocketFactory(SSLUtil.getSSLServerSocketFactory());
+            httpClient.setHostnameVerifier(new SSLUtil.VerifyAllHostnameVerifiyer());
+        }
+        return httpClient;
+    }
+
+    private static Callback getCallback() {
+        if (callback == null) {
+            callback = new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    Log.e(TAG, "Error sending AnalyticsData", e);
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (!response.isSuccessful()){
+                        Log.e(TAG, "Error sending AnalyticsData: Status code " +response.code());
+                    }
+                }
+            };
+        }
+        return callback;
+    }
 
     public static void trackEvent(Application app, String category, String action){
         if (!BuildConfig.DEBUG){
@@ -50,20 +79,7 @@ public class AnalyticsTracker {
                         .url(url)
                         .post(body)
                         .build();
-                callback = new Callback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        Log.e(TAG, "Error sending AnalyticsData", e);
-                    }
-
-                    @Override
-                    public void onResponse(Response response) throws IOException {
-                        if (!response.isSuccessful()){
-                            Log.e(TAG, "Error sending AnalyticsData: Status code " +response.code());
-                        }
-                    }
-                };
-                client.newCall(request).enqueue(callback);
+                getHttpClient().newCall(request).enqueue(getCallback());
             }
         } catch (Exception e) {
             e.printStackTrace();

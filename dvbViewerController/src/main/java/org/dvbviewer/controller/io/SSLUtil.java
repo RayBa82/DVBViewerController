@@ -34,7 +34,7 @@ import javax.net.ssl.X509TrustManager;
  * @author RayBa
  * @date 02.03.2014
  */
-class SSLUtil {
+public class SSLUtil {
 
 	/**
 	 * Gets the SSLCcontext. Here is special handling reqired,
