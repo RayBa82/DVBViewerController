@@ -9,7 +9,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -17,7 +16,7 @@ import com.squareup.okhttp.Response;
 import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.BuildConfig;
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.io.SSLUtil;
+import org.dvbviewer.controller.io.HTTPUtil;
 
 import java.io.IOException;
 
@@ -27,19 +26,8 @@ import java.io.IOException;
 public class AnalyticsTracker {
 
     private static final MediaType  JSON        = MediaType.parse("application/json; charset=utf-8");
-    private static OkHttpClient     httpClient;
     private static final String     TAG         = "AnalyticsTracker";
     private static Callback         callback;
-
-
-    private static OkHttpClient getHttpClient() {
-        if (httpClient == null) {
-            httpClient = new OkHttpClient();
-            httpClient.setSslSocketFactory(SSLUtil.getSSLServerSocketFactory());
-            httpClient.setHostnameVerifier(new SSLUtil.VerifyAllHostnameVerifiyer());
-        }
-        return httpClient;
-    }
 
     private static Callback getCallback() {
         if (callback == null) {
@@ -52,8 +40,9 @@ public class AnalyticsTracker {
                 @Override
                 public void onResponse(Response response) throws IOException {
                     if (!response.isSuccessful()){
-                        Log.e(TAG, "Error sending AnalyticsData: Status code " +response.code());
+                        Log.e(TAG, "Error sending AnalyticsData: Status code " + response.code());
                     }
+                    response.body().close();
                 }
             };
         }
@@ -75,14 +64,10 @@ public class AnalyticsTracker {
             String url = context.getString(R.string.tracking_url);
             if (!TextUtils.isEmpty(url)){
                 RequestBody body = RequestBody.create(JSON, trackingData);
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(body)
-                        .build();
-                getHttpClient().newCall(request).enqueue(getCallback());
+                HTTPUtil.executeAsync(url, "", "", getCallback(), body);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error sending AnalyticsData", e);
         }
     }
 

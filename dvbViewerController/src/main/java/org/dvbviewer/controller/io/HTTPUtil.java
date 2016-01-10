@@ -17,9 +17,11 @@ package org.dvbviewer.controller.io;
 
 import android.util.Log;
 
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import java.io.InputStream;
@@ -50,14 +52,20 @@ public class HTTPUtil {
         return result;
     }
 
+    public static void executeAsync(String url, String username, String password, Callback callback, RequestBody body) throws Exception {
+        final String credential = Credentials.basic(username, password);
+        Log.d("DVBViewerServerRequest", url);
+        Request request = getBuilder(url, credential).post(body).build();
+        try {
+            getHttpClient().newCall(request).enqueue(callback);
+        } catch (Exception e) {
+            throw new DefaultHttpException(url, e);
+        }
+    }
+
     public static InputStream getInputStream(String url, String username, String password) throws Exception {
         Response response = getResponse(url, username, password);
         return response.body().byteStream();
-    }
-
-    public static byte[] getByteArrray(String url, String username, String password) throws Exception {
-        Response response = getResponse(url, username, password);
-        return response.body().bytes();
     }
 
     public static void executeGet(String url, String username, String password) throws Exception {
@@ -67,11 +75,7 @@ public class HTTPUtil {
     private static Response getResponse(String url, String username, String password) throws Exception {
         final String credential = Credentials.basic(username, password);
         Log.d("DVBViewerServerRequest", url);
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", credential)
-                .header("Connection", "close")
-                .build();
+        Request request = getBuilder(url, credential).build();
         Response result;
         try {
             result = getHttpClient().newCall(request).execute();
@@ -80,6 +84,14 @@ public class HTTPUtil {
         }
         checkResponse(result);
         return result;
+    }
+
+    private static Request.Builder getBuilder(String url, String credentials){
+        Request.Builder builder = new Request.Builder()
+                .url(url)
+                .header("Authorization", credentials)
+                .header("Connection", "close");
+        return builder;
     }
 
     private static void checkResponse(Response response) throws AuthenticationException, DefaultHttpException {
