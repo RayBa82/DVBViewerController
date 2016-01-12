@@ -63,8 +63,6 @@ import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.entities.Timer;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
@@ -86,7 +84,6 @@ import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.json.JSONObject;
-import org.xml.sax.SAXException;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -248,18 +245,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             result = handler.parse(xml);
             DbHelper helper = new DbHelper(getContext());
             helper.saveNowPlaying(result);
-        } catch (AuthenticationException e) {
-            e.printStackTrace();
-            showToast(getStringSafely(R.string.error_invalid_credentials));
-        } catch (DefaultHttpException e) {
-            e.printStackTrace();
-            showToast(e.getMessage());
-        } catch (SAXException e) {
-            e.printStackTrace();
-            showToast(getStringSafely(R.string.error_parsing_xml));
         } catch (Exception e) {
-            e.printStackTrace();
-            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+            catchException(getClass().getSimpleName(), e);
         }
     }
 
@@ -267,7 +254,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         try {
             String version = RecordingService.getVersionString();
             if (!Config.isRSVersionSupported(version)) {
-                showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
+                showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                 return;
             }
 
@@ -322,15 +309,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             prefEditor.commit();
             Config.CHANNELS_SYNCED = true;
             AnalyticsTracker.trackSync(getContext(), trackingData.toString());
-        } catch (AuthenticationException e) {
-            e.printStackTrace();
-            showToast(getStringSafely(R.string.error_invalid_credentials));
-        } catch (DefaultHttpException e) {
-            e.printStackTrace();
-            showToast(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage());
+            catchException(getClass().getSimpleName(), e);
         }
     }
 

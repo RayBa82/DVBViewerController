@@ -32,8 +32,6 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Status;
 import org.dvbviewer.controller.entities.Status.Folder;
 import org.dvbviewer.controller.entities.Status.StatusItem;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.Status2Handler;
@@ -47,7 +45,6 @@ import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.json.JSONObject;
-import org.xml.sax.SAXException;
 
 import java.text.MessageFormat;
 
@@ -101,22 +98,12 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                 try {
                     String version = RecordingService.getVersionString();
                     if (!Config.isRSVersionSupported(version)){
-                        showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
+                        showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                         return result;
                     }
                     result = getStatus(new DVBViewerPreferences(getActivity()), version, null);
-                } catch (AuthenticationException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_credentials));
-                } catch (DefaultHttpException e) {
-                    e.printStackTrace();
-                    showToast(e.getMessage());
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_parsing_xml));
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+                    catchException(getClass().getSimpleName(), e);
                 }
                 return result;
             }

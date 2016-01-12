@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,7 +38,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.io.AuthenticationException;
+import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.utils.UIUtils;
+import org.xml.sax.SAXException;
 
 /**
  * Static library support version of the framework's {@link android.app.ListFragment}.
@@ -53,8 +58,7 @@ public class BaseListFragment extends Fragment {
 	static final int								INTERNAL_EMPTY_ID				= android.R.id.empty;
 	static final int								INTERNAL_PROGRESS_CONTAINER_ID	= android.R.id.progress;
 	static final int								INTERNAL_LIST_CONTAINER_ID		= android.R.id.content;
-	protected LoadingResult							loadingResult;
-    
+
     
     private int layoutRessource = -1;
     
@@ -498,7 +502,20 @@ public class BaseListFragment extends Fragment {
 		}
 		return count;
 	}
-	
+
+    protected void catchException(String tag, Exception e) {
+        Log.e(tag, "Error loading ListData", e);
+        if (e instanceof AuthenticationException) {
+            showToast(getContext(), getStringSafely(R.string.error_invalid_credentials));
+        } else if (e instanceof DefaultHttpException) {
+            showToast(getContext(), e.getMessage());
+        } else if (e instanceof SAXException) {
+            showToast(getContext(), getStringSafely(R.string.error_parsing_xml));
+        } else {
+            showToast(getContext(), getStringSafely(R.string.error_common) + "\n\n" + (e.getMessage() != null ? e.getMessage() : e.getClass().getName()));
+        }
+    }
+
 	/**
 	 * Show toast.
 	 *
@@ -506,14 +523,14 @@ public class BaseListFragment extends Fragment {
 	 * @author RayBa
 	 * @date 07.04.2013
 	 */
-	protected void showToast(final String message) {
-		if (getActivity() != null && !isDetached()) {
+	protected void showToast(final Context context, final String message) {
+		if (context != null && !isDetached()) {
 			Runnable errorRunnable = new Runnable() {
 
 				@Override
 				public void run() {
 					if (!TextUtils.isEmpty(message)) {
-						Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+						Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 					}
 				}
 			};
@@ -532,10 +549,6 @@ public class BaseListFragment extends Fragment {
 			}
 		}
 		return result;
-	}
-	
-	public enum LoadingResult {
-		OK, ERROR, NETWORK_ERROR, INVALID_URL, INVALID_CREDENTIALS
 	}
 	
 }

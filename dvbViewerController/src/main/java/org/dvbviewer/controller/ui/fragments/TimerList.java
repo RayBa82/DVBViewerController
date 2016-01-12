@@ -57,7 +57,6 @@ import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
-import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -129,18 +128,8 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 					TimerHandler hanler = new TimerHandler();
 					result = hanler.parse(xml);
 					Collections.sort(result);
-				} catch (AuthenticationException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_invalid_credentials));
-				} catch (DefaultHttpException e) {
-					e.printStackTrace();
-					showToast(e.getMessage());
-				} catch (SAXException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_parsing_xml));
 				} catch (Exception e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+					catchException(getClass().getSimpleName(), e);
 				}
 				return result;
 			}
