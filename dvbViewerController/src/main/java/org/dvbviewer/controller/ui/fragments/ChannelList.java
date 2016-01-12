@@ -246,20 +246,19 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     }
 
     private void performRefresh() {
+        JSONObject trackingData = AnalyticsTracker.buildTracker();
         try {
             String version = RecordingService.getVersionString();
             if (!Config.isRSVersionSupported(version)) {
                 showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                 return;
             }
-
-
+            AnalyticsTracker.addData(trackingData, "version", version);
             /**
              * Request the Channels
              */
-            JSONObject trackingData = new JSONObject();
             String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
-            trackingData.put("channels", chanXml);
+            AnalyticsTracker.addData(trackingData, "channels", chanXml);
             ChannelHandler channelHandler = new ChannelHandler();
             List<ChannelRoot> chans = channelHandler.parse(chanXml);
             DbHelper mDbHelper = new DbHelper(mContext);
@@ -269,7 +268,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
              */
             String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
             if (!TextUtils.isEmpty(favXml)) {
-                trackingData.put("favourites", favXml);
+                AnalyticsTracker.addData(trackingData, "favourites", favXml);
                 FavouriteHandler handler = new FavouriteHandler();
                 List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
                 FavMatcher favMatcher = new FavMatcher();
@@ -285,27 +284,21 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
             ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress;
 
-            /**
-             * Get the DVBViewer Clients
-             */
-            String jsonClients = RecordingService.getDVBViewerTargets();
 
             /**
              * Save the data in sharedpreferences
              */
             Editor prefEditor = prefs.getPrefs().edit();
-            if (jsonClients != null) {
-                prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
-            }
             StatusList.getStatus(prefs, version, trackingData);
             prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
             prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
             prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
             prefEditor.commit();
             Config.CHANNELS_SYNCED = true;
-            AnalyticsTracker.trackSync(getContext(), trackingData.toString());
         } catch (Exception e) {
             catchException(getClass().getSimpleName(), e);
+        } finally {
+            AnalyticsTracker.trackSync(getContext(), trackingData);
         }
     }
 

@@ -2,6 +2,7 @@ package org.dvbviewer.controller.utils;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,6 +18,8 @@ import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.BuildConfig;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.io.HTTPUtil;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -28,6 +31,21 @@ public class AnalyticsTracker {
     private static final MediaType  JSON        = MediaType.parse("application/json; charset=utf-8");
     private static final String     TAG         = "AnalyticsTracker";
     private static Callback         callback;
+
+    public static JSONObject buildTracker() {
+        return new JSONObject();
+    }
+
+    public static JSONObject addData(@Nullable JSONObject tracker, String key, String data) {
+        if (tracker != null){
+            try {
+                tracker.put(key,data);
+            } catch (JSONException e) {
+                tracker = addData(tracker,key, "Error creating JsonData from String");
+            }
+        }
+        return tracker;
+    }
 
     private static Callback getCallback() {
         if (callback == null) {
@@ -59,11 +77,12 @@ public class AnalyticsTracker {
         }
     }
 
-    public static void trackSync(Context context, String trackingData){
+    public static void trackSync(Context context, JSONObject trackingData){
         try {
             String url = context.getString(R.string.tracking_url);
-            if (!TextUtils.isEmpty(url)){
-                RequestBody body = RequestBody.create(JSON, trackingData);
+            String data = trackingData.toString();
+            if (!TextUtils.isEmpty(url) && !TextUtils.isEmpty(data)) {
+                RequestBody body = RequestBody.create(JSON, data);
                 HTTPUtil.executeAsync(url, "", "", getCallback(), body);
             }
         } catch (Exception e) {

@@ -38,6 +38,7 @@ import org.dvbviewer.controller.io.data.Status2Handler;
 import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.CategoryAdapter;
 import org.dvbviewer.controller.utils.Config;
@@ -113,18 +114,23 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
 
     @Nullable
     public static Status getStatus(DVBViewerPreferences prefs, String version, @Nullable JSONObject trackingData) throws Exception {
-        Status result = null;
+        Status result;
         String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
+        trackingData = AnalyticsTracker.addData(trackingData, "status2", status2Xml);
         Status2Handler status2Handler = new Status2Handler();
         result = status2Handler.parse(status2Xml);
         StatusHandler statusHandler = new StatusHandler();
         String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
+        AnalyticsTracker.addData(trackingData, "status", statusXml);
         Status oldStatus = statusHandler.parse(statusXml);
         StatusItem versionItem = new StatusItem();
         versionItem.setNameRessource(R.string.status_rs_version);
         versionItem.setValue(version);
         result.getItems().add(0, versionItem);
         String jsonClients = RecordingService.getDVBViewerTargets();
+        AnalyticsTracker.addData(trackingData, "dvbviewerTargets", jsonClients);
+        String ffmpegPrefsIni =  ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+        AnalyticsTracker.addData(trackingData, "ffmpegPrefsIni", ffmpegPrefsIni);
         result.getItems().addAll(oldStatus.getItems());
         SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
         if (jsonClients != null) {
@@ -135,10 +141,6 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
         prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
         prefEditor.commit();
-        if (trackingData != null){
-            trackingData.put("status", statusXml);
-            trackingData.put("status2", status2Xml);
-        }
         return result;
     }
 
