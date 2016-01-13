@@ -116,7 +116,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
     public static Status getStatus(DVBViewerPreferences prefs, String version, @Nullable JSONObject trackingData) throws Exception {
         Status result;
         String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
-        trackingData = AnalyticsTracker.addData(trackingData, "status2", status2Xml);
+        AnalyticsTracker.addData(trackingData, "status2", status2Xml);
         Status2Handler status2Handler = new Status2Handler();
         result = status2Handler.parse(status2Xml);
         StatusHandler statusHandler = new StatusHandler();
