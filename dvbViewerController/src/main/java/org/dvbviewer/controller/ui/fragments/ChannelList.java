@@ -234,19 +234,22 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         List<EpgEntry> result = null;
         String nowFloat = DateUtils.getFloatDate(new Date());
         String url = ServerConsts.URL_EPG + "&start=" + nowFloat + "&end=" + nowFloat;
+        DbHelper helper = new DbHelper(getContext());
         try {
             EpgEntryHandler handler = new EpgEntryHandler();
             String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
             result = handler.parse(xml);
-            DbHelper helper = new DbHelper(getContext());
             helper.saveNowPlaying(result);
         } catch (Exception e) {
             catchException(getClass().getSimpleName(), e);
+        }finally {
+            helper.close();
         }
     }
 
     private void performRefresh() {
         JSONObject trackingData = AnalyticsTracker.buildTracker();
+        DbHelper mDbHelper = new DbHelper(mContext);
         try {
             String version = RecordingService.getVersionString();
             if (!Config.isRSVersionSupported(version)) {
@@ -261,7 +264,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             AnalyticsTracker.addData(trackingData, "channels", chanXml);
             ChannelHandler channelHandler = new ChannelHandler();
             List<ChannelRoot> chans = channelHandler.parse(chanXml);
-            DbHelper mDbHelper = new DbHelper(mContext);
             chans = mDbHelper.saveChannelRoots(chans);
             /**
              * Request the Favourites
@@ -276,7 +278,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 mDbHelper.saveFavGroups(favs);
             }
 
-            mDbHelper.close();
 
             /**
              * Get the Mac Address for WOL
@@ -299,6 +300,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             catchException(getClass().getSimpleName(), e);
         } finally {
             AnalyticsTracker.trackSync(getContext(), trackingData);
+            mDbHelper.close();
         }
     }
 
