@@ -252,11 +252,11 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         DbHelper mDbHelper = new DbHelper(mContext);
         try {
             String version = RecordingService.getVersionString();
+            AnalyticsTracker.addData(trackingData, "version", version);
             if (!Config.isRSVersionSupported(version)) {
                 showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                 return;
             }
-            AnalyticsTracker.addData(trackingData, "version", version);
             /**
              * Request the Channels
              */
