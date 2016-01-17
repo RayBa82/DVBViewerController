@@ -40,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -172,15 +173,18 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             @Override
             public Cursor loadInBackground() {
                 MatrixCursor cursor = null;
-                Date now = mDateInfo.getEpgDate();
-                String nowFloat = DateUtils.getFloatDate(now);
-                Date tommorrow = DateUtils.addDay(now);
-                String tommorrowFloat = DateUtils.getFloatDate(tommorrow);
-                String url = ServerConsts.URL_CHANNEL_EPG + mCHannel.getEpgID() + "&start=" + nowFloat + "&end=" + tommorrowFloat;
                 try {
-                    List<EpgEntry> result = null;
+                    List<EpgEntry> result;
+                    Date now = mDateInfo.getEpgDate();
+                    String nowFloat = DateUtils.getFloatDate(now);
+                    Date tommorrow = DateUtils.addDay(now);
+                    String tommorrowFloat = DateUtils.getFloatDate(tommorrow);
+                    HttpUrl.Builder builder = buildBaseEpgUrl()
+                            .addQueryParameter("channel", String.valueOf(mCHannel.getEpgID()))
+                            .addQueryParameter("start", String.valueOf(nowFloat))
+                            .addQueryParameter("end", String.valueOf(tommorrowFloat));
                     EpgEntryHandler handler = new EpgEntryHandler();
-                    String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+                    String xml = ServerRequest.getRSString(builder.build().toString());
                     result = handler.parse(xml);
                     if (result != null && !result.isEmpty()) {
                         String[] columnNames = new String[]{EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END};
@@ -565,6 +569,14 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         timer.setEnd(end);
         timer.setTimerAction(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, 0));
         return timer;
+    }
+
+    public static HttpUrl.Builder buildBaseEpgUrl()  {
+        HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EPG);
+        HttpUrl.Builder builder = httpUrl.newBuilder()
+                .addQueryParameter("utf8", "1")
+                .addQueryParameter("lvl", "2");
+        return builder;
     }
 
 }
