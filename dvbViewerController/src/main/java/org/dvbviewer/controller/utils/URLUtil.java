@@ -77,7 +77,29 @@ public class URLUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static String buildProtectedRSUrl(String url){
+		StringBuffer result = new StringBuffer();
+		try {
+			String prefUrl = guessUrl(url);
+			URL baseUrl = new URL(prefUrl);
+			String path = baseUrl.getPath();
+			result.append(baseUrl.getProtocol()).append("://");
+			if((!TextUtils.isEmpty(ServerConsts.REC_SERVICE_USER_NAME)) && (!TextUtils.isEmpty(ServerConsts.REC_SERVICE_PASSWORD))) {
+				result.append(ServerConsts.REC_SERVICE_USER_NAME).append(":").append(ServerConsts.REC_SERVICE_PASSWORD).append("@");
+			}
+			result.append(baseUrl.getHost());
+			int port = baseUrl.getPort();
+			if (port > 0){
+				result.append(":").append(baseUrl.getPort());
+			}
+			result.append(path);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return result.toString();
+	}
+
 	/**
 	 * Sets the recording services address.
 	 *
