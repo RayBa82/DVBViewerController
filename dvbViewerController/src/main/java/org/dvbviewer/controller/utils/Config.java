@@ -62,7 +62,7 @@ public class Config {
      */
     public static boolean isRSVersionSupported(String version) {
         if (TextUtils.isEmpty(version)) {
-            return false;
+            return true;
         }
         String s1 = normalisedVersion(version);
         String s2 = normalisedVersion(SUPPORTED_RS_VERSION);
