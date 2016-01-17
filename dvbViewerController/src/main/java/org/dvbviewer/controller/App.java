@@ -23,6 +23,7 @@ import com.google.android.gms.analytics.ExceptionReporter;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.security.ProviderInstaller;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -41,11 +42,11 @@ import org.dvbviewer.controller.utils.URLUtil;
  * The Class App.
  *
  * @author RayBa
- * @date 11.08.2012
  */
 public class App extends Application {
 
     private Tracker tracker;
+	public static final String TAG = "DVBViewerController";
 	
 
 	/* (non-Javadoc)
@@ -88,7 +89,9 @@ public class App extends Application {
 			Thread wakeOnLanThread = new Thread(wakeOnLanRunnabel);
 			wakeOnLanThread.start();
 		}
-		
+
+		installPlayServiceSecurityUpdates();
+
 		DisplayImageOptions options = new DisplayImageOptions.Builder()
 		.cacheInMemory(true)
 		.cacheOnDisk(true)
@@ -120,7 +123,19 @@ public class App extends Application {
 
 	}
 
-    public synchronized Tracker getTracker(){
+	/**
+	 *  installing latest security fixes throught play services, e.g. TLS1.2 support.
+	 *  But dont push anybody by annoying messages to upgrade Play Services, we dont rely on it.
+	 */
+	private void installPlayServiceSecurityUpdates() {
+		try {
+			ProviderInstaller.installIfNeeded(getApplicationContext());
+		} catch (Exception e ) {
+			Log.e(TAG, "Error installing play service features", e);
+		}
+	}
+
+	public synchronized Tracker getTracker(){
         if (tracker == null){
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             tracker = analytics.newTracker(R.xml.app_tracker);

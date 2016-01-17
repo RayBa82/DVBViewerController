@@ -15,9 +15,11 @@
  */
 package org.dvbviewer.controller.ui.phone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 
@@ -27,7 +29,7 @@ import org.dvbviewer.controller.ui.fragments.ChannelList;
  * @author RayBa
  * @date 07.04.2013
  */
-public class ChannelListActivity extends BaseSinglePaneActivity {
+public class ChannelListActivity extends BaseSinglePaneActivity implements ChannelList.OnChannelSelectedListener{
 	
 	/* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
@@ -49,4 +51,11 @@ public class ChannelListActivity extends BaseSinglePaneActivity {
 		return chans;
 	}
 
+	@Override
+	public void channelSelected(long groupId, int groupIndex, Channel chan, int channelIndex) {
+		Intent epgPagerIntent = new Intent(this, EpgPagerActivity.class);
+		epgPagerIntent.putExtra(ChannelList.KEY_GROUP_ID, groupId);
+		epgPagerIntent.putExtra(ChannelList.KEY_CHANNEL_INDEX, channelIndex);
+		startActivity(epgPagerIntent);
+	}
 }

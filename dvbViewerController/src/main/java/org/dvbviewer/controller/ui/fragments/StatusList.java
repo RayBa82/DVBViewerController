@@ -32,21 +32,20 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Status;
 import org.dvbviewer.controller.entities.Status.Folder;
 import org.dvbviewer.controller.entities.Status.StatusItem;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.Status2Handler;
 import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.CategoryAdapter;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
-import org.xml.sax.SAXException;
+import org.json.JSONObject;
 
 import java.text.MessageFormat;
 
@@ -100,22 +99,12 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                 try {
                     String version = RecordingService.getVersionString();
                     if (!Config.isRSVersionSupported(version)){
-                        showToast(MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
+                        showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                         return result;
                     }
-                    result = getStatus(new DVBViewerPreferences(getActivity()), version);
-                } catch (AuthenticationException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_credentials));
-                } catch (DefaultHttpException e) {
-                    e.printStackTrace();
-                    showToast(e.getMessage());
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_parsing_xml));
+                    result = getStatus(new DVBViewerPreferences(getActivity()), version, null);
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+                    catchException(getClass().getSimpleName(), e);
                 }
                 return result;
             }
@@ -124,19 +113,24 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
     }
 
     @Nullable
-    public static Status getStatus(DVBViewerPreferences prefs, String version) throws Exception {
-        Status result = null;
+    public static Status getStatus(DVBViewerPreferences prefs, String version, @Nullable JSONObject trackingData) throws Exception {
+        Status result;
         String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
+        AnalyticsTracker.addData(trackingData, "status2", status2Xml);
         Status2Handler status2Handler = new Status2Handler();
         result = status2Handler.parse(status2Xml);
         StatusHandler statusHandler = new StatusHandler();
         String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
+        AnalyticsTracker.addData(trackingData, "status", statusXml);
         Status oldStatus = statusHandler.parse(statusXml);
         StatusItem versionItem = new StatusItem();
         versionItem.setNameRessource(R.string.status_rs_version);
         versionItem.setValue(version);
         result.getItems().add(0, versionItem);
         String jsonClients = RecordingService.getDVBViewerTargets();
+        AnalyticsTracker.addData(trackingData, "dvbviewerTargets", jsonClients);
+        String ffmpegPrefsIni =  ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+        AnalyticsTracker.addData(trackingData, "ffmpegPrefsIni", ffmpegPrefsIni);
         result.getItems().addAll(oldStatus.getItems());
         SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
         if (jsonClients != null) {

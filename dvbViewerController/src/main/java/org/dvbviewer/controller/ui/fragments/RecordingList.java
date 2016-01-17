@@ -65,7 +65,6 @@ import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
-import org.xml.sax.SAXException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,6 +118,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			mode = activity.startSupportActionMode(this);
 			updateActionModeTitle(savedInstanceState.getInt(CHECKED_ITEM_COUNT));
 		}
+		getActivity().setTitle(R.string.recordings);
 	}
 
 	/* (non-Javadoc)
@@ -136,18 +136,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					RecordingHandler hanler = new RecordingHandler();
 					result = hanler.parse(xml);
 					Collections.sort(result);
-				} catch (AuthenticationException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_invalid_credentials));
-				} catch (DefaultHttpException e) {
-					e.printStackTrace();
-					showToast(e.getMessage());
-				} catch (SAXException e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_parsing_xml));
 				} catch (Exception e) {
-					e.printStackTrace();
-					showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+					catchException(getClass().getSimpleName(), e);
 				}
 				return result;
 			}
@@ -225,7 +215,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	private class ViewHolder {
 		CheckableLinearLayout	layout;
-		ImageView thumbNail;
+		ImageView 				thumbNail;
+		View 					thumbNailContainer;
 		TextView				title;
 		TextView				subTitle;
 		TextView				channelName;
@@ -277,6 +268,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				holder.date = (TextView) convertView.findViewById(R.id.date);
 				holder.contextMenu = (ImageView) convertView.findViewById(R.id.contextMenu);
 				holder.contextMenu.setOnClickListener(RecordingList.this);
+				holder.thumbNailContainer = convertView.findViewById(R.id.thumbNailContainer);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -292,7 +284,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					holder.subTitle.setText(o.getSubTitle());
 				}
 				holder.thumbNail.setImageDrawable(null);
-				imageLoader.displayImage(ServerConsts.REC_SERVICE_URL+ ServerConsts.THUMBNAILS_VIDEO_URL +o.getThumbNail(), holder.thumbNail);
+				if (TextUtils.isEmpty(o.getThumbNail())){
+					holder.thumbNailContainer.setVisibility(View.GONE);
+				}else{
+					holder.thumbNailContainer.setVisibility(View.VISIBLE);
+					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL+ ServerConsts.THUMBNAILS_VIDEO_URL +o.getThumbNail(), holder.thumbNail);
+				}
 				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());
 				holder.contextMenu.setTag(position);

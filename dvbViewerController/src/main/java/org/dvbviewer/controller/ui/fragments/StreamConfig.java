@@ -42,22 +42,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.nineoldandroids.animation.IntEvaluator;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.squareup.okhttp.HttpUrl;
 
-import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.FfMpegPrefs;
 import org.dvbviewer.controller.entities.Preset;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
+import org.dvbviewer.controller.utils.URLUtil;
 
 
 /**
@@ -159,18 +158,6 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
         } catch (Exception e) {
             e.printStackTrace();
         }
-	}
-
-	private static String rebuildProtectedFlashUrl() {
-		if((!TextUtils.isEmpty(ServerConsts.REC_SERVICE_USER_NAME)) && (!TextUtils.isEmpty(ServerConsts.REC_SERVICE_PASSWORD))) {
-			flashUrl = ServerConsts.REC_SERVICE_PROTOCOL + "://" +
-					   ServerConsts.REC_SERVICE_USER_NAME + ":" +
-					   ServerConsts.REC_SERVICE_PASSWORD + "@" +
-					   ServerConsts.REC_SERVICE_HOST + ":" +
-					   ServerConsts.REC_SERVICE_PORT +
-					   ServerConsts.URL_FLASHSTREAM;
-		}
-		return flashUrl;
 	}
 
 	/* (non-Javadoc)
@@ -282,12 +269,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				} else {
 					getActivity().finish();
 				}
-				Tracker t = ((App) getActivity().getApplication()).getTracker();
-				// Build and send an Event.
-				t.send(new HitBuilders.EventBuilder()
-						.setCategory("Streaming")
-						.setAction("Transcoded stream")
-						.build());
+				AnalyticsTracker.trackTranscodedStream(getActivity().getApplication());
 			} catch (ActivityNotFoundException e) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
@@ -305,16 +287,10 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				} else {
 					getActivity().finish();
 				}
-				Tracker t = ((App) getActivity().getApplication()).getTracker();
-				// Build and send an Event.
-				t.send(new HitBuilders.EventBuilder()
-						.setCategory("Streaming")
-						.setAction("Direct stream")
-						.build());
+				AnalyticsTracker.trackDirectStream(getActivity().getApplication());
 			} catch (ActivityNotFoundException e) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
-
 				e.printStackTrace();
 			}
 			break;
@@ -430,13 +406,15 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 
 	private static Intent getTranscodedUrl(final int position, final Preset preset, final String encodingSpeed, final boolean recording, final int start) {
-		final HttpUrl httpUrl = HttpUrl.parse(rebuildProtectedFlashUrl() + preset.getExtension());
+		final HttpUrl httpUrl = HttpUrl.parse(URLUtil.buildProtectedRSUrl(ServerConsts.REC_SERVICE_URL+ServerConsts.URL_FLASHSTREAM + preset.getExtension()));
 		final HttpUrl.Builder builder = httpUrl.newBuilder();
 		final String idParam = recording ? "recid" : "chid";
 		builder.addQueryParameter("preset", preset.getTitle());
 		builder.addQueryParameter("ffPreset", encodingSpeed);
 		builder.addQueryParameter(idParam, String.valueOf(position));
-		builder.addQueryParameter("start", String.valueOf(start));
+		if (start > 0){
+			builder.addQueryParameter("start", String.valueOf(start));
+		}
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		final String url = builder.build().toString();
 		Log.d(Tag, "playing video: " + url);
@@ -445,7 +423,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 
 	public static Intent getDirectUrl(int position, boolean recording){
-		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(position+".ts");
+		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(position + ".ts");
 		Log.d(Tag, "playing video: " + result.toString());
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");

@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -28,8 +27,6 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,13 +35,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -53,8 +48,6 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Timer;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
@@ -66,7 +59,6 @@ import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
-import org.xml.sax.SAXException;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -90,6 +82,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     private TextView dayIndicator;
     EpgDateInfo mDateInfo;
     Date lastRefresh;
+    boolean useFavs;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -102,6 +95,9 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         if (savedInstanceState != null && savedInstanceState.containsKey(Channel.class.getName())) {
             mCHannel = savedInstanceState.getParcelable(Channel.class.getName());
         }
+        DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
+        useFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
+
     }
 
 
@@ -109,10 +105,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * @see com.actionbarsherlock.app.SherlockFragment#onAttach(android.app.Activity)
      */
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mDateInfo = (EpgDateInfo) activity;
+            mDateInfo = (EpgDateInfo) context;
         } catch (ClassCastException e) {
             e.printStackTrace();
         }
@@ -128,14 +124,13 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         setListAdapter(mAdapter);
         setListShown(false);
         getListView().setOnItemClickListener(this);
-        registerForContextMenu(getListView());
         channelLogo.setImageBitmap(null);
         if (mCHannel != null) {
             mImageCacher.cancelDisplayTask(channelLogo);
             setChannel(mCHannel);
             String url = ServerConsts.REC_SERVICE_URL + "/" + mCHannel.getLogoUrl();
             mImageCacher.displayImage(url, channelLogo);
-            position.setText(mCHannel.getPosition().toString());
+            position.setText(useFavs ? mCHannel.getFavPosition().toString() : mCHannel.getPosition().toString());
             channelName.setText(mCHannel.getName());
         }
         if (DateUtils.isToday(mDateInfo.getEpgDate().getTime())) {
@@ -166,8 +161,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-        Loader<Cursor> loader = null;
-        loader = new EpgLoader<Cursor>(getActivity().getApplicationContext(), mDateInfo) {
+        Loader<Cursor> loader = new EpgLoader<Cursor>(getActivity().getApplicationContext(), mDateInfo) {
 
             @Override
             protected void onForceLoad() {
@@ -196,18 +190,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                         }
                     }
 
-                } catch (AuthenticationException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_invalid_credentials));
-                } catch (DefaultHttpException e) {
-                    e.printStackTrace();
-                    showToast(e.getMessage());
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_parsing_xml));
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    showToast(getStringSafely(R.string.error_common) + "\n\n" + e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+                    catchException(getClass().getSimpleName(), e);
                 }
                 return cursor;
             }
@@ -303,6 +287,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     public void setChannel(Channel channel) {
         this.mCHannel = channel;
+    }
+
+    public Channel getChannel() {
+        return mCHannel;
     }
 
     /**
@@ -418,98 +406,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         menu.findItem(R.id.menuPrev).setEnabled(!DateUtils.isToday(mDateInfo.getEpgDate().getTime()));
     }
 
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.Fragment#onContextItemSelected(android.view.MenuItem)
-     */
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        int pos = AdapterView.INVALID_POSITION;
-        if (item.getMenuInfo() != null) {
-            AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-            pos = info.position;
-        }
-        Cursor c;
-        c = mAdapter.getCursor();
-        c.moveToPosition(pos);
-        Timer timer;
-        if (getUserVisibleHint()) {
-            switch (item.getItemId()) {
-                case R.id.menuRecord:
-                    timer = cursorToTimer(c);
-                    String url = buildTimerUrl(timer);
-                    RecordingServiceGet rsGet = new RecordingServiceGet(url);
-                    Thread executionThread = new Thread(rsGet);
-                    executionThread.start();
-
-                    return true;
-                case R.id.menuTimer:
-                    timer = cursorToTimer(c);
-                    Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
-                    timerIntent.putExtra(TimerDetails.EXTRA_TITLE, timer.getTitle());
-                    timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-                    timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-                    timerIntent.putExtra(TimerDetails.EXTRA_START, timer.getStart().getTime());
-                    timerIntent.putExtra(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-                    timerIntent.putExtra(TimerDetails.EXTRA_ACTIVE, true);
-                    startActivity(timerIntent);
-                    return true;
-                case R.id.menuDetails:
-                    Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
-                    c = mAdapter.getCursor();
-                    c.moveToPosition(selectedPosition);
-                    IEPG entry = cursorToEpgEntry(c);
-                    details.putExtra(IEPG.class.getSimpleName(), entry);
-                    startActivity(details);
-                    return true;
-                case R.id.menuSwitch:
-                    DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-                    String cid = ":" + String.valueOf(mCHannel.getChannelID());
-                    String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
-                    DVBViewerCommand command = new DVBViewerCommand(switchRequest);
-                    Thread exexuterTHread = new Thread(command);
-                    exexuterTHread.start();
-                    return true;
-                default:
-                    break;
-            }
-        }
-        return false;
-    }
-
-    private String buildTimerUrl(Timer timer) {
-        HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL+ (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
-        HttpUrl.Builder builder = httpUrl.newBuilder();
-        String title = timer.getTitle();
-        String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-        String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-        String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-        String endAction = String.valueOf(timer.getTimerAction());
-        builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
-        builder.addQueryParameter("dor", days);
-        builder.addQueryParameter("encoding", "255");
-        builder.addQueryParameter("enable", "1");
-        builder.addQueryParameter("start", start);
-        builder.addQueryParameter("stop", stop);
-        builder.addQueryParameter("title", title);
-        builder.addQueryParameter("endact", endAction);
-        if (timer.getId() >= 0) {
-            builder.addQueryParameter("id", String.valueOf(timer.getId()));
-        }
-        return builder.build().toString();
-    }
-
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
-	 */
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        if (getUserVisibleHint()) {
-            super.onCreateContextMenu(menu, v, menuInfo);
-            getActivity().getMenuInflater().inflate(R.menu.context_menu_epg, menu);
-        }
-    }
-
     /* (non-Javadoc)
      * @see android.view.View.OnClickListener#onClick(android.view.View)
      */
@@ -537,7 +433,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             switch (item.getItemId()) {
                 case R.id.menuRecord:
                     timer = cursorToTimer(c);
-                    String url = buildTimerUrl(timer);
+                    String url = TimerDetails.buildTimerUrl(timer);
                     RecordingServiceGet rsGet = new RecordingServiceGet(url);
                     Thread executionThread = new Thread(rsGet);
                     executionThread.start();
@@ -577,7 +473,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                 case R.id.menuSwitch:
                     DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
                     String cid = ":" + String.valueOf(mCHannel.getChannelID());
-                    String switchRequest = MessageFormat.format(ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
+                    String switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                     DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                     Thread exexuterTHread = new Thread(command);
                     exexuterTHread.start();

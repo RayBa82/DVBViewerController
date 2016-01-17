@@ -14,16 +14,18 @@ import java.util.List;
  */
 public class FavMatcher {
 
-    public List<ChannelGroup> matchFavs(List<ChannelRoot> channelRoots, List<ChannelGroup> favList){
+    public List<ChannelGroup> matchFavs(List<ChannelRoot> channelRoots, @Nullable List<ChannelGroup> favList){
         List<ChannelGroup> result = new ArrayList<>();
-        for (ChannelGroup favGroup : favList){
-            ChannelGroup tmp = getCurrentFavGroup(result, favGroup);
-            for (Channel.Fav fav : favGroup.getFavs()){
-                Channel chan = getMatchedChannel(channelRoots, fav.id);
-                if (chan != null){
-                    chan.setFavPosition(fav.position);
-                    chan.setFlag(Channel.FLAG_FAV);
-                    tmp.getChannels().add(chan);
+        if (favList != null){
+            for (ChannelGroup favGroup : favList){
+                ChannelGroup tmp = getCurrentFavGroup(result, favGroup);
+                for (Channel.Fav fav : favGroup.getFavs()){
+                    Channel chan = getMatchedChannel(channelRoots, fav.id);
+                    if (chan != null){
+                        chan.setFavPosition(fav.position);
+                        chan.setFlag(Channel.FLAG_FAV);
+                        tmp.getChannels().add(chan);
+                    }
                 }
             }
         }
@@ -31,12 +33,14 @@ public class FavMatcher {
     }
 
     @Nullable
-    private Channel getMatchedChannel(List<ChannelRoot> channelRoots, long favId) {
-        for(ChannelRoot roots : channelRoots){
-            for( ChannelGroup group : roots.getGroups()){
-                for(Channel chan : group.getChannels()){
-                    if (chan.getChannelID() == favId){
-                        return chan;
+    private Channel getMatchedChannel(@Nullable List<ChannelRoot> channelRoots, long favId) {
+        if (channelRoots != null){
+            for(ChannelRoot roots : channelRoots){
+                for( ChannelGroup group : roots.getGroups()){
+                    for(Channel chan : group.getChannels()){
+                        if (chan.getChannelID() == favId){
+                            return chan;
+                        }
                     }
                 }
             }

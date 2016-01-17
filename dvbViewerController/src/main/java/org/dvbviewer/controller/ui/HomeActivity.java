@@ -21,10 +21,13 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Channel;
@@ -33,6 +36,7 @@ import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
+import org.dvbviewer.controller.ui.fragments.EpgPager;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.TimerList;
@@ -47,10 +51,7 @@ import org.dvbviewer.controller.ui.phone.TimerlistActivity;
 import org.dvbviewer.controller.ui.tablet.ChannelListMultiActivity;
 import org.dvbviewer.controller.utils.Config;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * The Class HomeActivity.
@@ -58,13 +59,14 @@ import java.util.Locale;
  * @author RayBa
  * @date 01.07.2012
  */
-public class HomeActivity extends BaseActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener {
+public class HomeActivity extends BaseActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
 
-	SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 	private View		multiContainer;
-	private TextView	multiContainerIndicator;
-	private AlertDialog	expirationDialog;
-	String expirationMessage;
+	private Toolbar toolbar;
+	private ArrayAdapter mSpinnerAdapter;
+	private Spinner mClientSpinner;
+	private int spinnerPosition;
+	DVBViewerPreferences prefs;
 
 	/* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseActivity#onCreate(android.os.Bundle)
@@ -74,7 +76,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		multiContainer = findViewById(R.id.multi_container);
-		multiContainerIndicator = (TextView) findViewById(R.id.multi_container_indicator);
+		toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+		prefs = new DVBViewerPreferences(this);
 		
 		if (savedInstanceState == null) {
 			if (multiContainer != null) {
@@ -90,17 +93,37 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(getResources().getString(R.string.firstStartMessage)).setPositiveButton(R.string.yes, this).setTitle(getResources().getString(R.string.firstStartMessageTitle))
 				.setNegativeButton(R.string.no, this).show();
-				DVBViewerPreferences prefs = new DVBViewerPreferences(this);
+				prefs = new DVBViewerPreferences(this);
 				prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, false).commit();
 			}
 		}
-		
-		
+
+		initRemoteSpinner();
 	}
 
+	private void initRemoteSpinner() {
+		mClientSpinner = (Spinner) findViewById(R.id.clientSpinner);
+		if (mClientSpinner != null){
+			mClientSpinner.setVisibility(View.GONE);
+			mClientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+					String selectedClient = (String) mSpinnerAdapter.getItem(position);
+					prefs.getPrefs().edit().putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient).commit();
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> parent) {
+
+				}
+			});
+		}
+	}
+
+
 	/* (non-Javadoc)
-	 * @see android.content.DialogInterface.OnClickListener#onClick(android.content.DialogInterface, int)
-	 */
+         * @see android.content.DialogInterface.OnClickListener#onClick(android.content.DialogInterface, int)
+         */
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		switch (which) {
@@ -113,17 +136,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 			finish();
 			break;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener#channelSelected(org.dvbviewer.controller.entities.Channel, int)
-	 */
-	@Override
-	public void channelSelected(List<Channel> chans, Channel chan, int position) {
-		Intent channelListIntent = new Intent(this, ChannelListMultiActivity.class);
-		channelListIntent.putParcelableArrayListExtra(Channel.class.getName(), (ArrayList<Channel>) chans);
-		channelListIntent.putExtra(ChannelList.KEY_SELECTED_POSITION, position);
-		startActivity(channelListIntent);
 	}
 
 	/* (non-Javadoc)
@@ -159,7 +171,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
 				tran.replace(multiContainer.getId(), new TimerList());
 				tran.commit();
-				setTitle(R.string.timer);
 			} else {
 
 				startActivity(new Intent(this, TimerlistActivity.class));
@@ -187,6 +198,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 
 		default:
 			break;
+		}
+		if (mClientSpinner != null){
+			mClientSpinner.setVisibility(View.GONE);
 		}
 	}
 	
@@ -225,5 +239,38 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+	@Override
+	public void channelSelected(long groupId, int groupIndex, Channel chan, int channelIndex) {
+		Intent channelListIntent = new Intent(this, ChannelListMultiActivity.class);
+		channelListIntent.putExtra(ChannelList.KEY_GROUP_ID, groupId);
+		channelListIntent.putExtra(EpgPager.KEY_HIDE_OPTIONSMENU, true);
+		channelListIntent.putExtra(ChannelList.KEY_CHANNEL_INDEX, channelIndex);
+		startActivity(channelListIntent);
+
+	}
+
+	@Override
+	public void targetsChanged(String title, List<String> spinnerData) {
+		setTitle(title);
+		if (mClientSpinner != null){
+			String[] arr = new String[spinnerData.size()];
+			mSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, spinnerData.toArray(arr));
+			mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+			mClientSpinner.setAdapter(mSpinnerAdapter);
+			String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);
+			int index = spinnerData.indexOf(activeClient);
+			spinnerPosition = index > Spinner.INVALID_POSITION ? index : Spinner.INVALID_POSITION;
+			mClientSpinner.setSelection(spinnerPosition);
+			mClientSpinner.setVisibility(View.VISIBLE);
+		}
+
+	}
+
+	@Override
+	public Object getSelectedTarget() {
+		return mClientSpinner.getSelectedItem();
+	}
+
+
 }

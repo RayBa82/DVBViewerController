@@ -159,4 +159,7 @@
     <string name="version_unsupported_text">Ihre Recording Service Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
     <string name="version_unsupported_title">Version zu alt</string>
     <string name="recording_folder">Aufnahmeordner</string>
+    <!-- Remote -->
+    <string name="remote_control">Steuerung</string>
+    <string name="remote_numbers">Ziffern</string>
 </resources>

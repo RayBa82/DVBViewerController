@@ -134,6 +134,16 @@ public class DbHelper extends SQLiteOpenHelper {
 		}
 	}
 
+	@Override
+	public synchronized void close() {
+		try{
+			super.close();
+		}catch (Exception ignore){
+
+		}
+
+	}
+
 	/**
 	 * Save epg entries.
 	 * 
