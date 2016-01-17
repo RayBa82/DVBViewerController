@@ -15,6 +15,11 @@
  */
 package org.dvbviewer.controller.io;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.squareup.okhttp.TlsVersion;
+
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -32,9 +37,10 @@ import javax.net.ssl.X509TrustManager;
  * Util Class for !unsecure! SSL connections.
  *
  * @author RayBa
- * @date 02.03.2014
  */
 public class SSLUtil {
+
+	private static final String TAG = SSLUtil.class.getSimpleName();
 
 	/**
 	 * Gets the SSLCcontext. Here is special handling reqired,
@@ -45,9 +51,15 @@ public class SSLUtil {
 	 * @return the SSL context
 	 */
 	private static SSLContext getSSLContext() {
-		SSLContext sslContext = getTlsProtocolContext();
+		SSLContext sslContext = getProtocolContext(TlsVersion.TLS_1_2.javaName());
 		if (sslContext == null) {
-			sslContext = getSslProtocolContext();
+			sslContext = getProtocolContext(TlsVersion.TLS_1_0.javaName());
+		}
+		if (sslContext == null) {
+			sslContext = getProtocolContext(TlsVersion.SSL_3_0.javaName());
+		}
+		if (sslContext == null) {
+			sslContext = getDefaultContext();
 		}
 		return sslContext;
 	}
@@ -56,34 +68,33 @@ public class SSLUtil {
 		return getSSLContext().getSocketFactory();
 	}
 
+
 	/**
-	 * Gets an SSLContext using the TLS protocol.
+	 * Gets an SSLContext using the TLSv1.2 protocol.
 	 *
 	 * @return the tls protocol context
 	 */
-	private static SSLContext getTlsProtocolContext() {
+	private static SSLContext getProtocolContext(String protocol) {
 		SSLContext sslContext = null;
 		try {
-			sslContext = SSLContext.getInstance("TLS");
-			sslContext.init(null, new TrustManager[]{new TrustAllTrustManager()}, new SecureRandom());
-		} catch (NoSuchAlgorithmException | KeyManagementException e) {
-			e.printStackTrace();
+			sslContext = TextUtils.isEmpty(protocol) ? SSLContext.getDefault() : SSLContext.getInstance(protocol);
+			initSslContext(sslContext);
+		} catch (NoSuchAlgorithmException e) {
+			Log.e(TAG, "Error creating SSL Context", e);
 		}
 		return sslContext;
 	}
 
-	/**
-	 * Gets an SSLContext using the SSL protocol
-	 *
-	 * @return the ssl protocol context
-	 */
-	private static SSLContext getSslProtocolContext() {
-		SSLContext sslContext = null;
+
+	private static SSLContext getDefaultContext() {
+		return getProtocolContext(null);
+	}
+
+	private static SSLContext initSslContext(SSLContext sslContext){
 		try {
-			sslContext = SSLContext.getInstance("SSL");
 			sslContext.init(null, new TrustManager[]{new TrustAllTrustManager()}, new SecureRandom());
-		} catch (NoSuchAlgorithmException | KeyManagementException e) {
-			e.printStackTrace();
+		} catch (KeyManagementException e) {
+			Log.e(TAG, "Error initializing SSL Context", e);
 		}
 		return sslContext;
 	}
