@@ -37,7 +37,7 @@ public class AnalyticsTracker {
     }
 
     public static JSONObject addData(@Nullable JSONObject tracker, String key, String data) {
-        if (tracker != null){
+        if (tracker != null && !TextUtils.isEmpty(data)){
             try {
                 tracker.put(key,data);
             } catch (JSONException e) {
@@ -80,9 +80,8 @@ public class AnalyticsTracker {
     public static void trackSync(Context context, JSONObject trackingData){
         try {
             String url = context.getString(R.string.tracking_url);
-            String data = trackingData.toString();
-            if (!TextUtils.isEmpty(url) && !TextUtils.isEmpty(data)) {
-                RequestBody body = RequestBody.create(JSON, data);
+            if (!TextUtils.isEmpty(url) && trackingData.length() != 0) {
+                RequestBody body = RequestBody.create(JSON, trackingData.toString());
                 HTTPUtil.executeAsync(url, "", "", getCallback(), body);
             }
         } catch (Exception e) {
