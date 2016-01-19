@@ -6,6 +6,6 @@ package org.dvbviewer.controller.io;
 public class AuthenticationException extends Exception {
 
     public AuthenticationException() {
-        super("Authentication errpr");
+        super("Authentication error");
     }
 }
