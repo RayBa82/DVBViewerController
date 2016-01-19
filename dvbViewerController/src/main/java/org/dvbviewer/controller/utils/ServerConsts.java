@@ -23,8 +23,7 @@ public class ServerConsts {
 	public static String	URL_VERSION						= "/api/version.html";
 	public static String	URL_STATUS						= "/api/status.html";
 	public static String	URL_STATUS2						= "/api/status2.html";
-	public static String	URL_CHANNEL_EPG					= "/api/epg.html?lvl=2&channel=";
-	public static String	URL_EPG							= "/api/epg.html?lvl=2";
+	public static String	URL_EPG							= "/api/epg.html";
 	public static String	URL_TIMER_CREATE				= "/api/timeradd.html";
 	public static String	URL_TIMER_EDIT					= "/api/timeredit.html";
 	public static String	URL_TIMER_LIST					= "/api/timerlist.html?utf8=2";

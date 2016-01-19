@@ -49,6 +49,7 @@ import android.widget.TextView;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.ViewTarget;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
@@ -231,18 +232,20 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     }
 
     private void loadEpg() {
-        List<EpgEntry> result = null;
+        List<EpgEntry> result;
         String nowFloat = DateUtils.getFloatDate(new Date());
-        String url = ServerConsts.URL_EPG + "&start=" + nowFloat + "&end=" + nowFloat;
+        HttpUrl.Builder builder = ChannelEpg.buildBaseEpgUrl()
+                .addQueryParameter("start", nowFloat)
+                .addQueryParameter("end", nowFloat);
         DbHelper helper = new DbHelper(getContext());
         try {
             EpgEntryHandler handler = new EpgEntryHandler();
-            String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+            String xml = ServerRequest.getRSString(builder.build().toString());
             result = handler.parse(xml);
             helper.saveNowPlaying(result);
         } catch (Exception e) {
             catchException(getClass().getSimpleName(), e);
-        }finally {
+        } finally {
             helper.close();
         }
     }

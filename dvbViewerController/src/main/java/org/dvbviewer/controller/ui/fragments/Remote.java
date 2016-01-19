@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -92,16 +93,22 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         if (!UIUtils.isTablet(getActivity())) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         }
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initActionBar();
         prefs = new DVBViewerPreferences(getActivity());
         if (savedInstanceState != null) {
             spinnerPosition = savedInstanceState.getInt(KEY_SPINNER_POS, 0);
         }
         mPager.setAdapter(new PagerAdapter(getChildFragmentManager()));
         indicator.setViewPager(mPager);
-        mToolbar.setVisibility(onTargetsChangedListener == null ? View.VISIBLE : View.GONE);
     }
 
+    private void initActionBar() {
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (ab != null){
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+        mToolbar.setVisibility(onTargetsChangedListener == null ? View.VISIBLE : View.GONE);
+    }
 
     @Override
     public void onAttach(Context context) {
