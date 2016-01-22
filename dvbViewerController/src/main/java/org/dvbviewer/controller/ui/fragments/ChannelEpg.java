@@ -49,9 +49,11 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
+import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.EpgEntryHandler;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.base.EpgLoader;
@@ -73,16 +75,16 @@ import java.util.List;
  */
 public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener {
     public static final String KEY_EPG_DAY = "EPG_DAY";
-    ChannelEPGAdapter mAdapter;
-    Channel mCHannel;
-    ImageLoader mImageCacher;
-    int selectedPosition;
+    private ChannelEPGAdapter mAdapter;
+    private Channel mCHannel;
+    private ImageLoader mImageCacher;
+    private int selectedPosition;
     private ImageView channelLogo;
     private TextView position;
     private TextView channelName;
     private TextView dayIndicator;
-    EpgDateInfo mDateInfo;
-    Date lastRefresh;
+    private EpgDateInfo mDateInfo;
+    private Date lastRefresh;
     boolean useFavs;
 
     /* (non-Javadoc)
@@ -305,7 +307,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     public class ChannelEPGAdapter extends CursorAdapter {
 
-        Context mContext;
+        final Context mContext;
 
         /**
          * Instantiates a new channel epg adapter.
@@ -571,9 +573,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         return timer;
     }
 
-    public static HttpUrl.Builder buildBaseEpgUrl()  {
-        HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EPG);
-        HttpUrl.Builder builder = httpUrl.newBuilder()
+    public static HttpUrl.Builder buildBaseEpgUrl() throws UrlBuilderException {
+        HttpUrl.Builder builder = HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EPG)
                 .addQueryParameter("utf8", "1")
                 .addQueryParameter("lvl", "2");
         return builder;

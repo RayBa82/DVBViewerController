@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Credentials;
+import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -50,6 +51,15 @@ public class HTTPUtil {
         Response response = getResponse(url, username, password);
         result = response.body().string();
         return result;
+    }
+
+    public static HttpUrl.Builder getUrlBuilder(String url) throws UrlBuilderException {
+        final  HttpUrl httpUrl = HttpUrl.parse(url);
+        if (httpUrl == null){
+            throw new UrlBuilderException(url);
+        }
+        HttpUrl.Builder builder = httpUrl.newBuilder();
+        return builder;
     }
 
     public static void executeAsync(String url, String username, String password, Callback callback, RequestBody body) throws Exception {
@@ -86,9 +96,10 @@ public class HTTPUtil {
         return result;
     }
 
-    private static Request.Builder getBuilder(String url, String credentials){
+    private static Request.Builder getBuilder(String url, String credentials) throws UrlBuilderException {
+        HttpUrl.Builder urlBuilder = getUrlBuilder(url);
         Request.Builder builder = new Request.Builder()
-                .url(url)
+                .url(urlBuilder.toString())
                 .header("Authorization", credentials)
                 .header("Connection", "close");
         return builder;
