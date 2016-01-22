@@ -233,12 +233,12 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void loadEpg() {
         List<EpgEntry> result;
-        String nowFloat = DateUtils.getFloatDate(new Date());
-        HttpUrl.Builder builder = ChannelEpg.buildBaseEpgUrl()
-                .addQueryParameter("start", nowFloat)
-                .addQueryParameter("end", nowFloat);
         DbHelper helper = new DbHelper(getContext());
         try {
+            String nowFloat = DateUtils.getFloatDate(new Date());
+            HttpUrl.Builder builder = ChannelEpg.buildBaseEpgUrl()
+                    .addQueryParameter("start", nowFloat)
+                    .addQueryParameter("end", nowFloat);
             EpgEntryHandler handler = new EpgEntryHandler();
             String xml = ServerRequest.getRSString(builder.build().toString());
             result = handler.parse(xml);
