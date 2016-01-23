@@ -48,7 +48,7 @@ public abstract class AbstractRemote extends Fragment implements OnClickListener
     public void onClick(View v) {
         String command = getCommand(v);
         if (remoteButtonClickListener != null){
-            remoteButtonClickListener.OnRemoteButtonClick(command);
+            remoteButtonClickListener.onRemoteButtonClick(command);
         }
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractRemote extends Fragment implements OnClickListener
     // Container Activity or Fragment must implement this interface
     public interface OnRemoteButtonClickListener
     {
-        void OnRemoteButtonClick(String action);
+        void onRemoteButtonClick(String action);
     }
 
 }

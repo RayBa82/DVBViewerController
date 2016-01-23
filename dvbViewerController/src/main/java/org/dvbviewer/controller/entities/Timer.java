@@ -15,6 +15,8 @@
  */
 package org.dvbviewer.controller.entities;
 
+import android.support.annotation.NonNull;
+
 import java.util.Date;
 
 /**
@@ -250,7 +252,7 @@ public class Timer implements Comparable<Timer> {
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Timer comparator) {
+	public int compareTo(@NonNull Timer comparator) {
 		return this.start.compareTo(comparator.getStart());
 	}
 

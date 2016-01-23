@@ -198,15 +198,15 @@ public class ChannelGroup {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof ChannelGroup){
+		if (o != null && o instanceof ChannelGroup){
 			ChannelGroup cp = (ChannelGroup) o;
 			if (id == null){
 				return name.equals(cp.getName());
 			}else {
-				return id == cp.getId();
+				return id.equals(cp.getId());
 			}
 		}else{
-			return false;
+			return super.equals(o);
 		}
 	}
 

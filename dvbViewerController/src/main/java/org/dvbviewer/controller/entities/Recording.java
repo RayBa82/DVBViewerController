@@ -17,6 +17,7 @@ package org.dvbviewer.controller.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.util.Date;
 
@@ -182,7 +183,7 @@ public class Recording implements IEPG, Comparable<Recording> {
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Recording comparator) {
+	public int compareTo(@NonNull Recording comparator) {
 		return 0 - this.start.compareTo(comparator.getStart());
 	}
 

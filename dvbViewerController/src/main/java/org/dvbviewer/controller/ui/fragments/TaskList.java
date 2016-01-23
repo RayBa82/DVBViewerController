@@ -16,7 +16,6 @@
 package org.dvbviewer.controller.ui.fragments;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -50,7 +49,6 @@ public class TaskList extends BaseListFragment implements OnClickListener {
 	private static final String WOL_COMMAND = "WOL";
 	// TaskAdapter mAdapter;
 	CategoryAdapter	sAdapter;
-	ProgressDialog			progressDialog;
 	Task selectedTask;
 
 	/* (non-Javadoc)

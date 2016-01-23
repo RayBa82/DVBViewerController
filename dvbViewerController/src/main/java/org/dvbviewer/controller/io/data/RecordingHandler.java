@@ -43,7 +43,6 @@ public class RecordingHandler extends DefaultHandler {
 
 	List<Recording> recordingList    = null;
 	Recording       currentRecording = null;
-	private String imageURL = "";
 
 	/**
 	 * Parses the.
@@ -56,7 +55,6 @@ public class RecordingHandler extends DefaultHandler {
 	 */
 	public List<Recording> parse(String xml) throws SAXException {
 		RootElement root = new RootElement("recordings");
-		Element imageURLElement = root.getChild("imageURL");
 		Element recordingElement = root.getChild("recording");
 		Element chanElement = recordingElement.getChild("channel");
 		Element titleElement = recordingElement.getChild("title");
@@ -72,13 +70,6 @@ public class RecordingHandler extends DefaultHandler {
 			}
 		});
 
-		imageURLElement.setEndTextElementListener(new EndTextElementListener() {
-
-			@Override
-			public void end(String body) {
-				imageURL = body;
-			}
-		});
 		recordingElement.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
 				currentRecording = new Recording();

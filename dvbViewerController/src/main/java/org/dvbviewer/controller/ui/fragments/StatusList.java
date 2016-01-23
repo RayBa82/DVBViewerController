@@ -193,7 +193,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
      * @author RayBa
      * @date 05.07.2012
      */
-    private class StatusHolder {
+    private static class StatusHolder {
         TextView title;
         TextView statusText;
         TextView free;
@@ -311,7 +311,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                     holder.statusText.setText(mRes.getString(R.string.gmt) + (timezone > 0 ? " +" : "") + timezone);
                     break;
                 case R.string.status_def_after_record:
-                    holder.statusText.setText(mRes.getStringArray(R.array.postRecoridngActions)[Integer.valueOf(mItems.get(position).getValue())]);
+                    holder.statusText.setText(mRes.getStringArray(R.array.postRecoridngActions)[NumberUtils.toInt(mItems.get(position).getValue())]);
                     break;
                 case R.string.status_last_ui_access:
                 case R.string.status_next_Rec:

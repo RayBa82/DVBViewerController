@@ -440,7 +440,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 
 
-	private class HeightEvaluator extends IntEvaluator {
+	private static class HeightEvaluator extends IntEvaluator {
 
 		private View v;
 		public HeightEvaluator(View v) {

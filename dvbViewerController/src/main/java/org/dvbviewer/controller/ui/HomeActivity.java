@@ -21,7 +21,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,12 +56,10 @@ import java.util.List;
  * The Class HomeActivity.
  *
  * @author RayBa
- * @date 01.07.2012
  */
 public class HomeActivity extends BaseActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
 
 	private View		multiContainer;
-	private Toolbar toolbar;
 	private ArrayAdapter mSpinnerAdapter;
 	private Spinner mClientSpinner;
 	private int spinnerPosition;
@@ -76,7 +73,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		multiContainer = findViewById(R.id.multi_container);
-		toolbar = (Toolbar) findViewById(R.id.home_toolbar);
 		prefs = new DVBViewerPreferences(this);
 		
 		if (savedInstanceState == null) {
@@ -131,8 +127,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 			Intent settings = new Intent(HomeActivity.this, PreferencesActivity.class);
 			startActivity(settings);
 			break;
-
-		case DialogInterface.BUTTON_NEUTRAL:
+		default:
 			finish();
 			break;
 		}
@@ -255,7 +250,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		setTitle(title);
 		if (mClientSpinner != null){
 			String[] arr = new String[spinnerData.size()];
-			mSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, spinnerData.toArray(arr));
+			mSpinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, spinnerData.toArray(arr));
 			mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 			mClientSpinner.setAdapter(mSpinnerAdapter);
 			String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);

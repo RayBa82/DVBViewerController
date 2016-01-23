@@ -257,7 +257,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * @author RayBa
      * @date 07.04.2013
      */
-    private class ViewHolder {
+    private static class ViewHolder {
         TextView startTime;
         TextView title;
         TextView description;
@@ -358,7 +358,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
 
     }
 
-    public class ToolbarActionClickListener implements Toolbar.OnMenuItemClickListener {
+    public static class ToolbarActionClickListener implements Toolbar.OnMenuItemClickListener {
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {

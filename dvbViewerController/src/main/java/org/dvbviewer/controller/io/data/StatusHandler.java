@@ -24,7 +24,6 @@ import android.util.Xml;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Status;
-import org.dvbviewer.controller.entities.Status.Folder;
 import org.dvbviewer.controller.entities.Status.StatusItem;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -41,7 +40,6 @@ import java.util.ArrayList;
 public class StatusHandler extends DefaultHandler {
 
 	Status	status			= null;
-	Folder	currentFolder	= null;
 
 	/**
 	 * Parses the.

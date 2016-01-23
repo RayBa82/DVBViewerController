@@ -35,7 +35,7 @@ public class Config {
     /**
      * The rs profile names.
      */
-    public static String[] RS_PROFILE_NAMES = null;
+    public static final  String[] RS_PROFILE_NAMES = null;
 
     /**
      * The channels synced.
@@ -45,12 +45,12 @@ public class Config {
     /**
      * The current rs profile.
      */
-    public static String CURRENT_RS_PROFILE = "";
+    public static final  String CURRENT_RS_PROFILE = "";
 
     /**
      * The current dvbv profile.
      */
-    public static String CURRENT_DVBV_PROFILE = "";
+    public static final  String CURRENT_DVBV_PROFILE = "";
 
     /**
      * Checks if is old rs version.
@@ -78,7 +78,7 @@ public class Config {
      * @author RayBa
      * @date 18.08.2013
      */
-    private static String normalisedVersion(String version) {
+    private static final  String normalisedVersion(String version) {
         return normalisedVersion(version, ".", 4);
     }
 
@@ -92,7 +92,7 @@ public class Config {
      * @author RayBa
      * @date 18.08.2013
      */
-    private static String normalisedVersion(String version, String sep, int maxWidth) {
+    private static final  String normalisedVersion(String version, String sep, int maxWidth) {
         String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
         StringBuilder sb = new StringBuilder();
         for (String s : split) {

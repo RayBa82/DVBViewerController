@@ -547,7 +547,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * @author RayBa
      * @date 05.07.2012
      */
-    private class ViewHolder {
+    private static class ViewHolder {
         CheckableLinearLayout v;
         ImageView icon;
         View iconContainer;
@@ -567,7 +567,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     public class ChannelAdapter extends CursorAdapter {
 
-        Context mContext;
         ImageLoader imageChacher;
 
         /**
@@ -579,7 +578,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          */
         public ChannelAdapter(Context context) {
             super(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-            mContext = context;
             imageChacher = ImageLoader.getInstance();
         }
 

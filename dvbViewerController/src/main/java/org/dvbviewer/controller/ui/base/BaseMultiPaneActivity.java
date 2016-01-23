@@ -103,7 +103,7 @@ public abstract class BaseMultiPaneActivity extends BaseActivity {
      * @author RayBa
      * @date 07.04.2013
      */
-    protected class FragmentReplaceInfo {
+    protected static class FragmentReplaceInfo {
         private Class mFragmentClass;
         private String mFragmentTag;
         private int mContainerId;

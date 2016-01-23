@@ -242,7 +242,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     }
 
     @Override
-    public void OnRemoteButtonClick(String action) {
+    public void onRemoteButtonClick(String action) {
         Object target = onTargetsChangedListener != null ? onTargetsChangedListener.getSelectedTarget() : mClientSpinner.getSelectedItem();
         String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, target, action);
         ServerRequest.DVBViewerCommand httpCommand = new ServerRequest.DVBViewerCommand(request);

@@ -16,6 +16,7 @@
 package org.dvbviewer.controller.entities;
 
 import android.content.ContentValues;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
@@ -212,7 +213,7 @@ public class Channel implements Comparable<Channel> {
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Channel another) {
+	public int compareTo(@NonNull Channel another) {
 		return this.position.compareTo(another.position);
 	}
 

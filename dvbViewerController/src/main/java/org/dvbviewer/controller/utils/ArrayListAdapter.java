@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.utils;
 
-import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ import java.util.List;
 public abstract class ArrayListAdapter<E> extends BaseAdapter {
 
 	protected List<E>			mItems;
-	protected LayoutInflater	mInflater;
 
 	/**
 	 * Adds the item.
