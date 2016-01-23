@@ -242,12 +242,19 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		 */
 		@Override
 		public Fragment getItem(int position) {
-			ChannelEpg channelEpg = (ChannelEpg) Fragment.instantiate(getActivity(), ChannelEpg.class.getName());
 			if (mCursor == null || mCursor.isClosed()) {
 				return null;
 			}
 			mCursor.moveToPosition(position);
-			channelEpg.setChannel(ChannelList.cursorToChannel(mCursor));
+			final Channel chan = ChannelList.cursorToChannel(mCursor);
+			final Bundle bundle = new Bundle();
+			bundle.putString(ChannelEpg.KEY_CHANNEL_NAME, chan.getName());
+			bundle.putLong(ChannelEpg.KEY_EPG_ID, chan.getEpgID());
+			bundle.putLong(ChannelEpg.KEY_CHANNEL_ID, chan.getChannelID());
+			bundle.putString(ChannelEpg.KEY_CHANNEL_LOGO, chan.getLogoUrl());
+			bundle.putInt(ChannelEpg.KEY_CHANNEL_POS, chan.getPosition());
+			bundle.putInt(ChannelEpg.KEY_FAV_POS, chan.getFavPosition());
+			final ChannelEpg channelEpg = (ChannelEpg) Fragment.instantiate(getActivity(), ChannelEpg.class.getName(), bundle);
 			return channelEpg;
 		}
 
@@ -255,7 +262,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		public void setPrimaryItem(ViewGroup container, int position, Object object) {
 			super.setPrimaryItem(container, position, object);
 			ChannelEpg chanEPG = (ChannelEpg) object;
-			fragmentCache = new WeakReference<ChannelEpg>(chanEPG);
+			fragmentCache = new WeakReference<>(chanEPG);
 		}
 
 		@Override

@@ -42,6 +42,16 @@ public class RecordingService {
         return version;
     }
 
+    public static String getFfmpegPrefs() {
+        String versionXml = null;
+        try {
+            versionXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting version from rs", e);
+        }
+        return versionXml;
+    }
+
     public static String getDVBViewerTargets() {
         String jsonClients = null;
         try {

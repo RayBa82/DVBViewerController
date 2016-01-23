@@ -75,7 +75,6 @@ public class Status2Handler extends DefaultHandler {
             @Override
             public void start(Attributes attributes) {
                 status = new Status();
-                status.setItems(new ArrayList<StatusItem>());
             }
         });
 

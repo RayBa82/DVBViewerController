@@ -812,13 +812,12 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * @date 13.05.2012
      */
     public static Channel cursorToChannel(Cursor c) {
-        Channel channel = new Channel();
+        final Channel channel = new Channel();
         channel.setId(c.getLong(c.getColumnIndex(ChannelTbl._ID)));
         channel.setChannelID(c.getLong(c.getColumnIndex(ChannelTbl.CHANNEL_ID)));
         channel.setEpgID(c.getLong(c.getColumnIndex(ChannelTbl.EPG_ID)));
         channel.setLogoUrl(c.getString(c.getColumnIndex(ChannelTbl.LOGO_URL)));
-        String name = c.getString(c.getColumnIndex(ChannelTbl.NAME));
-        channel.setName(name);
+        channel.setName(c.getString(c.getColumnIndex(ChannelTbl.NAME)));
         channel.setPosition(c.getInt(c.getColumnIndex(ChannelTbl.POSITION)));
         channel.setFavPosition(c.getInt(c.getColumnIndex(ChannelTbl.FAV_POSITION)));
         return channel;

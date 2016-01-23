@@ -16,6 +16,7 @@
 package org.dvbviewer.controller.entities;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ import java.util.List;
  */
 public class Status {
 
-	private String				version;
+	private String				version = "";
 
 	private int					recordCount;
 
@@ -42,7 +43,7 @@ public class Status {
 
 	private int					defAfterRecord;
 
-	private List<StatusItem>	items;
+	private List<StatusItem>	items = new LinkedList<>();
 
 	private List<Folder>		folders		= new ArrayList<Status.Folder>();
 

@@ -16,8 +16,6 @@
 package org.dvbviewer.controller.entities;
 
 import android.content.ContentValues;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.TextUtils;
 
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
@@ -29,7 +27,7 @@ import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
  * @author RayBa
  * @date 07.04.2012
  */
-public class Channel implements Comparable<Channel>, Parcelable {
+public class Channel implements Comparable<Channel> {
 
 	/** The Constant FLAG_FAV. */
 	public static final int	FLAG_FAV				= 1 << 0;	// 0x01
@@ -260,74 +258,6 @@ public class Channel implements Comparable<Channel>, Parcelable {
 		result.put(ChannelTbl.FLAGS, this.flags);
 		return result;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.Parcelable#describeContents()
-	 */
-	@Override
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	private void readFromParcel(Parcel src) {
-		long id = src.readLong();
-		this.channelID = id == -1 ? null : id;
-		this.name = src.readString();
-		this.position = src.readInt();
-		this.favPosition = src.readInt();
-		this.epgID = src.readLong();
-		this.logoUrl = src.readString();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeLong(this.channelID);
-		dest.writeString(this.name);
-		dest.writeInt(this.position);
-		dest.writeInt(this.favPosition);
-		dest.writeLong(this.epgID);
-		dest.writeString(this.logoUrl);
-	}
-
-	/**
-	 * Instantiates a new channel.
-	 *
-	 * @param src the src
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	private Channel(Parcel src) {
-		readFromParcel(src);
-	}
-
-	/**
-	 * Instantiates a new channel.
-	 *
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public Channel() {
-	}
-
-	/** The Constant CREATOR. */
-	public static final Creator<Channel>	CREATOR	= new Creator<Channel>() {
-																public Channel createFromParcel(Parcel src) {
-
-																	return new Channel(src);
-																}
-
-																public Channel[] newArray(int size) {
-																	return new Channel[size];
-																}
-															};
 
 	/**
 	 * The Class Fav.

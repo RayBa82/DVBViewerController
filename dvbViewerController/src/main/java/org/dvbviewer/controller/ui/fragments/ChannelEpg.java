@@ -44,7 +44,6 @@ import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
-import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.entities.IEPG;
@@ -74,9 +73,20 @@ import java.util.List;
  * @date 07.04.2013
  */
 public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener {
+    public static final String KEY_CHANNEL_NAME = "KEY_CHANNEL_NAME";
+    public static final String KEY_CHANNEL_ID = "KEY_CHANNEL_ID";
+    public static final String KEY_CHANNEL_LOGO = "KEY_CHANNEL_LOGO";
+    public static final String KEY_CHANNEL_POS = "KEY_CHANNEL_POS";
+    public static final String KEY_FAV_POS = "KEY_FAV_POS";
+    public static final String KEY_EPG_ID = "KEY_EPG_ID";
     public static final String KEY_EPG_DAY = "EPG_DAY";
     private ChannelEPGAdapter mAdapter;
-    private Channel mCHannel;
+    private String channel;
+    private long channelId;
+    private long epgId;
+    private String logoUrl;
+    private int channelPos;
+    private int favPos;
     private ImageLoader mImageCacher;
     private int selectedPosition;
     private ImageView channelLogo;
@@ -94,13 +104,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setLayoutRessource(R.layout.fragment_channel_epg);
-        mImageCacher = ImageLoader.getInstance();
-        if (savedInstanceState != null && savedInstanceState.containsKey(Channel.class.getName())) {
-            mCHannel = savedInstanceState.getParcelable(Channel.class.getName());
-        }
-        DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
-        useFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
-
     }
 
 
@@ -123,18 +126,20 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mImageCacher = ImageLoader.getInstance();
+        fillFromBundle(getArguments());
+        DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
+        useFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
         mAdapter = new ChannelEPGAdapter(getActivity());
         setListAdapter(mAdapter);
         setListShown(false);
         getListView().setOnItemClickListener(this);
         channelLogo.setImageBitmap(null);
-        if (mCHannel != null) {
+        if (channel != null) {
             mImageCacher.cancelDisplayTask(channelLogo);
-            setChannel(mCHannel);
-            String url = ServerConsts.REC_SERVICE_URL + "/" + mCHannel.getLogoUrl();
+            String url = ServerConsts.REC_SERVICE_URL + "/" + logoUrl;
             mImageCacher.displayImage(url, channelLogo);
-            position.setText(useFavs ? mCHannel.getFavPosition().toString() : mCHannel.getPosition().toString());
-            channelName.setText(mCHannel.getName());
+            channelName.setText(channel);
         }
         if (DateUtils.isToday(mDateInfo.getEpgDate().getTime())) {
             dayIndicator.setText(R.string.today);
@@ -145,7 +150,16 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         }
 
         setEmptyText(getResources().getString(R.string.no_epg));
-        getLoaderManager().initLoader(mCHannel.getPosition(), savedInstanceState, this);
+        getLoaderManager().initLoader(channelPos, savedInstanceState, this);
+    }
+
+    private void fillFromBundle(Bundle savedInstanceState) {
+        channel = savedInstanceState.getString(KEY_CHANNEL_NAME);
+        channelId = savedInstanceState.getLong(KEY_CHANNEL_ID);
+        epgId = savedInstanceState.getLong(KEY_EPG_ID);
+        logoUrl = savedInstanceState.getString(KEY_CHANNEL_LOGO);
+        channelPos = savedInstanceState.getInt(KEY_CHANNEL_POS);
+        favPos = savedInstanceState.getInt(KEY_FAV_POS);
     }
 
     /* (non-Javadoc)
@@ -182,7 +196,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     Date tommorrow = DateUtils.addDay(now);
                     String tommorrowFloat = DateUtils.getFloatDate(tommorrow);
                     HttpUrl.Builder builder = buildBaseEpgUrl()
-                            .addQueryParameter("channel", String.valueOf(mCHannel.getEpgID()))
+                            .addQueryParameter("channel", String.valueOf(epgId))
                             .addQueryParameter("start", String.valueOf(nowFloat))
                             .addQueryParameter("end", String.valueOf(tommorrowFloat));
                     EpgEntryHandler handler = new EpgEntryHandler();
@@ -274,29 +288,14 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     private IEPG cursorToEpgEntry(Cursor c) {
         IEPG entry = new EpgEntry();
-        entry.setChannel(mCHannel.getName());
+        entry.setChannel(channel);
         entry.setDescription(c.getString(c.getColumnIndex(EpgTbl.DESC)));
         entry.setEnd(new Date(c.getLong(c.getColumnIndex(EpgTbl.END))));
-        entry.setEpgID(mCHannel.getEpgID());
+        entry.setEpgID(epgId);
         entry.setStart(new Date(c.getLong(c.getColumnIndex(EpgTbl.START))));
         entry.setSubTitle(c.getString(c.getColumnIndex(EpgTbl.SUBTITLE)));
         entry.setTitle(c.getString(c.getColumnIndex(EpgTbl.TITLE)));
         return entry;
-    }
-
-    /**
-     * Sets the channel.
-     *
-     * @param channel the new channel
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    public void setChannel(Channel channel) {
-        this.mCHannel = channel;
-    }
-
-    public Channel getChannel() {
-        return mCHannel;
     }
 
     /**
@@ -376,7 +375,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     public void refresh(boolean force) {
         setListShown(false);
-        getLoaderManager().restartLoader(mCHannel.getPosition(), getArguments(), this);
+        getLoaderManager().restartLoader(channelPos, getArguments(), this);
     }
 
     /**
@@ -398,7 +397,12 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(Channel.class.getName(), mCHannel);
+        outState.putString(KEY_CHANNEL_NAME, channel);
+        outState.putLong(KEY_CHANNEL_ID, channelId);
+        outState.putLong(KEY_EPG_ID, epgId);
+        outState.putString(KEY_CHANNEL_LOGO, logoUrl);
+        outState.putInt(KEY_EPG_ID, channelPos);
+        outState.putInt(KEY_EPG_ID, favPos);
         outState.putLong(KEY_EPG_DAY, mDateInfo.getEpgDate().getTime());
     }
 
@@ -478,7 +482,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     return true;
                 case R.id.menuSwitch:
                     DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-                    String cid = ":" + String.valueOf(mCHannel.getChannelID());
+                    String cid = ":" + String.valueOf(channelId);
                     String switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                     DVBViewerCommand command = new DVBViewerCommand(switchRequest);
                     Thread exexuterTHread = new Thread(command);
@@ -548,9 +552,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * @date 07.04.2013
      */
     private Timer cursorToTimer(Cursor c) {
-        String name = mCHannel.getName();
-        long channelID = mCHannel.getChannelID();
-        String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : name;
+        String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : channel;
         long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
         long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
         DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
@@ -565,8 +567,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         end = DateUtils.addMinutes(end, epgAfter);
         Timer timer = new Timer();
         timer.setTitle(epgTitle);
-        timer.setChannelId(channelID);
-        timer.setChannelName(name);
+        timer.setChannelId(channelId);
+        timer.setChannelName(channel);
         timer.setStart(start);
         timer.setEnd(end);
         timer.setTimerAction(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, 0));
