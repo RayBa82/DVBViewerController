@@ -382,7 +382,7 @@ public class URLUtil {
 
 		// If we couldn't do anything with the hint, move toward the content
 		// disposition
-		if (filename == null && contentDisposition != null) {
+		if (contentDisposition != null) {
 			filename = parseContentDisposition(contentDisposition);
 			if (filename != null) {
 				int index = filename.lastIndexOf('/') + 1;

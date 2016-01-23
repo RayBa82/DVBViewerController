@@ -178,7 +178,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          */
         if (!Config.CHANNELS_SYNCED) {
             loaderId = LOADER_REFRESH_CHANNELLIST;
-        } else if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && showNowPlayingWifi && mNetworkInfo.isConnected())) {
+        } else if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && mNetworkInfo.isConnected())) {
             loaderId = LOADER_EPG;
         }
         setEmptyText(showFavs ? getResources().getString(R.string.no_favourites) : getResources().getString(R.string.no_channels));
@@ -326,7 +326,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 /**
                  * Pr©fung ob das EPG in der Senderliste angezeigt werden soll.
                  */
-                if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && showNowPlayingWifi && mNetworkInfo.isConnected())) {
+                if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && mNetworkInfo.isConnected())) {
                     refresh(LOADER_EPG);
                 } else {
                     refresh(LOADER_CHANNELLIST);

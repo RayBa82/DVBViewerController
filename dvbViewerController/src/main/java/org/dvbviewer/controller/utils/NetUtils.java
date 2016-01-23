@@ -59,7 +59,7 @@ public class NetUtils {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] splitted = line.split(" +");
-                if (splitted != null && splitted.length >= 4 && ip.equals(splitted[0])) {
+                if (splitted.length >= 4 && ip.equals(splitted[0])) {
                     // Basic sanity check
                     String mac = splitted[3];
                     if (mac.matches("..:..:..:..:..:..")) {
