@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Status;
@@ -35,7 +36,6 @@ import org.dvbviewer.controller.entities.Status.StatusItem;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.Status2Handler;
-import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
@@ -95,7 +95,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
 
             @Override
             public Status loadInBackground() {
-                Status result = null;
+                Status result = new Status();
                 try {
                     String version = RecordingService.getVersionString();
                     if (!Config.isRSVersionSupported(version)){
@@ -112,38 +112,53 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         return loader;
     }
 
-    @Nullable
     public static Status getStatus(DVBViewerPreferences prefs, String version, @Nullable JSONObject trackingData) throws Exception {
         Status result;
-        String status2Xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS2);
-        AnalyticsTracker.addData(trackingData, "status2", status2Xml);
-        Status2Handler status2Handler = new Status2Handler();
-        result = status2Handler.parse(status2Xml);
-        StatusHandler statusHandler = new StatusHandler();
-        String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_STATUS);
-        AnalyticsTracker.addData(trackingData, "status", statusXml);
-        Status oldStatus = statusHandler.parse(statusXml);
-        StatusItem versionItem = new StatusItem();
-        versionItem.setNameRessource(R.string.status_rs_version);
-        versionItem.setValue(version);
-        result.getItems().add(0, versionItem);
+        result = requestStatusFromServer(ServerConsts.URL_STATUS2, trackingData, "status2");
+        addVersionItem(result, version);
         String jsonClients = RecordingService.getDVBViewerTargets();
         AnalyticsTracker.addData(trackingData, "dvbviewerTargets", jsonClients);
-        String ffmpegPrefsIni =  ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+        String ffmpegPrefsIni =  RecordingService.getFfmpegPrefs();
         AnalyticsTracker.addData(trackingData, "ffmpegPrefsIni", ffmpegPrefsIni);
-        result.getItems().addAll(oldStatus.getItems());
         SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
         if (jsonClients != null) {
             prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
         }
         prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.getEpgBefore());
-        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
-        prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
+        Status oldStatus = requestStatusFromServer(ServerConsts.URL_STATUS, trackingData, "status");
+        if (oldStatus != null){
+            result.getItems().addAll(oldStatus.getItems());
+            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.getEpgBefore());
+            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
+            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
+        }
         prefEditor.commit();
         return result;
     }
 
+    private static Status requestStatusFromServer(String url, @Nullable JSONObject trackingData, String key) {
+        Status result = null;
+        try {
+            String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+            AnalyticsTracker.addData(trackingData, key, statusXml);
+            Status2Handler status2Handler = new Status2Handler();
+            result = status2Handler.parse(statusXml);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private static Status addVersionItem(@Nullable Status status,@Nullable  String version){
+        if(status == null){
+            status = new Status();
+        }
+        StatusItem versionItem = new StatusItem();
+        versionItem.setNameRessource(R.string.status_rs_version);
+        versionItem.setValue(version);
+        status.getItems().add(0, versionItem);
+        return status;
+    }
 
     /* (non-Javadoc)
      * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoadFinished(android.support.v4.content.Loader, java.lang.Object)
@@ -178,7 +193,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
      * @author RayBa
      * @date 05.07.2012
      */
-    private class StatusHolder {
+    private static class StatusHolder {
         TextView title;
         TextView statusText;
         TextView free;
@@ -285,23 +300,23 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             switch (mItems.get(position).getNameRessource()) {
                 case R.string.status_epg_update_running:
                 case R.string.status_standby_blocked:
-                    holder.statusText.setText(Integer.valueOf(mItems.get(position).getValue()) == 0 ? R.string.no : R.string.yes);
+                    holder.statusText.setText(NumberUtils.toInt(mItems.get(position).getValue()) == 0 ? R.string.no : R.string.yes);
                     break;
                 case R.string.status_epg_before:
                 case R.string.status_epg_after:
                     holder.statusText.setText(mItems.get(position).getValue() + " " + mRes.getString(R.string.minutes));
                     break;
                 case R.string.status_timezone:
-                    int timezone = Integer.valueOf(mItems.get(position).getValue()) / 60;
+                    int timezone = NumberUtils.toInt(mItems.get(position).getValue()) / 60;
                     holder.statusText.setText(mRes.getString(R.string.gmt) + (timezone > 0 ? " +" : "") + timezone);
                     break;
                 case R.string.status_def_after_record:
-                    holder.statusText.setText(mRes.getStringArray(R.array.postRecoridngActions)[Integer.valueOf(mItems.get(position).getValue())]);
+                    holder.statusText.setText(mRes.getStringArray(R.array.postRecoridngActions)[NumberUtils.toInt(mItems.get(position).getValue())]);
                     break;
                 case R.string.status_last_ui_access:
                 case R.string.status_next_Rec:
                 case R.string.status_next_timer:
-                    holder.statusText.setText(DateUtils.secondsToReadableFormat(Long.valueOf(mItems.get(position).getValue())));
+                    holder.statusText.setText(DateUtils.secondsToReadableFormat(NumberUtils.toLong(mItems.get(position).getValue())));
                     break;
                 default:
                     holder.statusText.setText(mItems.get(position).getValue());

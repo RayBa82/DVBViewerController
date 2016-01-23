@@ -35,7 +35,7 @@ public class TimerlistActivity extends BaseSinglePaneActivity {
 	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setDisplayHomeAsUpEnabled(true);
 	}
 
 	/* (non-Javadoc)

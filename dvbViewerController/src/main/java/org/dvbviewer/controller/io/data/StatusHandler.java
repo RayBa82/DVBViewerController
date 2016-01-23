@@ -21,9 +21,9 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Status;
-import org.dvbviewer.controller.entities.Status.Folder;
 import org.dvbviewer.controller.entities.Status.StatusItem;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -40,7 +40,6 @@ import java.util.ArrayList;
 public class StatusHandler extends DefaultHandler {
 
 	Status	status			= null;
-	Folder	currentFolder	= null;
 
 	/**
 	 * Parses the.
@@ -72,7 +71,7 @@ public class StatusHandler extends DefaultHandler {
 
 			@Override
 			public void end(String body) {
-				status.setEpgBefore(Integer.valueOf(body));
+				status.setEpgBefore(NumberUtils.toInt(body));
 				StatusItem item = new StatusItem();
 				item.setNameRessource(R.string.status_epg_before);
 				item.setValue(body);
@@ -85,7 +84,7 @@ public class StatusHandler extends DefaultHandler {
 
 			@Override
 			public void end(String body) {
-				status.setEpgAfter(Integer.valueOf(body));
+				status.setEpgAfter(Integer.parseInt(body));
 				StatusItem item = new StatusItem();
 				item.setNameRessource(R.string.status_epg_after);
 				item.setValue(body);
@@ -96,7 +95,7 @@ public class StatusHandler extends DefaultHandler {
 
 			@Override
 			public void end(String body) {
-				status.setTimeZone(Integer.valueOf(body));
+				status.setTimeZone(NumberUtils.toInt(body));
 				StatusItem item = new StatusItem();
 				item.setNameRessource(R.string.status_timezone);
 				item.setValue(body);
@@ -107,7 +106,7 @@ public class StatusHandler extends DefaultHandler {
 
 			@Override
 			public void end(String body) {
-				status.setDefAfterRecord(Integer.valueOf(body));
+				status.setDefAfterRecord(NumberUtils.toInt(body));
 				StatusItem item = new StatusItem();
 				item.setNameRessource(R.string.status_def_after_record);
 				item.setValue(body);

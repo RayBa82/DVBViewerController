@@ -60,7 +60,6 @@ import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
-import org.dvbviewer.controller.ui.widget.CheckableLinearLayout;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
@@ -213,8 +212,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 * @author RayBa
 	 * @date 07.04.2013
 	 */
-	private class ViewHolder {
-		CheckableLinearLayout	layout;
+	private static class ViewHolder {
 		ImageView 				thumbNail;
 		View 					thumbNailContainer;
 		TextView				title;
@@ -260,7 +258,6 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				LayoutInflater vi = getActivity().getLayoutInflater();
 				convertView = vi.inflate(R.layout.list_item_recording, null);
 				holder = new ViewHolder();
-				holder.layout = (CheckableLinearLayout) convertView;
 				holder.thumbNail = (ImageView) convertView.findViewById(R.id.thumbNail);
 				holder.title = (TextView) convertView.findViewById(R.id.title);
 				holder.subTitle = (TextView) convertView.findViewById(R.id.subTitle);

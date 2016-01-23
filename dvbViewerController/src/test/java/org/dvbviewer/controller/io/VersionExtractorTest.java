@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-public class RecordingServiceTest {
+public class VersionExtractorTest {
 
     private final String expectedVersion    = "1.32.0.0";
     private final String unExpectedVersion  = "1.32.0.0.99";

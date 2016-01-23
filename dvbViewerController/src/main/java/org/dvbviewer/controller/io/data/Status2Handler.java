@@ -22,6 +22,7 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Status;
 import org.dvbviewer.controller.entities.Status.Folder;
@@ -75,7 +76,6 @@ public class Status2Handler extends DefaultHandler {
             @Override
             public void start(Attributes attributes) {
                 status = new Status();
-                status.setItems(new ArrayList<StatusItem>());
             }
         });
 
@@ -229,8 +229,8 @@ public class Status2Handler extends DefaultHandler {
             @Override
             public void start(Attributes attributes) {
                 currentFolder = new Folder();
-                currentFolder.setSize(Long.valueOf(attributes.getValue("size")));
-                currentFolder.setFree(Long.valueOf(attributes.getValue("free")));
+                currentFolder.setSize(NumberUtils.toLong(attributes.getValue("size")));
+                currentFolder.setFree(NumberUtils.toLong(attributes.getValue("free")));
             }
         });
         folder.setEndTextElementListener(new EndTextElementListener() {

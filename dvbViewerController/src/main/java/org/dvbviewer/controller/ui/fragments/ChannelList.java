@@ -178,7 +178,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          */
         if (!Config.CHANNELS_SYNCED) {
             loaderId = LOADER_REFRESH_CHANNELLIST;
-        } else if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && showNowPlayingWifi && mNetworkInfo.isConnected())) {
+        } else if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && mNetworkInfo.isConnected())) {
             loaderId = LOADER_EPG;
         }
         setEmptyText(showFavs ? getResources().getString(R.string.no_favourites) : getResources().getString(R.string.no_channels));
@@ -326,7 +326,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 /**
                  * Pr©fung ob das EPG in der Senderliste angezeigt werden soll.
                  */
-                if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && showNowPlayingWifi && mNetworkInfo.isConnected())) {
+                if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && mNetworkInfo.isConnected())) {
                     refresh(LOADER_EPG);
                 } else {
                     refresh(LOADER_CHANNELLIST);
@@ -547,7 +547,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * @author RayBa
      * @date 05.07.2012
      */
-    private class ViewHolder {
+    private static class ViewHolder {
         CheckableLinearLayout v;
         ImageView icon;
         View iconContainer;
@@ -567,7 +567,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     public class ChannelAdapter extends CursorAdapter {
 
-        Context mContext;
+        Context Context;
         ImageLoader imageChacher;
 
         /**
@@ -679,7 +679,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_SHOW_QUICK_STREAM_HINT, false).commit();
             showQuickstreamHint(position);
         } else {
-            ArrayList<Channel> chans = cursorToChannellist();
             if (mCHannelSelectedListener != null) {
                 Cursor c = mAdapter.getCursor();
                 c.moveToPosition(position);
@@ -812,13 +811,12 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * @date 13.05.2012
      */
     public static Channel cursorToChannel(Cursor c) {
-        Channel channel = new Channel();
+        final Channel channel = new Channel();
         channel.setId(c.getLong(c.getColumnIndex(ChannelTbl._ID)));
         channel.setChannelID(c.getLong(c.getColumnIndex(ChannelTbl.CHANNEL_ID)));
         channel.setEpgID(c.getLong(c.getColumnIndex(ChannelTbl.EPG_ID)));
         channel.setLogoUrl(c.getString(c.getColumnIndex(ChannelTbl.LOGO_URL)));
-        String name = c.getString(c.getColumnIndex(ChannelTbl.NAME));
-        channel.setName(name);
+        channel.setName(c.getString(c.getColumnIndex(ChannelTbl.NAME)));
         channel.setPosition(c.getInt(c.getColumnIndex(ChannelTbl.POSITION)));
         channel.setFavPosition(c.getInt(c.getColumnIndex(ChannelTbl.FAV_POSITION)));
         return channel;

@@ -35,7 +35,7 @@ public class StreamConfigActivity extends BaseSinglePaneActivity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setDisplayHomeAsUpEnabled(true);
 	}
 
 	/* (non-Javadoc)

@@ -22,6 +22,7 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.xml.sax.Attributes;
@@ -72,7 +73,7 @@ public class EpgEntryHandler extends DefaultHandler {
 		programmeElement.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
 				currentEPG = new EpgEntry();
-				currentEPG.setEpgID(Long.valueOf(attributes.getValue("channel")));
+				currentEPG.setEpgID(NumberUtils.toLong(attributes.getValue("channel")));
 				currentEPG.setStart(DateUtils.stringToDate(attributes.getValue("start"), DateUtils.DATEFORMAT_RS_EPG));
 				currentEPG.setEnd(DateUtils.stringToDate(attributes.getValue("stop"), DateUtils.DATEFORMAT_RS_EPG));
 			}

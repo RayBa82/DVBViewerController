@@ -41,13 +41,11 @@ public class DbConsts {
 	public static class RootTbl implements BaseColumns {
 
 		/** The table name. */
-		public static String	TABLE_NAME	= "channel_root";
+		public static final String	TABLE_NAME	= "channel_root";
 
 		/** The name. */
-		public static String	NAME		= "name";
+		public static final String	NAME		= "name";
 
-		/** The Constant CONTENT_URI. */
-		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 	}
 
 	/**
@@ -59,16 +57,16 @@ public class DbConsts {
 	public static class GroupTbl implements BaseColumns {
 
 		/** The table name. */
-		public static String	TABLE_NAME	= "channel_group";
+		public static final String	TABLE_NAME	= "channel_group";
 
 		/** The root id. */
-		public static String	ROOT_ID		= "root_id";
+		public static final String	ROOT_ID		= "root_id";
 		
 		/** The name. */
-		public static String	NAME		= "name";
+		public static final String	NAME		= "name";
 
 		/** The type. */
-		public static String	TYPE		= "type";
+		public static final String	TYPE		= "type";
 
 		/** The Constant CONTENT_URI. */
 		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
@@ -83,48 +81,48 @@ public class DbConsts {
 	public static class ChannelTbl implements BaseColumns {
 
 		/** The table name. */
-		public static String	TABLE_NAME				= "channel";
+		public static final String	TABLE_NAME				= "channel";
 		
-		public static String	CHANNEL_ID				= "channel_id";
+		public static final String	CHANNEL_ID				= "channel_id";
 
 		/** The name. */
-		public static String	NAME					= "name";
+		public static final String	NAME					= "name";
 
 		/** The position. */
-		public static String	POSITION				= "position";
+		public static final String	POSITION				= "position";
 
 		/** The fav position. */
-		public static String	FAV_POSITION			= "fav_position";
+		public static final String	FAV_POSITION			= "fav_position";
 
 		/** The epg id. */
-		public static String	EPG_ID					= "epg_id";
+		public static final String	EPG_ID					= "epg_id";
 
 		/** The fav id. */
-		public static String	FAV_ID					= "fav_id";
+		public static final String	FAV_ID					= "fav_id";
 
 		/** The flags. */
-		public static String	FLAGS					= "flags";
+		public static final String	FLAGS					= "flags";
 
 		/** The logo url. */
-		public static String	LOGO_URL				= "logo_url";
+		public static final String	LOGO_URL				= "logo_url";
 
 		/** The group id. */
-		public static String	GROUP_ID				= "group_id";
+		public static final String	GROUP_ID				= "group_id";
 
 		/** The fav group id. */
-		public static String	FAV_GROUP_ID			= "fav_group_id";
+		public static final String	FAV_GROUP_ID			= "fav_group_id";
 
 		/** The now playing. */
-		public static String	NOW_PLAYING				= ".now";
+		public static final String	NOW_PLAYING				= ".now";
 
 		/** The now playing favs. */
-		public static String	NOW_PLAYING_FAVS		= ".nowFavs";
+		public static final String	NOW_PLAYING_FAVS		= ".nowFavs";
 
 		/** The alias. */
-		public static String	ALIAS					= "chans";
+		public static final String	ALIAS					= "chans";
 
 		/** The as alias. */
-		public static String	AS_ALIAS				= TABLE_NAME + " as " + ALIAS;
+		public static final String	AS_ALIAS				= TABLE_NAME + " as " + ALIAS;
 
 		/** The Constant CONTENT_URI. */
 		public static final Uri	CONTENT_URI				= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
@@ -132,8 +130,6 @@ public class DbConsts {
 		/** The Constant CONTENT_URI_NOW. */
 		public static final Uri	CONTENT_URI_NOW			= BASE_CONTENT_URI.buildUpon().appendPath(NOW_PLAYING).build();
 
-		/** The Constant CONTENT_URI_NOW_FAVS. */
-		public static final Uri	CONTENT_URI_NOW_FAVS	= BASE_CONTENT_URI.buildUpon().appendPath(NOW_PLAYING_FAVS).build();
 	}
 
 	/**
@@ -145,10 +141,8 @@ public class DbConsts {
 	public static class FavTbl extends ChannelTbl {
 
 		/** The table name. */
-		public static String	TABLE_NAME	= "favs";
+		public static final String	TABLE_NAME	= "favs";
 
-		/** The Constant CONTENT_URI. */
-		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 	}
 
 	/**
@@ -160,34 +154,25 @@ public class DbConsts {
 	public static class EpgTbl implements BaseColumns {
 
 		/** The table name. */
-		public static String	TABLE_NAME	= "epg";
+		public static final String	TABLE_NAME	= "epg";
 
 		/** The epg id. */
-		public static String	EPG_ID		= "epg_id";
+		public static final String	EPG_ID		= "epg_id";
 
 		/** The start. */
-		public static String	START		= "start";
+		public static final String	START		= "start";
 
 		/** The end. */
-		public static String	END			= "end";
+		public static final String	END			= "end";
 
 		/** The title. */
-		public static String	TITLE		= "title";
+		public static final String	TITLE		= "title";
 
 		/** The subtitle. */
-		public static String	SUBTITLE	= "subtitle";
+		public static final String	SUBTITLE	= "subtitle";
 
 		/** The desc. */
-		public static String	DESC		= "desc";
-
-		/** The alias. */
-		public static String	ALIAS		= "epgalias";
-
-		/** The as alias. */
-		public static String	AS_ALIAS	= TABLE_NAME + " as " + ALIAS;
-
-		/** The Constant CONTENT_URI. */
-		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+		public static final String	DESC		= "desc";
 
 	}
 
@@ -200,65 +185,31 @@ public class DbConsts {
 	public static class NowTbl implements BaseColumns {
 
 		/** The table name. */
-		public static String	TABLE_NAME	= "now";
+		public static final String	TABLE_NAME	= "now";
 
 		/** The epg id. */
-		public static String	EPG_ID		= EpgTbl.EPG_ID;
+		public static final String	EPG_ID		= EpgTbl.EPG_ID;
 
 		/** The start. */
-		public static String	START		= EpgTbl.START;
+		public static final String	START		= EpgTbl.START;
 
 		/** The end. */
-		public static String	END			= EpgTbl.END;
+		public static final String	END			= EpgTbl.END;
 
 		/** The title. */
-		public static String	TITLE		= EpgTbl.TITLE;
+		public static final String	TITLE		= EpgTbl.TITLE;
 
 		/** The subtitle. */
-		public static String	SUBTITLE	= EpgTbl.SUBTITLE;
+		public static final String	SUBTITLE	= EpgTbl.SUBTITLE;
 
 		/** The desc. */
-		public static String	DESC		= EpgTbl.DESC;
+		public static final String	DESC		= EpgTbl.DESC;
 
 		/** The alias. */
-		public static String	ALIAS		= "nowAlias";
+		public static final String	ALIAS		= "nowAlias";
 
 		/** The as alias. */
-		public static String	AS_ALIAS	= TABLE_NAME + " as " + ALIAS;
-
-		/** The Constant CONTENT_URI. */
-		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
-
-	}
-
-	/**
-	 * The Class SqlSynatx.
-	 *
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public static class SqlSynatx {
-
-		/** The smaller or equals. */
-		public static String	SMALLER_OR_EQUALS	= " <= ";
-
-		/** The bigger or equals. */
-		public static String	BIGGER_OR_EQUALS	= " >= ";
-
-		/** The equals. */
-		public static String	EQUALS				= " = ";
-
-		/** The and. */
-		public static String	AND					= " AND ";
-
-		/** The between. */
-		public static String	BETWEEN				= " BETWEEN ";
-
-		/** The where. */
-		public static String	WHERE				= " WHERE ";
-
-		/** The order by. */
-		public static String	ORDER_BY			= " ORDER BY ";
+		public static final String	AS_ALIAS	= TABLE_NAME + " as " + ALIAS;
 
 	}
 

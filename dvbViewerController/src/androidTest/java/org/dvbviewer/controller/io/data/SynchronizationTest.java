@@ -24,10 +24,9 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 public class SynchronizationTest extends InstrumentationTestCase {
 
-
     @Test
     public void parseChannels() {
-        List<ChannelRoot> channelRoots = getChannels(R.raw.user1);
+        List<ChannelRoot> channelRoots = getChannels(R.raw.user_1);
         assertNotNull(channelRoots);
         assertEquals(1, channelRoots.size());
         ChannelRoot root = channelRoots.get(0);
@@ -37,15 +36,15 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void parseFavourites() {
-        List<ChannelGroup> channelGroups = getFavs(R.raw.user1);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.user_1);
         assertNotNull(channelGroups);
         assertEquals(false, channelGroups.isEmpty());
     }
 
     @Test
     public void matchFavouritesUser1() {
-        List<ChannelRoot> channelRoots = getChannels(R.raw.user1);
-        List<ChannelGroup> channelGroups = getFavs(R.raw.user1);
+        List<ChannelRoot> channelRoots = getChannels(R.raw.user_1);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.user_1);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(30, countFavs(favGroups));
@@ -53,8 +52,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void matchFavouritesUser2() {
-        List<ChannelRoot> channelRoots = getChannels(R.raw.user2);
-        List<ChannelGroup> channelGroups = getFavs(R.raw.user2);
+        List<ChannelRoot> channelRoots = getChannels(R.raw.user_2);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.user_2);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(1, favGroups.size());
@@ -63,8 +62,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void matchFavouritesUser3() {
-        List<ChannelRoot> channelRoots = getChannels(R.raw.user3);
-        List<ChannelGroup> channelGroups = getFavs(R.raw.user3);
+        List<ChannelRoot> channelRoots = getChannels(R.raw.user_3);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.user_3);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(8, favGroups.size());
@@ -73,8 +72,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void matchFavouritesUser4() {
-        List<ChannelRoot> channelRoots = getChannels(R.raw.user4);
-        List<ChannelGroup> channelGroups = getFavs(R.raw.user4);
+        List<ChannelRoot> channelRoots = getChannels(R.raw.user_4);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.user_4);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(15, favGroups.size());
@@ -83,8 +82,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void matchFavouritesUser5() {
-        List<ChannelRoot> channelRoots = getChannels(R.raw.user5);
-        List<ChannelGroup> channelGroups = getFavs(R.raw.user5);
+        List<ChannelRoot> channelRoots = getChannels(R.raw.user_5);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.user_5);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(4, favGroups.size());
@@ -93,8 +92,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void matchFavouritesUser6() {
-        List<ChannelRoot> channelRoots = getChannels(R.raw.user6);
-        List<ChannelGroup> channelGroups = getFavs(R.raw.user6);
+        List<ChannelRoot> channelRoots = getChannels(R.raw.user_6);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.user_6);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(18, favGroups.size());
@@ -103,8 +102,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void matchFavouritesUser7() {
-        List<ChannelRoot> channelRoots = getChannels(R.raw.user7);
-        List<ChannelGroup> channelGroups = getFavs(R.raw.user7);
+        List<ChannelRoot> channelRoots = getChannels(R.raw.user_7);
+        List<ChannelGroup> channelGroups = getFavs(R.raw.user_7);
         FavMatcher matcher = new FavMatcher();
         List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
         assertEquals(4, favGroups.size());

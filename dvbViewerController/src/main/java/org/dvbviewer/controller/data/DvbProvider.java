@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -89,21 +90,14 @@ public class DvbProvider extends ContentProvider {
 	 * @see android.content.ContentProvider#query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String)
 	 */
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+	public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder qb;
 		String groupBy = null;
-		HashMap<String, String> projectionMap = null;
+		HashMap<String, String> projectionMap;
 		switch (sUriMatcher.match(uri)) {
 		case CHANNELS:
 			qb = new SQLiteQueryBuilder();
 			qb.setTables(ChannelTbl.TABLE_NAME);
-			projectionMap = new HashMap<String, String>();
-			projectionMap.put(ChannelTbl._ID, ChannelTbl._ID);
-			projectionMap.put(ChannelTbl.CHANNEL_ID, ChannelTbl.CHANNEL_ID);
-			projectionMap.put(ChannelTbl.EPG_ID, ChannelTbl.EPG_ID);
-			projectionMap.put(ChannelTbl.POSITION, ChannelTbl.POSITION);
-			projectionMap.put(ChannelTbl.FAV_POSITION, ChannelTbl.FAV_POSITION);
-			projectionMap.put(ChannelTbl.LOGO_URL, ChannelTbl.LOGO_URL);
 			break;
 		case FAVOURITES:
 			qb = new SQLiteQueryBuilder();
@@ -140,8 +134,9 @@ public class DvbProvider extends ContentProvider {
 
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		Cursor c = qb.query(db, null, selection, selectionArgs, groupBy, null, sortOrder);
-
-		c.setNotificationUri(getContext().getContentResolver(), uri);
+		if (getContext() != null){
+			c.setNotificationUri(getContext().getContentResolver(), uri);
+		}
 		return c;
 	}
 
@@ -149,7 +144,7 @@ public class DvbProvider extends ContentProvider {
 	 * @see android.content.ContentProvider#getType(android.net.Uri)
 	 */
 	@Override
-	public String getType(Uri uri) {
+	public String getType(@NonNull Uri uri) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -158,7 +153,7 @@ public class DvbProvider extends ContentProvider {
 	 * @see android.content.ContentProvider#bulkInsert(android.net.Uri, android.content.ContentValues[])
 	 */
 	@Override
-	public int bulkInsert(Uri uri, ContentValues[] values) {
+	public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
 		// TODO Auto-generated method stub
 		return super.bulkInsert(uri, values);
 	}
@@ -167,7 +162,7 @@ public class DvbProvider extends ContentProvider {
 	 * @see android.content.ContentProvider#insert(android.net.Uri, android.content.ContentValues)
 	 */
 	@Override
-	public Uri insert(Uri uri, ContentValues values) {
+	public Uri insert(@NonNull Uri uri, ContentValues values) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -176,7 +171,7 @@ public class DvbProvider extends ContentProvider {
 	 * @see android.content.ContentProvider#delete(android.net.Uri, java.lang.String, java.lang.String[])
 	 */
 	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
+	public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -185,7 +180,7 @@ public class DvbProvider extends ContentProvider {
 	 * @see android.content.ContentProvider#update(android.net.Uri, android.content.ContentValues, java.lang.String, java.lang.String[])
 	 */
 	@Override
-	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+	public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

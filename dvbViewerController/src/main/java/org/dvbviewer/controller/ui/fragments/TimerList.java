@@ -163,7 +163,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	 * @author RayBa
 	 * @date 07.04.2013
 	 */
-	private class ViewHolder {
+	private static class ViewHolder {
 		ClickableRelativeLayout	layout;
 		ImageView				recIndicator;
 		TextView				title;

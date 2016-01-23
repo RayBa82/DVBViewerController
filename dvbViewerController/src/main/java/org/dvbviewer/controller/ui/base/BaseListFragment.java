@@ -233,7 +233,7 @@ public class BaseListFragment extends Fragment {
             if (!mListShown && !hadAdapter) {
                 // The list was hidden, and previously didn't have an
                 // adapter.  It is now time to show it.
-                setListShown(true, getView().getWindowToken() != null);
+                setListShown(true, getView() != null && getView().getWindowToken() != null);
             }
         }
     }
@@ -493,7 +493,7 @@ public class BaseListFragment extends Fragment {
 		SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
 		int count = 0;
 		int size = checkedPositions.size();
-		if (checkedPositions != null && size > 0) {
+		if (size > 0) {
 			for (int i = 0; i < size; i++) {
 				if (checkedPositions.valueAt(i)) {
 					count++;

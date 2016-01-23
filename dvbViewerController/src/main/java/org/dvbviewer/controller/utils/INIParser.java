@@ -173,7 +173,6 @@ public class INIParser {
       }
 
       public void remove() {
-        return;
       }
     }
 

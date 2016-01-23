@@ -22,6 +22,7 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.entities.Recording;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.xml.sax.Attributes;
@@ -42,7 +43,6 @@ public class RecordingHandler extends DefaultHandler {
 
 	List<Recording> recordingList    = null;
 	Recording       currentRecording = null;
-	private String imageURL = "";
 
 	/**
 	 * Parses the.
@@ -55,7 +55,6 @@ public class RecordingHandler extends DefaultHandler {
 	 */
 	public List<Recording> parse(String xml) throws SAXException {
 		RootElement root = new RootElement("recordings");
-		Element imageURLElement = root.getChild("imageURL");
 		Element recordingElement = root.getChild("recording");
 		Element chanElement = recordingElement.getChild("channel");
 		Element titleElement = recordingElement.getChild("title");
@@ -71,17 +70,10 @@ public class RecordingHandler extends DefaultHandler {
 			}
 		});
 
-		imageURLElement.setEndTextElementListener(new EndTextElementListener() {
-
-			@Override
-			public void end(String body) {
-				imageURL = body;
-			}
-		});
 		recordingElement.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
 				currentRecording = new Recording();
-				currentRecording.setId(Long.valueOf(attributes.getValue("id")));
+				currentRecording.setId(NumberUtils.toLong(attributes.getValue("id")));
 				Date start = DateUtils.stringToDate(attributes.getValue("start"), DateUtils.DATEFORMAT_RS_EPG);
 				Date duration = DateUtils.stringToDate(attributes.getValue("duration"), DateUtils.TIMEFORMAT_RS_RECORDING);
 				currentRecording.setStart(start);
