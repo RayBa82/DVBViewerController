@@ -259,7 +259,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	 */
 	@Override
 	public void onClick(View v) {
-		Intent videoIntent = null;
+		Intent videoIntent;
 		switch (v.getId()) {
 		case R.id.startTranscodedButton:
 			prefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).commit();

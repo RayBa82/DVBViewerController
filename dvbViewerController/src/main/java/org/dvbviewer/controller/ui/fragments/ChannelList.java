@@ -679,7 +679,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_SHOW_QUICK_STREAM_HINT, false).commit();
             showQuickstreamHint(position);
         } else {
-            ArrayList<Channel> chans = cursorToChannellist();
             if (mCHannelSelectedListener != null) {
                 Cursor c = mAdapter.getCursor();
                 c.moveToPosition(position);

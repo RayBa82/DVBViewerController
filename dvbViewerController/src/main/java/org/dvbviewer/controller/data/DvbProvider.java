@@ -93,7 +93,7 @@ public class DvbProvider extends ContentProvider {
 	public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder qb;
 		String groupBy = null;
-		HashMap<String, String> projectionMap = null;
+		HashMap<String, String> projectionMap;
 		switch (sUriMatcher.match(uri)) {
 		case CHANNELS:
 			qb = new SQLiteQueryBuilder();
