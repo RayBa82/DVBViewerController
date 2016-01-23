@@ -1,7 +1,6 @@
 package org.dvbviewer.controller.ui;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.rules.NoDataRule;
@@ -20,7 +19,6 @@ import static junit.framework.Assert.assertEquals;
  * Basic tests with no data, just dont crash ;-)
  */
 @RunWith(AndroidJUnit4.class)
-@LargeTest
 public class NoDataTest {
 
 	@Rule

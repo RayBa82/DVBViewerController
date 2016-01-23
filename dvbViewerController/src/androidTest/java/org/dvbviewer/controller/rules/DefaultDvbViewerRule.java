@@ -30,6 +30,7 @@ import java.net.URL;
  */
 public class DefaultDvbViewerRule<T extends Activity> extends ActivityTestRule {
 
+    public static final String GENERIC_CHANNEL_SUFFIX = "?utf8=1&lvl=2&channel";
     protected MockWebServer server;
     protected Resources res;
     protected static String VERSION_KEY = "version";
@@ -66,13 +67,17 @@ public class DefaultDvbViewerRule<T extends Activity> extends ActivityTestRule {
             final String status2 = getJsonString(userJson, STATUS2_KEY);
             final String ffmpegPrefs = getJsonString(userJson, FFMPEGPREFS_KEY);
             final String targets = getJsonString(userJson, TARGETS_KEY);
+            final String defaultEpg = TestUtils.getStringFromFile(context, R.raw.default_epg);
             server.setDispatcher(new Dispatcher() {
                 @Override
                 public MockResponse dispatch(RecordedRequest request)
                         throws InterruptedException {
                     Log.i(DefaultDvbViewerRule.class.getSimpleName(), "requestPath: " + request.getPath());
                     MockResponse response = new MockResponse();
-                    if (request.getPath().equalsIgnoreCase(ServerConsts.URL_STATUS)) {
+
+                    if (request.getPath().contains(ServerConsts.URL_EPG + GENERIC_CHANNEL_SUFFIX)) {
+                        response.setBody(defaultEpg);
+                    } else if (request.getPath().equalsIgnoreCase(ServerConsts.URL_STATUS)) {
                         response.setBody(status);
                     } else if (request.getPath().equalsIgnoreCase(ServerConsts.URL_VERSION)) {
                         response.setBody(version);

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.rules.MinimalSyncRule;
@@ -28,7 +27,6 @@ import static org.hamcrest.Matchers.anything;
  * Note that there is no need to tell Espresso that a view is in a different {@link Activity}.
  */
 @RunWith(AndroidJUnit4.class)
-@LargeTest
 public class DefaultDvbViewerTest {
 
 	@Rule

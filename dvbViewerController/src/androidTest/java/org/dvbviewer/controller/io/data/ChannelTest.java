@@ -20,10 +20,10 @@ public class ChannelTest extends InstrumentationTestCase {
 
     private static final String TAG = ChannelTest.class.getSimpleName();
 
-
     @Test
     public void parseChannels() throws JSONException, SAXException {
         List<ChannelRoot> tmp = null;
+        int successCount = 0;
         for (int i = 1; i <= 911; i++){
             try {
                 final String resName = "user_"+i;
@@ -32,6 +32,7 @@ public class ChannelTest extends InstrumentationTestCase {
                 tmp = TestUtils.getChannels(resId);
                 Log.d(TAG, "parsed " + tmp.size() + " channel groups");
                 assertEquals(true, tmp != null);
+                successCount++;
             }catch (JSONException | SAXException e){
                 e.printStackTrace();
                 assertEquals(true, tmp == null || tmp.size() == 0);
@@ -39,6 +40,7 @@ public class ChannelTest extends InstrumentationTestCase {
                 tmp = null;
             }
         }
+        assertTrue(successCount > 0);
     }
 
 

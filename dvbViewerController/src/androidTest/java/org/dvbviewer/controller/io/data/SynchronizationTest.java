@@ -24,7 +24,6 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 public class SynchronizationTest extends InstrumentationTestCase {
 
-
     @Test
     public void parseChannels() {
         List<ChannelRoot> channelRoots = getChannels(R.raw.user_1);
