@@ -27,12 +27,17 @@ import java.net.URL;
 
 /**
  * Created by r.baun on 14.06.2015.
+ *
+ * Default template for an {@link ActivityTestRule}. It starts a {@link MockWebServer} to provide
+ * basic functionallity for testing.
  */
 public class DefaultDvbViewerRule<T extends Activity> extends ActivityTestRule {
 
-    public static final String GENERIC_CHANNEL_SUFFIX = "?utf8=1&lvl=2&channel";
+    protected final Context context = InstrumentationRegistry.getInstrumentation().getContext();
+    protected final Resources res = context.getResources();
+    protected final DVBViewerPreferences prefs = new DVBViewerPreferences(context);
+    public final String GENERIC_CHANNEL_SUFFIX = "?utf8=1&lvl=2&channel";
     protected MockWebServer server;
-    protected Resources res;
     protected static String VERSION_KEY = "version";
     protected static String CHANNELS_KEY = "channels";
     protected static String FAVOURITES_KEY = "favourites";
@@ -40,7 +45,6 @@ public class DefaultDvbViewerRule<T extends Activity> extends ActivityTestRule {
     protected static String STATUS2_KEY = "status2";
     protected static String FFMPEGPREFS_KEY = "ffmpegPrefsIni";
     protected static String TARGETS_KEY = "dvbviewerTargets";
-    protected DVBViewerPreferences prefs;
 
     public DefaultDvbViewerRule(Class<T> activityClass) {
         super(activityClass);
@@ -49,15 +53,11 @@ public class DefaultDvbViewerRule<T extends Activity> extends ActivityTestRule {
     @Override
     protected void beforeActivityLaunched() {
         super.beforeActivityLaunched();
-        prefs = new DVBViewerPreferences(InstrumentationRegistry.getInstrumentation().getContext());
         // Create a MockWebServer. These are lean enough that you can create a new
         // instance for every unit test.
         server = new MockWebServer();
-
         // Schedule some responses.
         try {
-            final Context context = InstrumentationRegistry.getInstrumentation().getContext();
-            res = context.getResources();
             String user1 = TestUtils.getStringFromFile(context, R.raw.user_1);
             JSONObject userJson = new JSONObject(user1);
             final String version = getJsonString(userJson, VERSION_KEY);
@@ -101,8 +101,6 @@ public class DefaultDvbViewerRule<T extends Activity> extends ActivityTestRule {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-
-
         // Ask the server for its URL. You'll need this to make HTTP requests.
         HttpUrl serverUrl = server.url("");
         URL baseUrl = serverUrl.url();
