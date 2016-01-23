@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -39,7 +40,9 @@ import com.squareup.okhttp.HttpUrl;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
+import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.widget.DateField;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
@@ -330,26 +333,32 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		}
 	}
 
+	@Nullable
 	public static String buildTimerUrl(Timer timer) {
-		HttpUrl httpUrl = HttpUrl.parse(ServerConsts.REC_SERVICE_URL + (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
-		HttpUrl.Builder builder = httpUrl.newBuilder();
-		String title = timer.getTitle();
-		String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-		String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-		String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-		String endAction = String.valueOf(timer.getTimerAction());
-		builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
-		builder.addQueryParameter("dor", days);
-		builder.addQueryParameter("encoding", "255");
-		builder.addQueryParameter("enable", timer.isFlagSet(Timer.FLAG_DISABLED) ? "0" : "1");
-		builder.addQueryParameter("start", start);
-		builder.addQueryParameter("stop", stop);
-		builder.addQueryParameter("title", title);
-		builder.addQueryParameter("endact", endAction);
-		if (timer.getId() >= 0) {
-			builder.addQueryParameter("id", String.valueOf(timer.getId()));
+		final HttpUrl.Builder builder;
+		try {
+			builder = HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
+			String title = timer.getTitle();
+			String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
+			String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
+			String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
+			String endAction = String.valueOf(timer.getTimerAction());
+			builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
+			builder.addQueryParameter("dor", days);
+			builder.addQueryParameter("encoding", "255");
+			builder.addQueryParameter("enable", timer.isFlagSet(Timer.FLAG_DISABLED) ? "0" : "1");
+			builder.addQueryParameter("start", start);
+			builder.addQueryParameter("stop", stop);
+			builder.addQueryParameter("title", title);
+			builder.addQueryParameter("endact", endAction);
+			if (timer.getId() >= 0) {
+				builder.addQueryParameter("id", String.valueOf(timer.getId()));
+			}
+			return builder.build().toString();
+		} catch (UrlBuilderException e) {
+			e.printStackTrace();
 		}
-		return builder.build().toString();
+		return null;
 	}
 
 	/* (non-Javadoc)
