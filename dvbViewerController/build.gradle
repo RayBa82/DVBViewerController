@@ -33,6 +33,10 @@ android {
         exclude 'META-INF/LICENSE.txt'
     }
 
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
 }
 
 dependencies {
@@ -45,6 +49,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.7.2'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.github.jrejaud:ViewPagerIndicator2:0.0.1'
+    compile 'org.apache.commons:commons-lang3:3.4'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:runner:0.4.1'

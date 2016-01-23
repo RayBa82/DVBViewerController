@@ -48,6 +48,7 @@ import com.nineoldandroids.animation.IntEvaluator;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.squareup.okhttp.HttpUrl;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.FfMpegPrefs;
@@ -317,9 +318,9 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		case STREAM_TYPE_TRANSCODE:
 			final Preset preset = (Preset) qualitySpinner.getSelectedItem();
 			final String encodingSpeed = encodingSpeedSpinner.getSelectedItem().toString();
-			int hours = TextUtils.isEmpty(startHours.getText()) ? 0 : Integer.valueOf(startHours.getText().toString());
-			int minutes = TextUtils.isEmpty(startMinutes.getText()) ? 0 : Integer.valueOf(startMinutes.getText().toString());
-			int seconds = TextUtils.isEmpty(startSeconds.getText()) ? 0 : Integer.valueOf(startSeconds.getText().toString());
+			int hours = TextUtils.isEmpty(startHours.getText()) ? 0 : NumberUtils.toInt(startHours.getText().toString());
+			int minutes = TextUtils.isEmpty(startMinutes.getText()) ? 0 : NumberUtils.toInt(startMinutes.getText().toString());
+			int seconds = TextUtils.isEmpty(startSeconds.getText()) ? 0 : NumberUtils.toInt(startSeconds.getText().toString());
 			int start = 3600 * hours + 60 * minutes + seconds;
 			videoIntent = getTranscodedUrl(mFileId, preset, encodingSpeed, recording, start);
 		default:

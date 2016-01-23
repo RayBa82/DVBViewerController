@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Status;
@@ -299,14 +300,14 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             switch (mItems.get(position).getNameRessource()) {
                 case R.string.status_epg_update_running:
                 case R.string.status_standby_blocked:
-                    holder.statusText.setText(Integer.valueOf(mItems.get(position).getValue()) == 0 ? R.string.no : R.string.yes);
+                    holder.statusText.setText(NumberUtils.toInt(mItems.get(position).getValue()) == 0 ? R.string.no : R.string.yes);
                     break;
                 case R.string.status_epg_before:
                 case R.string.status_epg_after:
                     holder.statusText.setText(mItems.get(position).getValue() + " " + mRes.getString(R.string.minutes));
                     break;
                 case R.string.status_timezone:
-                    int timezone = Integer.valueOf(mItems.get(position).getValue()) / 60;
+                    int timezone = NumberUtils.toInt(mItems.get(position).getValue()) / 60;
                     holder.statusText.setText(mRes.getString(R.string.gmt) + (timezone > 0 ? " +" : "") + timezone);
                     break;
                 case R.string.status_def_after_record:
@@ -315,7 +316,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                 case R.string.status_last_ui_access:
                 case R.string.status_next_Rec:
                 case R.string.status_next_timer:
-                    holder.statusText.setText(DateUtils.secondsToReadableFormat(Long.valueOf(mItems.get(position).getValue())));
+                    holder.statusText.setText(DateUtils.secondsToReadableFormat(NumberUtils.toLong(mItems.get(position).getValue())));
                     break;
                 default:
                     holder.statusText.setText(mItems.get(position).getValue());

@@ -21,6 +21,7 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
@@ -89,10 +90,10 @@ public class ChannelHandler extends DefaultHandler {
 		channelElement.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
 				currentChannel = new Channel();
-				currentChannel.setChannelID(Long.valueOf(attributes.getValue("ID")));
-				currentChannel.setPosition(Integer.valueOf(attributes.getValue("nr")));
+				currentChannel.setChannelID(NumberUtils.toLong(attributes.getValue("ID")));
+				currentChannel.setPosition(NumberUtils.toInt(attributes.getValue("nr")));
 				currentChannel.setName(attributes.getValue("name"));
-				currentChannel.setEpgID(Long.valueOf(attributes.getValue("EPGID")));
+				currentChannel.setEpgID(NumberUtils.toLong(attributes.getValue("EPGID")));
 				currentGroup.getChannels().add(currentChannel);
 			}
 		});
@@ -109,7 +110,7 @@ public class ChannelHandler extends DefaultHandler {
 		subChanElement.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
 				Channel c = new Channel();
-				c.setChannelID(Long.valueOf(attributes.getValue("ID")));
+				c.setChannelID(NumberUtils.toLong(attributes.getValue("ID")));
 				c.setPosition(currentChannel.getPosition());
 				c.setName(attributes.getValue("name"));
 				c.setEpgID(currentChannel.getEpgID());

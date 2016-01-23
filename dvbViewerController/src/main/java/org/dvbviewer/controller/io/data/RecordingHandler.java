@@ -22,6 +22,7 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.entities.Recording;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.xml.sax.Attributes;
@@ -81,7 +82,7 @@ public class RecordingHandler extends DefaultHandler {
 		recordingElement.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
 				currentRecording = new Recording();
-				currentRecording.setId(Long.valueOf(attributes.getValue("id")));
+				currentRecording.setId(NumberUtils.toLong(attributes.getValue("id")));
 				Date start = DateUtils.stringToDate(attributes.getValue("start"), DateUtils.DATEFORMAT_RS_EPG);
 				Date duration = DateUtils.stringToDate(attributes.getValue("duration"), DateUtils.TIMEFORMAT_RS_RECORDING);
 				currentRecording.setStart(start);

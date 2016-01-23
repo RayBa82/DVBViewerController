@@ -22,6 +22,7 @@ import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.xml.sax.Attributes;
@@ -74,12 +75,12 @@ public class TimerHandler extends DefaultHandler {
 				currentTimer = new Timer();
 				Date startDay = DateUtils.stringToDate(attributes.getValue("Date"), DateUtils.DATEFORMAT_RS_TIMER);
 				Date startTime = DateUtils.stringToDate(attributes.getValue("Start"), DateUtils.TIMEFORMAT_RS_TIMER);
-				int duration = Integer.valueOf(attributes.getValue("Dur"));
+				int duration = NumberUtils.toInt(attributes.getValue("Dur"));
 				currentTimer.setStart(DateUtils.addTime(startDay, startTime));
 				currentTimer.setEnd(DateUtils.addMinutes(currentTimer.getStart(), duration));
 				String timerAction = attributes.getValue("ShutDown");
-				currentTimer.setTimerAction(timerAction != null ? Integer.valueOf(timerAction) : 0);
-				long disabled = Long.valueOf(attributes.getValue("Enabled"));
+				currentTimer.setTimerAction(timerAction != null ? NumberUtils.toInt(timerAction) : 0);
+				long disabled = NumberUtils.toLong(attributes.getValue("Enabled"));
 				if (disabled == 0l) {
 					currentTimer.setFlag(Timer.FLAG_DISABLED);
 				} else {
@@ -110,7 +111,7 @@ public class TimerHandler extends DefaultHandler {
 			public void start(Attributes attributes) {
 				String id = attributes.getValue("ID");
 				String[] channelInfos = id.split("\\|");
-				currentTimer.setChannelId(Long.valueOf(channelInfos[0].trim()));
+				currentTimer.setChannelId(NumberUtils.toLong(channelInfos[0].trim()));
 				currentTimer.setChannelName(channelInfos[1].trim());
 			}
 
@@ -119,7 +120,7 @@ public class TimerHandler extends DefaultHandler {
 
 			@Override
 			public void end(String body) {
-				currentTimer.setId(Long.valueOf(body));
+				currentTimer.setId(NumberUtils.toLong(body));
 			}
 		});
 
@@ -135,7 +136,7 @@ public class TimerHandler extends DefaultHandler {
 
 			@Override
 			public void end(String body) {
-				long executable = Long.valueOf(body);
+				long executable = NumberUtils.toLong(body);
 				if (executable == 0l) {
 					currentTimer.setFlag(Timer.FLAG_EXECUTABLE);
 				} else {
