@@ -43,6 +43,7 @@ import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
 import org.dvbviewer.controller.io.UrlBuilderException;
+import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.widget.DateField;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
@@ -162,7 +163,10 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		AppCompatActivity activity = (AppCompatActivity) getActivity();
-		activity.getSupportActionBar().setSubtitle(R.string.details);
+		if (activity instanceof BaseActivity){
+			BaseActivity a = (BaseActivity) activity;
+			a.setSubTitle(R.string.details);
+		}
 		if (timer != null) {
 			titleField.setText(timer.getTitle());
 			dateField.setDate(timer.getStart());
@@ -176,7 +180,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 			}
 		}
 		if (getDialog() != null) {
-			getDialog().setTitle(timer.getId() <= 0 ? R.string.createTimer : R.string.editTimer);
+			getDialog().setTitle(timer != null && timer.getId() <= 0 ? R.string.createTimer : R.string.editTimer);
 		}
 	}
 	

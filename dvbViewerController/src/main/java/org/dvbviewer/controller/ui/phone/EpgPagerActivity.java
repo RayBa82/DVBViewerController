@@ -51,7 +51,7 @@ public class EpgPagerActivity extends BaseSinglePaneActivity implements EpgDateI
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setDisplayHomeAsUpEnabled(true);
 		epgDate = savedInstanceState != null && savedInstanceState.containsKey(ChannelEpg.KEY_EPG_DAY) ? new Date(savedInstanceState.getLong(ChannelEpg.KEY_EPG_DAY)) : new Date();
 	}
 	

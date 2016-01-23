@@ -36,7 +36,7 @@ public class ChannelListActivity extends BaseSinglePaneActivity implements Chann
 	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setDisplayHomeAsUpEnabled(true);
 	}
 
 	/* (non-Javadoc)

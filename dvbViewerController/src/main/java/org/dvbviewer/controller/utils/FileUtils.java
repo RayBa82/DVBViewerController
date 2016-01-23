@@ -15,6 +15,8 @@
  */
 package org.dvbviewer.controller.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.DecimalFormat;
 
 /**
@@ -41,7 +43,7 @@ public class FileUtils {
 	public static String byteToHumanString(final long value){
 	    final long[] dividers = new long[] { T, G, M, K, 1 };
 	    final String[] units = new String[] { "TB", "GB", "MB", "KB", "B" };
-	    String result = null;
+	    String result = StringUtils.EMPTY;
 	    if(value < 1)
 	        return result;
 	    for(int i = 0; i < dividers.length; i++){

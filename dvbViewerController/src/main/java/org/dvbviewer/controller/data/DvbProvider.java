@@ -134,8 +134,9 @@ public class DvbProvider extends ContentProvider {
 
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		Cursor c = qb.query(db, null, selection, selectionArgs, groupBy, null, sortOrder);
-
-		c.setNotificationUri(getContext().getContentResolver(), uri);
+		if (getContext() != null){
+			c.setNotificationUri(getContext().getContentResolver(), uri);
+		}
 		return c;
 	}
 

@@ -47,7 +47,7 @@ public class EPGDetails extends Fragment  {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AppCompatActivity activity = (AppCompatActivity) getActivity();
-		activity.getSupportActionBar().setTitle(R.string.details);
+		activity.setTitle(R.string.details);
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
 		epg = getActivity().getIntent().getParcelableExtra(IEPG.class.getSimpleName());

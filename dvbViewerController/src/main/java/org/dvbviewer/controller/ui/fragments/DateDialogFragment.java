@@ -155,12 +155,10 @@ public class DateDialogFragment extends DialogFragment {
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.setTime(sDate);
 		switch (type) {
-		case TYPE_DATE:
-			return new DatePickerDialog(sContext, mDateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-		case TYPE_TIME:
-			return new TimePickerDialog(sContext, mTimeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
-		default:
-			return null;
+			case TYPE_TIME:
+				return new TimePickerDialog(sContext, mTimeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
+			default:
+				return new DatePickerDialog(sContext, mDateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 		}
 
 	}

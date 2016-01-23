@@ -254,10 +254,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void setTitle(CharSequence title) {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
 		if (toolbar != null) {
-			getSupportActionBar().setTitle(R.string.app_name);
+			setSupportActionBarTitle(R.string.app_name);
 			toolbar.setTitle(title);
 		} else {
-			getSupportActionBar().setTitle(title);
+			setSupportActionBarTitle(title);
 		}
 	}
 	
@@ -266,11 +266,62 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void setTitle(int titleId) {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
 		if (toolbar != null) {
-			getSupportActionBar().setTitle(R.string.app_name);
+			setSupportActionBarTitle(R.string.app_name);
 			toolbar.setTitle(titleId);
 		}else {
+			setSupportActionBarTitle(titleId);
+		}
+	}
+
+	public void setSubTitle(CharSequence title) {
+		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+		if (toolbar != null) {
+			setSupportActionBarSubtitleTitle(R.string.app_name);
+			toolbar.setTitle(title);
+		} else {
+			setSupportActionBarSubtitleTitle(title);
+		}
+	}
+
+
+	public void setSubTitle(int titleId) {
+		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+		if (toolbar != null) {
+			setSupportActionBarSubtitleTitle(R.string.app_name);
+			toolbar.setTitle(titleId);
+		}else {
+			setSupportActionBarSubtitleTitle(titleId);
+		}
+	}
+
+	protected void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+		if (getSupportActionBar() != null) {
+			getSupportActionBar().setDisplayHomeAsUpEnabled(showHomeAsUp);
+		}
+	}
+
+	private void setSupportActionBarTitle(int titleId) {
+		if (getSupportActionBar() != null) {
 			getSupportActionBar().setTitle(titleId);
 		}
 	}
-	
+
+	private void setSupportActionBarTitle(CharSequence title) {
+		if (getSupportActionBar() != null) {
+			getSupportActionBar().setTitle(title);
+		}
+	}
+
+	private void setSupportActionBarSubtitleTitle(int titleId) {
+		if (getSupportActionBar() != null) {
+			getSupportActionBar().setTitle(titleId);
+		}
+	}
+
+	private void setSupportActionBarSubtitleTitle(CharSequence title) {
+		if (getSupportActionBar() != null) {
+			getSupportActionBar().setTitle(title);
+		}
+	}
+
 }

@@ -244,10 +244,12 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        position = (TextView) v.findViewById(R.id.position);
-        channelLogo = (ImageView) v.findViewById(R.id.icon);
-        channelName = (TextView) v.findViewById(R.id.title);
-        dayIndicator = (TextView) v.findViewById(R.id.dayIndicator);
+        if (v != null){
+            position = (TextView) v.findViewById(R.id.position);
+            channelLogo = (ImageView) v.findViewById(R.id.icon);
+            channelName = (TextView) v.findViewById(R.id.title);
+            dayIndicator = (TextView) v.findViewById(R.id.dayIndicator);
+        }
         return v;
     }
 

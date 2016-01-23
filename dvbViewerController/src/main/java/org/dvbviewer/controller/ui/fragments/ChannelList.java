@@ -567,6 +567,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     public class ChannelAdapter extends CursorAdapter {
 
+        Context Context;
         ImageLoader imageChacher;
 
         /**
@@ -578,6 +579,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          */
         public ChannelAdapter(Context context) {
             super(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+            mContext = context;
             imageChacher = ImageLoader.getInstance();
         }
 

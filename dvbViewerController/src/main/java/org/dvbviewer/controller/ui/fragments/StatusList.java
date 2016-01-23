@@ -95,7 +95,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
 
             @Override
             public Status loadInBackground() {
-                Status result = null;
+                Status result = new Status();
                 try {
                     String version = RecordingService.getVersionString();
                     if (!Config.isRSVersionSupported(version)){
