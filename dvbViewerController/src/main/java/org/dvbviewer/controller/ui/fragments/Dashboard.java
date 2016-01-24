@@ -82,20 +82,16 @@ public class Dashboard extends Fragment implements OnClickListener{
 	 * the onDashboardButtonClick event occurs, that object's appropriate
 	 * method is invoked.
 	 *
-	 * @see OnDashboardButtonClickEvent
 	 * @author RayBa
-	 * @date 01.07.2012
 	 */
-	public static interface OnDashboardButtonClickListener {
+	public interface OnDashboardButtonClickListener {
 
 		/**
 		 * On dashboar button click.
 		 *
-		 * @param v the v
-		 * @author RayBa
-		 * @date 01.07.2012
+		 * @param view the clicked View
 		 */
-		public void onDashboarButtonClick(View v);
+		void onDashboarButtonClick(View view);
 
 	}
 

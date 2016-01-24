@@ -123,7 +123,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
          */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_remote, null);
+        View v = inflater.inflate(R.layout.fragment_remote, container, false);
         mToolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
         // Set an OnMenuItemClickListener to handle menu item clicks

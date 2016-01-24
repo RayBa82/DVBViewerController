@@ -2,7 +2,6 @@ package org.dvbviewer.controller.rules;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
@@ -34,8 +33,8 @@ import java.net.URL;
 public class DefaultDvbViewerRule<T extends Activity> extends ActivityTestRule {
 
     protected final Context context = InstrumentationRegistry.getInstrumentation().getContext();
-    protected final Resources res = context.getResources();
-    protected final DVBViewerPreferences prefs = new DVBViewerPreferences(context);
+    protected final Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    protected final DVBViewerPreferences prefs = new DVBViewerPreferences(targetContext);
     public final String GENERIC_CHANNEL_SUFFIX = "?utf8=1&lvl=2&channel";
     protected MockWebServer server;
     protected static String VERSION_KEY = "version";

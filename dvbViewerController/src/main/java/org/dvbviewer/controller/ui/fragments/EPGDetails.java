@@ -66,7 +66,7 @@ public class EPGDetails extends Fragment  {
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_epg_details, null);
+		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_epg_details, container, false);
 		TextView channel = (TextView) v.findViewById(R.id.channel);
 		TextView date = (TextView) v.findViewById(R.id.date);
 		TextView title = (TextView) v.findViewById(R.id.title);

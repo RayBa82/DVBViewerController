@@ -140,7 +140,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.pager, null);
+		View v = inflater.inflate(R.layout.pager, container, false);
 		ActionToolbar bootomBar = (ActionToolbar) v.findViewById(R.id.toolbar);
 		bootomBar.inflateMenu(R.menu.channel_epg_bottom_bar);
 		bootomBar.setOnMenuItemClickListener(this);
@@ -223,7 +223,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	 */
 	class PagerAdapter extends CursorPagerAdapter {
 
-		WeakReference<ChannelEpg> fragmentCache = new WeakReference<ChannelEpg>(null);
+		WeakReference<ChannelEpg> fragmentCache = new WeakReference<>(null);
 
 		/**
 		 * Instantiates a new pager adapter.
@@ -242,7 +242,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		 */
 		@Override
 		public Fragment getItem(int position) {
-			if (mCursor == null || mCursor.isClosed()) {
+			if (mCursor == null || mCursor.isClosed() || position == AdapterView.INVALID_POSITION) {
 				return null;
 			}
 			mCursor.moveToPosition(position);

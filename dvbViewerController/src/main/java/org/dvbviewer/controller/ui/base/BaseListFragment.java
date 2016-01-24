@@ -20,9 +20,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,31 +33,20 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.utils.UIUtils;
-import org.xml.sax.SAXException;
 
 /**
- * Static library support version of the framework's {@link android.app.ListFragment}.
- * Used to write apps that run on platforms prior to Android 3.0.  When running
- * on Android 3.0 or above, this implementation is still used; it does not try
- * to switch to the framework's implementation.  See the framework SDK
- * documentation for a class overview.
+ * Class to mimic API of ListActivity for Fragments
  *
  * @author RayBa
- * @date 07.04.2013
  */
-public class BaseListFragment extends Fragment {
-	static final int								INTERNAL_EMPTY_ID				= android.R.id.empty;
-	static final int								INTERNAL_PROGRESS_CONTAINER_ID	= android.R.id.progress;
-	static final int								INTERNAL_LIST_CONTAINER_ID		= android.R.id.content;
+public class BaseListFragment extends BaseFragment {
 
-    
-    private int layoutRessource = -1;
+	private static final int    INTERNAL_EMPTY_ID				= android.R.id.empty;
+    private static final int	INTERNAL_PROGRESS_CONTAINER_ID	= android.R.id.progress;
+    private static final int	INTERNAL_LIST_CONTAINER_ID		= android.R.id.content;
+
     
     final private Handler mHandler = new Handler();
 
@@ -73,24 +59,21 @@ public class BaseListFragment extends Fragment {
     final private AdapterView.OnItemClickListener mOnClickListener
             = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-            onListItemClick((ListView)parent, v, position, id);
+            onListItemClick((ListView) parent, v, position, id);
         }
     };
 
-    ListAdapter mAdapter;
-    ListView mList;
-    View mEmptyView;
-    TextView mStandardEmptyView;
-    View mProgressContainer;
-    View mListContainer;
-    CharSequence mEmptyText;
-    boolean mListShown;
+    private ListAdapter mAdapter;
+    private ListView mList;
+    private View mEmptyView;
+    private TextView mStandardEmptyView;
+    private View mProgressContainer;
+    private View mListContainer;
+    private CharSequence mEmptyText;
+    private boolean mListShown;
 
     /**
      * Instantiates a new base list fragment.
-     *
-     * @author RayBa
-     * @date 07.04.2013
      */
     public BaseListFragment() {
     }
@@ -113,18 +96,17 @@ public class BaseListFragment extends Fragment {
      * @param container the container
      * @param savedInstanceState the saved instance state
      * @return the view©
-     * @author RayBa
-     * @date 07.04.2013
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        final Context context = getActivity();
-        if (layoutRessource > 0) {
-			View v = getLayoutInflater(savedInstanceState).inflate(layoutRessource, null);
-			return v;
-		}else {
-			FrameLayout root = new FrameLayout(context);
+        final int layoutRes = getLayoutRessource();
+        if (layoutRes > 0) {
+            View v = getLayoutInflater(savedInstanceState).inflate(layoutRes, null);
+            return v;
+        }else {
+            final Context context = getContext();
+            FrameLayout root = new FrameLayout(context);
 			
 			// ------------------------------------------------------------------
 			
@@ -140,33 +122,33 @@ public class BaseListFragment extends Fragment {
 					ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			
 			root.addView(pframe, new FrameLayout.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			
 			// ------------------------------------------------------------------
 			
 			FrameLayout lframe = new FrameLayout(context);
 			lframe.setId(INTERNAL_LIST_CONTAINER_ID);
 			
-			TextView tv = new TextView(getActivity());
+			TextView tv = new TextView(context);
 			tv.setId(INTERNAL_EMPTY_ID);
 			tv.setGravity(Gravity.CENTER);
-			tv.setTextAppearance(getActivity(), android.R.style.TextAppearance_Medium);
+			tv.setTextAppearance(context, android.R.style.TextAppearance_Medium);
 			lframe.addView(tv, new FrameLayout.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			
-			ListView lv = new ListView(getActivity());
+			ListView lv = new ListView(context);
 			lv.setId(android.R.id.list);
 			lv.setDrawSelectorOnTop(false);
 			lframe.addView(lv, new FrameLayout.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			
 			root.addView(lframe, new FrameLayout.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			
 			// ------------------------------------------------------------------
 			
 			root.setLayoutParams(new FrameLayout.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+					ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			
 			return root;
 		}
@@ -177,8 +159,6 @@ public class BaseListFragment extends Fragment {
      *
      * @param view the view
      * @param savedInstanceState the saved instance state
-     * @author RayBa
-     * @date 07.04.2013
      */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -188,9 +168,6 @@ public class BaseListFragment extends Fragment {
 
     /**
      * Detach from list view.
-     *
-     * @author RayBa
-     * @date 07.04.2013
      */
     @Override
     public void onDestroyView() {
@@ -212,8 +189,6 @@ public class BaseListFragment extends Fragment {
      * @param v The view that was clicked within the ListView
      * @param position The position of the view in the list
      * @param id The row id of the item that was clicked
-     * @author RayBa
-     * @date 07.04.2013
      */
     public void onListItemClick(ListView l, View v, int position, long id) {
     }
@@ -222,8 +197,6 @@ public class BaseListFragment extends Fragment {
      * Provide the mCursor for the list view.
      *
      * @param adapter the new list adapter
-     * @author RayBa
-     * @date 07.04.2013
      */
     public void setListAdapter(ListAdapter adapter) {
         boolean hadAdapter = mAdapter != null;
@@ -243,8 +216,6 @@ public class BaseListFragment extends Fragment {
      * position with the adapter's data.
      *
      * @param position the new selection
-     * @author RayBa
-     * @date 07.04.2013
      */
     @SuppressLint("NewApi")
 	public void setSelection(int position) {
@@ -264,8 +235,6 @@ public class BaseListFragment extends Fragment {
      * Get the position of the currently selected list item.
      *
      * @return the selected item position
-     * @author RayBa
-     * @date 07.04.2013
      */
     public int getSelectedItemPosition() {
         ensureList();
@@ -276,8 +245,6 @@ public class BaseListFragment extends Fragment {
      * Get the mCursor row ID of the currently selected list item.
      *
      * @return the selected item id
-     * @author RayBa
-     * @date 07.04.2013
      */
     public long getSelectedItemId() {
         ensureList();
@@ -288,8 +255,6 @@ public class BaseListFragment extends Fragment {
      * Get the activity's list view widget.
      *
      * @return the list view
-     * @author RayBa
-     * @date 07.04.2013
      */
     public ListView getListView() {
         ensureList();
@@ -302,8 +267,6 @@ public class BaseListFragment extends Fragment {
      * shown, call this method to supply the text it should use.
      *
      * @param text the new empty text
-     * @author RayBa
-     * @date 07.04.2013
      */
 	public void setEmptyText(CharSequence text) {
 		ensureList();
@@ -329,8 +292,6 @@ public class BaseListFragment extends Fragment {
      *
      * @param shown If true, the list view is shown; if false, the progress
      * indicator.  The initial value is true.
-     * @author RayBa
-     * @date 07.04.2013
      */
     public void setListShown(boolean shown) {
         setListShown(shown, true);
@@ -341,8 +302,6 @@ public class BaseListFragment extends Fragment {
      * transitioning from the previous state.
      *
      * @param shown the new list shown no animation
-     * @author RayBa
-     * @date 07.04.2013
      */
     public void setListShownNoAnimation(boolean shown) {
         setListShown(shown, false);
@@ -357,8 +316,6 @@ public class BaseListFragment extends Fragment {
      * indicator.  The initial value is true.
      * @param animate If true, an animation will be used to transition to the
      * new state.
-     * @author RayBa
-     * @date 07.04.2013
      */
     private void setListShown(boolean shown, boolean animate) {
     	try {
@@ -376,9 +333,9 @@ public class BaseListFragment extends Fragment {
         if (shown) {
             if (animate) {
                 mProgressContainer.startAnimation(AnimationUtils.loadAnimation(
-                        getActivity(), android.R.anim.fade_out));
+                        getContext(), android.R.anim.fade_out));
                 mListContainer.startAnimation(AnimationUtils.loadAnimation(
-                        getActivity(), android.R.anim.fade_in));
+                        getContext(), android.R.anim.fade_in));
             } else {
                 mProgressContainer.clearAnimation();
                 mListContainer.clearAnimation();
@@ -388,9 +345,9 @@ public class BaseListFragment extends Fragment {
         } else {
             if (animate) {
                 mProgressContainer.startAnimation(AnimationUtils.loadAnimation(
-                        getActivity(), android.R.anim.fade_in));
+                        getContext(), android.R.anim.fade_in));
                 mListContainer.startAnimation(AnimationUtils.loadAnimation(
-                        getActivity(), android.R.anim.fade_out));
+                        getContext(), android.R.anim.fade_out));
             } else {
                 mProgressContainer.clearAnimation();
                 mListContainer.clearAnimation();
@@ -404,8 +361,6 @@ public class BaseListFragment extends Fragment {
      * Get the ListAdapter associated with this activity's ListView.
      *
      * @return the list adapter
-     * @author RayBa
-     * @date 07.04.2013
      */
     public ListAdapter getListAdapter() {
         return mAdapter;
@@ -414,8 +369,6 @@ public class BaseListFragment extends Fragment {
     /**
      * Ensure list.
      *
-     * @author RayBa
-     * @date 07.04.2013
      */
     private void ensureList() {
         if (mList != null) {
@@ -471,23 +424,19 @@ public class BaseListFragment extends Fragment {
         mHandler.post(mRequestFocus);
     }
 
-	/**
-	 * Sets the layout ressource.
-	 *
-	 * @param layoutRessource the new layout ressource
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void setLayoutRessource(int layoutRessource) {
-		this.layoutRessource = layoutRessource;
-	}
-	
+    /**
+     * Possibility for sublasses to provide a custom layout ressource.
+     *
+     * @return the layout resource id
+     */
+    protected int getLayoutRessource(){
+        return -1;
+    }
+
 	/**
 	 * Gets the checked item count.
 	 *
 	 * @return the checked item count
-	 * @author RayBa
-	 * @date 07.04.2013
 	 */
 	public int getCheckedItemCount() {
 		SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
@@ -503,52 +452,4 @@ public class BaseListFragment extends Fragment {
 		return count;
 	}
 
-    protected void catchException(String tag, Exception e) {
-        Log.e(tag, "Error loading ListData", e);
-        if (e instanceof AuthenticationException) {
-            showToast(getContext(), getStringSafely(R.string.error_invalid_credentials));
-        } else if (e instanceof DefaultHttpException) {
-            showToast(getContext(), e.getMessage());
-        } else if (e instanceof SAXException) {
-            showToast(getContext(), getStringSafely(R.string.error_parsing_xml));
-        } else {
-            showToast(getContext(), getStringSafely(R.string.error_common) + "\n\n" + (e.getMessage() != null ? e.getMessage() : e.getClass().getName()));
-        }
-    }
-
-	/**
-	 * Show toast.
-	 *
-	 * @param message the message
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	protected void showToast(final Context context, final String message) {
-		if (context != null && !isDetached()) {
-			Runnable errorRunnable = new Runnable() {
-
-				@Override
-				public void run() {
-					if (!TextUtils.isEmpty(message)) {
-						Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-					}
-				}
-			};
-			getActivity().runOnUiThread(errorRunnable);
-		}
-	}
-	
-	public String getStringSafely(int resId){
-		String result = "";
-		if (!isDetached() && isVisible() && isAdded()) {
-			try {
-				result = getString(resId);
-			} catch (Exception e) {
-				// Dirty Exception Handling, because this keeps and keeps crashing...
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-	
 }
