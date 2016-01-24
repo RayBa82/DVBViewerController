@@ -78,7 +78,7 @@ public class Config {
      * @author RayBa
      * @date 18.08.2013
      */
-    private static final  String normalisedVersion(String version) {
+    private static String normalisedVersion(String version) {
         return normalisedVersion(version, ".", 4);
     }
 
@@ -92,7 +92,7 @@ public class Config {
      * @author RayBa
      * @date 18.08.2013
      */
-    private static final  String normalisedVersion(String version, String sep, int maxWidth) {
+    private static String normalisedVersion(String version, String sep, int maxWidth) {
         String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
         StringBuilder sb = new StringBuilder();
         for (String s : split) {
