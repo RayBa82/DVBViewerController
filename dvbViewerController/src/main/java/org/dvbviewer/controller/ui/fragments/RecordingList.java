@@ -256,7 +256,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			ViewHolder holder;
 			if (convertView == null) {
 				LayoutInflater vi = getActivity().getLayoutInflater();
-				convertView = vi.inflate(R.layout.list_item_recording, null);
+				convertView = vi.inflate(R.layout.list_item_recording, parent, false);
 				holder = new ViewHolder();
 				holder.thumbNail = (ImageView) convertView.findViewById(R.id.thumbNail);
 				holder.title = (TextView) convertView.findViewById(R.id.title);
@@ -285,7 +285,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					holder.thumbNailContainer.setVisibility(View.GONE);
 				}else{
 					holder.thumbNailContainer.setVisibility(View.VISIBLE);
-					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL+ ServerConsts.THUMBNAILS_VIDEO_URL +o.getThumbNail(), holder.thumbNail);
+					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail);
 				}
 				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());

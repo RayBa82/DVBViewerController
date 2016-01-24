@@ -77,7 +77,7 @@ public class RemoteNumbers extends AbstractRemote {
          */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        content = inflater.inflate(R.layout.fragment_remote_numbers, null);
+        content = inflater.inflate(R.layout.fragment_remote_numbers, container, false);
         return content;
     }
 

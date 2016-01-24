@@ -205,7 +205,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_timer_details, null);
+		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_timer_details, container, false);
 		titleField = (TextView) v.findViewById(R.id.titleField);
 		dateField = (DateField) v.findViewById(R.id.dateField);
 		activeBox = (CheckBox) v.findViewById(R.id.activeBox);
