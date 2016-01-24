@@ -29,6 +29,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,6 +59,7 @@ import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
+import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
@@ -68,7 +71,7 @@ import org.dvbviewer.controller.utils.URLUtil;
  *
  * @author RayBa
  */
-public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener {
+public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener, LoaderManager.LoaderCallbacks<FfMpegPrefs> {
 
 	private static final String	Tag						= StreamConfig.class.getSimpleName();
 	public static final String	EXTRA_FILE_ID			= "_fileID";
@@ -96,7 +99,6 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private static Gson 		gson					= new Gson();
 	
 	private SharedPreferences	prefs;
-	private FfMpegPrefs ffMpegPrefs;
 	private View collapsable;
 
 	/* (non-Javadoc)
@@ -120,48 +122,8 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 			preTime = String.valueOf(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 0));
 		}
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				updateQualitySpinner();
-			}
-		}).start();
-
 	}
 
-	private void updateQualitySpinner() {
-		try {
-            String ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
-            if (!TextUtils.isEmpty(ffmpegprefsString)){
-                FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
-
-				ffMpegPrefs = prefsHandler.parse(ffmpegprefsString);
-				if (!ffMpegPrefs.getPresets().isEmpty()){
-					final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, ffMpegPrefs.getPresets());
-					dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					getActivity().runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							qualitySpinner.setAdapter(dataAdapter);
-							int pos = ffMpegPrefs.getPresets().indexOf(getDefaultPreset(prefs));
-							qualitySpinner.setSelection(pos);
-							ViewGroup vg = (ViewGroup) collapsable.getParent();
-							int widthMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(vg.getWidth(), View.MeasureSpec.AT_MOST);
-							int heightMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(1073741823, View.MeasureSpec.AT_MOST);
-							collapsable.measure(widthMeasureSpec, heightMeasureSpec);
-							collapsable.setVisibility(View.VISIBLE);
-							ValueAnimator animator = ValueAnimator.ofObject(new HeightEvaluator(collapsable), 0, collapsable.getMeasuredHeight());
-							animator.setDuration(500);
-							animator.start();
-						}
-					});
-				}
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	}
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.DialogFragment#onCreateDialog(android.os.Bundle)
@@ -194,7 +156,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		if (getDialog() != null && title > 0) {
 			getDialog().setTitle(title);
 		}
-		startHours.clearFocus();
+		getLoaderManager().initLoader(0, arg0, this);
 	}
 
 	/* (non-Javadoc)
@@ -437,6 +399,51 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");
 		return videoIntent;
+	}
+
+	@Override
+	public Loader<FfMpegPrefs> onCreateLoader(int id, Bundle args) {
+		Loader<FfMpegPrefs> loader = new AsyncLoader<FfMpegPrefs>(getContext()) {
+			@Override
+			public FfMpegPrefs loadInBackground() {
+				FfMpegPrefs result = null;
+				String ffmpegprefsString;
+				try {
+					ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+					FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
+					result = prefsHandler.parse(ffmpegprefsString);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return result;
+			}
+		};
+		return loader;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<FfMpegPrefs> loader, FfMpegPrefs data) {
+		if (!data.getPresets().isEmpty()) {
+			final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, data.getPresets());
+			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			int pos = data.getPresets().indexOf(getDefaultPreset(prefs));
+			startHours.clearFocus();
+			qualitySpinner.setSelection(pos);
+			qualitySpinner.setAdapter(dataAdapter);
+			ViewGroup vg = (ViewGroup) collapsable.getParent();
+			int widthMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(vg.getWidth(), View.MeasureSpec.AT_MOST);
+			int heightMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(1073741823, View.MeasureSpec.AT_MOST);
+			collapsable.measure(widthMeasureSpec, heightMeasureSpec);
+			collapsable.setVisibility(View.VISIBLE);
+			ValueAnimator animator = ValueAnimator.ofObject(new HeightEvaluator(collapsable), 0, collapsable.getMeasuredHeight());
+			animator.setDuration(500);
+			animator.start();
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<FfMpegPrefs> loader) {
+
 	}
 
 
