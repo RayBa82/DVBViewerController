@@ -27,7 +27,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -67,9 +66,8 @@ import org.dvbviewer.controller.utils.UIUtils;
 import org.dvbviewer.controller.utils.URLUtil;
 
 /**
- * The Class StreamConfig.
+ * DialogFragment to show the stream settings.
  *
- * @author RayBa
  */
 public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener, LoaderManager.LoaderCallbacks<FfMpegPrefs> {
 
@@ -221,43 +219,16 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	 */
 	@Override
 	public void onClick(View v) {
-		Intent videoIntent;
 		switch (v.getId()) {
 		case R.id.startTranscodedButton:
 			prefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).commit();
 			mStreamType = STREAM_TYPE_TRANSCODE;
-			videoIntent = getVideoIntent();
-			try {
-				startActivity(videoIntent);
-				if (UIUtils.isTablet(getActivity())) {
-					getDialog().dismiss();
-				} else {
-					getActivity().finish();
-				}
-				AnalyticsTracker.trackTranscodedStream(getActivity().getApplication());
-			} catch (ActivityNotFoundException e) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
-				e.printStackTrace();
-			}
+			startStreaming(false);
 			break;
 		case R.id.startDirectButton:
 			prefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).commit();
 			mStreamType = STREAM_TYPE_DIRECT;
-			videoIntent = getVideoIntent();
-			try {
-				startActivity(videoIntent);
-				if (UIUtils.isTablet(getActivity())) {
-					getDialog().dismiss();
-				} else {
-					getActivity().finish();
-				}
-				AnalyticsTracker.trackDirectStream(getActivity().getApplication());
-			} catch (ActivityNotFoundException e) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
-				e.printStackTrace();
-			}
+			startStreaming(true);
 			break;
 
 		default:
@@ -265,12 +236,45 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		}
 	}
 
+	private void startStreaming(boolean direct) {
+		try {
+            startVideoIntent();
+			if (direct){
+				AnalyticsTracker.trackDirectStream(getActivity().getApplication());
+			}else{
+				AnalyticsTracker.trackTranscodedStream(getActivity().getApplication());
+			}
+        } catch (ActivityNotFoundException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
+        } catch (UrlBuilderException e) {
+			Log.e(Tag, "Error creating Stream URL", e);
+        }
+	}
+
+	/**
+	 * starts an {@link Intent} to play a video stream or throws an Exception if the video url
+	 * could not be determined.
+	 *
+	 * @throws UrlBuilderException
+	 */
+	private void startVideoIntent() throws UrlBuilderException {
+		Intent videoIntent;
+		videoIntent = getVideoIntent();
+		startActivity(videoIntent);
+		if (UIUtils.isTablet(getActivity())) {
+            getDialog().dismiss();
+        } else {
+            getActivity().finish();
+        }
+	}
+
 	/**
 	 * Gets the video intent.
 	 *
 	 * @return the video intent
 	 */
-	private Intent getVideoIntent() {
+	private Intent getVideoIntent() throws UrlBuilderException {
 		Intent videoIntent = null;
 		final boolean recording = mFileType == FILE_TYPE_RECORDING;
 		switch (mStreamType) {
@@ -341,7 +345,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 	
 	
-	public static Intent buildLiveUrl(Context context, int position){
+	public static Intent buildLiveUrl(Context context, int position) throws UrlBuilderException {
 		final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
 		boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
 		if (direct) {
@@ -353,32 +357,25 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 
 
-
-	@Nullable
-	private static Intent getTranscodedUrl(final int position, final Preset preset, final String encodingSpeed, final boolean recording, final int start) {
-		try {
-			final String baseUrl = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM + preset.getExtension();
-			final HttpUrl.Builder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
-			final String idParam = recording ? "recid" : "chid";
-			builder.addQueryParameter("preset", preset.getTitle());
-			builder.addQueryParameter("ffPreset", encodingSpeed);
-			builder.addQueryParameter(idParam, String.valueOf(position));
-			if (start > 0){
-				builder.addQueryParameter("start", String.valueOf(start));
-			}
-			final Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-			final String url = builder.build().toString();
-			Log.d(Tag, "playing video: " + url);
-			videoIntent.setDataAndType(Uri.parse(url), preset.getMimeType());
-			return videoIntent;
-		} catch (UrlBuilderException e) {
-			e.printStackTrace();
+	private static Intent getTranscodedUrl(final int position, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
+		final String baseUrl = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM + preset.getExtension();
+		final HttpUrl.Builder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
+		final String idParam = recording ? "recid" : "chid";
+		builder.addQueryParameter("preset", preset.getTitle());
+		builder.addQueryParameter("ffPreset", encodingSpeed);
+		builder.addQueryParameter(idParam, String.valueOf(position));
+		if (start > 0) {
+			builder.addQueryParameter("start", String.valueOf(start));
 		}
-		return null;
+		final Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+		final String url = builder.build().toString();
+		Log.d(Tag, "playing video: " + url);
+		videoIntent.setDataAndType(Uri.parse(url), preset.getMimeType());
+		return videoIntent;
 	}
 
 	public static Intent getDirectUrl(int position, boolean recording){
-		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(position + ".ts");
+		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(position).append(".ts");
 		Log.d(Tag, "playing video: " + result.toString());
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");

@@ -65,6 +65,7 @@ import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
+import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.ChannelHandler;
 import org.dvbviewer.controller.io.data.EpgEntryHandler;
 import org.dvbviewer.controller.io.data.FavMatcher;
@@ -84,7 +85,6 @@ import org.dvbviewer.controller.utils.UIUtils;
 import org.json.JSONObject;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -92,7 +92,6 @@ import java.util.List;
  * The Class ChannelList.
  *
  * @author RayBa
- * @date 05.07.2012
  */
 public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cursor>, OnClickListener, PopupMenu.OnMenuItemClickListener {
 
@@ -363,18 +362,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * (non-Javadoc)
      *
      * @see
-     * android.support.v4.app.ListFragment#onCreateView(android.view.LayoutInflater
-     * , android.view.ViewGroup, android.os.Bundle)
-     */
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
      * com.actionbarsherlock.app.SherlockListFragment#onCreateOptionsMenu(android
      * .view.Menu, android.view.MenuInflater)
      */
@@ -455,8 +442,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void switchChannel(Cursor c) {
         Channel chan = cursorToChannel(c);
         StringBuilder cid = new StringBuilder(":").append(chan.getChannelID());
-        StringBuilder url = new StringBuilder(ServerConsts.REC_SERVICE_URL).append(ServerConsts.URL_SWITCH_COMMAND);
-        String switchRequest = MessageFormat.format(url.toString(), prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
+        final String url = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND;
+        String switchRequest = MessageFormat.format(url, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
         DVBViewerCommand command = new DVBViewerCommand(switchRequest);
         Thread executerThread = new Thread(command);
         executerThread.start();
@@ -519,8 +506,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     /**
      * Persist channel config config.
      *
-     * @author RayBa
-     * @date 05.07.2012
      */
     public void persistChannelConfigConfig() {
         Editor editor = prefs.getPrefs().edit();
@@ -533,8 +518,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * Refresh.
      *
      * @param id the id
-     * @author RayBa
-     * @date 05.07.2012
      */
     public void refresh(int id) {
         getLoaderManager().restartLoader(id, getArguments(), this);
@@ -545,7 +528,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * The Class ViewHolder.
      *
      * @author RayBa
-     * @date 05.07.2012
      */
     private static class ViewHolder {
         CheckableLinearLayout v;
@@ -563,7 +545,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * The Class ChannelAdapter.
      *
      * @author RayBa
-     * @date 05.07.2012
      */
     public class ChannelAdapter extends CursorAdapter {
 
@@ -574,8 +555,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          * Instantiates a new channel adapter.
          *
          * @param context the context
-         * @author RayBa
-         * @date 05.07.2012
          */
         public ChannelAdapter(Context context) {
             super(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -628,10 +607,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             holder.v.setChecked(getListView().isItemChecked(c.getPosition()));
 
             if (!TextUtils.isEmpty(logoUrl)) {
-                StringBuffer url = new StringBuffer(ServerConsts.REC_SERVICE_URL);
-                url.append("/");
-                url.append(logoUrl);
-                imageChacher.displayImage(url.toString(), holder.icon);
+                imageChacher.displayImage(ServerConsts.REC_SERVICE_URL + "/" + logoUrl, holder.icon);
             } else {
                 holder.icon.setImageBitmap(null);
             }
@@ -648,7 +624,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater vi = getActivity().getLayoutInflater();
             ViewHolder holder = new ViewHolder();
-            View view = vi.inflate(R.layout.list_row_channel, null);
+            View view = vi.inflate(R.layout.list_row_channel, parent, false);
             holder.v = (CheckableLinearLayout) view;
             holder.iconContainer = view.findViewById(R.id.iconContainer);
             holder.icon = (ImageView) view.findViewById(R.id.icon);
@@ -725,28 +701,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     }
 
     /**
-     * Cursor to channellist.
-     *
-     * @return the array list©
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    private ArrayList<Channel> cursorToChannellist() {
-        Cursor c = mAdapter.getCursor();
-        ArrayList<Channel> chans = new ArrayList<Channel>();
-        c.moveToPosition(-1);
-        while (c.moveToNext()) {
-            Channel channel = cursorToChannel(c);
-            chans.add(channel);
-        }
-        return chans;
-    }
-
-    /**
      * Clears the selection of a ListView.
-     *
-     * @author RayBa
-     * @date 05.07.2012
      */
     private void clearSelection() {
         for (int i = 0; i < getListAdapter().getCount(); i++) {
@@ -787,9 +742,12 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Cursor c = mAdapter.getCursor();
                     c.moveToPosition(selectedPosition);
                     Channel chan = cursorToChannel(c);
-                    getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getPosition()));
-					// Get tracker.
-                    AnalyticsTracker.trackQuickStream(getActivity().getApplication());
+                    try {
+                        getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getPosition()));
+                        AnalyticsTracker.trackQuickStream(getActivity().getApplication());
+                    } catch (UrlBuilderException e) {
+                        e.printStackTrace();
+                    }
                 } catch (ActivityNotFoundException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
@@ -807,8 +765,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      *
      * @param c the c
      * @return the Channel
-     * @author RayBa
-     * @date 13.05.2012
      */
     public static Channel cursorToChannel(Cursor c) {
         final Channel channel = new Channel();
@@ -827,8 +783,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      *
      * @param c the c
      * @return the timer©
-     * @author RayBa
-     * @date 07.04.2013
      */
     private Timer cursorToTimer(Cursor c) {
         String name = c.getString(c.getColumnIndex(ChannelTbl.NAME));
@@ -865,7 +819,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * method is invoked.
      *
      * @author RayBa
-     * @date 05.07.2012
      */
     public interface OnChannelSelectedListener {
 
@@ -873,8 +826,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          * Channel selected.
          *
          * @param chan     the chan
-         * @author RayBa
-         * @date 05.07.2012
          */
         void channelSelected(long groupId, int groupIndex, Channel chan, int channelIndex);
 
@@ -884,8 +835,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * Sets the selected position.
      *
      * @param selectedPosition the new selected position
-     * @author RayBa
-     * @date 05.07.2012
      */
     public void setSelectedPosition(int selectedPosition) {
         this.selectedPosition = selectedPosition;
@@ -906,8 +855,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * Checks if is show favs.
      *
      * @return true, if is show favs
-     * @author RayBa
-     * @date 07.04.2013
      */
     public boolean isShowFavs() {
         return showFavs;
