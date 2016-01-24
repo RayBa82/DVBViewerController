@@ -24,7 +24,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 /**
- * Created by rbaun on 09.01.16.
+ * Class to track some Events for Google Analytics.
+ *
+ * Created by RayBa on 09.01.16.
  */
 public class AnalyticsTracker {
 
