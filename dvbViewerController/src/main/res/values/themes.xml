@@ -8,6 +8,7 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="android:actionBarStyle" tools:ignore="NewApi">@style/ActionBarStyle</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
     </style>
 
     <style name="Theme.DVB.NoActionBar" parent="@style/Theme.AppCompat.NoActionBar">
@@ -16,6 +17,7 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="android:actionBarStyle" tools:ignore="NewApi">@style/ActionBarStyle</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
     </style>
 
 </resources>
