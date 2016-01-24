@@ -62,9 +62,9 @@ import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.dvbviewer.controller.utils.URLUtil;
-
 
 /**
  * The Class StreamConfig.
@@ -172,8 +172,8 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		qualitySpinner.setOnItemSelectedListener(this);
 
 		encodingSpeedSpinner = (Spinner) v.findViewById(R.id.encodingSpeedSpinner);
-		int ffmpegIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_ENCODING_SPEED, 5);
-		encodingSpeedSpinner.setSelection(ffmpegIndex);
+		int encodingSpeed = StreamUtils.getEncodingSpeedIndex(getContext(), prefs);
+		encodingSpeedSpinner.setSelection(encodingSpeed);
 		encodingSpeedSpinner.setOnItemSelectedListener(this);
 		
 		startButton = (Button) v.findViewById(R.id.startTranscodedButton);
@@ -347,28 +347,12 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		if (direct) {
 			return getDirectUrl(position, false);
 		}else {
-			int encodingSpeedIndex = prefs.getInt(DVBViewerPreferences.KEY_STREAM_ENCODING_SPEED, 5);
-			final String encodingSpeed = context.getResources().getStringArray(R.array.ffmpegPresets)[encodingSpeedIndex];
-			return getTranscodedUrl(position, getDefaultPreset(prefs), encodingSpeed, false, 0);
+			final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
+			return getTranscodedUrl(position, StreamUtils.getDefaultPreset(prefs), encodingSpeed, false, 0);
 		}
 	}
 
-	private static Preset getDefaultPreset(SharedPreferences prefs) {
-		Preset p = null;
-		try {
-			final String jsonPreset = prefs.getString(DVBViewerPreferences.KEY_STREAM_PRESET, null);
-			p = gson.fromJson(jsonPreset, Preset.class);
-		} catch (Exception e) {
-			Log.d(Tag, "Error parsing default Preset", e);
-		}
-		if (p == null) {
-			p = new Preset();
-			p.setTitle("TS Mid 1200 kbit");
-			p.setExtension(".ts");
-			p.setMimeType("video/mpeg");
-		}
-		return p;
-	}
+
 
 	@Nullable
 	private static Intent getTranscodedUrl(final int position, final Preset preset, final String encodingSpeed, final boolean recording, final int start) {
@@ -426,7 +410,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		if (!data.getPresets().isEmpty()) {
 			final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, data.getPresets());
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			int pos = data.getPresets().indexOf(getDefaultPreset(prefs));
+			int pos = data.getPresets().indexOf(StreamUtils.getDefaultPreset(prefs));
 			startHours.clearFocus();
 			qualitySpinner.setSelection(pos);
 			qualitySpinner.setAdapter(dataAdapter);
