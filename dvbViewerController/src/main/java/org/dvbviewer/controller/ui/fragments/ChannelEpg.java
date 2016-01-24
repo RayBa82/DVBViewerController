@@ -70,7 +70,6 @@ import java.util.List;
  * The Class ChannelEpg.
  *
  * @author RayBa
- * @date 07.04.2013
  */
 public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener {
     public static final String KEY_CHANNEL_NAME = "KEY_CHANNEL_NAME";
@@ -87,25 +86,17 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     private String logoUrl;
     private int channelPos;
     private int favPos;
-    private ImageLoader mImageCacher;
     private int selectedPosition;
     private ImageView channelLogo;
-    private TextView position;
     private TextView channelName;
     private TextView dayIndicator;
     private EpgDateInfo mDateInfo;
     private Date lastRefresh;
-    boolean useFavs;
 
-    /* (non-Javadoc)
-     * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
-     */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setLayoutRessource(R.layout.fragment_channel_epg);
+    protected int getLayoutRessource() {
+        return R.layout.fragment_channel_epg;
     }
-
 
     /* (non-Javadoc)
      * @see com.actionbarsherlock.app.SherlockFragment#onAttach(android.app.Activity)
@@ -126,10 +117,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mImageCacher = ImageLoader.getInstance();
+        ImageLoader mImageCacher = ImageLoader.getInstance();
         fillFromBundle(getArguments());
-        DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
-        useFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
         mAdapter = new ChannelEPGAdapter(getActivity());
         setListAdapter(mAdapter);
         setListShown(false);
@@ -245,7 +234,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         if (v != null){
-            position = (TextView) v.findViewById(R.id.position);
             channelLogo = (ImageView) v.findViewById(R.id.icon);
             channelName = (TextView) v.findViewById(R.id.title);
             dayIndicator = (TextView) v.findViewById(R.id.dayIndicator);
@@ -257,7 +245,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * The Class ViewHolder.
      *
      * @author RayBa
-     * @date 07.04.2013
      */
     private static class ViewHolder {
         TextView startTime;
@@ -285,8 +272,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      *
      * @param c the c
      * @return the iEPG©
-     * @author RayBa
-     * @date 13.05.2012
      */
     private IEPG cursorToEpgEntry(Cursor c) {
         IEPG entry = new EpgEntry();
@@ -304,7 +289,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * The Class ChannelEPGAdapter.
      *
      * @author RayBa
-     * @date 07.04.2013
      */
     public class ChannelEPGAdapter extends CursorAdapter {
 
@@ -314,8 +298,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
          * Instantiates a new channel epg adapter.
          *
          * @param context the context
-         * @author RayBa
-         * @date 07.04.2013
          */
         public ChannelEPGAdapter(Context context) {
             super(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -347,7 +329,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater vi = getActivity().getLayoutInflater();
-            View view = vi.inflate(R.layout.list_row_epg, null);
+            View view = vi.inflate(R.layout.list_row_epg, parent, false);
             ViewHolder holder = new ViewHolder();
             holder.startTime = (TextView) view.findViewById(R.id.startTime);
             holder.title = (TextView) view.findViewById(R.id.title);
@@ -372,8 +354,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * Refresh.
      *
      * @param force the force
-     * @author RayBa
-     * @date 07.04.2013
      */
     public void refresh(boolean force) {
         setListShown(false);
@@ -383,8 +363,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     /**
      * Refresh date.
      *
-     * @author RayBa
-     * @date 07.04.2013
      */
     public void refreshDate() {
         if (lastRefresh != null && lastRefresh.getTime() != mDateInfo.getEpgDate().getTime()) {
@@ -501,7 +479,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * The Interface EpgDateInfo.
      *
      * @author RayBa
-     * @date 07.04.2013
      */
     public interface EpgDateInfo {
 
@@ -509,8 +486,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
          * Sets the epg date.
          *
          * @param date the new epg date
-         * @author RayBa
-         * @date 07.04.2013
          */
         void setEpgDate(Date date);
 
@@ -518,8 +493,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
          * Gets the epg date.
          *
          * @return the epg date
-         * @author RayBa
-         * @date 07.04.2013
          */
         Date getEpgDate();
 
@@ -529,8 +502,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * Sets the date info.
      *
      * @param mDateInfo the new date info
-     * @author RayBa
-     * @date 07.04.2013
      */
     public void setDateInfo(EpgDateInfo mDateInfo) {
         this.mDateInfo = mDateInfo;
@@ -550,8 +521,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      *
      * @param c the c
      * @return the timer©
-     * @author RayBa
-     * @date 07.04.2013
      */
     private Timer cursorToTimer(Cursor c) {
         String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : channel;
