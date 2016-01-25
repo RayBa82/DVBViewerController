@@ -404,7 +404,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 
 	@Override
 	public void onLoadFinished(Loader<FfMpegPrefs> loader, FfMpegPrefs data) {
-		if (!data.getPresets().isEmpty()) {
+		if (data != null && !data.getPresets().isEmpty()) {
 			final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, data.getPresets());
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			int pos = data.getPresets().indexOf(StreamUtils.getDefaultPreset(prefs));
