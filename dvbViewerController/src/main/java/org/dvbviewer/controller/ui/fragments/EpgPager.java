@@ -45,7 +45,6 @@ import org.dvbviewer.controller.ui.widget.ActionToolbar;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 
-import java.lang.ref.WeakReference;
 import java.util.Date;
 
 /**
@@ -222,8 +221,6 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	 */
 	class PagerAdapter extends CursorPagerAdapter {
 
-		WeakReference<ChannelEpg> fragmentCache = new WeakReference<>(null);
-
 		/**
 		 * Instantiates a new pager adapter.
 		 *
@@ -257,35 +254,8 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		}
 
 		@Override
-		public void setPrimaryItem(ViewGroup container, int position, Object object) {
-			super.setPrimaryItem(container, position, object);
-			ChannelEpg chanEPG = (ChannelEpg) object;
-			fragmentCache = new WeakReference<>(chanEPG);
-		}
-
-		@Override
 		public int getItemPosition(Object object) {
 			return POSITION_NONE;
-		}
-
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see android.support.v4.view.PagerAdapter#getCount()
-		 */
-		@Override
-		public int getCount() {
-			return mCursor != null ? mCursor.getCount() : 0;
-		}
-
-		public Cursor getmCursor() {
-			return mCursor;
-		}
-
-		public ChannelEpg getCurrentFragment(int position) {
-			ChannelEpg result = fragmentCache.get();
-			return result;
 		}
 
 	}
