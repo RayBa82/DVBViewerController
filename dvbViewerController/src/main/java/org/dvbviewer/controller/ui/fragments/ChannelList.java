@@ -197,10 +197,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             case LOADER_CHANNELLIST:
                 String selection = showFavs ? ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0" : ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0";
                 String orderBy = showFavs ? ChannelTbl.FAV_POSITION : ChannelTbl.POSITION;
-                loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection, null, orderBy);
+                loader = new CursorLoader(getContext(), ChannelTbl.CONTENT_URI_NOW, null, selection, null, orderBy);
                 break;
             case LOADER_EPG:
-                loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
+                loader = new AsyncLoader<Cursor>(getContext()) {
 
                     @Override
                     public Cursor loadInBackground() {
@@ -211,7 +211,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 };
                 break;
             case LOADER_REFRESH_CHANNELLIST:
-                loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
+                loader = new AsyncLoader<Cursor>(getContext()) {
 
                     @Override
                     public Cursor loadInBackground() {

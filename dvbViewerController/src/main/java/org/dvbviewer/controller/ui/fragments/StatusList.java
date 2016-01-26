@@ -91,7 +91,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
      */
     @Override
     public Loader<Status> onCreateLoader(int arg0, Bundle arg1) {
-        AsyncLoader<Status> loader = new AsyncLoader<Status>(getActivity().getApplicationContext()) {
+        AsyncLoader<Status> loader = new AsyncLoader<Status>(getContext()) {
 
             @Override
             public Status loadInBackground() {
