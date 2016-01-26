@@ -255,8 +255,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
 			if (convertView == null) {
-				LayoutInflater vi = getActivity().getLayoutInflater();
-				convertView = vi.inflate(R.layout.list_item_recording, parent, false);
+				convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_recording, parent, false);
 				holder = new ViewHolder();
 				holder.thumbNail = (ImageView) convertView.findViewById(R.id.thumbNail);
 				holder.title = (TextView) convertView.findViewById(R.id.title);

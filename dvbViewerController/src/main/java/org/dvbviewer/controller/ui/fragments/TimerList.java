@@ -203,8 +203,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
 			if (convertView == null) {
-				LayoutInflater vi = getActivity().getLayoutInflater();
-				convertView = vi.inflate(R.layout.list_item_timer, parent, false);
+				convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_timer, parent, false);
 				holder = new ViewHolder();
 				holder.layout = (ClickableRelativeLayout) convertView;
 				holder.recIndicator = (ImageView) convertView.findViewById(R.id.recIndicator);

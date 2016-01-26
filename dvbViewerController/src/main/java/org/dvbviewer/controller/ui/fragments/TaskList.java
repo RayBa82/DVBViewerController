@@ -173,8 +173,7 @@ public class TaskList extends BaseListFragment implements OnClickListener {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null) {
-				LayoutInflater vi = getActivity().getLayoutInflater();
-				convertView = vi.inflate(R.layout.list_item_tasks, parent, false);
+				convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_tasks, parent, false);
 			}
 			TextView title = (TextView) convertView.findViewById(android.R.id.title);
 			title.setText(mItems.get(position).getTitle());

@@ -60,7 +60,6 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	private 			PagerAdapter 			mAdapter;
 	private 			OnPageChangeListener	mOnPageChangeListener;
 	private 			Boolean                 showFavs;
-	private 			Cursor 					mEpgCursor;
 
 
 	/*
@@ -85,7 +84,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mAdapter = new PagerAdapter(getChildFragmentManager(), mEpgCursor);
+		mAdapter = new PagerAdapter(getChildFragmentManager());
 		DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
 		boolean showOptionsMenu = true;
@@ -230,9 +229,8 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		 *
 		 * @param fm the fm
 		 */
-		public PagerAdapter(FragmentManager fm, Cursor cursor) {
-			super(fm, cursor);
-			mCursor = cursor;
+		public PagerAdapter(FragmentManager fm) {
+			super(fm);
 		}
 
 		/*
@@ -242,11 +240,11 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		 */
 		@Override
 		public Fragment getItem(int position) {
-			if (mCursor == null || mCursor.isClosed() || position == AdapterView.INVALID_POSITION) {
+			if (getCursor() == null || getCursor().isClosed() || position == AdapterView.INVALID_POSITION) {
 				return null;
 			}
-			mCursor.moveToPosition(position);
-			final Channel chan = ChannelList.cursorToChannel(mCursor);
+			getCursor().moveToPosition(position);
+			final Channel chan = ChannelList.cursorToChannel(getCursor());
 			final Bundle bundle = new Bundle();
 			bundle.putString(ChannelEpg.KEY_CHANNEL_NAME, chan.getName());
 			bundle.putLong(ChannelEpg.KEY_EPG_ID, chan.getEpgID());
@@ -317,7 +315,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		}
 		String orderBy;
 		orderBy = showFavs ? ChannelTbl.FAV_POSITION : ChannelTbl.POSITION;
-		return new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI, null, selection.toString(), null, orderBy);
+		return new CursorLoader(getContext(), ChannelTbl.CONTENT_URI, null, selection.toString(), null, orderBy);
 	}
 
 	/*
@@ -329,8 +327,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	 */
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
-		mEpgCursor = cursor;
-		mAdapter.changeCursor(mEpgCursor);
+		mAdapter.changeCursor(cursor);
 		mAdapter.notifyDataSetChanged();
 		mPager.setCurrentItem(chanIndex, false);
 	}
@@ -344,6 +341,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	 */
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
+		mAdapter.swapCursor(null);
 	}
 
 	public void setGroupId(long groupId) {
@@ -373,11 +371,8 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	private void resetLoader() {
 		DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
-		mEpgCursor = null;
-		mPager.setAdapter(null);
+		mAdapter.swapCursor(null);
 		mAdapter.notifyDataSetChanged();
-		mAdapter = new PagerAdapter(getChildFragmentManager(), mEpgCursor);
-		mPager.setAdapter(mAdapter);
 		getLoaderManager().destroyLoader(0);
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}

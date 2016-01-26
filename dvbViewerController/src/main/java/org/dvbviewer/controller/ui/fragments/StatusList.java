@@ -230,8 +230,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         public View getView(int position, View convertView, ViewGroup parent) {
             StatusHolder holder;
             if (convertView == null) {
-                LayoutInflater vi = getActivity().getLayoutInflater();
-                convertView = vi.inflate(R.layout.list_item_status, parent, false);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_status, parent, false);
                 holder = new StatusHolder();
                 holder.title = (TextView) convertView.findViewById(R.id.title);
                 holder.statusText = (TextView) convertView.findViewById(R.id.statusText);
@@ -283,8 +282,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         public View getView(int position, View convertView, ViewGroup parent) {
             StatusHolder holder;
             if (convertView == null || !(convertView.getTag() instanceof StatusHolder)) {
-                LayoutInflater vi = getActivity().getLayoutInflater();
-                convertView = vi.inflate(R.layout.list_item_status, parent, false);
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_status, parent, false);
                 holder = new StatusHolder();
                 holder.title = (TextView) convertView.findViewById(R.id.title);
                 holder.statusText = (TextView) convertView.findViewById(R.id.statusText);

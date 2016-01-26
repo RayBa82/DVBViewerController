@@ -110,7 +110,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private             DVBViewerPreferences        prefs;
     private             ChannelAdapter              mAdapter;
     private             OnChannelSelectedListener   mCHannelSelectedListener;
-    private             Context                     mContext;
     private             NetworkInfo                 mNetworkInfo;
 
     /*
@@ -121,8 +120,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = getActivity().getApplicationContext();
-
         ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
@@ -251,7 +248,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void performRefresh() {
         JSONObject trackingData = AnalyticsTracker.buildTracker();
-        DbHelper mDbHelper = new DbHelper(mContext);
+        DbHelper mDbHelper = new DbHelper(getContext());
         try {
             String version = RecordingService.getVersionString();
             AnalyticsTracker.addData(trackingData, "version", version);
@@ -548,7 +545,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     public class ChannelAdapter extends CursorAdapter {
 
-        Context Context;
         ImageLoader imageChacher;
 
         /**
@@ -622,9 +618,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          */
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            LayoutInflater vi = getActivity().getLayoutInflater();
+            View view = LayoutInflater.from(context).inflate(R.layout.list_row_channel, parent, false);
             ViewHolder holder = new ViewHolder();
-            View view = vi.inflate(R.layout.list_row_channel, parent, false);
             holder.v = (CheckableLinearLayout) view;
             holder.iconContainer = view.findViewById(R.id.iconContainer);
             holder.icon = (ImageView) view.findViewById(R.id.icon);

@@ -167,7 +167,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-        Loader<Cursor> loader = new EpgLoader<Cursor>(getActivity().getApplicationContext(), mDateInfo) {
+        Loader<Cursor> loader = new EpgLoader<Cursor>(getContext(), mDateInfo) {
 
             @Override
             protected void onForceLoad() {
@@ -292,7 +292,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     public class ChannelEPGAdapter extends CursorAdapter {
 
-        final Context mContext;
 
         /**
          * Instantiates a new channel epg adapter.
@@ -301,7 +300,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
          */
         public ChannelEPGAdapter(Context context) {
             super(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-            mContext = context;
         }
 
         /* (non-Javadoc)
@@ -310,7 +308,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         @Override
         public void bindView(View view, Context context, Cursor c) {
             ViewHolder holder = (ViewHolder) view.getTag();
-
             holder.contextMenu.setTag(c.getPosition());
             long millis = c.getLong(c.getColumnIndex(EpgTbl.START));
             int flags = DateUtils.FORMAT_SHOW_TIME;
@@ -328,8 +325,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
          */
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            LayoutInflater vi = getActivity().getLayoutInflater();
-            View view = vi.inflate(R.layout.list_row_epg, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.list_row_epg, parent, false);
             ViewHolder holder = new ViewHolder();
             holder.startTime = (TextView) view.findViewById(R.id.startTime);
             holder.title = (TextView) view.findViewById(R.id.title);
