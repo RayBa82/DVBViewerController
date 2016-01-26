@@ -27,7 +27,7 @@ import org.dvbviewer.controller.R;
  * A {@link BaseActivity} that simply contains a single fragment. The intent used to invoke this
  * activity is forwarded to the fragment as arguments during fragment instantiation. Derived
  * activities should only need to implement
- * {@link com.google.android.apps.iosched.ui.BaseSinglePaneActivity#onCreatePane()}.
+ * {@link org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreatePane()}.
  */
 public abstract class BaseSinglePaneActivity extends BaseActivity {
     private Fragment mFragment;
