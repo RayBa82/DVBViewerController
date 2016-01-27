@@ -20,15 +20,19 @@ import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
+import android.support.annotation.NonNull;
 import android.util.Xml;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.entities.Recording;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +41,6 @@ import java.util.List;
  * The Class RecordingHandler.
  *
  * @author RayBa
- * @date 05.07.2012
  */
 public class RecordingHandler extends DefaultHandler {
 
@@ -49,11 +52,20 @@ public class RecordingHandler extends DefaultHandler {
 	 *
 	 * @param xml the xml
 	 * @return the list©
-	 * @author RayBa
 	 * @throws SAXException
-	 * @date 05.07.2012
 	 */
 	public List<Recording> parse(String xml) throws SAXException {
+		Xml.parse(xml, getContentHandler());
+		return recordingList;
+	}
+
+	public List<Recording> parse(InputStream inputStream) throws SAXException, IOException {
+		Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
+		return recordingList;
+	}
+
+	@NonNull
+	private ContentHandler getContentHandler() {
 		RootElement root = new RootElement("recordings");
 		Element recordingElement = root.getChild("recording");
 		Element chanElement = recordingElement.getChild("channel");
@@ -130,9 +142,7 @@ public class RecordingHandler extends DefaultHandler {
 				currentRecording.setThumbNail(body);
 			}
 		});
-
-		Xml.parse(xml, root.getContentHandler());
-		return recordingList;
+		return root.getContentHandler();
 	}
 
 }

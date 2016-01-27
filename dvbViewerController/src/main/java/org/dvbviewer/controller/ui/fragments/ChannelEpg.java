@@ -40,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.utils.IoUtils;
 import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
@@ -62,6 +63,7 @@ import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -178,6 +180,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             @Override
             public Cursor loadInBackground() {
                 MatrixCursor cursor = null;
+                InputStream is = null;
                 try {
                     List<EpgEntry> result;
                     Date now = mDateInfo.getEpgDate();
@@ -189,8 +192,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                             .addQueryParameter("start", String.valueOf(nowFloat))
                             .addQueryParameter("end", String.valueOf(tommorrowFloat));
                     EpgEntryHandler handler = new EpgEntryHandler();
-                    String xml = ServerRequest.getRSString(builder.build().toString());
-                    result = handler.parse(xml);
+                    is = ServerRequest.getInputStream(builder.build().toString());
+                    result = handler.parse(is);
                     if (result != null && !result.isEmpty()) {
                         String[] columnNames = new String[]{EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END};
                         cursor = new MatrixCursor(columnNames);
@@ -201,6 +204,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
 
                 } catch (Exception e) {
                     catchException(getClass().getSimpleName(), e);
+                    IoUtils.closeSilently(cursor);
+                }
+                finally {
+                    IoUtils.closeSilently(is);
                 }
                 return cursor;
             }

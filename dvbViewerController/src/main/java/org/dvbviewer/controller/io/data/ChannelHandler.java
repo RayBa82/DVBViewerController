@@ -19,6 +19,7 @@ import android.sax.Element;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
+import android.support.annotation.NonNull;
 import android.util.Xml;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -26,9 +27,12 @@ import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +40,6 @@ import java.util.List;
  * The Class ChannelHandler.
  *
  * @author RayBa
- * @date 07.04.2013
  */
 public class ChannelHandler extends DefaultHandler {
 
@@ -45,17 +48,27 @@ public class ChannelHandler extends DefaultHandler {
 	ChannelGroup		currentGroup;
 	Channel				currentChannel	= null;
 
+
 	/**
 	 * Parses the.
 	 *
 	 * @param xml the xml
 	 * @return the list�
-	 * @author RayBa
 	 * @throws org.xml.sax.SAXException
-	 * @date 07.04.2013
 	 */
 	public List<ChannelRoot> parse(String xml) throws SAXException {
+		Xml.parse(xml, getContentHandler());
+		return rootElements;
 
+	}
+
+	public List<ChannelRoot> parse(InputStream inputStream) throws SAXException, IOException {
+		Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
+		return rootElements;
+	}
+
+	@NonNull
+	private ContentHandler getContentHandler() {
 		RootElement channels = new RootElement("channels");
 		Element rootElement = channels.getChild("root");
 		Element groupElement = rootElement.getChild("group");
@@ -119,10 +132,7 @@ public class ChannelHandler extends DefaultHandler {
 				currentGroup.getChannels().add(c);
 			}
 		});
-
-		Xml.parse(xml, channels.getContentHandler());
-		return rootElements;
-
+		return channels.getContentHandler();
 	}
 
 }

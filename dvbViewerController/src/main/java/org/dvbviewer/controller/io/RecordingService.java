@@ -4,11 +4,13 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.io.data.TargetHandler;
 import org.dvbviewer.controller.io.data.VersionHandler;
 import org.dvbviewer.controller.utils.ServerConsts;
 
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
@@ -27,10 +29,11 @@ public class RecordingService {
 
     public static String getVersionString() {
         String version = null;
+        InputStream is = null;
         try {
-            String versionXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_VERSION);
+            is = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_VERSION);
             VersionHandler versionHandler = new VersionHandler();
-            final String rawVersion = versionHandler.parse(versionXml);
+            final String rawVersion = versionHandler.parse(is);
             Matcher matcher    = getVersionMatcher(rawVersion);
             boolean matchFound = matcher.find();
             if (matchFound) {
@@ -38,6 +41,9 @@ public class RecordingService {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting version from rs", e);
+        }
+        finally {
+            IoUtils.closeSilently(is);
         }
         return version;
     }

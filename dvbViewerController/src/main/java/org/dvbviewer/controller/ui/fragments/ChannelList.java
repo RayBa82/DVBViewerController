@@ -49,6 +49,7 @@ import android.widget.TextView;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.ViewTarget;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.utils.IoUtils;
 import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
@@ -84,6 +85,7 @@ import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -230,18 +232,20 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void loadEpg() {
         List<EpgEntry> result;
         DbHelper helper = new DbHelper(getContext());
+        InputStream is = null;
         try {
             String nowFloat = DateUtils.getFloatDate(new Date());
             HttpUrl.Builder builder = ChannelEpg.buildBaseEpgUrl()
                     .addQueryParameter("start", nowFloat)
                     .addQueryParameter("end", nowFloat);
             EpgEntryHandler handler = new EpgEntryHandler();
-            String xml = ServerRequest.getRSString(builder.build().toString());
-            result = handler.parse(xml);
+            is = ServerRequest.getInputStream(builder.build().toString());
+            result = handler.parse(is);
             helper.saveNowPlaying(result);
         } catch (Exception e) {
             catchException(getClass().getSimpleName(), e);
         } finally {
+            IoUtils.closeSilently(is);
             helper.close();
         }
     }
