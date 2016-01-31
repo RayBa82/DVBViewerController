@@ -93,7 +93,6 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private int					mFileType				= 0;
 	private int					mStreamType				= 0;
 	private int					mFileId					= -1;
-	private Context				mContext;
 	private static Gson 		gson					= new Gson();
 	
 	private SharedPreferences	prefs;
@@ -105,8 +104,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mContext = getActivity().getApplicationContext();
-		DVBViewerPreferences dvbvPrefs = new DVBViewerPreferences(mContext);
+		DVBViewerPreferences dvbvPrefs = new DVBViewerPreferences(getContext());
 		prefs = dvbvPrefs.getStreamPrefs();
 		if (savedInstanceState != null) {
 			title = savedInstanceState.getInt("titleRes");
@@ -302,7 +300,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	public void onClick(DialogInterface dialog, int which) {
 		switch (which) {
 		case DialogInterface.BUTTON_POSITIVE:
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 			Editor editor = prefs.edit();
 			editor.putBoolean("stream_external", false);
 			editor.commit();
@@ -404,7 +402,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 
 	@Override
 	public void onLoadFinished(Loader<FfMpegPrefs> loader, FfMpegPrefs data) {
-		if (!data.getPresets().isEmpty()) {
+		if (data != null && !data.getPresets().isEmpty()) {
 			final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, data.getPresets());
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			int pos = data.getPresets().indexOf(StreamUtils.getDefaultPreset(prefs));

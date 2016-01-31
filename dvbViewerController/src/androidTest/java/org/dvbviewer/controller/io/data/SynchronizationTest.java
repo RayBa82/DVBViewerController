@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.ChannelGroup;
@@ -22,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
+@SmallTest
 public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
@@ -122,10 +124,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Test
     public void matchNullLists() {
-        List<ChannelRoot> channelRoots = null;
-        List<ChannelGroup> channelGroups = null;
         FavMatcher matcher = new FavMatcher();
-        List<ChannelGroup> favGroups = matcher.matchFavs(channelRoots, channelGroups);
+        List<ChannelGroup> favGroups = matcher.matchFavs(null, null);
         assertEquals(0, favGroups.size());
         assertEquals(0, countFavs(favGroups));
     }
@@ -147,9 +147,7 @@ public class SynchronizationTest extends InstrumentationTestCase {
             String chanXml = json.getString("channels");
             ChannelHandler chanHandler = new ChannelHandler();
             channelRoots = chanHandler.parse(chanXml);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        }catch (JSONException e) {
+        } catch (SAXException | JSONException e) {
             e.printStackTrace();
         }
         return channelRoots;
@@ -163,9 +161,7 @@ public class SynchronizationTest extends InstrumentationTestCase {
             String favXml = json.getString("favourites");
             FavouriteHandler favHandler = new FavouriteHandler();
             channelGroups = favHandler.parse(InstrumentationRegistry.getContext(), favXml);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        }catch (JSONException e) {
+        } catch (SAXException | JSONException e) {
             e.printStackTrace();
         }
         return channelGroups;

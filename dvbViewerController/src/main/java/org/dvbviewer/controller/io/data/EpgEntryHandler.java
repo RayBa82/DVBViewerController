@@ -20,15 +20,19 @@ import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
+import android.support.annotation.NonNull;
 import android.util.Xml;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +40,6 @@ import java.util.List;
  * The Class EpgEntryHandler.
  *
  * @author RayBa
- * @date 05.07.2012
  */
 public class EpgEntryHandler extends DefaultHandler {
 
@@ -48,11 +51,20 @@ public class EpgEntryHandler extends DefaultHandler {
 	 *
 	 * @param xml the xml
 	 * @return the list©
-	 * @author RayBa
-	 * @throws SAXException 
-	 * @date 05.07.2012
+	 * @throws SAXException
 	 */
 	public List<EpgEntry> parse(String xml) throws SAXException {
+		Xml.parse(xml, getContentHandler());
+		return epgList;
+	}
+
+	public List<EpgEntry> parse(InputStream inputStream) throws SAXException, IOException {
+		Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
+		return epgList;
+	}
+
+	@NonNull
+	private ContentHandler getContentHandler() {
 		RootElement root = new RootElement("epg");
 		Element programmeElement = root.getChild("programme");
 		Element titles = programmeElement.getChild("titles");
@@ -109,9 +121,7 @@ public class EpgEntryHandler extends DefaultHandler {
 				currentEPG.setDescription(body);
 			}
 		});
-
-		Xml.parse(xml, root.getContentHandler());
-		return epgList;
+		return root.getContentHandler();
 	}
 
 }

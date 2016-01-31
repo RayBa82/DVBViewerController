@@ -191,7 +191,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
 
     @Override
     public Loader<List<String>> onCreateLoader(int id, Bundle args) {
-        AsyncLoader<List<String>> loader = new AsyncLoader<List<String>>(getActivity().getApplicationContext()) {
+        AsyncLoader<List<String>> loader = new AsyncLoader<List<String>>(getContext()) {
 
             @Override
             public List<String> loadInBackground() {

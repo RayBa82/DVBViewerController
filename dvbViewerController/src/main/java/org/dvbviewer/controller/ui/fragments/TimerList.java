@@ -118,7 +118,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	 */
 	@Override
 	public Loader<List<Timer>> onCreateLoader(int arg0, Bundle arg1) {
-		AsyncLoader<List<Timer>> loader = new AsyncLoader<List<Timer>>(getActivity().getApplicationContext()) {
+		AsyncLoader<List<Timer>> loader = new AsyncLoader<List<Timer>>(getContext()) {
 
 			@Override
 			public List<Timer> loadInBackground() {
@@ -203,8 +203,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
 			if (convertView == null) {
-				LayoutInflater vi = getActivity().getLayoutInflater();
-				convertView = vi.inflate(R.layout.list_item_timer, parent, false);
+				convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_timer, parent, false);
 				holder = new ViewHolder();
 				holder.layout = (ClickableRelativeLayout) convertView;
 				holder.recIndicator = (ImageView) convertView.findViewById(R.id.recIndicator);

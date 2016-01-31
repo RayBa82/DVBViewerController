@@ -57,7 +57,6 @@ import java.util.GregorianCalendar;
  * The Class TimerDetails.
  *
  * @author RayBa
- * @date 07.04.2013
  */
 public class TimerDetails extends DialogFragment implements OnDateSetListener, OnClickListener, OnLongClickListener {
 
@@ -148,8 +147,6 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	 * New instance.
 	 *
 	 * @return the timer details©
-	 * @author RayBa
-	 * @date 07.04.2013
 	 */
 	public static TimerDetails newInstance() {
 		TimerDetails frag = new TimerDetails();
@@ -173,10 +170,10 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 			activeBox.setChecked(!timer.isFlagSet(Timer.FLAG_DISABLED));
 			startField.setTime(timer.getStart());
 			stopField.setTime(timer.getEnd());
-			postRecordSpinner.setSelection(timer.getTimerAction());
+			final boolean invalidindex = timer.getTimerAction() >= postRecordSpinner.getCount();
+			postRecordSpinner.setSelection(invalidindex ? 0 : timer.getTimerAction());
 			if (!TextUtils.isEmpty(timer.getChannelName())) {
 				channelField.setText(timer.getChannelName());
-//				imageCahcer.getImage(channelLogo, ServerConsts.URL_CHANNEL_LOGO + URLEncoder.encode(timer.getChannelName()), null);
 			}
 		}
 		if (getDialog() != null) {

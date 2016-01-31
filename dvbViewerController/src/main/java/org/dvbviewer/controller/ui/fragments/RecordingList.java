@@ -47,6 +47,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
@@ -65,6 +66,7 @@ import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -125,18 +127,21 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	@Override
 	public Loader<List<Recording>> onCreateLoader(int arg0, Bundle arg1) {
-		return new AsyncLoader<List<Recording>>(getActivity().getApplicationContext()) {
+		return new AsyncLoader<List<Recording>>(getContext()) {
 
 			@Override
 			public List<Recording> loadInBackground() {
 				List<Recording> result = null;
+				InputStream is = null;
 				try {
-					String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_RECORIDNGS);
+					is = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_RECORIDNGS);
 					RecordingHandler hanler = new RecordingHandler();
-					result = hanler.parse(xml);
+					result = hanler.parse(is);
 					Collections.sort(result);
 				} catch (Exception e) {
 					catchException(getClass().getSimpleName(), e);
+				}finally {
+					IoUtils.closeSilently(is);
 				}
 				return result;
 			}
@@ -255,8 +260,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
 			if (convertView == null) {
-				LayoutInflater vi = getActivity().getLayoutInflater();
-				convertView = vi.inflate(R.layout.list_item_recording, parent, false);
+				convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_recording, parent, false);
 				holder = new ViewHolder();
 				holder.thumbNail = (ImageView) convertView.findViewById(R.id.thumbNail);
 				holder.title = (TextView) convertView.findViewById(R.id.title);

@@ -17,16 +17,20 @@ package org.dvbviewer.controller.io.data;
 
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
+import android.support.annotation.NonNull;
 import android.util.Xml;
 
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The Class VersionHandler.
  *
  * @author RayBa
- * @date 01.07.2012
  */
 public class VersionHandler extends DefaultHandler {
 
@@ -37,11 +41,20 @@ public class VersionHandler extends DefaultHandler {
 	 *
 	 * @param xml the xml
 	 * @return the version©
-	 * @author RayBa
-	 * @throws SAXException 
-	 * @date 01.07.2012
+	 * @throws SAXException
 	 */
 	public String parse(String xml) throws SAXException {
+		Xml.parse(xml, getContentHandler());
+		return result;
+	}
+
+	public String parse(InputStream inputStream) throws SAXException, IOException {
+		Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
+		return result;
+	}
+
+	@NonNull
+	private ContentHandler getContentHandler() {
 		RootElement root = new RootElement("version");
 		root.setEndTextElementListener(new EndTextElementListener() {
 
@@ -50,9 +63,7 @@ public class VersionHandler extends DefaultHandler {
 				result = body;
 			}
 		});
-
-		Xml.parse(xml, root.getContentHandler());
-		return result;
+		return root.getContentHandler();
 	}
 
 }

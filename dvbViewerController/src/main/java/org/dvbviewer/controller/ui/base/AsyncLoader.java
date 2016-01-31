@@ -19,18 +19,22 @@ package org.dvbviewer.controller.ui.base;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
+import com.nostra13.universalimageloader.utils.IoUtils;
+
+import java.io.Closeable;
+
 /**
  * Loader which extends AsyncTaskLoaders and handles caveats
  * as pointed out in http://code.google.com/p/android/issues/detail?id=14944.
  * 
  * Based on CursorLoader.java in the Fragment compatibility package
  *
- * @param <D> data type
+ * @param <D> mData type
  * @author RayBa
  * @date 07.04.2013
  */
 public abstract class AsyncLoader<D> extends AsyncTaskLoader<D> {
-	private D data;
+	private D mData;
 	
 	
 	/**
@@ -51,27 +55,39 @@ public abstract class AsyncLoader<D> extends AsyncTaskLoader<D> {
 	 */
 	@Override
 	public void deliverResult(D data) {
-		this.data = data;
 		if (isReset()) {
 			// An async query came in while the loader is stopped
+			closeData(data);
 			return;
 		}
+
 		if (isStarted()) {
-            super.deliverResult(data);
-        }
-		
+			super.deliverResult(data);
+		}
+
+		D oldData = mData;
+		mData = data;
+		if (oldData != mData){
+			closeData(oldData);
+		}
 	}
-	
-	
+
+
+	@Override
+	public void onCanceled(D data) {
+		super.onCanceled(data);
+		closeData(data);
+	}
+
 	/* (non-Javadoc)
-	 * @see android.support.v4.content.Loader#onStartLoading()
-	 */
+         * @see android.support.v4.content.Loader#onStartLoading()
+         */
 	@Override
 	protected void onStartLoading() {
-		if (data != null) {
-            deliverResult(data);
+		if (mData != null) {
+            deliverResult(mData);
         }
-        if (takeContentChanged() || data == null) {
+        if (takeContentChanged() || mData == null) {
         	forceLoad();
         }
 	}
@@ -91,13 +107,18 @@ public abstract class AsyncLoader<D> extends AsyncTaskLoader<D> {
 	@Override
 	protected void onReset() {
 		super.onReset();
-		
 		// Ensure the loader is stopped
         onStopLoading();
-        
-        data = null;
+		closeData(mData);
+		mData = null;
 	}
-	
-	
-	
+
+	private void closeData(D data) {
+		if (data != null && data instanceof Closeable){
+            Closeable c = (Closeable) data;
+            IoUtils.closeSilently(c);
+        }
+	}
+
+
 }

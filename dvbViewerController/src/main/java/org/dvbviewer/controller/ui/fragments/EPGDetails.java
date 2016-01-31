@@ -29,15 +29,17 @@ import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.utils.DateUtils;
 
 /**
- * The Class EPGDetails.
- *
- * @author RayBa
- * @date 07.04.2013
+ * Fragment for EPG details or Timer details.
  */
 public class EPGDetails extends Fragment  {
 	
 
 	IEPG epg;
+	private TextView channel;
+	private TextView date;
+	private TextView title;
+	private TextView subTitle;
+	private TextView desc;
 
 
 	/* (non-Javadoc)
@@ -59,6 +61,25 @@ public class EPGDetails extends Fragment  {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		if (epg != null){
+			String dateString = DateUtils.getDateInLocalFormat(epg.getStart());
+			if (DateUtils.isToday(epg.getStart().getTime())) {
+				dateString = getResources().getString(R.string.today);
+			} else if (DateUtils.isTomorrow(epg.getStart().getTime())) {
+				dateString = getResources().getString(R.string.tomorrow);
+			}
+			String start = DateUtils.getTimeInLocalFormat(getActivity(), epg.getStart());
+			String end = DateUtils.getTimeInLocalFormat(getActivity(), epg.getEnd());
+			date.setText(dateString + "  " + start + " - " + end);
+			channel.setText(epg.getChannel());
+			title.setText(epg.getTitle());
+			if (TextUtils.isEmpty(epg.getSubTitle())) {
+				subTitle.setVisibility(View.GONE);
+			}else {
+				subTitle.setText(epg.getSubTitle());
+			}
+			desc.setText(epg.getDescription());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -67,28 +88,11 @@ public class EPGDetails extends Fragment  {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_epg_details, container, false);
-		TextView channel = (TextView) v.findViewById(R.id.channel);
-		TextView date = (TextView) v.findViewById(R.id.date);
-		TextView title = (TextView) v.findViewById(R.id.title);
-		TextView subTitle = (TextView) v.findViewById(R.id.subTitle);
-		TextView desc = (TextView) v.findViewById(R.id.desc);
-		String dateString = DateUtils.getDateInLocalFormat(epg.getStart());
-		if (DateUtils.isToday(epg.getStart().getTime())) {
-			dateString = getResources().getString(R.string.today);
-		} else if (DateUtils.isTomorrow(epg.getStart().getTime())) {
-			dateString = getResources().getString(R.string.tomorrow);
-		}
-		String start = DateUtils.getTimeInLocalFormat(getActivity(), epg.getStart());
-		String end = DateUtils.getTimeInLocalFormat(getActivity(), epg.getEnd());
-		date.setText(dateString + "  " + start + " - " + end);
-		channel.setText(epg.getChannel());
-		title.setText(epg.getTitle());
-		if (TextUtils.isEmpty(epg.getSubTitle())) {
-			subTitle.setVisibility(View.GONE);
-		}else {
-			subTitle.setText(epg.getSubTitle());
-		}
-		desc.setText(epg.getDescription());
+		channel = (TextView) v.findViewById(R.id.channel);
+		date = (TextView) v.findViewById(R.id.date);
+		title = (TextView) v.findViewById(R.id.title);
+		subTitle = (TextView) v.findViewById(R.id.subTitle);
+		desc = (TextView) v.findViewById(R.id.desc);
 		return v;
 	}
 
@@ -96,8 +100,6 @@ public class EPGDetails extends Fragment  {
 	 * Gets the epg.
 	 *
 	 * @return the epg
-	 * @author RayBa
-	 * @date 07.04.2013
 	 */
 	public IEPG getEpg() {
 		return epg;

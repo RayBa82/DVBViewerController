@@ -49,6 +49,7 @@ import android.widget.TextView;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.ViewTarget;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.utils.IoUtils;
 import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
@@ -84,6 +85,7 @@ import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -110,7 +112,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private             DVBViewerPreferences        prefs;
     private             ChannelAdapter              mAdapter;
     private             OnChannelSelectedListener   mCHannelSelectedListener;
-    private             Context                     mContext;
     private             NetworkInfo                 mNetworkInfo;
 
     /*
@@ -121,8 +122,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = getActivity().getApplicationContext();
-
         ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
@@ -200,10 +199,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             case LOADER_CHANNELLIST:
                 String selection = showFavs ? ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0" : ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0";
                 String orderBy = showFavs ? ChannelTbl.FAV_POSITION : ChannelTbl.POSITION;
-                loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection, null, orderBy);
+                loader = new CursorLoader(getContext(), ChannelTbl.CONTENT_URI_NOW, null, selection, null, orderBy);
                 break;
             case LOADER_EPG:
-                loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
+                loader = new AsyncLoader<Cursor>(getContext()) {
 
                     @Override
                     public Cursor loadInBackground() {
@@ -214,7 +213,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 };
                 break;
             case LOADER_REFRESH_CHANNELLIST:
-                loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
+                loader = new AsyncLoader<Cursor>(getContext()) {
 
                     @Override
                     public Cursor loadInBackground() {
@@ -233,25 +232,27 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void loadEpg() {
         List<EpgEntry> result;
         DbHelper helper = new DbHelper(getContext());
+        InputStream is = null;
         try {
             String nowFloat = DateUtils.getFloatDate(new Date());
             HttpUrl.Builder builder = ChannelEpg.buildBaseEpgUrl()
                     .addQueryParameter("start", nowFloat)
                     .addQueryParameter("end", nowFloat);
             EpgEntryHandler handler = new EpgEntryHandler();
-            String xml = ServerRequest.getRSString(builder.build().toString());
-            result = handler.parse(xml);
+            is = ServerRequest.getInputStream(builder.build().toString());
+            result = handler.parse(is);
             helper.saveNowPlaying(result);
         } catch (Exception e) {
             catchException(getClass().getSimpleName(), e);
         } finally {
+            IoUtils.closeSilently(is);
             helper.close();
         }
     }
 
     private void performRefresh() {
         JSONObject trackingData = AnalyticsTracker.buildTracker();
-        DbHelper mDbHelper = new DbHelper(mContext);
+        DbHelper mDbHelper = new DbHelper(getContext());
         try {
             String version = RecordingService.getVersionString();
             AnalyticsTracker.addData(trackingData, "version", version);
@@ -548,7 +549,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     public class ChannelAdapter extends CursorAdapter {
 
-        Context Context;
         ImageLoader imageChacher;
 
         /**
@@ -622,9 +622,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
          */
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            LayoutInflater vi = getActivity().getLayoutInflater();
+            View view = LayoutInflater.from(context).inflate(R.layout.list_row_channel, parent, false);
             ViewHolder holder = new ViewHolder();
-            View view = vi.inflate(R.layout.list_row_channel, parent, false);
             holder.v = (CheckableLinearLayout) view;
             holder.iconContainer = view.findViewById(R.id.iconContainer);
             holder.icon = (ImageView) view.findViewById(R.id.icon);
