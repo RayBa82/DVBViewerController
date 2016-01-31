@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     android:id="@+id/content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@android:id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <com.github.jrejaud.viewpagerindicator2.TitlePageIndicator
+        android:id="@+id/titles"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
-        android:layout_alignParentTop="true"
+        android:layout_height="fill_parent"
         android:layout_above="@+id/bottom_container"
-        android:layout_height="fill_parent">
+        android:layout_below="@+id/titles">
 
     </android.support.v4.view.ViewPager>
 
@@ -21,7 +43,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
-        <include layout="@layout/bottom_toolbar"  />
+        <include layout="@layout/bottom_toolbar"/>
     </LinearLayout>
 
 </RelativeLayout>

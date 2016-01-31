@@ -22,6 +22,7 @@ import android.support.v4.app.Fragment;
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
+import org.dvbviewer.controller.ui.fragments.ChannelPager;
 
 /**
  * The Class ChannelListActivity.
@@ -44,11 +45,11 @@ public class ChannelListActivity extends BaseSinglePaneActivity implements Chann
 	 */
 	@Override
 	protected Fragment onCreatePane() {
-		ChannelList chans = new ChannelList();
+		ChannelPager pager = new ChannelPager();
 		Bundle args = new Bundle();
 		args.putBoolean(ChannelList.KEY_HAS_OPTIONMENU, true);
-		chans.setArguments(args);
-		return chans;
+		pager.setArguments(args);
+		return pager;
 	}
 
 	@Override
