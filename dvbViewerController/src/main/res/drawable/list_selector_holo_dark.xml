@@ -11,7 +11,7 @@
     <item android:drawable="@drawable/list_selector_background_transition_holo_dark" android:state_focused="false" android:state_pressed="true"/>
     <item android:drawable="@drawable/list_focused_holo" android:state_focused="true"/>
     <item android:drawable="@drawable/list_selector_background_transition_holo_dark" customstate:state_checked="true"/>
-    <item android:drawable="@color/dim_foreground_disabled_holo_dark" customstate:state_disabled="true"/>
+    <item android:drawable="@color/dim_foreground_disabled_dark" customstate:state_disabled="true"/>
     <item android:drawable="@color/holo_red_dark" customstate:state_error="true"/>
 
 </selector>
