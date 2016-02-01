@@ -72,29 +72,28 @@ import org.dvbviewer.controller.utils.URLUtil;
 public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener, LoaderManager.LoaderCallbacks<FfMpegPrefs> {
 
 	private static final String	Tag						= StreamConfig.class.getSimpleName();
+	private static final String	liveUrl					= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_LIVE_STREAM_PORT + "/upnp/channelstream/";
+	private static final String	mediaUrl				= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT + "/upnp/recordings/";
+	private static final int	STREAM_TYPE_DIRECT		= 0;
+	private static final int	STREAM_TYPE_TRANSCODE	= 1;
+	private static final Gson 	gson					= new Gson();
 	public static final String	EXTRA_FILE_ID			= "_fileID";
 	public static final String	EXTRA_FILE_TYPE			= "_fileType";
 	public static final String	EXTRA_DIALOG_TITLE_RES	= "_dialog_title_res";
 	public static final int		FILE_TYPE_LIVE			= 0;
 	public static final int		FILE_TYPE_RECORDING		= 1;
-	public static final int		STREAM_TYPE_DIRECT		= 0;
-	public static final int		STREAM_TYPE_TRANSCODE	= 1;
-	private static String		liveUrl					= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_LIVE_STREAM_PORT + "/upnp/channelstream/";
-	private static String		mediaUrl				= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT + "/upnp/recordings/";
-	private Spinner				qualitySpinner;
-	private Spinner 			encodingSpeedSpinner;
-	private Button				startButton;
 	private EditText			startHours;
 	private EditText			startMinutes;
 	private EditText			startSeconds;
+	private Spinner				qualitySpinner;
+	private Spinner 			encodingSpeedSpinner;
+	private Button				startButton;
+	private String				preTime;
 	private int					title					= 0;
-	boolean						seekable				= false;
-	String						preTime;
+	private boolean				seekable				= false;
 	private int					mFileType				= 0;
 	private int					mStreamType				= 0;
 	private int					mFileId					= -1;
-	private static Gson 		gson					= new Gson();
-	
 	private SharedPreferences	prefs;
 	private View collapsable;
 
@@ -372,7 +371,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		return videoIntent;
 	}
 
-	public static Intent getDirectUrl(int position, boolean recording){
+	private static Intent getDirectUrl(int position, boolean recording){
 		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(position).append(".ts");
 		Log.d(Tag, "playing video: " + result.toString());
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
@@ -382,7 +381,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 
 	@Override
 	public Loader<FfMpegPrefs> onCreateLoader(int id, Bundle args) {
-		Loader<FfMpegPrefs> loader = new AsyncLoader<FfMpegPrefs>(getContext()) {
+		return new AsyncLoader<FfMpegPrefs>(getContext()) {
 			@Override
 			public FfMpegPrefs loadInBackground() {
 				FfMpegPrefs result = null;
@@ -397,7 +396,6 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				return result;
 			}
 		};
-		return loader;
 	}
 
 	@Override
@@ -407,8 +405,8 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			int pos = data.getPresets().indexOf(StreamUtils.getDefaultPreset(prefs));
 			startHours.clearFocus();
-			qualitySpinner.setSelection(pos);
 			qualitySpinner.setAdapter(dataAdapter);
+			qualitySpinner.setSelection(pos);
 			ViewGroup vg = (ViewGroup) collapsable.getParent();
 			int widthMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(vg.getWidth(), View.MeasureSpec.AT_MOST);
 			int heightMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(1073741823, View.MeasureSpec.AT_MOST);
@@ -428,7 +426,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 
 	private static class HeightEvaluator extends IntEvaluator {
 
-		private View v;
+		private final View v;
 		public HeightEvaluator(View v) {
 			this.v = v;
 		}
