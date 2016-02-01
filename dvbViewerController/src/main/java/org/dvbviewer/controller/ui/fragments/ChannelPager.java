@@ -15,6 +15,7 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
@@ -30,7 +31,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,56 +69,41 @@ import org.dvbviewer.controller.utils.UIUtils;
 import org.json.JSONObject;
 
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 
 /**
  * The Class EpgPager.
  *
- * @author RayBa
+ * @author RayBa82
  */
 public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor>, OnPageChangeListener {
 
-	public static final String KEY_GROUP_INDEX = ChannelPager.class.getName()+"KEY_GROUP_INDEX";
-	int mPosition = AdapterView.INVALID_POSITION;
-	int mInitialPosition = AdapterView.INVALID_POSITION;
-	int initialChanIndex = AdapterView.INVALID_POSITION;
-
-	private Cursor mGroupCursor;
-
-	private ViewPager mPager;
-
-	private View mProgress;
-
-	private TitlePageIndicator mPagerIndicator;
-
-	private PagerAdapter mAdapter;
-
-	private boolean showFavs;
-	private boolean showGroups;
-	private boolean showExtraGroup;
-
-	private DVBViewerPreferences prefs;
-
-	private static final int SYNCHRONIZE_CHANNELS = 0;
-
-	public static final int LOAD_CHANNELS = 1;
-
-	private static final int LOAD_CURRENT_PROGRAM = 2;
-
-	private NetworkInfo mNetworkInfo;
-
-	private boolean showNowPlaying;
-
-	private boolean                    showNowPlayingWifi;
-	private OnGroupTypeChangedListener mOnGroupTypeCHangedListener;
-	private OnGroupChangedListener     mGroupCHangedListener;
-	boolean setInitialSelection;
-	private boolean refreshGroupType;
+	public static final  String 					KEY_GROUP_INDEX 			= ChannelPager.class.getName()+"KEY_GROUP_INDEX";
+	private				 int 						mPosition 					= AdapterView.INVALID_POSITION;
+	private 			 int 						mInitialPosition 			= AdapterView.INVALID_POSITION;
+	private 			 int 						initialChanIndex 			= AdapterView.INVALID_POSITION;
+	private static final int 						SYNCHRONIZE_CHANNELS 		= 0;
+	private static final int 						LOAD_CHANNELS 				= 1;
+	private static final int 						LOAD_CURRENT_PROGRAM 		= 2;
+	private 			 boolean 	 				showFavs;
+	private 			 boolean 	 				showGroups;
+	private 			 boolean 	 				showExtraGroup;
+	private 			 boolean 					showNowPlaying;
+	private 			 boolean 					showNowPlayingWifi;
+	private 			 boolean 					setInitialSelection;
+	private 			 boolean 					refreshGroupType;
+	private 			 View 						mProgress;
+	private 			 Cursor 					mGroupCursor;
+	private 			 ViewPager 					mPager;
+	private 			 NetworkInfo 				mNetworkInfo;
+	private 			 PagerAdapter 				mAdapter;
+	private 			 TitlePageIndicator	 		mPagerIndicator;
+	private 			 DVBViewerPreferences 		prefs;
+	private 			 OnGroupChangedListener 	mGroupCHangedListener;
+	private 			 OnGroupTypeChangedListener	mOnGroupTypeCHangedListener;
 
 	/*
 	 * (non-Javadoc)
@@ -289,7 +274,8 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	/**
 	 * Persist channel config config.
 	 */
-	public void persistChannelConfigConfig() {
+	@SuppressLint("CommitPrefEdits")
+	private void persistChannelConfigConfig() {
 		Editor editor = prefs.getPrefs().edit();
 		editor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, showFavs);
 		editor.commit();
@@ -300,8 +286,6 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	 * The Class PagerAdapter.
 	 */
 	class PagerAdapter extends CursorPagerAdapter {
-
-		HashMap<Integer, WeakReference<ChannelList>> fragmentCache = new HashMap<>();
 
 		/**
 		 * Instantiates a new pager adapter.
@@ -359,13 +343,6 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		}
 
 
-		@Override
-		public void setPrimaryItem(ViewGroup container, int position, Object object) {
-			super.setPrimaryItem(container, position, object);
-			ChannelList channelList = (ChannelList) object;
-			fragmentCache.put(position, new WeakReference<>(channelList));
-		}
-
 		/*
 				 * (non-Javadoc)
 				 *
@@ -404,16 +381,6 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			return title;
 		}
 
-		public ChannelList getCurrentFragment(int position) {
-			WeakReference<ChannelList> ref = fragmentCache.get(position);
-			if (ref == null){
-				Log.i(ChannelList.class.getSimpleName(), "no Fragment ref found ");
-				return null;
-			}
-			ChannelList result = ref.get();
-			return result;
-		}
-
 	}
 
 	/**
@@ -428,13 +395,8 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		}
 	}
 
-	public void setSelection(int groupIndex, int channelIndex) {
-		setPosition(groupIndex);
-		getCurrentFragment().setSelection(channelIndex);
-	}
-
 	/**
-	 * Sets the position.
+	 * @return the position.
 	 */
 	public int getPosition() {
 		int result = AbsListView.INVALID_POSITION;
@@ -456,7 +418,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		Loader<Cursor> loader = null;
 		switch (id) {
 			case SYNCHRONIZE_CHANNELS:
-				loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
+				loader = new AsyncLoader<Cursor>(getContext()) {
 
 					@Override
 					public Cursor loadInBackground() {
@@ -470,10 +432,10 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			case LOAD_CHANNELS:
 				String selection = showFavs ? GroupTbl.TYPE + " = " + ChannelGroup.TYPE_FAV : GroupTbl.TYPE + " = " + ChannelGroup.TYPE_CHAN;
 				String orderBy = GroupTbl._ID;
-				loader = new CursorLoader(getActivity().getApplicationContext(), GroupTbl.CONTENT_URI, null, selection, null, orderBy);
+				loader = new CursorLoader(getContext(), GroupTbl.CONTENT_URI, null, selection, null, orderBy);
 				break;
 			case LOAD_CURRENT_PROGRAM:
-				loader = new AsyncLoader<Cursor>(getActivity().getApplicationContext()) {
+				loader = new AsyncLoader<Cursor>(getContext()) {
 
 					@Override
 					public Cursor loadInBackground() {
@@ -549,13 +511,6 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(KEY_GROUP_INDEX, mPager.getCurrentItem());
-	}
-
-	public ChannelList getCurrentFragment() {
-		if (mAdapter == null){
-			return null;
-		}
-		return mAdapter.getCurrentFragment(mPager.getCurrentItem());
 	}
 
 	private void performRefresh() {
@@ -698,19 +653,9 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	@Override
 	public void onPageSelected(int position) {
 		mPosition = position;
-		int channelIndex = 0;
-		ChannelList channelList = mAdapter.getCurrentFragment(position);
-		if (channelList != null) {
-			channelIndex = channelList.getChannelIndex();
-		}
-		Log.i(ChannelPager.class.getSimpleName(), "channelIndex " + channelIndex);
 		if (mGroupCHangedListener != null) {
 			mGroupCHangedListener.groupChanged(mAdapter.getGroupId(position), position);
 		}
 	}
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
-	}
 }
