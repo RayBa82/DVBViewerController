@@ -31,22 +31,19 @@ import java.util.Map;
  * The Class CategoryAdapter.
  *
  * @author RayBa
- * @date 01.07.2012
  */
 public class CategoryAdapter extends BaseAdapter {
-	public final Map<String, Adapter>	sections			= new LinkedHashMap<String, Adapter>();
-	public final ArrayAdapter<String>	headers;
-	public final static int				TYPE_SECTION_HEADER	= 0;
+	private final Map<String, Adapter>	sections			= new LinkedHashMap<>();
+	private final ArrayAdapter<String>	headers;
+	private final static int				TYPE_SECTION_HEADER	= 0;
 
 	/**
 	 * Instantiates a new category adapter.
 	 *
 	 * @param context the context
-	 * @author RayBa
-	 * @date 01.07.2012
 	 */
 	public CategoryAdapter(Context context) {
-		headers = new ArrayAdapter<String>(context, R.layout.preference_category, android.R.id.title);
+		headers = new ArrayAdapter<>(context, R.layout.preference_category, android.R.id.title);
 	}
 
 	/**
@@ -54,8 +51,6 @@ public class CategoryAdapter extends BaseAdapter {
 	 *
 	 * @param section the section
 	 * @param adapter the adapter
-	 * @author RayBa
-	 * @date 01.07.2012
 	 */
 	public void addSection(String section, Adapter adapter) {
 		this.headers.add(section);
@@ -66,7 +61,7 @@ public class CategoryAdapter extends BaseAdapter {
 	 * @see android.widget.Adapter#getItem(int)
 	 */
 	public Object getItem(int position) {
-		for (Object section : this.sections.keySet()) {
+		for (String section : this.sections.keySet()) {
 			Adapter adapter = sections.get(section);
 			int size = adapter.getCount() + 1;
 
@@ -111,7 +106,7 @@ public class CategoryAdapter extends BaseAdapter {
 	@Override
 	public int getItemViewType(int position) {
 		int type = 1;
-		for (Object section : this.sections.keySet()) {
+		for (String section : this.sections.keySet()) {
 			Adapter adapter = sections.get(section);
 			int size = adapter.getCount() + 1;
 
@@ -128,17 +123,6 @@ public class CategoryAdapter extends BaseAdapter {
 		return -1;
 	}
 
-	/**
-	 * Are all items selectable.
-	 *
-	 * @return true, if successful
-	 * @author RayBa
-	 * @date 01.07.2012
-	 */
-	public boolean areAllItemsSelectable() {
-		return false;
-	}
-	
 	@Override
 	public boolean areAllItemsEnabled() {
 		return false;
@@ -159,7 +143,7 @@ public class CategoryAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		int sectionnum = 0;
 		
-		for (Object section : this.sections.keySet()) {
+		for (String section : this.sections.keySet()) {
 			Adapter adapter = sections.get(section);
 			int size = adapter.getCount() + 1;
 
