@@ -29,21 +29,10 @@ import java.util.Date;
  * The Class EpgPagerActivity.
  *
  * @author RayBa
- * @date 07.04.2013
  */
 public class EpgPagerActivity extends BaseSinglePaneActivity implements EpgDateInfo{
-	
-	Date epgDate;
-	
-	/* (non-Javadoc)
-	 * @see com.actionbarsherlock.app.SherlockFragmentActivity#onRestoreInstanceState(android.os.Bundle)
-	 */
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-	}
-	
-	
+
+	private Date epgDate;
 	
 	/* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
@@ -69,8 +58,8 @@ public class EpgPagerActivity extends BaseSinglePaneActivity implements EpgDateI
 	 * @see org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo#setEpgDate(java.util.Date)
 	 */
 	@Override
-	public void setEpgDate(Date epgDate) {
-		this.epgDate = epgDate;
+	public void setEpgDate(long epgDate) {
+		this.epgDate = new Date(epgDate);
 	}
 
 
@@ -78,8 +67,8 @@ public class EpgPagerActivity extends BaseSinglePaneActivity implements EpgDateI
 	 * @see org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo#getEpgDate()
 	 */
 	@Override
-	public Date getEpgDate() {
-		return epgDate;
+	public long getEpgDate() {
+		return epgDate.getTime();
 	}
 
 

@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,7 +38,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 
 import com.github.jrejaud.viewpagerindicator2.TitlePageIndicator;
@@ -71,6 +71,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -81,10 +82,11 @@ import java.util.List;
  */
 public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor>, OnPageChangeListener {
 
+	private static final String 					KEY_INDEX 					= ChannelPager.class.getName()+"KEY_INDEX";
 	public static final  String 					KEY_GROUP_INDEX 			= ChannelPager.class.getName()+"KEY_GROUP_INDEX";
-	private				 int 						mPosition 					= AdapterView.INVALID_POSITION;
-	private 			 int 						mInitialPosition 			= AdapterView.INVALID_POSITION;
-	private 			 int 						initialChanIndex 			= AdapterView.INVALID_POSITION;
+	public static final  String                     KEY_GROUP_ID      	        = ChannelPager.class.getName() + "KEY_GROUP_ID";
+	private				 int 						mGroupIndex 				= AdapterView.INVALID_POSITION;
+	private 			 HashMap<Integer, Integer> 	index 						= new HashMap<>();
 	private static final int 						SYNCHRONIZE_CHANNELS 		= 0;
 	private static final int 						LOAD_CHANNELS 				= 1;
 	private static final int 						LOAD_CURRENT_PROGRAM 		= 2;
@@ -93,7 +95,6 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	private 			 boolean 	 				showExtraGroup;
 	private 			 boolean 					showNowPlaying;
 	private 			 boolean 					showNowPlayingWifi;
-	private 			 boolean 					setInitialSelection;
 	private 			 boolean 					refreshGroupType;
 	private 			 View 						mProgress;
 	private 			 Cursor 					mGroupCursor;
@@ -140,19 +141,15 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
 		showNowPlaying = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING, true);
 		showNowPlayingWifi = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY, true);
-		setInitialSelection = true;
 		if (savedInstanceState == null && getArguments() != null) {
 			if (getArguments().containsKey(KEY_GROUP_INDEX)) {
-				mPosition = getArguments().getInt(KEY_GROUP_INDEX);
-				mInitialPosition = getArguments().getInt(KEY_GROUP_INDEX);
+				mGroupIndex = getArguments().getInt(KEY_GROUP_INDEX);
 			}
-			if (getArguments().containsKey(ChannelList.KEY_CHANNEL_INDEX)) {
-				initialChanIndex = getArguments().getInt(ChannelList.KEY_CHANNEL_INDEX);
-			}
+			int	initialChanIndex = getArguments().getInt(ChannelList.KEY_CHANNEL_INDEX);
+			index.put(mGroupIndex, initialChanIndex);
 		} else if (savedInstanceState != null) {
-			if (savedInstanceState.containsKey(KEY_GROUP_INDEX)) {
-				mPosition = savedInstanceState.getInt(KEY_GROUP_INDEX);
-			}
+			mGroupIndex = savedInstanceState.getInt(KEY_GROUP_INDEX);
+			index = (HashMap<Integer, Integer>) savedInstanceState.getSerializable(KEY_INDEX);
 		}
 	}
 
@@ -181,7 +178,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 				loaderId = LOAD_CURRENT_PROGRAM;
 			}
 		}
-		mPager.setCurrentItem(mPosition);
+		mPager.setCurrentItem(mGroupIndex);
 		getLoaderManager().initLoader(loaderId, savedInstanceState, this);
 		showProgress(savedInstanceState == null);
 	}
@@ -258,7 +255,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		case R.id.menuChannelList:
 		case R.id.menuFavourties:
 			showFavs = !showFavs;
-			mPosition = 0;
+			mGroupIndex = 0;
 			persistChannelConfigConfig();
 			getActivity().setTitle(showFavs ? R.string.favourites : R.string.channelList);
 			refreshGroupType = true;
@@ -317,19 +314,13 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 					groupId = mCursor.getLong(mCursor.getColumnIndex(GroupTbl._ID));
 				}
 			}
-			ChannelList channelList = (ChannelList) Fragment.instantiate(getActivity(), ChannelList.class.getName());
 			Bundle args = new Bundle();
-			args.putLong(ChannelList.KEY_GROUP_ID, groupId);
+			args.putLong(ChannelPager.KEY_GROUP_ID, groupId);
 			args.putInt(ChannelPager.KEY_GROUP_INDEX, position);
-			args.putInt(ChannelList.KEY_CHANNEL_INDEX, (setInitialSelection && mInitialPosition == position) ? initialChanIndex : 0);
-			if (position == mInitialPosition){
-				mInitialPosition = AdapterView.INVALID_POSITION;
-				setInitialSelection = false;
-			}
+			args.putInt(ChannelList.KEY_CHANNEL_INDEX, getChannelIndex(position));
 			args.putBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, showFavs);
 			args.putBoolean(ChannelList.KEY_HAS_OPTIONMENU, false);
-			channelList.setArguments(args);
-			return channelList;
+			return Fragment.instantiate(getActivity(), ChannelList.class.getName(), args);
 		}
 
 		@Override
@@ -386,24 +377,12 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	/**
 	 * Sets the position.
 	 *
-	 * @param position the new position
+	 * @param channelIndex the new channel index
 	 */
-	public void setPosition(int position) {
-		mPosition = position;
-		if (mPager != null) {
-			mPager.setCurrentItem(mPosition, false);
-		}
-	}
-
-	/**
-	 * @return the position.
-	 */
-	public int getPosition() {
-		int result = AbsListView.INVALID_POSITION;
-		if (mPager != null) {
-			result = mPager.getCurrentItem();
-		}
-		return result;
+	public void setChannelSelection(long groupId, int channelIndex) {
+		Uri uri = ChannelList.BASE_CONTENT_URI.buildUpon().appendPath(String.valueOf(groupId)).appendQueryParameter("index", String.valueOf(channelIndex)).build();
+		index.put(mPager.getCurrentItem(), channelIndex);
+		getContext().getContentResolver().notifyChange(uri, null);
 	}
 
 	/*
@@ -478,7 +457,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 				mGroupCursor = cursor;
 				mAdapter.changeCursor(mGroupCursor);
 				mAdapter.notifyDataSetChanged();
-				mPager.setCurrentItem(mPosition, false);
+				mPager.setCurrentItem(mGroupIndex, false);
 				// mPager.setPageTransformer(true, new DepthPageTransformer());
 				getActivity().supportInvalidateOptionsMenu();
 				showProgress(false);
@@ -511,6 +490,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt(KEY_GROUP_INDEX, mPager.getCurrentItem());
+		outState.putSerializable(KEY_INDEX, index);
 	}
 
 	private void performRefresh() {
@@ -596,7 +576,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	 *
 	 * @param id the id
 	 */
-	public void refresh(int id) {
+	private void refresh(int id) {
 		mGroupCursor = null;
 		mPager.setAdapter(null);
 		mAdapter.notifyDataSetChanged();
@@ -636,7 +616,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 
 	public interface OnGroupChangedListener {
 
-		void groupChanged(long groupId, int groupIndex);
+		void groupChanged(long groupId, int channelIndex);
 
 	}
 
@@ -652,10 +632,19 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 
 	@Override
 	public void onPageSelected(int position) {
-		mPosition = position;
+		mGroupIndex = position;
 		if (mGroupCHangedListener != null) {
-			mGroupCHangedListener.groupChanged(mAdapter.getGroupId(position), position);
+			mGroupCHangedListener.groupChanged(mAdapter.getGroupId(mGroupIndex), getChannelIndex(mGroupIndex));
 		}
+	}
+
+	public void updateIndex(int groupIndex, int channelIndex) {
+		index.put(groupIndex,channelIndex);
+	}
+
+	private int getChannelIndex(int groupIndex){
+		Integer channelIndex = index.get(groupIndex);
+		return channelIndex != null ? channelIndex : 0;
 	}
 
 }
