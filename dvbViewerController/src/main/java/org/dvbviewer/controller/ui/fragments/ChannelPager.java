@@ -153,6 +153,13 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		}
 	}
 
+	public void setPosition(int position) {
+		mGroupIndex = position;
+		if (mPager != null) {
+			mPager.setCurrentItem(mGroupIndex, false);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -616,7 +623,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 
 	public interface OnGroupChangedListener {
 
-		void groupChanged(long groupId, int channelIndex);
+		void groupChanged(long groupId, int groupIndex, int channelIndex);
 
 	}
 
@@ -634,7 +641,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	public void onPageSelected(int position) {
 		mGroupIndex = position;
 		if (mGroupCHangedListener != null) {
-			mGroupCHangedListener.groupChanged(mAdapter.getGroupId(mGroupIndex), getChannelIndex(mGroupIndex));
+			mGroupCHangedListener.groupChanged(mAdapter.getGroupId(mGroupIndex), mPager.getCurrentItem(), getChannelIndex(mGroupIndex));
 		}
 	}
 

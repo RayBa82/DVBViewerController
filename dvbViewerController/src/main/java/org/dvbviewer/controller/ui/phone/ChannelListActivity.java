@@ -16,39 +16,40 @@
 package org.dvbviewer.controller.ui.phone;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.Loader;
 import android.view.View;
+import android.widget.AdapterView;
 
 import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
+import org.dvbviewer.controller.data.DbConsts;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.ui.base.BaseActivity;
-import org.dvbviewer.controller.ui.fragments.ChannelEpg;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
 import org.dvbviewer.controller.ui.fragments.EpgPager;
-
-import java.util.Date;
 
 /**
  * The Class ChannelListActivity.
  *
  * @author RayBa
  */
-public class ChannelListActivity extends BaseActivity implements ChannelEpg.EpgDateInfo, ChannelList.OnChannelSelectedListener, ChannelPager.OnGroupChangedListener, EpgPager.OnChannelScrolledListener {
+public class ChannelListActivity extends GroupDrawerActivity implements ChannelList.OnChannelSelectedListener, EpgPager.OnChannelScrolledListener, ChannelPager.OnGroupTypeChangedListener {
 
-	private Date epgDate = new Date();
-	private EpgPager	mEpgPager;
-	private ChannelPager mChannelPager;
-	private View container;
+	private 	ChannelPager 			mChannelPager;
+	private 	View 					container;
+	private 	boolean 				groupTypeChanged;
 
 	/* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
 	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setDisplayHomeAsUpEnabled(true);
-		epgDate = savedInstanceState != null && savedInstanceState.containsKey(ChannelEpg.KEY_EPG_DAY) ? new Date(savedInstanceState.getLong(ChannelEpg.KEY_EPG_DAY)) : new Date();
-		setContentView(R.layout.activity_channel_list);
-		container = findViewById(R.id.fragment_container_channel_epg);
+		container = findViewById(R.id.right_content);
 		initFragments(savedInstanceState);
 	}
 
@@ -56,16 +57,20 @@ public class ChannelListActivity extends BaseActivity implements ChannelEpg.EpgD
 		if (savedInstanceState == null) {
 			mChannelPager = new ChannelPager();
 			mChannelPager.setArguments(BaseActivity.intentToFragmentArguments(getIntent()));
-			getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_channel_list, mChannelPager, ChannelList.class.getName()).commit();
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.left_content, mChannelPager, CHANNEL_PAGER_TAG)
+					.commit();
 			if (container != null){
 				mEpgPager = new EpgPager();
 				mEpgPager.setArguments(BaseActivity.intentToFragmentArguments(getIntent()));
-				getSupportFragmentManager().beginTransaction().add(R.id.fragment_container_channel_epg, mEpgPager, EpgPager.class.getName()).commit();
+				getSupportFragmentManager().beginTransaction()
+						.add(R.id.right_content, mEpgPager, EPG_PAGER_TAG)
+						.commit();
 			}
 		}else {
-			mChannelPager = (ChannelPager) getSupportFragmentManager().findFragmentByTag(ChannelList.class.getName());
+			mChannelPager = (ChannelPager) getSupportFragmentManager().findFragmentByTag(CHANNEL_PAGER_TAG);
 			if (container != null){
-				mEpgPager = (EpgPager) getSupportFragmentManager().findFragmentByTag(EpgPager.class.getName());
+				mEpgPager = (EpgPager) getSupportFragmentManager().findFragmentByTag(EPG_PAGER_TAG);
 			}
 		}
 	}
@@ -76,6 +81,7 @@ public class ChannelListActivity extends BaseActivity implements ChannelEpg.EpgD
 		if (container == null){
 			Intent epgPagerIntent = new Intent(this, EpgPagerActivity.class);
 			epgPagerIntent.putExtra(ChannelPager.KEY_GROUP_ID, groupId);
+			epgPagerIntent.putExtra(ChannelPager.KEY_GROUP_INDEX, groupIndex);
 			epgPagerIntent.putExtra(ChannelList.KEY_CHANNEL_INDEX, channelIndex);
 			startActivity(epgPagerIntent);
 		}else{
@@ -83,27 +89,45 @@ public class ChannelListActivity extends BaseActivity implements ChannelEpg.EpgD
 		}
 	}
 
-	@Override
-	public void setEpgDate(long date) {
-		epgDate = new Date(date);
-	}
-
-	@Override
-	public long getEpgDate() {
-		return epgDate.getTime();
-	}
-
-	@Override
-	public void groupChanged(long groupId, int channelIndex) {
-		if (mEpgPager != null){
-			mEpgPager.refresh(groupId, channelIndex);
-		}
-
-	}
 
 	@Override
 	public void channelChanged(long groupId, int channelIndex) {
 		mChannelPager.setChannelSelection(groupId, channelIndex);
 	}
 
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		super.onItemClick(parent, view, position, id);
+		mChannelPager.setPosition(position);
+	}
+
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		super.onLoadFinished(loader, data);
+		if (container == null){
+			Fragment f = getSupportFragmentManager().findFragmentByTag(CHANNEL_PAGER_TAG);
+			if (f == null) {
+				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+				mChannelPager = new ChannelPager();
+				tran.add(R.id.content_frame, mChannelPager, CHANNEL_PAGER_TAG);
+				tran.commitAllowingStateLoss();
+			} else {
+				mChannelPager = (ChannelPager) f;
+			}
+		}
+		if (container != null && groupTypeChanged){
+			data.moveToFirst();
+			mEpgPager.refresh(data.getLong(data.getColumnIndex(DbConsts.GroupTbl._ID)), 0);
+		}
+		groupTypeChanged = false;
+	}
+
+	@Override
+	public void groupTypeChanged(int type) {
+		groupTypeChanged = true;
+		showFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
+		getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
+		groupIndex = 0;
+	}
 }

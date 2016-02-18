@@ -16,6 +16,7 @@
 -->
 <resources>
 
+    <color name="white_transparent">#50FFFFFF</color>
 	<color name="dark_orange">#fd7208</color>
     <color name="light_orange">#f79428</color>
     <color name="primary_text_color">@android:color/white</color>
