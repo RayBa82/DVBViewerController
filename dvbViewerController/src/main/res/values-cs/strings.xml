@@ -160,4 +160,6 @@
     <string name="version_unsupported_title">Nepodporovaná verze</string>
     <string name="recording_folder">Složka pro nahrávání</string>
     <!-- Remote -->
+    <string name="remote_control">Dálkový ovladač</string>
+    <string name="remote_numbers">Číselník</string>
 </resources>

@@ -57,7 +57,7 @@
     <string name="stream">Strumieniuj</string>
     <string name="quality">Jakość</string>
     <string name="aspectRatio">Proporcie</string>
-    <string name="ffmpegpreset">Ustawienia FFMPEG</string>
+    <string name="ffmpegpreset">Szybkość kodowania</string>
     <string name="maxHeight">Max. wysokość</string>
     <string name="maxWidth">Max. szerokość</string>
     <string name="streamStart">Strumieniuj</string>
@@ -88,7 +88,7 @@
     <string name="ClearVideoStats">Wyczyść statystyki biblioteki filmów</string>
     <string name="ClearPhotoStats">Wyczyść statystyki biblioteki zdjęć</string>
     <string name="Hibernate">Hibernacja</string>
-    <string name="Standby">Wstrzymanie</string>
+    <string name="Standby">Uśpienie</string>
     <string name="Shutdown">Wyłącz komputer</string>
     <string name="WOL">Obudź Usługę nagrywania</string>
     <!-- Status -->
@@ -96,6 +96,16 @@
     <string name="status_rs_version">Wersja Usługi nagrywania</string>
     <string name="status_current_recordings">Trwające nagrania</string>
     <string name="status_current_clients">Podłączeni klienci</string>
+    <string name="status_current_rtsp_clients">Połączeni klienci RTSP</string>
+    <string name="status_current_unicast_clients">Połączeni klienci Unicast</string>
+    <string name="status_next_Rec">Następne nagrywanie</string>
+    <string name="status_next_timer">Następne nagranie</string>
+    <string name="status_last_ui_access">Ostatni dostęp przez www</string>
+    <string name="status_standby_blocked">Blokuj uśpienie</string>
+    <string name="status_tunercount">Używany program</string>
+    <string name="status_stream_tunercount">Strumieniowany program</string>
+    <string name="status_record_tunercount">Nagrywany program</string>
+    <string name="status_recfiles">Nagrania</string>
     <string name="status_epg_update_running">Aktualizacja EPG</string>
     <string name="status_epg_before">Czas przed</string>
     <string name="status_epg_after">Czas po</string>
@@ -146,7 +156,10 @@
     <string name="support_this_app">Wsparcie aplikacji</string>
     <string name="quick_stream_hint_title">Strumieniuj kanał</string>
     <string name="quick_stream_hint_text">Strumieniowanie po kliknięciu na logo kanału</string>
-    <string name="version_unsupported_text">Nagranie Serwis wersja jest obsługiwana. Jest wymagane w wersji {0} lub nowszej</string>
+    <string name="version_unsupported_text">Ta wersja Usługi nagrywania nie jest obsługiwana. Wymagana jest wersja {0} lub nowsza.</string>
     <string name="version_unsupported_title">Nieobsługiwana wersja</string>
     <string name="recording_folder">Folder nagrań</string>
+    <!-- Remote -->
+    <string name="remote_control">Sterowanie</string>
+    <string name="remote_numbers">Cyfry</string>
 </resources>
