@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.Loader;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -101,6 +102,14 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 		mChannelPager.setPosition(position);
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		boolean result = super.onOptionsItemSelected(item);
+		if (mEpgPager != null){
+			result = mEpgPager.onOptionsItemSelected(item);
+		}
+		return result;
+	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

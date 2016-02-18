@@ -173,10 +173,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		int itemId = item.getItemId();
 		switch (itemId) {
 			case R.id.menuRefresh:
-				getActivity().supportInvalidateOptionsMenu();
-				ChannelEpg mCurrent;
-				mCurrent = (ChannelEpg) mAdapter.instantiateItem(mPager, mPager.getCurrentItem());
-				mCurrent.refresh();
+				refresh();
 				break;
 			default:
 				return false;

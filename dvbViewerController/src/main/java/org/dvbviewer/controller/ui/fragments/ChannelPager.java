@@ -227,7 +227,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 
-		inflater.inflate(R.menu.channel_list, menu);
+		inflater.inflate(R.menu.channel_pager, menu);
 		for (int i = 0; i < menu.size(); i++) {
 			if (menu.getItem(i).getItemId() == R.id.menuChannelList) {
 				menu.getItem(i).setVisible(showFavs);
@@ -255,7 +255,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			refresh(LOAD_CURRENT_PROGRAM);
 			getActivity().onOptionsItemSelected(item);
 			return true;
-		case R.id.menuRefreshChannels:
+		case R.id.menuSyncChannels:
 			refreshGroupType = true;
 			refresh(SYNCHRONIZE_CHANNELS);
 			return true;

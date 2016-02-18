@@ -19,7 +19,6 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,8 +32,6 @@ import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -60,7 +57,6 @@ import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
-import org.dvbviewer.controller.ui.phone.ChannelListActivity;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
 import org.dvbviewer.controller.ui.widget.CheckableLinearLayout;
@@ -82,13 +78,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     public static final Uri                         BASE_CONTENT_URI	        = Uri.parse("content://org.dvbviewer.controller/channelselector");
     public static final String                      KEY_HAS_OPTIONMENU          = "HAS_OPTIONMENU";
     public static final String                      KEY_CHANNEL_INDEX 	        = ChannelList.class.getName() + "KEY_CHANNEL_INDEX";
-    private static final int                        LOADER_REFRESH_CHANNELLIST  = 100;
     private static final int                        LOADER_CHANNELLIST          = 101;
-    private static final int                        LOADER_EPG                  = 103;
     private             long                        mGroupId                    = -1;
     private             int                         mGroupIndex                 = -1;
     private             int                         mChannelIndex               = -1;
-    private             boolean                     hasOptionsMenu              = true;
     private             boolean                     showFavs;
     private             DVBViewerPreferences        prefs;
     private             ChannelAdapter              mAdapter;
@@ -112,9 +105,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void getExtras(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            if (getArguments().containsKey(ChannelList.KEY_HAS_OPTIONMENU)) {
-                hasOptionsMenu = getArguments().getBoolean(KEY_HAS_OPTIONMENU);
-            }
             if (getArguments().containsKey(ChannelPager.KEY_GROUP_ID)) {
                 mGroupId = getArguments().getLong(ChannelPager.KEY_GROUP_ID);
             }
@@ -159,12 +149,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(hasOptionsMenu);
         setListAdapter(mAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        int loaderId = LOADER_CHANNELLIST;
         setEmptyText(showFavs ? getResources().getString(R.string.no_favourites) : getResources().getString(R.string.no_channels));
-        Loader<Cursor> loader = getLoaderManager().initLoader(loaderId, savedInstanceState, this);
+        Loader<Cursor> loader = getLoaderManager().initLoader(LOADER_CHANNELLIST, savedInstanceState, this);
         setListShown(!(!isResumed() || loader.isStarted()));
         setSelection(mChannelIndex);
     }
@@ -226,61 +214,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.actionbarsherlock.app.SherlockListFragment#onCreateOptionsMenu(android
-     * .view.Menu, android.view.MenuInflater)
-     */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.channel_list, menu);
-        for (int i = 0; i < menu.size(); i++) {
-            if (menu.getItem(i).getItemId() == R.id.menuChannelList) {
-                menu.getItem(i).setVisible(showFavs);
-            } else if (menu.getItem(i).getItemId() == R.id.menuFavourties) {
-                menu.getItem(i).setVisible(!showFavs);
-            }
-        }
-        menu.findItem(R.id.menuChannelList).setVisible(showFavs);
-        menu.findItem(R.id.menuFavourties).setVisible(!showFavs);
-        if (getActivity() instanceof ChannelListActivity) {
-            menu.findItem(R.id.menu_refresh_now_playing).setVisible(false);
-            menu.findItem(R.id.menuRefreshChannels).setVisible(false);
-        }
-    }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.actionbarsherlock.app.SherlockListFragment#onOptionsItemSelected(
-     * android.view.MenuItem)
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        switch (itemId) {
-            case R.id.menu_refresh_now_playing:
-                refresh(LOADER_EPG);
-                return true;
-            case R.id.menuRefreshChannels:
-                refresh(LOADER_REFRESH_CHANNELLIST);
-                return true;
-            case R.id.menuChannelList:
-            case R.id.menuFavourties:
-                showFavs = !showFavs;
-                setTitle();
-                refresh(LOADER_CHANNELLIST);
-                persistChannelConfigConfig();
-                return true;
-
-            default:
-                return false;
-        }
-    }
 
 
     @Override
@@ -369,27 +303,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             streamConfig.putExtra(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
             startActivity(streamConfig);
         }
-    }
-
-    /**
-     * Persist channel config config.
-     *
-     */
-    private void persistChannelConfigConfig() {
-        Editor editor = prefs.getPrefs().edit();
-        editor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, showFavs);
-        editor.commit();
-        super.onPause();
-    }
-
-    /**
-     * Refresh.
-     *
-     * @param id the id
-     */
-    private void refresh(int id) {
-        getLoaderManager().restartLoader(id, getArguments(), this);
-        setListShown(false);
     }
 
     /**

@@ -3,7 +3,7 @@
     xmlns:dvb="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_refresh_now_playing"
+        android:id="@+id/menuRefresh"
         android:enabled="true"
         android:icon="@drawable/ic_action_refresh"
         dvb:showAsAction="never"
@@ -24,7 +24,7 @@
         android:title="@string/favourites"
         android:visible="true"/>
     <item
-        android:id="@+id/menuRefreshChannels"
+        android:id="@+id/menuSyncChannels"
         android:enabled="true"
         android:icon="@drawable/ic_action_refresh"
         dvb:showAsAction="never"
