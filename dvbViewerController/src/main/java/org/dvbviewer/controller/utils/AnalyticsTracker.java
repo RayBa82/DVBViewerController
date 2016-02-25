@@ -8,11 +8,6 @@ import android.util.Log;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
 import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.BuildConfig;
@@ -23,6 +18,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * Class to track some Events for Google Analytics.
  *
@@ -30,9 +31,9 @@ import java.io.IOException;
  */
 public class AnalyticsTracker {
 
-    private static final MediaType  JSON        = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType JSON        = MediaType.parse("application/json; charset=utf-8");
     private static final String     TAG         = "AnalyticsTracker";
-    private static Callback         callback;
+    private static Callback callback;
 
     public static JSONObject buildTracker() {
         return new JSONObject();
@@ -53,23 +54,24 @@ public class AnalyticsTracker {
         if (callback == null) {
             callback = new Callback() {
                 @Override
-                public void onFailure(Request request, IOException e) {
+                public void onFailure(Call call, IOException e) {
                     Log.e(TAG, "Error sending AnalyticsData", e);
                 }
 
                 @Override
-                public void onResponse(Response response) throws IOException {
+                public void onResponse(Call call, Response response) throws IOException {
                     if (!response.isSuccessful()){
                         Log.e(TAG, "Error sending AnalyticsData: Status code " + response.code());
                     }
                     response.body().close();
                 }
+
             };
         }
         return callback;
     }
 
-    public static void trackEvent(Application app, String category, String action){
+    private static void trackEvent(Application app, String category, String action){
         if (!BuildConfig.DEBUG){
             Tracker t = ((App) app).getTracker();
             t.send(new HitBuilders.EventBuilder()

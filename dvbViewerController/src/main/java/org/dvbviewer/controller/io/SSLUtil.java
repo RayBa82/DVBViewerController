@@ -18,8 +18,6 @@ package org.dvbviewer.controller.io;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.squareup.okhttp.TlsVersion;
-
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -33,12 +31,14 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.TlsVersion;
+
 /**
  * Util Class for !unsecure! SSL connections.
  *
  * @author RayBa
  */
-public class SSLUtil {
+class SSLUtil {
 
 	private static final String TAG = SSLUtil.class.getSimpleName();
 
@@ -90,13 +90,12 @@ public class SSLUtil {
 		return getProtocolContext(null);
 	}
 
-	private static SSLContext initSslContext(SSLContext sslContext){
+	private static void initSslContext(SSLContext sslContext){
 		try {
 			sslContext.init(null, new TrustManager[]{new TrustAllTrustManager()}, new SecureRandom());
 		} catch (KeyManagementException e) {
 			Log.e(TAG, "Error initializing SSL Context", e);
 		}
-		return sslContext;
 	}
 
 	/**
@@ -130,12 +129,9 @@ public class SSLUtil {
 
 		}
 
-		/* (non-Javadoc)
-         * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
-         */
 		@Override
 		public X509Certificate[] getAcceptedIssuers() {
-			return null;
+			return new X509Certificate[0];
 		}
 
 	}

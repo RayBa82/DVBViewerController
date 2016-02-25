@@ -40,7 +40,6 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.IoUtils;
-import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -188,7 +187,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     final String nowFloat = DateUtils.getFloatDate(now);
                     final Date tommorrow = DateUtils.addDay(now);
                     final String tommorrowFloat = DateUtils.getFloatDate(tommorrow);
-                    HttpUrl.Builder builder = buildBaseEpgUrl()
+                    HTTPUtil.UrlBuilder builder = buildBaseEpgUrl()
                             .addQueryParameter("channel", String.valueOf(epgId))
                             .addQueryParameter("start", String.valueOf(nowFloat))
                             .addQueryParameter("end", String.valueOf(tommorrowFloat));
@@ -531,7 +530,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         return timer;
     }
 
-    public static HttpUrl.Builder buildBaseEpgUrl() throws UrlBuilderException {
+    public static HTTPUtil.UrlBuilder buildBaseEpgUrl() throws UrlBuilderException {
         return HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EPG)
                 .addQueryParameter("utf8", "1")
                 .addQueryParameter("lvl", "2");

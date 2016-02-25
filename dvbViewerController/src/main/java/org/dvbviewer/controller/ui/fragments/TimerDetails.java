@@ -35,8 +35,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.squareup.okhttp.HttpUrl;
-
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
@@ -72,22 +70,19 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	public static final String		EXTRA_ACTION		= "_action";
 	public static final String		EXTRA_ACTIVE		= "_active";
 
-	Timer							timer;
+	private Timer					timer;
 	private TextView				channelField;
 	private TextView				titleField;
 	private CheckBox				activeBox;
 	private DateField				dateField;
 	private DateField				startField;
 	private DateField				stopField;
-	private Button					cancelButton;
-	private Button					okButton;
 	private OnTimeSetListener		startTimeSetListener;
 	private OnTimeSetListener		stopTimeSetListener;
 	private Calendar				cal;
 	private Spinner					postRecordSpinner;
 	private OnTimerEditedListener	mOntimeredEditedListener;
-	private DVBViewerPreferences	prefs;
-	
+
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.DialogFragment#onCreate(android.os.Bundle)
@@ -97,7 +92,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		super.onCreate(savedInstanceState);
 		cal = GregorianCalendar.getInstance();
 		Date now = new Date();
-		prefs = new DVBViewerPreferences(getActivity());
+		DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 		if (timer == null && savedInstanceState == null) {
 			timer = new Timer();
 			timer.setId(getArguments().getLong(EXTRA_ID, -1l));
@@ -149,8 +144,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	 * @return the timer details©
 	 */
 	public static TimerDetails newInstance() {
-		TimerDetails frag = new TimerDetails();
-		return frag;
+		return new TimerDetails();
 	}
 
 	/* (non-Javadoc)
@@ -231,8 +225,8 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		};
 
 		stopField = (DateField) v.findViewById(R.id.stopField);
-		cancelButton = (Button) v.findViewById(R.id.buttonCancel);
-		okButton = (Button) v.findViewById(R.id.buttonOk);
+		Button cancelButton = (Button) v.findViewById(R.id.buttonCancel);
+		Button okButton = (Button) v.findViewById(R.id.buttonOk);
 		channelField = (TextView) v.findViewById(R.id.channelField);
 
 		dateField.setOnClickListener(this);
@@ -245,28 +239,6 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		startField.setOnLongClickListener(this);
 		stopField.setOnLongClickListener(this);
 		return v;
-	}
-
-	/**
-	 * Gets the timer.
-	 *
-	 * @return the timer
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public Timer getTimer() {
-		return timer;
-	}
-
-	/**
-	 * Sets the timer.
-	 *
-	 * @param timer the new timer
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public void setTimer(Timer timer) {
-		this.timer = timer;
 	}
 
 	/* (non-Javadoc)
@@ -336,7 +308,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 
 	@Nullable
 	public static String buildTimerUrl(Timer timer) {
-		final HttpUrl.Builder builder;
+		final HTTPUtil.UrlBuilder builder;
 		try {
 			builder = HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
 			String title = timer.getTitle();
@@ -380,7 +352,6 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	 * method is invoked.
 	 *
 	 * @author RayBa
-	 * @date 07.04.2013
 	 */
 	public interface OnTimerEditedListener{
 		
@@ -388,8 +359,6 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		 * Timer edited.
 		 *
 		 * @param edited the edited
-		 * @author RayBa
-		 * @date 07.04.2013
 		 */
 		void timerEdited(boolean edited);
 		

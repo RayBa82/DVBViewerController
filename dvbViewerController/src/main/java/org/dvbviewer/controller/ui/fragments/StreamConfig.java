@@ -47,7 +47,6 @@ import android.widget.Spinner;
 import com.google.gson.Gson;
 import com.nineoldandroids.animation.IntEvaluator;
 import com.nineoldandroids.animation.ValueAnimator;
-import com.squareup.okhttp.HttpUrl;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
@@ -356,7 +355,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 
 	private static Intent getTranscodedUrl(final int position, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
 		final String baseUrl = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM + preset.getExtension();
-		final HttpUrl.Builder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
+		final HTTPUtil.UrlBuilder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
 		final String idParam = recording ? "recid" : "chid";
 		builder.addQueryParameter("preset", preset.getTitle());
 		builder.addQueryParameter("ffPreset", encodingSpeed);

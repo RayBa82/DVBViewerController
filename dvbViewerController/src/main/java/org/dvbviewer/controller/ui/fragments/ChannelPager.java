@@ -42,7 +42,6 @@ import android.widget.AdapterView;
 
 import com.github.jrejaud.viewpagerindicator2.TitlePageIndicator;
 import com.nostra13.universalimageloader.utils.IoUtils;
-import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.GroupTbl;
@@ -51,6 +50,7 @@ import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
+import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.ChannelHandler;
@@ -563,7 +563,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		InputStream is = null;
 		try {
 			String nowFloat = DateUtils.getFloatDate(new Date());
-			HttpUrl.Builder builder = ChannelEpg.buildBaseEpgUrl()
+			HTTPUtil.UrlBuilder builder = ChannelEpg.buildBaseEpgUrl()
 					.addQueryParameter("start", nowFloat)
 					.addQueryParameter("end", nowFloat);
 			EpgEntryHandler handler = new EpgEntryHandler();
