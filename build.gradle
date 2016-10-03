@@ -13,15 +13,15 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.2.0'
     }
 }
 ext {
     applicationId = "org.dvbviewer.controller"
-    compileSdkVersion = 23
-    buildToolsVersion = "23.0.2"
+    compileSdkVersion = 24
+    buildToolsVersion = "24.0.3"
     minSdkVersion = 9
-    targetSdkVersion = 23
+    targetSdkVersion = 24
     appcompatVersion = "23.1.1"
     versionCode = buildVersionCode
     versionName = buildVersionName
