@@ -52,10 +52,10 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support.test:runner:0.4.1'
-    androidTestCompile 'com.android.support.test:rules:0.4.1'
-    androidTestCompile 'com.android.support:support-annotations:23.1.1'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support:support-annotations:' + rootProject.ext.appcompatVersion
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.squareup.okhttp:mockwebserver:2.7.2'
     androidTestCompile 'commons-io:commons-io:2.4'
 }
