@@ -46,16 +46,18 @@ dependencies {
     compile 'com.android.support:design:' + rootProject.ext.appcompatVersion
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
     compile 'com.google.code.gson:gson:2.4'
-    compile 'com.squareup.okhttp3:okhttp:3.1.2'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.github.jrejaud:ViewPagerIndicator2:0.0.1'
     compile 'org.apache.commons:commons-lang3:3.4'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support:support-annotations:' + rootProject.ext.appcompatVersion
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.squareup.okhttp:mockwebserver:2.7.2'
+    androidTestCompile 'com.squareup.okhttp3:mockwebserver:3.4.1'
     androidTestCompile 'commons-io:commons-io:2.4'
+    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
 }
