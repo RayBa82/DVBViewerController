@@ -30,7 +30,7 @@ public class Config {
      */
     public static boolean IS_FIRST_START = false;
 
-    public static final String SUPPORTED_RS_VERSION = "1.32.0.0";
+    public static final String SUPPORTED_RS_VERSION = "1.33.0.0";
 
     /**
      * The rs profile names.

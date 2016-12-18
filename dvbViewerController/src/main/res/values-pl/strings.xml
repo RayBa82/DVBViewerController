@@ -136,10 +136,6 @@
     <string name="pref_item_password_summary">Jeśli wymagane jest hasło</string>
     <string name="pref_item_rs_wol_on_start">Wyślij WOL podczas uruchamiania</string>
     <string name="pref_item_rs_wol_on_start_summary">Podczas uruchamiania próbuję obudzić Usługę nagrywania</string>
-    <string name="pref_item_rs_live_stream_port">Port strumieniowania na żywo</string>
-    <string name="pref_item_rs_live_stream_port_summary">Port do strumieniowania na żywo</string>
-    <string name="pref_item_rs_media_stream_port">Port stumieniowania multimediów</string>
-    <string name="pref_item_rs_media_stream_port_summary">Port do stumieniowania multimediów</string>
     <string name="pref_item_channel_show_current_program">Pokaż aktualny program</string>
     <string name="pref_item_channel_show_current_program_summary">Pokazuje aktualny program na liście kanałów</string>
     <string name="pref_item_channel_show_current_program_wifi">Tylko przez WIFI</string>

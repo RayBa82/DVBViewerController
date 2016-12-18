@@ -172,12 +172,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         return new EpgLoader<Cursor>(getContext(), mDateInfo) {
 
             @Override
-            protected void onForceLoad() {
-                super.onForceLoad();
-                setListShown(false);
-            }
-
-            @Override
             public Cursor loadInBackground() {
                 MatrixCursor cursor = null;
                 InputStream is = null;

@@ -30,10 +30,6 @@ public class ConnectionPreferenceFragment extends PreferenceFragmentCompat imple
 			ServerConsts.REC_SERVICE_USER_NAME = sharedPreferences.getString(key, "");
 		} else if (key.equals(DVBViewerPreferences.KEY_RS_PASSWORD)) {
 			ServerConsts.REC_SERVICE_PASSWORD = sharedPreferences.getString(key, "");
-		} else if (key.equals(DVBViewerPreferences.KEY_RS_LIVE_STREAM_PORT)) {
-			ServerConsts.REC_SERVICE_LIVE_STREAM_PORT = sharedPreferences.getString(key, ServerConsts.REC_SERVICE_LIVE_STREAM_PORT);
-		} else if (key.equals(DVBViewerPreferences.KEY_RS_MEDIA_STREAM_PORT)) {
-			ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT = sharedPreferences.getString(key, ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT);
 		}
 		URLUtil.setRecordingServicesAddress(ServerConsts.REC_SERVICE_URL, ServerConsts.REC_SERVICE_PORT);
 	}

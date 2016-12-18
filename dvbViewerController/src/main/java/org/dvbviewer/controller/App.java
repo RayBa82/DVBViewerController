@@ -67,8 +67,6 @@ public class App extends Application {
 		URLUtil.setRecordingServicesAddress(serviceUrl, prefPort);
 		ServerConsts.REC_SERVICE_USER_NAME = prefs.getString(DVBViewerPreferences.KEY_RS_USERNAME, "");
 		ServerConsts.REC_SERVICE_PASSWORD = prefs.getString(DVBViewerPreferences.KEY_RS_PASSWORD, "");
-		ServerConsts.REC_SERVICE_LIVE_STREAM_PORT = prefs.getString(DVBViewerPreferences.KEY_RS_LIVE_STREAM_PORT, ServerConsts.REC_SERVICE_LIVE_STREAM_PORT);
-		ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT = prefs.getString(DVBViewerPreferences.KEY_RS_MEDIA_STREAM_PORT, ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT);
 		ServerConsts.REC_SERVICE_MAC_ADDRESS = prefs.getString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS);
 		ServerConsts.REC_SERVICE_WOL_PORT = prefs.getInt(DVBViewerPreferences.KEY_RS_WOL_PORT, 9);
 		super.onCreate();

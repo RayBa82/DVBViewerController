@@ -55,8 +55,6 @@ import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.ChannelHandler;
 import org.dvbviewer.controller.io.data.EpgEntryHandler;
-import org.dvbviewer.controller.io.data.FavMatcher;
-import org.dvbviewer.controller.io.data.FavouriteHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseFragment;
 import org.dvbviewer.controller.ui.base.CursorPagerAdapter;
@@ -516,20 +514,19 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
 			AnalyticsTracker.addData(trackingData, "channels", chanXml);
 			ChannelHandler channelHandler = new ChannelHandler();
-			List<ChannelRoot> chans = channelHandler.parse(chanXml);
-			chans = mDbHelper.saveChannelRoots(chans);
+			List<ChannelRoot> chans = channelHandler.parse(chanXml, false);
 			/**
 			 * Request the Favourites
 			 */
 			String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
 			if (!TextUtils.isEmpty(favXml)) {
 				AnalyticsTracker.addData(trackingData, "favourites", favXml);
-				FavouriteHandler handler = new FavouriteHandler();
-				List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
-				FavMatcher favMatcher = new FavMatcher();
-				List<ChannelGroup> favs = favMatcher.matchFavs(chans, favGroups);
-				mDbHelper.saveFavGroups(favs);
+				List<ChannelRoot> favs = channelHandler.parse(favXml, true);
+				if(favs != null && !favs.isEmpty()) {
+					chans.addAll(favs);
+				}
 			}
+			mDbHelper.saveChannelRoots(chans);
 
 
 			/**

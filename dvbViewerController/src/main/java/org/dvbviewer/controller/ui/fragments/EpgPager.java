@@ -35,7 +35,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts;
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
@@ -292,18 +291,12 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		StringBuilder selection = new StringBuilder(showFavs ? ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0" : ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0");
+		StringBuilder selection = new StringBuilder(ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0");
 		if (mGroupId > 0) {
 			selection.append(" and ");
-			if (showFavs) {
-				selection.append(DbConsts.FavTbl.FAV_GROUP_ID).append(" = ").append(mGroupId);
-			} else {
-				selection.append(ChannelTbl.GROUP_ID).append(" = ").append(mGroupId);
-			}
+			selection.append(ChannelTbl.GROUP_ID).append(" = ").append(mGroupId);
 		}
-		String orderBy;
-		orderBy = showFavs ? ChannelTbl.FAV_POSITION : ChannelTbl.POSITION;
-		return new CursorLoader(getContext(), ChannelTbl.CONTENT_URI, null, selection.toString(), null, orderBy);
+		return new CursorLoader(getContext(), ChannelTbl.CONTENT_URI, null, selection.toString(), null, ChannelTbl.POSITION);
 	}
 
 	/*

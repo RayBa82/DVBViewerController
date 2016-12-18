@@ -192,14 +192,14 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				if (UIUtils.isTablet(getActivity())) {
 					StreamConfig cfg = StreamConfig.newInstance();
 					Bundle arguments = new Bundle();
-					arguments.putInt(StreamConfig.EXTRA_FILE_ID, (int) mAdapter.getItem(selectedPosition).getId());
+					arguments.putLong(StreamConfig.EXTRA_FILE_ID, mAdapter.getItem(selectedPosition).getId());
 					arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
 					arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
 					cfg.setArguments(arguments);
 					cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
 				} else {
 					Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
-					streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, (int) mAdapter.getItem(selectedPosition).getId());
+					streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, mAdapter.getItem(selectedPosition).getId());
 					streamConfig.putExtra(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
 					startActivity(streamConfig);
 				}

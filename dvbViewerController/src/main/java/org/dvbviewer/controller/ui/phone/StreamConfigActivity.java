@@ -44,10 +44,7 @@ public class StreamConfigActivity extends BaseSinglePaneActivity {
 	@Override
 	protected Fragment onCreatePane() {
 		StreamConfig cfg = new StreamConfig();
-		Bundle arguments = new Bundle();
-		arguments.putInt(StreamConfig.EXTRA_FILE_ID, getIntent().getExtras().getInt(StreamConfig.EXTRA_FILE_ID));
-		arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, getIntent().getExtras().getInt(StreamConfig.EXTRA_FILE_TYPE));
-		cfg.setArguments(arguments);
+		cfg.setArguments(intentToFragmentArguments(getIntent()));
 		return cfg;
 	}
 

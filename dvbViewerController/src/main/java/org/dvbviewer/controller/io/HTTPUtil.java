@@ -18,6 +18,9 @@ package org.dvbviewer.controller.io;
 import android.util.Log;
 
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Callback;
 import okhttp3.Credentials;
@@ -39,19 +42,19 @@ public class HTTPUtil {
 
     private static OkHttpClient getHttpClient() {
         if (httpClient == null) {
+            final X509TrustManager trustManager = SSLUtil.getTrustAllTrustManager();
             httpClient = new OkHttpClient.Builder()
-            .sslSocketFactory(SSLUtil.getSSLServerSocketFactory())
+                    .sslSocketFactory(SSLUtil.getSSLServerSocketFactory(trustManager), trustManager)
                     .hostnameVerifier(new SSLUtil.VerifyAllHostnameVerifiyer())
-            .build();
+                    .connectTimeout(5000, TimeUnit.MILLISECONDS)
+                    .readTimeout(5000, TimeUnit.MILLISECONDS)
+                    .build();
         }
         return httpClient;
     }
 
     public static String getString(String url, String username, String password) throws Exception {
-        String result;
-        Response response = getResponse(url, username, password);
-        result = response.body().string();
-        return result;
+        return getResponse(url, username, password).body().string();
     }
 
     public static UrlBuilder getUrlBuilder(String url) throws UrlBuilderException {

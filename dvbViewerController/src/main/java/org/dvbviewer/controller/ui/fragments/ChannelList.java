@@ -47,7 +47,6 @@ import com.espian.showcaseview.targets.ViewTarget;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts;
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
 import org.dvbviewer.controller.entities.Channel;
@@ -167,19 +166,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle bundle) {
         Loader<Cursor> loader;
-        StringBuilder selection = new StringBuilder(showFavs ? ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0" : ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0");
+        StringBuilder selection = new StringBuilder(ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0");
         if (mGroupId > 0) {
             selection.append(" and ");
-            if (showFavs) {
-                selection.append(DbConsts.FavTbl.FAV_GROUP_ID).append(" = ").append(mGroupId);
-            } else {
-                selection.append(ChannelTbl.GROUP_ID).append(" = ").append(mGroupId);
-            }
+            selection.append(ChannelTbl.GROUP_ID).append(" = ").append(mGroupId);
         }
 
-        String orderBy;
-        orderBy = showFavs ? ChannelTbl.FAV_POSITION : ChannelTbl.POSITION;
-        loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection.toString(), null, orderBy);
+        loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection.toString(), null, ChannelTbl.POSITION);
         return loader;
     }
 
@@ -291,14 +284,14 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         if (UIUtils.isTablet(getActivity())) {
             StreamConfig cfg = StreamConfig.newInstance();
             Bundle arguments = new Bundle();
-            arguments.putInt(StreamConfig.EXTRA_FILE_ID, chan.getPosition());
+            arguments.putLong(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
             arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_LIVE);
             arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
             cfg.setArguments(arguments);
             cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
         } else {
             Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
-            streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, chan.getPosition());
+            streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
             streamConfig.putExtra(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_LIVE);
             streamConfig.putExtra(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
             startActivity(streamConfig);
@@ -362,7 +355,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
             long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
             Integer position = c.getInt(c.getColumnIndex(ChannelTbl.POSITION));
-            Integer favPosition = c.getInt(c.getColumnIndex(ChannelTbl.FAV_POSITION));
             holder.channelName.setText(channelName);
             if (TextUtils.isEmpty(epgTitle)) {
                 holder.epgTime.setVisibility(View.GONE);
@@ -381,7 +373,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 holder.epgTime.setText(start + " - " + end);
                 holder.epgTitle.setText(epgTitle);
             }
-            holder.position.setText(!showFavs ? position.toString() : favPosition.toString());
+            holder.position.setText(position.toString());
             holder.contextMenu.setTag(c.getPosition());
             holder.iconContainer.setTag(c.getPosition());
             holder.v.setChecked(getListView().isItemChecked(c.getPosition()));
@@ -520,7 +512,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     c.moveToPosition(mChannelIndex);
                     Channel chan = cursorToChannel(c);
                     try {
-                        getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getPosition()));
+                        getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getChannelID()));
                         AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                     } catch (UrlBuilderException e) {
                         e.printStackTrace();

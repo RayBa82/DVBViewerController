@@ -50,22 +50,26 @@ class SSLUtil {
 	 *
 	 * @return the SSL context
 	 */
-	private static SSLContext getSSLContext() {
-		SSLContext sslContext = getProtocolContext(TlsVersion.TLS_1_2.javaName());
+	private static SSLContext getSSLContext(X509TrustManager trustManager) {
+		SSLContext sslContext = getProtocolContext(TlsVersion.TLS_1_2.javaName(), trustManager);
 		if (sslContext == null) {
-			sslContext = getProtocolContext(TlsVersion.TLS_1_0.javaName());
+			sslContext = getProtocolContext(TlsVersion.TLS_1_0.javaName(), trustManager);
 		}
 		if (sslContext == null) {
-			sslContext = getProtocolContext(TlsVersion.SSL_3_0.javaName());
+			sslContext = getProtocolContext(TlsVersion.SSL_3_0.javaName(), trustManager);
 		}
 		if (sslContext == null) {
-			sslContext = getDefaultContext();
+			sslContext = getDefaultContext(trustManager);
 		}
 		return sslContext;
 	}
 
-	public static SSLSocketFactory getSSLServerSocketFactory() {
-		return getSSLContext().getSocketFactory();
+	public static SSLSocketFactory getSSLServerSocketFactory(X509TrustManager trustManager) {
+		return getSSLContext(trustManager).getSocketFactory();
+	}
+
+	public static X509TrustManager getTrustAllTrustManager() {
+		return new TrustAllTrustManager();
 	}
 
 
@@ -74,11 +78,11 @@ class SSLUtil {
 	 *
 	 * @return the tls protocol context
 	 */
-	private static SSLContext getProtocolContext(String protocol) {
+	private static SSLContext getProtocolContext(String protocol, X509TrustManager trustManager) {
 		SSLContext sslContext = null;
 		try {
 			sslContext = TextUtils.isEmpty(protocol) ? SSLContext.getDefault() : SSLContext.getInstance(protocol);
-			initSslContext(sslContext);
+			initSslContext(sslContext, trustManager);
 		} catch (NoSuchAlgorithmException e) {
 			Log.e(TAG, "Error creating SSL Context", e);
 		}
@@ -86,13 +90,13 @@ class SSLUtil {
 	}
 
 
-	private static SSLContext getDefaultContext() {
-		return getProtocolContext(null);
+	private static SSLContext getDefaultContext(X509TrustManager trustManager) {
+		return getProtocolContext(null, trustManager);
 	}
 
-	private static void initSslContext(SSLContext sslContext){
+	private static void initSslContext(SSLContext sslContext, X509TrustManager trustManager){
 		try {
-			sslContext.init(null, new TrustManager[]{new TrustAllTrustManager()}, new SecureRandom());
+			sslContext.init(null, new TrustManager[]{trustManager}, new SecureRandom());
 		} catch (KeyManagementException e) {
 			Log.e(TAG, "Error initializing SSL Context", e);
 		}
