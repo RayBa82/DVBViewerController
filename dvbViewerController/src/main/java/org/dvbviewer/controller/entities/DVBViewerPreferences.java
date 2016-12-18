@@ -49,8 +49,6 @@ public class DVBViewerPreferences {
 	public static final String	KEY_RS_WOL_ON_START						= "KEY_RS_WOL_ON_START";
 	public static final String	KEY_RS_USERNAME							= "KEY_RS_USERNAME";
 	public static final String	KEY_RS_PASSWORD							= "KEY_RS_PASSWORD";
-	public static final String	KEY_RS_LIVE_STREAM_PORT					= "KEY_RS_LIVE_STREAM_PORT";
-	public static final String	KEY_RS_MEDIA_STREAM_PORT				= "KEY_RS_MEDIA_STREAM_PORT";
 	public static final String	KEY_RS_CLIENTS				            = "KEY_RS_CLIENTS";
 	public static final String	KEY_SELECTED_CLIENT			            = "KEY_SELECTED_CLIENT";
 	public static final String	KEY_CHANNELS_SHOW_NOW_PLAYING			= "KEY_CHANNELS_SHOW_NOW_PLAYING";
