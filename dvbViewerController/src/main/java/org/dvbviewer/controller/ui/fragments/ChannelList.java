@@ -15,17 +15,15 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
+import android.database.ContentObserver;
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -34,8 +32,6 @@ import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,46 +45,27 @@ import android.widget.TextView;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.ViewTarget;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.utils.IoUtils;
-import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
-import org.dvbviewer.controller.data.DbHelper;
 import org.dvbviewer.controller.entities.Channel;
-import org.dvbviewer.controller.entities.ChannelGroup;
-import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.entities.Timer;
-import org.dvbviewer.controller.io.RecordingService;
-import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
 import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
 import org.dvbviewer.controller.io.UrlBuilderException;
-import org.dvbviewer.controller.io.data.ChannelHandler;
-import org.dvbviewer.controller.io.data.EpgEntryHandler;
-import org.dvbviewer.controller.io.data.FavMatcher;
-import org.dvbviewer.controller.io.data.FavouriteHandler;
-import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
-import org.dvbviewer.controller.ui.tablet.ChannelListMultiActivity;
 import org.dvbviewer.controller.ui.widget.CheckableLinearLayout;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
-import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.DateUtils;
-import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
-import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
  * The Class ChannelList.
@@ -97,22 +74,18 @@ import java.util.List;
  */
 public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cursor>, OnClickListener, PopupMenu.OnMenuItemClickListener {
 
-    public static final String                      KEY_SELECTED_POSITION       = "SELECTED_POSITION";
+    public static final Uri                         BASE_CONTENT_URI	        = Uri.parse("content://org.dvbviewer.controller/channelselector");
     public static final String                      KEY_HAS_OPTIONMENU          = "HAS_OPTIONMENU";
-    public static final String                      KEY_GROUP_ID      	        = EpgPager.class.getName() + "KEY_GROUP_ID";
-    public static final String                      KEY_CHANNEL_INDEX 	        = EpgPager.class.getName() + "KEY_CHANNEL_INDEX";
-    public static final int                         LOADER_REFRESH_CHANNELLIST  = 100;
-    public static final int                         LOADER_CHANNELLIST          = 101;
-    public static final int                         LOADER_EPG                  = 103;
-    private             int                         selectedPosition            = -1;
-    private             boolean                     hasOptionsMenu              = true;
+    public static final String                      KEY_CHANNEL_INDEX 	        = ChannelList.class.getName() + "KEY_CHANNEL_INDEX";
+    private static final int                        LOADER_CHANNELLIST          = 101;
+    private             long                        mGroupId                    = -1;
+    private             int                         mGroupIndex                 = -1;
+    private             int                         mChannelIndex               = -1;
     private             boolean                     showFavs;
-    private             boolean                     showNowPlaying;
-    private             boolean                     showNowPlayingWifi;
     private             DVBViewerPreferences        prefs;
     private             ChannelAdapter              mAdapter;
     private             OnChannelSelectedListener   mCHannelSelectedListener;
-    private             NetworkInfo                 mNetworkInfo;
+    private             ChannelPagedObserver        mChannelPagedOberserver;
 
     /*
      * (non-Javadoc)
@@ -122,27 +95,34 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        prefs = new DVBViewerPreferences(getActivity());
+        prefs = new DVBViewerPreferences(getContext());
         showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
-        showNowPlaying = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING, true);
-        showNowPlayingWifi = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY, true);
-        mAdapter = new ChannelAdapter(getActivity());
-        if (getArguments() != null) {
-            if (getArguments().containsKey(ChannelList.KEY_HAS_OPTIONMENU)) {
-                hasOptionsMenu = getArguments().getBoolean(KEY_HAS_OPTIONMENU);
+        mAdapter = new ChannelAdapter(getContext());
+        getExtras(savedInstanceState);
+        registerObserver();
+    }
+
+    private void getExtras(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            if (getArguments().containsKey(ChannelPager.KEY_GROUP_ID)) {
+                mGroupId = getArguments().getLong(ChannelPager.KEY_GROUP_ID);
             }
-        }
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(KEY_SELECTED_POSITION)) {
-                selectedPosition = savedInstanceState.getInt(KEY_SELECTED_POSITION);
+            if (getArguments().containsKey(ChannelPager.KEY_GROUP_INDEX)) {
+                mGroupIndex = getArguments().getInt(ChannelPager.KEY_GROUP_INDEX);
             }
-        } else {
-            selectedPosition = getActivity().getIntent().getIntExtra(KEY_SELECTED_POSITION, selectedPosition);
+            mChannelIndex = getArguments().getInt(KEY_CHANNEL_INDEX, mChannelIndex);
+        }else{
+            mGroupId = savedInstanceState.getLong(ChannelPager.KEY_GROUP_ID);
+            mGroupIndex = savedInstanceState.getInt(ChannelPager.KEY_GROUP_INDEX);
+            mChannelIndex = savedInstanceState.getInt(KEY_CHANNEL_INDEX, mChannelIndex);
         }
-        setHasOptionsMenu(hasOptionsMenu);
+    }
+
+    private void registerObserver() {
+        final Handler handler = new Handler();
+        final Uri contentUri = BASE_CONTENT_URI.buildUpon().appendPath(String.valueOf(mGroupId)).appendQueryParameter("index", String.valueOf(mChannelIndex)).build();
+        mChannelPagedOberserver = new ChannelPagedObserver(handler);
+        getContext().getContentResolver().registerContentObserver(contentUri, true, mChannelPagedOberserver);
     }
 
     /*
@@ -170,19 +150,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         super.onActivityCreated(savedInstanceState);
         setListAdapter(mAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        int loaderId = LOADER_CHANNELLIST;
-        /**
-         * Pr©fung ob das EPG in der Senderliste angezeigt werden soll.
-         */
-        if (!Config.CHANNELS_SYNCED) {
-            loaderId = LOADER_REFRESH_CHANNELLIST;
-        } else if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && mNetworkInfo.isConnected())) {
-            loaderId = LOADER_EPG;
-        }
         setEmptyText(showFavs ? getResources().getString(R.string.no_favourites) : getResources().getString(R.string.no_channels));
-        Loader<Cursor> loader = getLoaderManager().initLoader(loaderId, savedInstanceState, this);
+        Loader<Cursor> loader = getLoaderManager().initLoader(LOADER_CHANNELLIST, savedInstanceState, this);
         setListShown(!(!isResumed() || loader.isStarted()));
-        setSelection(selectedPosition);
+        setSelection(mChannelIndex);
     }
 
     /*
@@ -194,119 +165,16 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     @Override
     public Loader<Cursor> onCreateLoader(int loaderId, Bundle bundle) {
-        Loader<Cursor> loader = null;
-        switch (loaderId) {
-            case LOADER_CHANNELLIST:
-                String selection = showFavs ? ChannelTbl.FLAGS + " & " + Channel.FLAG_FAV + "!= 0" : ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0";
-                String orderBy = showFavs ? ChannelTbl.FAV_POSITION : ChannelTbl.POSITION;
-                loader = new CursorLoader(getContext(), ChannelTbl.CONTENT_URI_NOW, null, selection, null, orderBy);
-                break;
-            case LOADER_EPG:
-                loader = new AsyncLoader<Cursor>(getContext()) {
-
-                    @Override
-                    public Cursor loadInBackground() {
-                        loadEpg();
-                        return new MatrixCursor(new String[1]);
-                    }
-
-                };
-                break;
-            case LOADER_REFRESH_CHANNELLIST:
-                loader = new AsyncLoader<Cursor>(getContext()) {
-
-                    @Override
-                    public Cursor loadInBackground() {
-                        performRefresh();
-                        return new MatrixCursor(new String[1]);
-                    }
-
-                };
-                break;
-            default:
-                break;
+        Loader<Cursor> loader;
+        StringBuilder selection = new StringBuilder(ChannelTbl.FLAGS + " & " + Channel.FLAG_ADDITIONAL_AUDIO + "== 0");
+        if (mGroupId > 0) {
+            selection.append(" and ");
+            selection.append(ChannelTbl.GROUP_ID).append(" = ").append(mGroupId);
         }
+
+        loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection.toString(), null, ChannelTbl.POSITION);
         return loader;
     }
-
-    private void loadEpg() {
-        List<EpgEntry> result;
-        DbHelper helper = new DbHelper(getContext());
-        InputStream is = null;
-        try {
-            String nowFloat = DateUtils.getFloatDate(new Date());
-            HttpUrl.Builder builder = ChannelEpg.buildBaseEpgUrl()
-                    .addQueryParameter("start", nowFloat)
-                    .addQueryParameter("end", nowFloat);
-            EpgEntryHandler handler = new EpgEntryHandler();
-            is = ServerRequest.getInputStream(builder.build().toString());
-            result = handler.parse(is);
-            helper.saveNowPlaying(result);
-        } catch (Exception e) {
-            catchException(getClass().getSimpleName(), e);
-        } finally {
-            IoUtils.closeSilently(is);
-            helper.close();
-        }
-    }
-
-    private void performRefresh() {
-        JSONObject trackingData = AnalyticsTracker.buildTracker();
-        DbHelper mDbHelper = new DbHelper(getContext());
-        try {
-            String version = RecordingService.getVersionString();
-            AnalyticsTracker.addData(trackingData, "version", version);
-            if (!Config.isRSVersionSupported(version)) {
-                showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
-                return;
-            }
-            /**
-             * Request the Channels
-             */
-            String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
-            AnalyticsTracker.addData(trackingData, "channels", chanXml);
-            ChannelHandler channelHandler = new ChannelHandler();
-            List<ChannelRoot> chans = channelHandler.parse(chanXml);
-            chans = mDbHelper.saveChannelRoots(chans);
-            /**
-             * Request the Favourites
-             */
-            String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
-            if (!TextUtils.isEmpty(favXml)) {
-                AnalyticsTracker.addData(trackingData, "favourites", favXml);
-                FavouriteHandler handler = new FavouriteHandler();
-                List<ChannelGroup> favGroups = handler.parse(getActivity(), favXml);
-                FavMatcher favMatcher = new FavMatcher();
-                List<ChannelGroup> favs = favMatcher.matchFavs(chans, favGroups);
-                mDbHelper.saveFavGroups(favs);
-            }
-
-
-            /**
-             * Get the Mac Address for WOL
-             */
-            String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
-            ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress;
-
-
-            /**
-             * Save the data in sharedpreferences
-             */
-            Editor prefEditor = prefs.getPrefs().edit();
-            StatusList.getStatus(prefs, version, trackingData);
-            prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
-            prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
-            prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-            prefEditor.commit();
-            Config.CHANNELS_SYNCED = true;
-        } catch (Exception e) {
-            catchException(getClass().getSimpleName(), e);
-        } finally {
-            AnalyticsTracker.trackSync(getContext(), trackingData);
-            mDbHelper.close();
-        }
-    }
-
 
     /*
      * (non-Javadoc)
@@ -315,32 +183,12 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      * android.support.v4.app.LoaderManager.LoaderCallbacks#onLoadFinished(android
      * .support.v4.content.Loader, java.lang.Object)
      */
-    @SuppressLint("NewApi")
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch (loader.getId()) {
-            case LOADER_EPG:
-                refresh(LOADER_CHANNELLIST);
-                break;
-            case LOADER_REFRESH_CHANNELLIST:
-                /**
-                 * Pr©fung ob das EPG in der Senderliste angezeigt werden soll.
-                 */
-                if ((showNowPlaying && !showNowPlayingWifi) || (showNowPlaying && mNetworkInfo.isConnected())) {
-                    refresh(LOADER_EPG);
-                } else {
-                    refresh(LOADER_CHANNELLIST);
-                }
-                break;
-            default:
-                mAdapter.swapCursor(cursor);
-                if (selectedPosition != ListView.INVALID_POSITION) {
-                    getListView().setItemChecked(selectedPosition, true);
-                }
-                getListView().setSelectionFromTop(selectedPosition, (int) getResources().getDimension(R.dimen.list_preferred_item_height_small) * 3);
-                setListShown(true);
-                break;
-        }
+        mAdapter.changeCursor(cursor);
+        setSelection(mChannelIndex);
+        getListView().setSelectionFromTop(mChannelIndex, (int) getResources().getDimension(R.dimen.list_preferred_item_height_small) * 3);
+        setListShown(true);
         getActivity().supportInvalidateOptionsMenu();
     }
 
@@ -359,67 +207,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.actionbarsherlock.app.SherlockListFragment#onCreateOptionsMenu(android
-     * .view.Menu, android.view.MenuInflater)
-     */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.channel_list, menu);
-        for (int i = 0; i < menu.size(); i++) {
-            if (menu.getItem(i).getItemId() == R.id.menuChannelList) {
-                menu.getItem(i).setVisible(showFavs);
-            } else if (menu.getItem(i).getItemId() == R.id.menuFavourties) {
-                menu.getItem(i).setVisible(!showFavs);
-            }
-        }
-        menu.findItem(R.id.menuChannelList).setVisible(showFavs);
-        menu.findItem(R.id.menuFavourties).setVisible(!showFavs);
-        if (getActivity() instanceof ChannelListMultiActivity) {
-            menu.findItem(R.id.menu_refresh_now_playing).setVisible(false);
-            menu.findItem(R.id.menuRefreshChannels).setVisible(false);
-        }
-    }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.actionbarsherlock.app.SherlockListFragment#onOptionsItemSelected(
-     * android.view.MenuItem)
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        switch (itemId) {
-            case R.id.menu_refresh_now_playing:
-                refresh(LOADER_EPG);
-                return true;
-            case R.id.menuRefreshChannels:
-                refresh(LOADER_REFRESH_CHANNELLIST);
-                return true;
-            case R.id.menuChannelList:
-            case R.id.menuFavourties:
-                showFavs = !showFavs;
-                setTitle();
-                refresh(LOADER_CHANNELLIST);
-                persistChannelConfigConfig();
-                return true;
-
-            default:
-                return false;
-        }
-    }
 
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         Cursor c = mAdapter.getCursor();
-        c.moveToPosition(selectedPosition);
+        c.moveToPosition(mChannelIndex);
         switch (item.getItemId()) {
             case R.id.menuTimer:
                 showTimerDialog(c);
@@ -490,39 +284,18 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         if (UIUtils.isTablet(getActivity())) {
             StreamConfig cfg = StreamConfig.newInstance();
             Bundle arguments = new Bundle();
-            arguments.putInt(StreamConfig.EXTRA_FILE_ID, chan.getPosition());
+            arguments.putLong(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
             arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_LIVE);
             arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
             cfg.setArguments(arguments);
             cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
         } else {
             Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
-            streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, chan.getPosition());
+            streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
             streamConfig.putExtra(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_LIVE);
             streamConfig.putExtra(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
             startActivity(streamConfig);
         }
-    }
-
-    /**
-     * Persist channel config config.
-     *
-     */
-    public void persistChannelConfigConfig() {
-        Editor editor = prefs.getPrefs().edit();
-        editor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, showFavs);
-        editor.commit();
-        super.onPause();
-    }
-
-    /**
-     * Refresh.
-     *
-     * @param id the id
-     */
-    public void refresh(int id) {
-        getLoaderManager().restartLoader(id, getArguments(), this);
-        setListShown(false);
     }
 
     /**
@@ -549,7 +322,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     public class ChannelAdapter extends CursorAdapter {
 
-        ImageLoader imageChacher;
+        final ImageLoader imageChacher;
 
         /**
          * Instantiates a new channel adapter.
@@ -582,7 +355,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
             long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
             Integer position = c.getInt(c.getColumnIndex(ChannelTbl.POSITION));
-            Integer favPosition = c.getInt(c.getColumnIndex(ChannelTbl.FAV_POSITION));
             holder.channelName.setText(channelName);
             if (TextUtils.isEmpty(epgTitle)) {
                 holder.epgTime.setVisibility(View.GONE);
@@ -601,7 +373,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 holder.epgTime.setText(start + " - " + end);
                 holder.epgTitle.setText(epgTitle);
             }
-            holder.position.setText(!showFavs ? position.toString() : favPosition.toString());
+            holder.position.setText(position.toString());
             holder.contextMenu.setTag(c.getPosition());
             holder.iconContainer.setTag(c.getPosition());
             holder.v.setChecked(getListView().isItemChecked(c.getPosition()));
@@ -649,25 +421,21 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        selectedPosition = position;
+        mChannelIndex = position;
         if (prefs.getBoolean(DVBViewerPreferences.KEY_SHOW_QUICK_STREAM_HINT, true)) {
             prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_SHOW_QUICK_STREAM_HINT, false).commit();
             showQuickstreamHint(position);
         } else {
             if (mCHannelSelectedListener != null) {
-                Cursor c = mAdapter.getCursor();
-                c.moveToPosition(position);
-                Channel chan = cursorToChannel(c);
-                mCHannelSelectedListener.channelSelected(-1, -1, chan, position);
+                mCHannelSelectedListener.channelSelected(mGroupId, mGroupIndex, position);
                 getListView().setItemChecked(position, true);
             }
         }
     }
 
     private void showQuickstreamHint(int position) {
-        int wantedPosition = position;
         int firstPosition = getListView().getFirstVisiblePosition() - getListView().getHeaderViewsCount(); // This is the same as child #0
-        int wantedChild = wantedPosition - firstPosition;
+        int wantedChild = position - firstPosition;
         View listItem = getListView().getChildAt(wantedChild);
         View icon = listItem.findViewById(R.id.icon);
 
@@ -718,7 +486,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(KEY_SELECTED_POSITION, selectedPosition);
+        outState.putLong(ChannelPager.KEY_GROUP_ID, mGroupId);
+        outState.putInt(ChannelPager.KEY_GROUP_INDEX, mGroupIndex);
+        outState.putInt(KEY_CHANNEL_INDEX, mChannelIndex);
     }
 
     /*
@@ -728,7 +498,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     @Override
     public void onClick(View v) {
-        selectedPosition = (Integer) v.getTag();
+        mChannelIndex = (Integer) v.getTag();
         switch (v.getId()) {
             case R.id.contextMenu:
                 PopupMenu popup = new PopupMenu(getActivity(), v);
@@ -739,10 +509,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             case R.id.iconContainer:
                 try {
                     Cursor c = mAdapter.getCursor();
-                    c.moveToPosition(selectedPosition);
+                    c.moveToPosition(mChannelIndex);
                     Channel chan = cursorToChannel(c);
                     try {
-                        getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getPosition()));
+                        getActivity().startActivity(StreamConfig.buildLiveUrl(getActivity(), chan.getChannelID()));
                         AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                     } catch (UrlBuilderException e) {
                         e.printStackTrace();
@@ -822,11 +592,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     public interface OnChannelSelectedListener {
 
         /**
-         * Channel selected.
+         * Notifys about channel selections in the channel List
          *
-         * @param chan     the chan
+         * @param groupId the groupId
+         * @param groupIndex the groupIndex
+         * @param channelIndex the channelIndex
          */
-        void channelSelected(long groupId, int groupIndex, Channel chan, int channelIndex);
+        void channelSelected(long groupId, int groupIndex, int channelIndex);
 
     }
 
@@ -835,8 +607,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      *
      * @param selectedPosition the new selected position
      */
-    public void setSelectedPosition(int selectedPosition) {
-        this.selectedPosition = selectedPosition;
+    private void setSelectedPosition(int selectedPosition) {
+        this.mChannelIndex = selectedPosition;
     }
 
     /* (non-Javadoc)
@@ -844,19 +616,30 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     @Override
     public void setSelection(int position) {
+        setSelectedPosition(position);
         clearSelection();
         getListView().setItemChecked(position, true);
-        setSelectedPosition(position);
         super.setSelection(position);
     }
 
-    /**
-     * Checks if is show favs.
-     *
-     * @return true, if is show favs
-     */
-    public boolean isShowFavs() {
-        return showFavs;
+    class ChannelPagedObserver extends ContentObserver {
+
+        public ChannelPagedObserver(Handler handler){
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri != null){
+                int index = Integer.parseInt(uri.getQueryParameter("index"));
+                setSelection(index);
+            }
+        }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getContext().getContentResolver().unregisterContentObserver(mChannelPagedOberserver);
+    }
 }

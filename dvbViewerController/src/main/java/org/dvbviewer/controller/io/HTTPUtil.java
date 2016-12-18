@@ -17,15 +17,18 @@ package org.dvbviewer.controller.io;
 
 import android.util.Log;
 
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.Credentials;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.Callback;
+import okhttp3.Credentials;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Here is
@@ -39,27 +42,27 @@ public class HTTPUtil {
 
     private static OkHttpClient getHttpClient() {
         if (httpClient == null) {
-            httpClient = new OkHttpClient();
-            httpClient.setSslSocketFactory(SSLUtil.getSSLServerSocketFactory());
-            httpClient.setHostnameVerifier(new SSLUtil.VerifyAllHostnameVerifiyer());
+            final X509TrustManager trustManager = SSLUtil.getTrustAllTrustManager();
+            httpClient = new OkHttpClient.Builder()
+                    .sslSocketFactory(SSLUtil.getSSLServerSocketFactory(trustManager), trustManager)
+                    .hostnameVerifier(new SSLUtil.VerifyAllHostnameVerifiyer())
+                    .connectTimeout(5000, TimeUnit.MILLISECONDS)
+                    .readTimeout(5000, TimeUnit.MILLISECONDS)
+                    .build();
         }
         return httpClient;
     }
 
     public static String getString(String url, String username, String password) throws Exception {
-        String result;
-        Response response = getResponse(url, username, password);
-        result = response.body().string();
-        return result;
+        return getResponse(url, username, password).body().string();
     }
 
-    public static HttpUrl.Builder getUrlBuilder(String url) throws UrlBuilderException {
+    public static UrlBuilder getUrlBuilder(String url) throws UrlBuilderException {
         final  HttpUrl httpUrl = HttpUrl.parse(url);
         if (httpUrl == null){
             throw new UrlBuilderException(url);
         }
-        HttpUrl.Builder builder = httpUrl.newBuilder();
-        return builder;
+        return new UrlBuilder(httpUrl.toString());
     }
 
     public static void executeAsync(String url, String username, String password, Callback callback, RequestBody body) throws Exception {
@@ -97,20 +100,47 @@ public class HTTPUtil {
     }
 
     private static Request.Builder getBuilder(String url, String credentials) throws UrlBuilderException {
-        HttpUrl.Builder urlBuilder = getUrlBuilder(url);
-        Request.Builder builder = new Request.Builder()
+        UrlBuilder urlBuilder = new UrlBuilder(url);
+        return new Request.Builder()
                 .url(urlBuilder.toString())
                 .header("Authorization", credentials)
                 .header("Connection", "close");
-        return builder;
     }
 
-    private static void checkResponse(Response response) throws AuthenticationException, DefaultHttpException {
+    private static void checkResponse(Response response) throws AuthenticationException {
         if (response != null && !response.isSuccessful()) {
             switch (response.code()) {
                 case 401:
                     throw new AuthenticationException();
             }
+        }
+    }
+
+    public static class UrlBuilder{
+
+        private HttpUrl.Builder builder;
+
+        public UrlBuilder(String url) throws UrlBuilderException {
+            final HttpUrl httpUrl = HttpUrl.parse(url);
+            if (httpUrl == null) {
+                throw new UrlBuilderException(url);
+            }
+            builder = httpUrl.newBuilder();
+        }
+
+        public UrlBuilder addQueryParameter(String name, String value){
+            builder.addQueryParameter(name, value);
+            return this;
+        }
+
+        public HttpUrl build(){
+            return builder.build();
+        }
+
+
+        @Override
+        public String toString() {
+            return build().toString();
         }
     }
 

@@ -47,7 +47,6 @@ import android.widget.Spinner;
 import com.google.gson.Gson;
 import com.nineoldandroids.animation.IntEvaluator;
 import com.nineoldandroids.animation.ValueAnimator;
-import com.squareup.okhttp.HttpUrl;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
@@ -72,8 +71,8 @@ import org.dvbviewer.controller.utils.URLUtil;
 public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener, LoaderManager.LoaderCallbacks<FfMpegPrefs> {
 
 	private static final String	Tag						= StreamConfig.class.getSimpleName();
-	private static final String	liveUrl					= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_LIVE_STREAM_PORT + "/upnp/channelstream/";
-	private static final String	mediaUrl				= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_MEDIA_STREAM_PORT + "/upnp/recordings/";
+	private static final String	liveUrl					= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_PORT + "/upnp/channelstream/";
+	private static final String	mediaUrl				= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_PORT + "/upnp/recordings/";
 	private static final int	STREAM_TYPE_DIRECT		= 0;
 	private static final int	STREAM_TYPE_TRANSCODE	= 1;
 	private static final Gson 	gson					= new Gson();
@@ -93,7 +92,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private boolean				seekable				= false;
 	private int					mFileType				= 0;
 	private int					mStreamType				= 0;
-	private int					mFileId					= -1;
+	private long				mFileId					= -1;
 	private SharedPreferences	prefs;
 	private View collapsable;
 
@@ -108,7 +107,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		if (savedInstanceState != null) {
 			title = savedInstanceState.getInt("titleRes");
 		}
-		mFileId = getArguments().getInt(EXTRA_FILE_ID);
+		mFileId = getArguments().getLong(EXTRA_FILE_ID);
 		mFileType = getArguments().getInt(EXTRA_FILE_TYPE, FILE_TYPE_LIVE);
 		mStreamType = getArguments().getInt(EXTRA_FILE_TYPE, STREAM_TYPE_DIRECT);
 		seekable = mFileType != FILE_TYPE_LIVE && mStreamType != STREAM_TYPE_DIRECT;
@@ -342,25 +341,25 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 	
 	
-	public static Intent buildLiveUrl(Context context, int position) throws UrlBuilderException {
+	public static Intent buildLiveUrl(Context context, long id) throws UrlBuilderException {
 		final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
 		boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
 		if (direct) {
-			return getDirectUrl(position, false);
+			return getDirectUrl(id, false);
 		}else {
 			final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
-			return getTranscodedUrl(position, StreamUtils.getDefaultPreset(prefs), encodingSpeed, false, 0);
+			return getTranscodedUrl(id, StreamUtils.getDefaultPreset(prefs), encodingSpeed, false, 0);
 		}
 	}
 
 
-	private static Intent getTranscodedUrl(final int position, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
+	private static Intent getTranscodedUrl(final long id, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
 		final String baseUrl = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM + preset.getExtension();
-		final HttpUrl.Builder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
+		final HTTPUtil.UrlBuilder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
 		final String idParam = recording ? "recid" : "chid";
 		builder.addQueryParameter("preset", preset.getTitle());
 		builder.addQueryParameter("ffPreset", encodingSpeed);
-		builder.addQueryParameter(idParam, String.valueOf(position));
+		builder.addQueryParameter(idParam, String.valueOf(id));
 		if (start > 0) {
 			builder.addQueryParameter("start", String.valueOf(start));
 		}
@@ -371,8 +370,8 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		return videoIntent;
 	}
 
-	private static Intent getDirectUrl(int position, boolean recording){
-		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(position).append(".ts");
+	private static Intent getDirectUrl(long id, boolean recording){
+		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(id).append(".ts");
 		Log.d(Tag, "playing video: " + result.toString());
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");

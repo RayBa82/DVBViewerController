@@ -126,10 +126,6 @@
     <string name="pref_item_password_summary">Password (se richiesta)</string>
     <string name="pref_item_rs_wol_on_start">Invia WOL all\'avvio</string>
     <string name="pref_item_rs_wol_on_start_summary">Prova a svegliare il Recording Service all\'avvio</string>
-    <string name="pref_item_rs_live_stream_port">Porta live streaming</string>
-    <string name="pref_item_rs_live_stream_port_summary">Porta per TV live streaming</string>
-    <string name="pref_item_rs_media_stream_port">Porta media streaming</string>
-    <string name="pref_item_rs_media_stream_port_summary">Porta per il media streaming</string>
     <string name="pref_item_channel_show_current_program">Mostra programma corrente</string>
     <string name="pref_item_channel_show_current_program_summary">Mostra il programma corrente nella lista canali</string>
     <string name="pref_item_channel_show_current_program_wifi">Solo in Wi-Fi</string>

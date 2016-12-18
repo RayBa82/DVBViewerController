@@ -6,11 +6,6 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.mockwebserver.Dispatcher;
-import com.squareup.okhttp.mockwebserver.MockResponse;
-import com.squareup.okhttp.mockwebserver.MockWebServer;
-import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.test.R;
@@ -23,6 +18,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
+
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.RecordedRequest;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.HttpUrl;
+
 
 /**
  * Created by r.baun on 14.06.2015.

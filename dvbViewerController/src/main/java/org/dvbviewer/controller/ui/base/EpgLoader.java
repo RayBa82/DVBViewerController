@@ -24,20 +24,17 @@ import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
  *
  * @param <D> the
  * @author RayBa
- * @date 07.04.2013
  */
 public abstract class EpgLoader<D> extends AsyncLoader<D>{
 	
-	EpgDateInfo mDateInfo;
-	long mEpgDate;
+	private final 	EpgDateInfo mDateInfo;
+	private 		long 		mEpgDate;
 
 	/**
 	 * Instantiates a new epg loader.
 	 *
 	 * @param context the context
 	 * @param dateInfo the date info
-	 * @author RayBa
-	 * @date 07.04.2013
 	 */
 	public EpgLoader(Context context, EpgDateInfo dateInfo) {
 		super(context);
@@ -50,7 +47,7 @@ public abstract class EpgLoader<D> extends AsyncLoader<D>{
 	@Override
 	protected void onForceLoad() {
 		super.onForceLoad();
-		mEpgDate = mDateInfo.getEpgDate().getTime();
+		mEpgDate = mDateInfo.getEpgDate();
 	}
 	
 	/* (non-Javadoc)
@@ -58,7 +55,7 @@ public abstract class EpgLoader<D> extends AsyncLoader<D>{
 	 */
 	@Override
 	public boolean takeContentChanged() {
-		return mEpgDate != mDateInfo.getEpgDate().getTime();
+		return mEpgDate != mDateInfo.getEpgDate();
 	}
 
 }

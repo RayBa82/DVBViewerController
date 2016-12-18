@@ -18,8 +18,6 @@ package org.dvbviewer.controller.io;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.squareup.okhttp.TlsVersion;
-
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -33,12 +31,14 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.TlsVersion;
+
 /**
  * Util Class for !unsecure! SSL connections.
  *
  * @author RayBa
  */
-public class SSLUtil {
+class SSLUtil {
 
 	private static final String TAG = SSLUtil.class.getSimpleName();
 
@@ -50,22 +50,26 @@ public class SSLUtil {
 	 *
 	 * @return the SSL context
 	 */
-	private static SSLContext getSSLContext() {
-		SSLContext sslContext = getProtocolContext(TlsVersion.TLS_1_2.javaName());
+	private static SSLContext getSSLContext(X509TrustManager trustManager) {
+		SSLContext sslContext = getProtocolContext(TlsVersion.TLS_1_2.javaName(), trustManager);
 		if (sslContext == null) {
-			sslContext = getProtocolContext(TlsVersion.TLS_1_0.javaName());
+			sslContext = getProtocolContext(TlsVersion.TLS_1_0.javaName(), trustManager);
 		}
 		if (sslContext == null) {
-			sslContext = getProtocolContext(TlsVersion.SSL_3_0.javaName());
+			sslContext = getProtocolContext(TlsVersion.SSL_3_0.javaName(), trustManager);
 		}
 		if (sslContext == null) {
-			sslContext = getDefaultContext();
+			sslContext = getDefaultContext(trustManager);
 		}
 		return sslContext;
 	}
 
-	public static SSLSocketFactory getSSLServerSocketFactory() {
-		return getSSLContext().getSocketFactory();
+	public static SSLSocketFactory getSSLServerSocketFactory(X509TrustManager trustManager) {
+		return getSSLContext(trustManager).getSocketFactory();
+	}
+
+	public static X509TrustManager getTrustAllTrustManager() {
+		return new TrustAllTrustManager();
 	}
 
 
@@ -74,11 +78,11 @@ public class SSLUtil {
 	 *
 	 * @return the tls protocol context
 	 */
-	private static SSLContext getProtocolContext(String protocol) {
+	private static SSLContext getProtocolContext(String protocol, X509TrustManager trustManager) {
 		SSLContext sslContext = null;
 		try {
 			sslContext = TextUtils.isEmpty(protocol) ? SSLContext.getDefault() : SSLContext.getInstance(protocol);
-			initSslContext(sslContext);
+			initSslContext(sslContext, trustManager);
 		} catch (NoSuchAlgorithmException e) {
 			Log.e(TAG, "Error creating SSL Context", e);
 		}
@@ -86,17 +90,16 @@ public class SSLUtil {
 	}
 
 
-	private static SSLContext getDefaultContext() {
-		return getProtocolContext(null);
+	private static SSLContext getDefaultContext(X509TrustManager trustManager) {
+		return getProtocolContext(null, trustManager);
 	}
 
-	private static SSLContext initSslContext(SSLContext sslContext){
+	private static void initSslContext(SSLContext sslContext, X509TrustManager trustManager){
 		try {
-			sslContext.init(null, new TrustManager[]{new TrustAllTrustManager()}, new SecureRandom());
+			sslContext.init(null, new TrustManager[]{trustManager}, new SecureRandom());
 		} catch (KeyManagementException e) {
 			Log.e(TAG, "Error initializing SSL Context", e);
 		}
-		return sslContext;
 	}
 
 	/**
@@ -130,12 +133,9 @@ public class SSLUtil {
 
 		}
 
-		/* (non-Javadoc)
-         * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
-         */
 		@Override
 		public X509Certificate[] getAcceptedIssuers() {
-			return null;
+			return new X509Certificate[0];
 		}
 
 	}

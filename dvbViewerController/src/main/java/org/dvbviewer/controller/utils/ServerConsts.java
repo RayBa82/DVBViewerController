@@ -12,15 +12,13 @@ public class ServerConsts {
 	public static String	REC_SERVICE_HOST				= "";
 	public static String	REC_SERVICE_PORT				= "8089";
 	public static String	REC_SERVICE_URL					= REC_SERVICE_PROTOCOL;
-	public static String	REC_SERVICE_LIVE_STREAM_PORT	= "7522";
-	public static String	REC_SERVICE_MEDIA_STREAM_PORT	= "8090";
 	public static String	REC_SERVICE_USER_NAME			= "";
 	public static String	REC_SERVICE_MAC_ADDRESS			= "";
 	public static int		REC_SERVICE_WOL_PORT			= 9;
 	public static String	REC_SERVICE_PASSWORD			= "";
 
-	public static final String	URL_CHANNELS					= "/api/getchannelsxml.html?logo=1&subchannels=1";
-	public static final String	URL_FAVS						= "/api/getfavourites.html";
+	public static final String	URL_CHANNELS					= "/api/getchannelsxml.html?logo=1";
+	public static final String	URL_FAVS						= "/api/getchannelsxml.html?logo=1&favonly=1";
 	public static final String	URL_VERSION						= "/api/version.html";
 	public static final String	URL_STATUS						= "/api/status.html";
 	public static final String	URL_STATUS2						= "/api/status2.html";

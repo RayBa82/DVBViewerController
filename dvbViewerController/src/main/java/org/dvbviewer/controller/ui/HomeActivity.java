@@ -29,11 +29,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
+import org.dvbviewer.controller.ui.fragments.ChannelPager;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
 import org.dvbviewer.controller.ui.fragments.EpgPager;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
@@ -47,7 +47,6 @@ import org.dvbviewer.controller.ui.phone.RemoteActivity;
 import org.dvbviewer.controller.ui.phone.StatusActivity;
 import org.dvbviewer.controller.ui.phone.TaskActivity;
 import org.dvbviewer.controller.ui.phone.TimerlistActivity;
-import org.dvbviewer.controller.ui.tablet.ChannelListMultiActivity;
 import org.dvbviewer.controller.utils.Config;
 
 import java.util.List;
@@ -59,11 +58,10 @@ import java.util.List;
  */
 public class HomeActivity extends BaseActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
 
-	private View		multiContainer;
-	private ArrayAdapter mSpinnerAdapter;
-	private Spinner mClientSpinner;
-	private int spinnerPosition;
-	DVBViewerPreferences prefs;
+	private View					multiContainer;
+	private ArrayAdapter 			mSpinnerAdapter;
+	private Spinner 				mClientSpinner;
+	private DVBViewerPreferences 	prefs;
 
 	/* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseActivity#onCreate(android.os.Bundle)
@@ -78,7 +76,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		if (savedInstanceState == null) {
 			if (multiContainer != null) {
 				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-				ChannelList chans = new ChannelList();
+				ChannelPager chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
 				tran.add(multiContainer.getId(), chans);
 				tran.commit();
@@ -152,7 +150,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 		case R.id.home_btn_channels:
 			if (multiContainer != null) {
 				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-				ChannelList chans = new ChannelList();
+				ChannelPager chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
 				tran.replace(multiContainer.getId(), chans);
 				tran.commit();
@@ -198,23 +196,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 			mClientSpinner.setVisibility(View.GONE);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onRestoreInstanceState(android.os.Bundle)
-	 */
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-	}
-	
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.FragmentActivity#onSaveInstanceState(android.os.Bundle)
-	 */
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -236,11 +218,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 	}
 
 	@Override
-	public void channelSelected(long groupId, int groupIndex, Channel chan, int channelIndex) {
-		Intent channelListIntent = new Intent(this, ChannelListMultiActivity.class);
-		channelListIntent.putExtra(ChannelList.KEY_GROUP_ID, groupId);
-		channelListIntent.putExtra(EpgPager.KEY_HIDE_OPTIONSMENU, true);
+	public void channelSelected(long groupId, int groupIndex, int channelIndex) {
+		Intent channelListIntent = new Intent(this, ChannelListActivity.class);
+		channelListIntent.putExtra(ChannelPager.KEY_GROUP_ID, groupId);
+		channelListIntent.putExtra(ChannelPager.KEY_GROUP_INDEX, groupIndex);
 		channelListIntent.putExtra(ChannelList.KEY_CHANNEL_INDEX, channelIndex);
+		channelListIntent.putExtra(EpgPager.KEY_HIDE_OPTIONSMENU, true);
 		startActivity(channelListIntent);
 
 	}
@@ -255,7 +238,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 			mClientSpinner.setAdapter(mSpinnerAdapter);
 			String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);
 			int index = spinnerData.indexOf(activeClient);
-			spinnerPosition = index > Spinner.INVALID_POSITION ? index : Spinner.INVALID_POSITION;
+			int spinnerPosition = index > Spinner.INVALID_POSITION ? index : Spinner.INVALID_POSITION;
 			mClientSpinner.setSelection(spinnerPosition);
 			mClientSpinner.setVisibility(View.VISIBLE);
 		}

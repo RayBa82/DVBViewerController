@@ -146,7 +146,7 @@ public class SynchronizationTest extends InstrumentationTestCase {
             JSONObject json = new JSONObject(TestUtils.getStringFromFile(InstrumentationRegistry.getContext(), resId));
             String chanXml = json.getString("channels");
             ChannelHandler chanHandler = new ChannelHandler();
-            channelRoots = chanHandler.parse(chanXml);
+            channelRoots = chanHandler.parse(chanXml, false);
         } catch (SAXException | JSONException e) {
             e.printStackTrace();
         }
@@ -155,15 +155,7 @@ public class SynchronizationTest extends InstrumentationTestCase {
 
     @Nullable
     private List<ChannelGroup> getFavs(int resId) {
-        List<ChannelGroup> channelGroups = null;
-        try {
-            JSONObject json = new JSONObject(TestUtils.getStringFromFile(InstrumentationRegistry.getContext(), resId));
-            String favXml = json.getString("favourites");
-            FavouriteHandler favHandler = new FavouriteHandler();
-            channelGroups = favHandler.parse(InstrumentationRegistry.getContext(), favXml);
-        } catch (SAXException | JSONException e) {
-            e.printStackTrace();
-        }
+        List<ChannelGroup> channelGroups = new ArrayList<>();
         return channelGroups;
     }
 

@@ -143,6 +143,8 @@ public class DbConsts {
 		/** The table name. */
 		public static final String	TABLE_NAME	= "favs";
 
+		/** The Constant CONTENT_URI. */
+		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 	}
 
 	/**
