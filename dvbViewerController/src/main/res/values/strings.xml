@@ -19,7 +19,6 @@
     <string name="common_colon">:&#160;</string>
     <string name="about_app">About DVBViewer Controller</string>
     <string name="version">App Version:</string>
-    <string name="common_all">All</string>
     <!-- Channels -->
     <string name="channelList">Channel List</string>
     <string name="refreshChannels">Synchronize channels</string>
@@ -159,5 +158,4 @@
     <!-- Remote -->
     <string name="remote_control">Control</string>
     <string name="remote_numbers">Numbers</string>
-
 </resources>
