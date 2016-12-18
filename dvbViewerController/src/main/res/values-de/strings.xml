@@ -19,6 +19,7 @@
     <string name="common_colon">:&#160;</string>
     <string name="about_app">Über DVBViewer Controller</string>
     <string name="version">App Version:</string>
+    <string name="common_all">Alle</string>
     <!-- Channels -->
     <string name="channelList">Senderliste</string>
     <string name="refreshChannels">Sender syncronisieren</string>
@@ -153,7 +154,7 @@
     <string name="quick_stream_hint_title">Sender streamen</string>
     <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
     <string name="version_unsupported_text">Ihre Recording Service Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
-    <string name="version_unsupported_title">Version zu alt</string>
+    <string name="version_unsupported_title">Version nicht mehr unterstützt</string>
     <string name="recording_folder">Aufnahmeordner</string>
     <!-- Remote -->
     <string name="remote_control">Steuerung</string>
