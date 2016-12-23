@@ -71,8 +71,8 @@ import org.dvbviewer.controller.utils.URLUtil;
 public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener, LoaderManager.LoaderCallbacks<FfMpegPrefs> {
 
 	private static final String	Tag						= StreamConfig.class.getSimpleName();
-	private static final String	liveUrl					= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_PORT + "/upnp/channelstream/";
-	private static final String	mediaUrl				= "http://"+ServerConsts.REC_SERVICE_HOST + ":" + ServerConsts.REC_SERVICE_PORT + "/upnp/recordings/";
+	private static final String	liveUrl					= "/upnp/channelstream/";
+	private static final String recordingUrl			= "/upnp/recordings/";
 	private static final int	STREAM_TYPE_DIRECT		= 0;
 	private static final int	STREAM_TYPE_TRANSCODE	= 1;
 	private static final Gson 	gson					= new Gson();
@@ -371,7 +371,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 
 	private static Intent getDirectUrl(long id, boolean recording){
-		StringBuilder result = new StringBuilder(recording ? mediaUrl : liveUrl).append(id).append(".ts");
+		StringBuilder result = new StringBuilder(ServerConsts.REC_SERVICE_URL).append(recording ? recordingUrl : liveUrl).append(id).append(".ts");
 		Log.d(Tag, "playing video: " + result.toString());
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");
