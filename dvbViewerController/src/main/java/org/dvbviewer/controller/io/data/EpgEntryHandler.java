@@ -46,18 +46,6 @@ public class EpgEntryHandler extends DefaultHandler {
 	List<EpgEntry>	epgList		= null;
 	EpgEntry		currentEPG	= null;
 
-	/**
-	 * Parses the.
-	 *
-	 * @param xml the xml
-	 * @return the list©
-	 * @throws SAXException
-	 */
-	public List<EpgEntry> parse(String xml) throws SAXException {
-		Xml.parse(xml, getContentHandler());
-		return epgList;
-	}
-
 	public List<EpgEntry> parse(InputStream inputStream) throws SAXException, IOException {
 		Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
 		return epgList;

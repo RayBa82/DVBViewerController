@@ -60,8 +60,9 @@ public class RecordingService {
 
     public static String getDVBViewerTargets() {
         String jsonClients = null;
+        InputStream xml = null;
         try {
-            String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TARGETS);
+            xml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TARGETS);
             TargetHandler handler = new TargetHandler();
             List<String> targets = handler.parse(xml);
             Collections.sort(targets);
@@ -71,6 +72,8 @@ public class RecordingService {
             jsonClients = gson.toJson(targets, type);
         } catch (Exception e) {
             Log.e(TAG, "Error getting DVBViewer Targets", e);
+        }finally {
+            IoUtils.closeSilently(xml);
         }
         return jsonClients;
     }

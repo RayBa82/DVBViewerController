@@ -42,6 +42,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.utils.IoUtils;
+
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.AuthenticationException;
@@ -58,6 +60,7 @@ import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -123,13 +126,16 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			@Override
 			public List<Timer> loadInBackground() {
 				List<Timer> result = null;
+				InputStream xml = null;
 				try {
-					String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_LIST);
+					xml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_LIST);
 					TimerHandler hanler = new TimerHandler();
 					result = hanler.parse(xml);
 					Collections.sort(result);
 				} catch (Exception e) {
 					catchException(getClass().getSimpleName(), e);
+				}finally {
+					IoUtils.closeSilently(xml);
 				}
 				return result;
 			}

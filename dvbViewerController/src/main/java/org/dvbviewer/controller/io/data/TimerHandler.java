@@ -29,6 +29,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +55,7 @@ public class TimerHandler extends DefaultHandler {
 	 * @throws SAXException 
 	 * @date 05.07.2012
 	 */
-	public List<Timer> parse(String xml) throws SAXException {
+	public List<Timer> parse(InputStream xml) throws SAXException, IOException {
 		RootElement root = new RootElement("Timers");
 		Element timerElement = root.getChild("Timer");
 		Element descElement = timerElement.getChild("Descr");
@@ -144,7 +146,7 @@ public class TimerHandler extends DefaultHandler {
 				}
 			}
 		});
-		Xml.parse(xml, root.getContentHandler());
+		Xml.parse(xml, Xml.Encoding.UTF_8, root.getContentHandler());
 		return timerList;
 	}
 

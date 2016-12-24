@@ -31,7 +31,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,13 +57,11 @@ import org.dvbviewer.controller.io.data.EpgEntryHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseFragment;
 import org.dvbviewer.controller.ui.base.CursorPagerAdapter;
-import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
-import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -498,11 +495,11 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	}
 
 	private void performRefresh() {
-		JSONObject trackingData = AnalyticsTracker.buildTracker();
 		DbHelper mDbHelper = new DbHelper(getContext());
+		InputStream chanXml = null;
+		InputStream favXml = null;
 		try {
 			String version = RecordingService.getVersionString();
-			AnalyticsTracker.addData(trackingData, "version", version);
 			if (!Config.isRSVersionSupported(version)) {
 				showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
 				return;
@@ -510,16 +507,14 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			/**
 			 * Request the Channels
 			 */
-			String chanXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
-			AnalyticsTracker.addData(trackingData, "channels", chanXml);
+			chanXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS);
 			ChannelHandler channelHandler = new ChannelHandler();
 			List<ChannelRoot> chans = channelHandler.parse(chanXml, false);
 			/**
 			 * Request the Favourites
 			 */
-			String favXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
-			if (!TextUtils.isEmpty(favXml)) {
-				AnalyticsTracker.addData(trackingData, "favourites", favXml);
+			favXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS);
+			if (favXml != null) {
 				List<ChannelRoot> favs = channelHandler.parse(favXml, true);
 				if(favs != null && !favs.isEmpty()) {
 					chans.addAll(favs);
@@ -539,7 +534,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			 * Save the data in sharedpreferences
 			 */
 			Editor prefEditor = prefs.getPrefs().edit();
-			StatusList.getStatus(prefs, version, trackingData);
+			StatusList.getStatus(prefs, version);
 			prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
 			prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
 			prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
@@ -548,8 +543,9 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		} catch (Exception e) {
 			catchException(getClass().getSimpleName(), e);
 		} finally {
-			AnalyticsTracker.trackSync(getContext(), trackingData);
 			mDbHelper.close();
+			IoUtils.closeSilently(chanXml);
+			IoUtils.closeSilently(favXml);
 		}
 	}
 

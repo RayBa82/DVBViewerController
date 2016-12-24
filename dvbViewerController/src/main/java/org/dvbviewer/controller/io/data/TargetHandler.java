@@ -25,6 +25,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +49,7 @@ public class TargetHandler extends DefaultHandler {
 	 * @throws org.xml.sax.SAXException
 	 * @date 11.01.2015
 	 */
-	public List<String> parse(String xml) throws SAXException {
+	public List<String> parse(InputStream xml) throws SAXException, IOException {
 		RootElement root = new RootElement("targets");
 		Element targetElement = root.getChild("target");
 
@@ -67,7 +69,7 @@ public class TargetHandler extends DefaultHandler {
 			}
 		});
 
-		Xml.parse(xml, root.getContentHandler());
+		Xml.parse(xml, Xml.Encoding.UTF_8, root.getContentHandler());
 		return targets;
 	}
 

@@ -51,20 +51,6 @@ public class ChannelHandler extends DefaultHandler {
     private int favPosition;
     private String favRootName;
 
-
-    /**
-     * Parses the.
-     *
-     * @param xml the xml
-     * @return the list�
-     * @throws org.xml.sax.SAXException
-     */
-    public List<ChannelRoot> parse(String xml, boolean fav) throws SAXException {
-        Xml.parse(xml, getContentHandler(fav));
-        return rootElements;
-
-    }
-
     public List<ChannelRoot> parse(InputStream inputStream, boolean fav) throws SAXException, IOException {
         Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler(fav));
         return rootElements;
