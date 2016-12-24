@@ -191,7 +191,6 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		switch (itemId) {
 			case R.id.menuPrev:
 				info.setEpgDate(DateUtils.substractDay(new Date(info.getEpgDate())).getTime());
-				info.setEpgDate(DateUtils.substractDay(new Date(info.getEpgDate())).getTime());
 				break;
 			case R.id.menuNext:
 				info.setEpgDate(DateUtils.addDay(new Date(info.getEpgDate())).getTime());
