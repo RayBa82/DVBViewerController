@@ -105,6 +105,9 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		boolean result = super.onOptionsItemSelected(item);
+		if (mChannelPager != null){
+			result = mChannelPager.onOptionsItemSelected(item);
+		}
 		if (mEpgPager != null){
 			result = mEpgPager.onOptionsItemSelected(item);
 		}
