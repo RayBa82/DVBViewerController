@@ -251,7 +251,6 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 
 		case R.id.menuRefresh:
 			refresh(LOAD_CURRENT_PROGRAM);
-			getActivity().onOptionsItemSelected(item);
 			return true;
 		case R.id.menuSyncChannels:
 			refreshGroupType = true;
