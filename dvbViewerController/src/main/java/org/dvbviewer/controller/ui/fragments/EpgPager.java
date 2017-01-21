@@ -186,7 +186,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	 */
 	@Override
 	public boolean onMenuItemClick(MenuItem menuItem) {
-		EpgDateInfo info = (EpgDateInfo) getActivity();
+		final EpgDateInfo info = (EpgDateInfo) getActivity();
 		int itemId = menuItem.getItemId();
 		switch (itemId) {
 			case R.id.menuPrev:
@@ -199,7 +199,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 				info.setEpgDate(new Date().getTime());
 				break;
 			case R.id.menuNow:
-				info.setEpgDate(DateUtils.setCurrentTime(new Date(info.getEpgDate())).getTime());
+				info.setEpgDate(DateUtils.setCurrentTime(new Date()).getTime());
 				break;
 			case R.id.menuEvening:
 				info.setEpgDate(DateUtils.setEveningTime(new Date(info.getEpgDate())).getTime());
@@ -337,6 +337,8 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	}
 
 	private void resetLoader() {
+		final EpgDateInfo info = (EpgDateInfo) getActivity();
+		info.setEpgDate(System.currentTimeMillis());
 		DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
 		mAdapter.swapCursor(null);

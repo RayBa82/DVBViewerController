@@ -371,10 +371,11 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 
 	private static Intent getDirectUrl(long id, boolean recording){
-		StringBuilder result = new StringBuilder(ServerConsts.REC_SERVICE_URL).append(recording ? recordingUrl : liveUrl).append(id).append(".ts");
-		Log.d(Tag, "playing video: " + result.toString());
+		final StringBuilder baseUrl = new StringBuilder(ServerConsts.REC_SERVICE_URL).append(recording ? recordingUrl : liveUrl).append(id).append(".ts");
+		final String videoUrl = URLUtil.buildProtectedRSUrl(baseUrl.toString());
+		Log.d(Tag, "playing video: " + videoUrl);
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-		videoIntent.setDataAndType(Uri.parse(result.toString()), "video/mpeg");
+		videoIntent.setDataAndType(Uri.parse(videoUrl), "video/mpeg");
 		return videoIntent;
 	}
 
