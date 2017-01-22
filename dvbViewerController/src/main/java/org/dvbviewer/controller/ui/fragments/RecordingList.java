@@ -24,6 +24,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -68,6 +69,7 @@ import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.DateUtils;
+import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
@@ -195,17 +197,14 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		switch (item.getItemId()) {
 			case R.id.menuStream:
 				if (UIUtils.isTablet(getActivity())) {
+					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
 					StreamConfig cfg = StreamConfig.newInstance();
-					Bundle arguments = new Bundle();
-					arguments.putLong(StreamConfig.EXTRA_FILE_ID, mAdapter.getItem(selectedPosition).getId());
-					arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
-					arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
 					cfg.setArguments(arguments);
 					cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
 				} else {
+					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
 					Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
-					streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, mAdapter.getItem(selectedPosition).getId());
-					streamConfig.putExtra(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
+					streamConfig.putExtras(arguments);
 					startActivity(streamConfig);
 				}
 				return true;
@@ -214,6 +213,16 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				break;
 		}
 		return false;
+	}
+
+	@NonNull
+	private Bundle getIntentExtras(IEPG recording) {
+		Bundle arguments = new Bundle();
+		arguments.putLong(StreamConfig.EXTRA_FILE_ID, recording.getId());
+		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.RECORDING);
+		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+		arguments.putString(StreamConfig.EXTRA_TITLE, recording.getTitle());
+		return arguments;
 	}
 
 	/**
@@ -585,8 +594,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				try {
 					selectedPosition = (Integer) v.getTag();
 					final IEPG recording = mAdapter.getItem(selectedPosition);
-					final Intent videoIntent = StreamConfig.buildRecordingUrl(getActivity(), recording.getId());
-					StreamConfig.addTitle(videoIntent, recording.getTitle());
+					final Intent videoIntent = StreamConfig.buildRecordingUrl(getActivity(), recording.getId(), recording.getTitle());
 					getActivity().startActivity(videoIntent);
 					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 				} catch (ActivityNotFoundException e) {

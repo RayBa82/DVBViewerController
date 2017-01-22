@@ -24,6 +24,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -61,6 +62,7 @@ import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
 import org.dvbviewer.controller.ui.widget.CheckableLinearLayout;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.DateUtils;
+import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
@@ -282,20 +284,26 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void showStreamConfig(Cursor cursor) {
         Channel chan = cursorToChannel(cursor);
         if (UIUtils.isTablet(getActivity())) {
+            Bundle arguments = getIntentExtras(chan);
             StreamConfig cfg = StreamConfig.newInstance();
-            Bundle arguments = new Bundle();
-            arguments.putLong(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
-            arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_LIVE);
-            arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
             cfg.setArguments(arguments);
             cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
         } else {
+            Bundle arguments = getIntentExtras(chan);
             Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
-            streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
-            streamConfig.putExtra(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_LIVE);
-            streamConfig.putExtra(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+            streamConfig.putExtras(arguments);
             startActivity(streamConfig);
         }
+    }
+
+    @NonNull
+    private Bundle getIntentExtras(Channel chan) {
+        Bundle arguments = new Bundle();
+        arguments.putLong(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
+        arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.CHANNEL);
+        arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+        arguments.putString(StreamConfig.EXTRA_TITLE, chan.getName());
+        return arguments;
     }
 
     /**
@@ -512,8 +520,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     c.moveToPosition(mChannelIndex);
                     Channel chan = cursorToChannel(c);
                     try {
-                        final Intent videoIntent = StreamConfig.buildLiveUrl(getActivity(), chan.getChannelID());
-                        StreamConfig.addTitle(videoIntent, chan.getName());
+                        final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), chan.getChannelID(), chan.getName());
                         getActivity().startActivity(videoIntent);
                         AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                     } catch (UrlBuilderException e) {

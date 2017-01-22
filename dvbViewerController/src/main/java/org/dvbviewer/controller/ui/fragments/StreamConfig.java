@@ -48,6 +48,7 @@ import com.google.gson.Gson;
 import com.nineoldandroids.animation.IntEvaluator;
 import com.nineoldandroids.animation.ValueAnimator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
@@ -59,7 +60,9 @@ import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
+import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.StreamType;
 import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.dvbviewer.controller.utils.URLUtil;
@@ -73,15 +76,11 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private static final String	Tag						= StreamConfig.class.getSimpleName();
 	private static final String	liveUrl					= "/upnp/channelstream/";
 	private static final String recordingUrl			= "/upnp/recordings/";
-	private static final int	STREAM_TYPE_DIRECT		= 0;
-	private static final int	STREAM_TYPE_TRANSCODE	= 1;
 	private static final Gson 	gson					= new Gson();
 	public static final String	EXTRA_FILE_ID			= "_fileID";
 	public static final String	EXTRA_FILE_TYPE			= "_fileType";
 	public static final String	EXTRA_DIALOG_TITLE_RES	= "_dialog_title_res";
-	public static final int		FILE_TYPE_LIVE			= 0;
-	public static final int		FILE_TYPE_RECORDING		= 1;
-	public static final String  TITLE                   = "title";
+    public static final String  EXTRA_TITLE             = "title";
 	private EditText			startHours;
 	private EditText			startMinutes;
 	private EditText			startSeconds;
@@ -91,11 +90,13 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private String				preTime;
 	private int					title					= 0;
 	private boolean				seekable				= false;
-	private int					mFileType				= 0;
-	private int					mStreamType				= 0;
+    private String				mTitle				    = StringUtils.EMPTY;
+	private StreamType			mStreamType;
+    private FileType            mFileType;
 	private long				mFileId					= -1;
 	private SharedPreferences	prefs;
 	private View collapsable;
+
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.DialogFragment#onCreate(android.os.Bundle)
@@ -109,9 +110,10 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			title = savedInstanceState.getInt("titleRes");
 		}
 		mFileId = getArguments().getLong(EXTRA_FILE_ID);
-		mFileType = getArguments().getInt(EXTRA_FILE_TYPE, FILE_TYPE_LIVE);
-		mStreamType = getArguments().getInt(EXTRA_FILE_TYPE, STREAM_TYPE_DIRECT);
-		seekable = mFileType != FILE_TYPE_LIVE && mStreamType != STREAM_TYPE_DIRECT;
+		mFileType = getArguments().getParcelable(EXTRA_FILE_TYPE);
+		mStreamType = StreamType.DIRECT;
+        mTitle = getArguments().getString(EXTRA_TITLE);
+		seekable = mFileType != FileType.CHANNEL && mStreamType != StreamType.DIRECT;
 
 		if (seekable) {
 			DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
@@ -219,12 +221,12 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		switch (v.getId()) {
 		case R.id.startTranscodedButton:
 			prefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).commit();
-			mStreamType = STREAM_TYPE_TRANSCODE;
+			mStreamType = StreamType.TRANSCODED;
 			startStreaming(false);
 			break;
 		case R.id.startDirectButton:
 			prefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).commit();
-			mStreamType = STREAM_TYPE_DIRECT;
+			mStreamType = StreamType.DIRECT;
 			startStreaming(true);
 			break;
 
@@ -272,23 +274,19 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	 * @return the video intent
 	 */
 	private Intent getVideoIntent() throws UrlBuilderException {
-		Intent videoIntent = null;
-		final boolean recording = mFileType == FILE_TYPE_RECORDING;
-		switch (mStreamType) {
-		case STREAM_TYPE_DIRECT:
-			videoIntent = getDirectUrl(mFileId, recording);
-			break;
-		case STREAM_TYPE_TRANSCODE:
-			final Preset preset = (Preset) qualitySpinner.getSelectedItem();
-			final String encodingSpeed = encodingSpeedSpinner.getSelectedItem().toString();
-			int hours = TextUtils.isEmpty(startHours.getText()) ? 0 : NumberUtils.toInt(startHours.getText().toString());
-			int minutes = TextUtils.isEmpty(startMinutes.getText()) ? 0 : NumberUtils.toInt(startMinutes.getText().toString());
-			int seconds = TextUtils.isEmpty(startSeconds.getText()) ? 0 : NumberUtils.toInt(startSeconds.getText().toString());
-			int start = 3600 * hours + 60 * minutes + seconds;
-			videoIntent = getTranscodedUrl(mFileId, preset, encodingSpeed, recording, start);
-		default:
-			break;
-		}
+		Intent videoIntent;
+		final boolean recording = mFileType == FileType.RECORDING;
+		if(mStreamType == StreamType.DIRECT){
+            videoIntent = getDirectUrl(mFileId, mTitle, recording);
+        }else{
+            final Preset preset = (Preset) qualitySpinner.getSelectedItem();
+            final String encodingSpeed = encodingSpeedSpinner.getSelectedItem().toString();
+            int hours = TextUtils.isEmpty(startHours.getText()) ? 0 : NumberUtils.toInt(startHours.getText().toString());
+            int minutes = TextUtils.isEmpty(startMinutes.getText()) ? 0 : NumberUtils.toInt(startMinutes.getText().toString());
+            int seconds = TextUtils.isEmpty(startSeconds.getText()) ? 0 : NumberUtils.toInt(startSeconds.getText().toString());
+            int start = 3600 * hours + 60 * minutes + seconds;
+            videoIntent = getTranscodedUrl(mFileId, mTitle, preset, encodingSpeed, recording, start);
+        }
 		return videoIntent;
 	}
 
@@ -342,36 +340,36 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	}
 	
 	
-	public static Intent buildLiveUrl(Context context, long id) throws UrlBuilderException {
+	public static Intent buildLiveUrl(Context context, long id, String title) throws UrlBuilderException {
 		final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
 		boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
 		if (direct) {
-			return getDirectUrl(id, false);
+			return getDirectUrl(id, title, false);
 		}else {
 			final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
-			return getTranscodedUrl(id, StreamUtils.getDefaultPreset(prefs), encodingSpeed, false, 0);
+			return getTranscodedUrl(id, title, StreamUtils.getDefaultPreset(prefs), encodingSpeed, false, 0);
 		}
 	}
 
-	public static Intent addTitle(Intent intent, String title) {
-		intent.putExtra(TITLE, title);
+	private static Intent addTitle(Intent intent, String title) {
+		intent.putExtra(EXTRA_TITLE, title);
 		return intent;
 	}
 
-	public static Intent buildRecordingUrl(Context context, long id) throws UrlBuilderException {
+	public static Intent buildRecordingUrl(Context context, long id, String title) throws UrlBuilderException {
 		final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
 		boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
 		if (direct) {
-			return getDirectUrl(id, true);
+			return getDirectUrl(id, title, true);
 		}else {
 			final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
 			int start = StreamUtils.getDefaultStart(prefs);
-			return getTranscodedUrl(id, StreamUtils.getDefaultPreset(prefs), encodingSpeed, true, start);
+			return getTranscodedUrl(id, title, StreamUtils.getDefaultPreset(prefs), encodingSpeed, true, start);
 		}
 	}
 
 
-	private static Intent getTranscodedUrl(final long id, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
+	private static Intent getTranscodedUrl(final long id, String title, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
 		final String baseUrl = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM + preset.getExtension();
 		final HTTPUtil.UrlBuilder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
 		final String idParam = recording ? "recid" : "chid";
@@ -385,15 +383,17 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		final String url = builder.build().toString();
 		Log.d(Tag, "playing video: " + url);
 		videoIntent.setDataAndType(Uri.parse(url), preset.getMimeType());
+        addTitle(videoIntent, title);
 		return videoIntent;
 	}
 
-	private static Intent getDirectUrl(long id, boolean recording){
+	private static Intent getDirectUrl(long id, String title, boolean recording){
 		final StringBuilder baseUrl = new StringBuilder(ServerConsts.REC_SERVICE_URL).append(recording ? recordingUrl : liveUrl).append(id).append(".ts");
 		final String videoUrl = URLUtil.buildProtectedRSUrl(baseUrl.toString());
 		Log.d(Tag, "playing video: " + videoUrl);
 		Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		videoIntent.setDataAndType(Uri.parse(videoUrl), "video/mpeg");
+        addTitle(videoIntent, title);
 		return videoIntent;
 	}
 
