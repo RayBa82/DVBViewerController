@@ -29,11 +29,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
+import org.dvbviewer.controller.ui.fragments.Dashboard;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
 import org.dvbviewer.controller.ui.fragments.EpgPager;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
@@ -56,7 +57,7 @@ import java.util.List;
  *
  * @author RayBa
  */
-public class HomeActivity extends BaseActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
+public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
 
 	private View					multiContainer;
 	private ArrayAdapter 			mSpinnerAdapter;
@@ -67,15 +68,18 @@ public class HomeActivity extends BaseActivity implements OnClickListener, OnCha
 	 * @see org.dvbviewer.controller.ui.base.BaseActivity#onCreate(android.os.Bundle)
 	 */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
+		setContentView(R.layout.activity_drawer);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_home);
-		multiContainer = findViewById(R.id.multi_container);
+		multiContainer = findViewById(R.id.right_content);
 		prefs = new DVBViewerPreferences(this);
-		
 		if (savedInstanceState == null) {
+			Dashboard dashboard = new Dashboard();
+			FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+			tran.add(R.id.left_content, dashboard);
+			tran.commit();
 			if (multiContainer != null) {
-				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+				tran = getSupportFragmentManager().beginTransaction();
 				ChannelPager chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
 				tran.add(multiContainer.getId(), chans);

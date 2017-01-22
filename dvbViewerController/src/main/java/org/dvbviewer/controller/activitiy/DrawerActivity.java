@@ -44,7 +44,7 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 				this,  mDrawerLayout, mToolbar,
 				R.string.app_name, R.string.app_name
 		);
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDrawerLayout.addDrawerListener(mDrawerToggle);
 		setDisplayHomeAsUpEnabled(true);
 
 		mDrawerAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item_group, null, new String[]{DbConsts.GroupTbl.NAME}, new int[]{android.R.id.text1}, 0);
