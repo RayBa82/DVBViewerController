@@ -17,17 +17,17 @@ package org.dvbviewer.controller.io;
 
 import android.util.Log;
 
+import org.dvbviewer.controller.utils.ServerConsts;
+
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.X509TrustManager;
 
-import okhttp3.Callback;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -65,17 +65,6 @@ public class HTTPUtil {
         return new UrlBuilder(httpUrl.toString());
     }
 
-    public static void executeAsync(String url, String username, String password, Callback callback, RequestBody body) throws Exception {
-        final String credential = Credentials.basic(username, password);
-        Log.d("DVBViewerServerRequest", url);
-        Request request = getBuilder(url, credential).post(body).build();
-        try {
-            getHttpClient().newCall(request).enqueue(callback);
-        } catch (Exception e) {
-            throw new DefaultHttpException(url, e);
-        }
-    }
-
     public static InputStream getInputStream(String url, String username, String password) throws Exception {
         Response response = getResponse(url, username, password);
         return response.body().byteStream();
@@ -92,10 +81,10 @@ public class HTTPUtil {
         Response result;
         try {
             result = getHttpClient().newCall(request).execute();
+            checkResponse(result);
         }catch (Exception e){
-            throw new DefaultHttpException(url, e);
+            throw new DefaultHttpException(ServerConsts.REC_SERVICE_URL, e);
         }
-        checkResponse(result);
         return result;
     }
 
@@ -107,11 +96,13 @@ public class HTTPUtil {
                 .header("Connection", "close");
     }
 
-    private static void checkResponse(Response response) throws AuthenticationException {
+    private static void checkResponse(Response response) throws AuthenticationException, UnsuccessfullHttpException {
         if (response != null && !response.isSuccessful()) {
             switch (response.code()) {
                 case 401:
                     throw new AuthenticationException();
+                default:
+                    throw new UnsuccessfullHttpException(response.code());
             }
         }
     }

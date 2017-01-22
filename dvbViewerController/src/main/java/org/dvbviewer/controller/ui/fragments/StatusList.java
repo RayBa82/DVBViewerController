@@ -136,14 +136,12 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         return result;
     }
 
-    private static Status requestStatusFromServer(String url, StatusHandler handler) {
+    private static Status requestStatusFromServer(String url, StatusHandler handler) throws Exception {
         Status result = null;
         InputStream statusXml = null;
         try {
             statusXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + url);
             result = handler.parse(statusXml);
-        } catch (Exception e) {
-            e.printStackTrace();
         }finally {
             IoUtils.closeSilently(statusXml);
         }

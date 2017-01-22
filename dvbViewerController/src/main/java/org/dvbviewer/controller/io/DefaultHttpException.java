@@ -5,7 +5,20 @@ package org.dvbviewer.controller.io;
  */
 public class DefaultHttpException extends Exception {
 
+    private Throwable throwable;
+
     public DefaultHttpException(String url, Throwable cause) {
-        super("Error accessing url: "+url + " cause:" + cause.getClass().getSimpleName());
+        super(cause.getMessage()
+                + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
+                + "when accessing url:"
+                + System.getProperty("line.separator")
+                + System.getProperty("line.separator")
+                + url);
+        throwable = cause;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
     }
 }
