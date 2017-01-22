@@ -311,7 +311,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                     holder.statusText.setText(mRes.getStringArray(R.array.postRecoridngActions)[NumberUtils.toInt(mItems.get(position).getValue())]);
                     break;
                 case R.string.status_last_ui_access:
-                    holder.statusText.setText(DateUtils.secondsToReadableFormat(NumberUtils.toLong(mItems.get(position).getValue())*-1));
+                    holder.statusText.setText(DateUtils.secondsToReadableFormat(NumberUtils.toLong(mItems.get(position).getValue())*-1l));
                     break;
                 case R.string.status_next_Rec:
                 case R.string.status_next_timer:
