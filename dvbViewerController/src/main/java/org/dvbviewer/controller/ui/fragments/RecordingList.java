@@ -17,6 +17,7 @@ package org.dvbviewer.controller.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -46,7 +47,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
@@ -55,12 +58,14 @@ import org.dvbviewer.controller.entities.Recording;
 import org.dvbviewer.controller.io.AuthenticationException;
 import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.RecordingHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
@@ -236,6 +241,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public class RecordingAdapter extends ArrayListAdapter<Recording> {
 
 		private final ImageLoader imageLoader;
+		private final DisplayImageOptions options;
 
 		/**
 		 * The Constructor.
@@ -248,6 +254,13 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		public RecordingAdapter(Context context) {
 			super();
 			imageLoader = ImageLoader.getInstance();
+			options = new DisplayImageOptions.Builder()
+					.cacheInMemory(true)
+					.cacheOnDisk(true)
+					.showImageForEmptyUri(R.drawable.play_circle_outline) // resource or drawable
+					.showImageOnFail(R.drawable.play_circle_outline) // r
+					.displayer(new FadeInBitmapDisplayer(500, true, true, false))
+					.build();
 		}
 
 		/*
@@ -270,6 +283,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				holder.contextMenu = (ImageView) convertView.findViewById(R.id.contextMenu);
 				holder.contextMenu.setOnClickListener(RecordingList.this);
 				holder.thumbNailContainer = convertView.findViewById(R.id.thumbNailContainer);
+				holder.thumbNailContainer.setOnClickListener(RecordingList.this);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -289,8 +303,9 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					holder.thumbNailContainer.setVisibility(View.GONE);
 				}else{
 					holder.thumbNailContainer.setVisibility(View.VISIBLE);
-					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail);
+					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail, options);
 				}
+				holder.thumbNailContainer.setTag(position);
 				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());
 				holder.contextMenu.setTag(position);
@@ -565,6 +580,19 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				popup.getMenuInflater().inflate(R.menu.context_menu_recordinglist, popup.getMenu());
 				popup.setOnMenuItemClickListener(this);
 				popup.show();
+				break;
+			case R.id.thumbNailContainer:
+				try {
+					selectedPosition = (Integer) v.getTag();
+					getActivity().startActivity(StreamConfig.buildRecordingUrl(getActivity(), mAdapter.getItem(selectedPosition).getId()));
+					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+				} catch (ActivityNotFoundException e) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+					e.printStackTrace();
+				} catch (UrlBuilderException e) {
+					e.printStackTrace();
+				}
 				break;
 
 			default:

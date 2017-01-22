@@ -352,6 +352,18 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		}
 	}
 
+	public static Intent buildRecordingUrl(Context context, long id) throws UrlBuilderException {
+		final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
+		boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
+		if (direct) {
+			return getDirectUrl(id, true);
+		}else {
+			final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
+			int start = StreamUtils.getDefaultStart(prefs);
+			return getTranscodedUrl(id, StreamUtils.getDefaultPreset(prefs), encodingSpeed, true, start);
+		}
+	}
+
 
 	private static Intent getTranscodedUrl(final long id, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
 		final String baseUrl = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM + preset.getExtension();

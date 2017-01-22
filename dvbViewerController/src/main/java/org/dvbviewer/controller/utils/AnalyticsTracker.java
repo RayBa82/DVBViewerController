@@ -25,6 +25,10 @@ public class AnalyticsTracker {
         }
     }
 
+    public static void trackQuickRecordingStream(Application app){
+        trackEvent(app, "Streaming", "Quickrecordingstream");
+    }
+
     public static void trackQuickStream(Application app){
         trackEvent(app, "Streaming", "Quickstream");
     }
