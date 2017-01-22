@@ -584,7 +584,10 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			case R.id.thumbNailContainer:
 				try {
 					selectedPosition = (Integer) v.getTag();
-					getActivity().startActivity(StreamConfig.buildRecordingUrl(getActivity(), mAdapter.getItem(selectedPosition).getId()));
+					final IEPG recording = mAdapter.getItem(selectedPosition);
+					final Intent videoIntent = StreamConfig.buildRecordingUrl(getActivity(), recording.getId());
+					StreamConfig.addTitle(videoIntent, recording.getTitle());
+					getActivity().startActivity(videoIntent);
 					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 				} catch (ActivityNotFoundException e) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

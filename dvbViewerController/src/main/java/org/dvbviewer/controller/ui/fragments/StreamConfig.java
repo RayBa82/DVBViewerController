@@ -81,6 +81,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	public static final String	EXTRA_DIALOG_TITLE_RES	= "_dialog_title_res";
 	public static final int		FILE_TYPE_LIVE			= 0;
 	public static final int		FILE_TYPE_RECORDING		= 1;
+	public static final String  TITLE                   = "title";
 	private EditText			startHours;
 	private EditText			startMinutes;
 	private EditText			startSeconds;
@@ -350,6 +351,11 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
 			return getTranscodedUrl(id, StreamUtils.getDefaultPreset(prefs), encodingSpeed, false, 0);
 		}
+	}
+
+	public static Intent addTitle(Intent intent, String title) {
+		intent.putExtra(TITLE, title);
+		return intent;
 	}
 
 	public static Intent buildRecordingUrl(Context context, long id) throws UrlBuilderException {
