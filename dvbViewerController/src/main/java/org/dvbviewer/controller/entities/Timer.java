@@ -48,6 +48,10 @@ public class Timer implements Comparable<Timer> {
 
 	private int					timerAction;
 
+	private int					pre;
+
+	private int					post;
+
 	private int					flags = FLAG_EXECUTABLE;
 
 	/**
@@ -202,6 +206,22 @@ public class Timer implements Comparable<Timer> {
 	 */
 	public void setChannelName(String channelName) {
 		this.channelName = channelName;
+	}
+
+	public int getPost() {
+		return post;
+	}
+
+	public void setPost(int post) {
+		this.post = post;
+	}
+
+	public int getPre() {
+		return pre;
+	}
+
+	public void setPre(int pre) {
+		this.pre = pre;
 	}
 
 	/**

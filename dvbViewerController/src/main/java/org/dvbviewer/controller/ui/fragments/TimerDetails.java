@@ -19,9 +19,10 @@ import android.app.Activity;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,7 @@ import java.util.GregorianCalendar;
  *
  * @author RayBa
  */
-public class TimerDetails extends DialogFragment implements OnDateSetListener, OnClickListener, OnLongClickListener {
+public class TimerDetails extends AppCompatDialogFragment implements OnDateSetListener, OnClickListener, OnLongClickListener {
 
 	public static final int			TIMER_RESULT		= 0;
 	public static final int			RESULT_CHANGED		= 1;
@@ -69,6 +70,8 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	public static final String		EXTRA_END			= "_end";
 	public static final String		EXTRA_ACTION		= "_action";
 	public static final String		EXTRA_ACTIVE		= "_active";
+	public static final String		EXTRA_PRE			= "_pre";
+	public static final String		EXTRA_POST			= "_post";
 
 	private Timer					timer;
 	private TextView				channelField;
@@ -108,8 +111,12 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 			}
 			if (timer.getId() <= 0l) {
 				timer.setTimerAction(prefs.getInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, 0));
+				timer.setPre(prefs.getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5));
+				timer.setPost(prefs.getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5));
 			}else{
 				timer.setTimerAction(getArguments().getInt(EXTRA_ACTION, 0));
+				timer.setPre(getArguments().getInt(EXTRA_PRE, 5));
+				timer.setPost(getArguments().getInt(EXTRA_POST, 5));
 			}
 		}else if (savedInstanceState != null) {
 			timer = new Timer();
@@ -120,6 +127,8 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 			timer.setStart(new Date(savedInstanceState.getLong(EXTRA_START, now.getTime())));
 			timer.setEnd(new Date(savedInstanceState.getLong(EXTRA_END, now.getTime())));
 			timer.setTimerAction(savedInstanceState.getInt(EXTRA_ACTION, 0));
+			timer.setPre(getArguments().getInt(EXTRA_PRE, 5));
+			timer.setPost(getArguments().getInt(EXTRA_POST, 5));
 			if (!savedInstanceState.getBoolean(EXTRA_ACTIVE)) {
 				timer.setFlag(Timer.FLAG_DISABLED);
 			}
@@ -188,6 +197,8 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		arg0.putLong(EXTRA_START, timer.getStart().getTime());
 		arg0.putLong(EXTRA_END, timer.getEnd().getTime());
 		arg0.putInt(EXTRA_ACTION, timer.getTimerAction());
+		arg0.putInt(EXTRA_PRE, timer.getPre());
+		arg0.putInt(EXTRA_POST, timer.getPost());
 		arg0.putBoolean(EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
 	}
 
@@ -196,7 +207,7 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_timer_details, container, false);
+		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_timer_details, container, true);
 		titleField = (TextView) v.findViewById(R.id.titleField);
 		dateField = (DateField) v.findViewById(R.id.dateField);
 		activeBox = (CheckBox) v.findViewById(R.id.activeBox);
@@ -311,11 +322,13 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 		final HTTPUtil.UrlBuilder builder;
 		try {
 			builder = HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
-			String title = timer.getTitle();
-			String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-			String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-			String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-			String endAction = String.valueOf(timer.getTimerAction());
+			final String title = timer.getTitle();
+            final String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
+            final String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
+            final String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
+            final String endAction = String.valueOf(timer.getTimerAction());
+            final String pre = String.valueOf(timer.getPre());
+            final String post  = String.valueOf(timer.getPost());
 			builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
 			builder.addQueryParameter("dor", days);
 			builder.addQueryParameter("encoding", "255");
@@ -324,6 +337,8 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 			builder.addQueryParameter("stop", stop);
 			builder.addQueryParameter("title", title);
 			builder.addQueryParameter("endact", endAction);
+            builder.addQueryParameter("pre", pre);
+            builder.addQueryParameter("post", post);
 			if (timer.getId() >= 0) {
 				builder.addQueryParameter("id", String.valueOf(timer.getId()));
 			}
@@ -332,6 +347,21 @@ public class TimerDetails extends DialogFragment implements OnDateSetListener, O
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@NonNull
+	public static Bundle getIntentArgs(Timer timer) {
+		Bundle args = new Bundle();
+		args.putString(TimerDetails.EXTRA_TITLE, timer.getTitle());
+		args.putString(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
+		args.putLong(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
+		args.putLong(TimerDetails.EXTRA_START, timer.getStart().getTime());
+		args.putLong(TimerDetails.EXTRA_END, timer.getEnd().getTime());
+		args.putInt(TimerDetails.EXTRA_ACTION, timer.getTimerAction());
+		args.putInt(TimerDetails.EXTRA_PRE, timer.getPre());
+		args.putInt(TimerDetails.EXTRA_POST, timer.getPost());
+		args.putBoolean(TimerDetails.EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
+		return args;
 	}
 
 	/* (non-Javadoc)

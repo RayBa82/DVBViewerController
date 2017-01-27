@@ -68,19 +68,23 @@ public class TimerHandler extends DefaultHandler {
 
 			@Override
 			public void start(Attributes attributes) {
-				timerList = new ArrayList<Timer>();
+				timerList = new ArrayList<>();
 			}
 		});
 
 		timerElement.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
 				currentTimer = new Timer();
-				Date startDay = DateUtils.stringToDate(attributes.getValue("Date"), DateUtils.DATEFORMAT_RS_TIMER);
-				Date startTime = DateUtils.stringToDate(attributes.getValue("Start"), DateUtils.TIMEFORMAT_RS_TIMER);
+				final Date startDay = DateUtils.stringToDate(attributes.getValue("Date"), DateUtils.DATEFORMAT_RS_TIMER);
+				final Date startTime = DateUtils.stringToDate(attributes.getValue("Start"), DateUtils.TIMEFORMAT_RS_TIMER);
 				int duration = NumberUtils.toInt(attributes.getValue("Dur"));
 				currentTimer.setStart(DateUtils.addTime(startDay, startTime));
 				currentTimer.setEnd(DateUtils.addMinutes(currentTimer.getStart(), duration));
-				String timerAction = attributes.getValue("ShutDown");
+				final String pre = attributes.getValue("PreEPG");
+				currentTimer.setPre(NumberUtils.toInt(pre));
+				final String post = attributes.getValue("PostEPG");
+				currentTimer.setPost(NumberUtils.toInt(post));
+				final String timerAction = attributes.getValue("ShutDown");
 				currentTimer.setTimerAction(timerAction != null ? NumberUtils.toInt(timerAction) : 0);
 				long disabled = NumberUtils.toLong(attributes.getValue("Enabled"));
 				if (disabled == 0l) {

@@ -418,24 +418,13 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     timer = cursorToTimer(c);
                     if (UIUtils.isTablet(getActivity())) {
                         TimerDetails timerdetails = TimerDetails.newInstance();
-                        Bundle args = new Bundle();
-                        args.putString(TimerDetails.EXTRA_TITLE, timer.getTitle());
-                        args.putString(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-                        args.putLong(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-                        args.putLong(TimerDetails.EXTRA_START, timer.getStart().getTime());
-                        args.putLong(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-                        args.putInt(TimerDetails.EXTRA_ACTION, timer.getTimerAction());
-                        args.putBoolean(TimerDetails.EXTRA_ACTIVE, true);
+                        Bundle args = TimerDetails.getIntentArgs(timer);
                         timerdetails.setArguments(args);
                         timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
                     }else{
                         Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
-                        timerIntent.putExtra(TimerDetails.EXTRA_TITLE, timer.getTitle());
-                        timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-                        timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-                        timerIntent.putExtra(TimerDetails.EXTRA_START, timer.getStart().getTime());
-                        timerIntent.putExtra(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-                        timerIntent.putExtra(TimerDetails.EXTRA_ACTIVE, true);
+                        Bundle extras = TimerDetails.getIntentArgs(timer);
+                        timerIntent.putExtras(extras);
                         startActivity(timerIntent);
                     }
                     return true;
@@ -447,7 +436,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     startActivity(details);
                     return true;
                 case R.id.menuSwitch:
-                    DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+                    final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
                     String cid = ":" + String.valueOf(channelId);
                     String switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                     DVBViewerCommand command = new DVBViewerCommand(switchRequest);
@@ -501,25 +490,25 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * @return the timer©
      */
     private Timer cursorToTimer(Cursor c) {
-        String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : channel;
+        final String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : channel;
         long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
         long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
-        DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+        final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
         int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5);
         int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5);
-        Date start = epgStart > 0 ? new Date(epgStart) : new Date();
-        Date end = epgEnd > 0 ? new Date(epgEnd) : new Date();
+        final Date start = epgStart > 0 ? new Date(epgStart) : new Date();
+        final Date end = epgEnd > 0 ? new Date(epgEnd) : new Date();
         Log.i(ChannelList.class.getSimpleName(), start.toString());
         Log.i(ChannelList.class.getSimpleName(), start.toString());
         Log.i(ChannelList.class.getSimpleName(), start.toString());
-        start = DateUtils.addMinutes(start, 0 - epgBefore);
-        end = DateUtils.addMinutes(end, epgAfter);
         Timer timer = new Timer();
         timer.setTitle(epgTitle);
         timer.setChannelId(channelId);
         timer.setChannelName(channel);
         timer.setStart(start);
         timer.setEnd(end);
+        timer.setPre(epgBefore);
+        timer.setPost(epgAfter);
         timer.setTimerAction(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, 0));
         return timer;
     }
