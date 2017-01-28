@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -76,7 +76,7 @@ public class TimerDetails extends AppCompatDialogFragment implements OnDateSetLi
 	private Timer					timer;
 	private TextView				channelField;
 	private TextView				titleField;
-	private CheckBox				activeBox;
+	private SwitchCompat            activeBox;
 	private DateField				dateField;
 	private DateField				startField;
 	private DateField				stopField;
@@ -210,7 +210,7 @@ public class TimerDetails extends AppCompatDialogFragment implements OnDateSetLi
 		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_timer_details, container, false);
 		titleField = (TextView) v.findViewById(R.id.titleField);
 		dateField = (DateField) v.findViewById(R.id.dateField);
-		activeBox = (CheckBox) v.findViewById(R.id.activeBox);
+		activeBox = (SwitchCompat) v.findViewById(R.id.activeBox);
 		startField = (DateField) v.findViewById(R.id.startField);
 		postRecordSpinner = (Spinner) v.findViewById(R.id.postRecordingSpinner);
 
@@ -352,6 +352,7 @@ public class TimerDetails extends AppCompatDialogFragment implements OnDateSetLi
 	@NonNull
 	public static Bundle getIntentArgs(Timer timer) {
 		Bundle args = new Bundle();
+        args.putLong(TimerDetails.EXTRA_ID, timer.getId());
 		args.putString(TimerDetails.EXTRA_TITLE, timer.getTitle());
 		args.putString(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
 		args.putLong(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
