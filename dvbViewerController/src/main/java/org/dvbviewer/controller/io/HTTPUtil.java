@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Callback;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -88,6 +89,17 @@ public class HTTPUtil {
         return result;
     }
 
+    public static void getAsyncResponse(String url, String username, String password, Callback callback) {
+        final String credential = Credentials.basic(username, password);
+        Log.d("DVBViewerServerRequest", url);
+        try {
+            Request request = getBuilder(url, credential).build();
+            getHttpClient().newCall(request).enqueue(callback);
+        }catch (UrlBuilderException e){
+            e.printStackTrace();
+        }
+    }
+
     private static Request.Builder getBuilder(String url, String credentials) throws UrlBuilderException {
         UrlBuilder urlBuilder = new UrlBuilder(url);
         return new Request.Builder()
@@ -96,7 +108,7 @@ public class HTTPUtil {
                 .header("Connection", "close");
     }
 
-    private static void checkResponse(Response response) throws AuthenticationException, UnsuccessfullHttpException {
+    public static void checkResponse(Response response) throws AuthenticationException, UnsuccessfullHttpException {
         if (response != null && !response.isSuccessful()) {
             switch (response.code()) {
                 case 401:

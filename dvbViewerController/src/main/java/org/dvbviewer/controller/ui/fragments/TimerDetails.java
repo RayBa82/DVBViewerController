@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -40,16 +39,22 @@ import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.HTTPUtil;
-import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
+import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.base.BaseActivity;
+import org.dvbviewer.controller.ui.base.BaseDialogFragment;
 import org.dvbviewer.controller.ui.widget.DateField;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 
 /**
@@ -57,7 +62,7 @@ import java.util.GregorianCalendar;
  *
  * @author RayBa
  */
-public class TimerDetails extends AppCompatDialogFragment implements OnDateSetListener, OnClickListener, OnLongClickListener {
+public class TimerDetails extends BaseDialogFragment implements OnDateSetListener, OnClickListener, OnLongClickListener {
 
 	public static final int			TIMER_RESULT		= 0;
 	public static final int			RESULT_CHANGED		= 1;
@@ -87,9 +92,9 @@ public class TimerDetails extends AppCompatDialogFragment implements OnDateSetLi
 	private OnTimerEditedListener	mOntimeredEditedListener;
 
 
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.DialogFragment#onCreate(android.os.Bundle)
-	 */
+    /* (non-Javadoc)
+     * @see android.support.v4.app.DialogFragment#onCreate(android.os.Bundle)
+     */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -301,15 +306,9 @@ public class TimerDetails extends AppCompatDialogFragment implements OnDateSetLi
 				timer.setFlag(Timer.FLAG_DISABLED);
 			}
 			String query = buildTimerUrl(timer);
-			RecordingServiceGet rsGet = new RecordingServiceGet(query);
-			Thread executionThread = new Thread(rsGet);
-			executionThread.start();
-			if (mOntimeredEditedListener != null) {
-				mOntimeredEditedListener.timerEdited(true);
-			}
-			if (getDialog() != null && getDialog().isShowing()) {
-				dismiss();
-			}
+            Callback callback = getCallback();
+            ServerRequest.executeAsync(query, callback);
+
 			break;
 
 		default:
@@ -317,7 +316,32 @@ public class TimerDetails extends AppCompatDialogFragment implements OnDateSetLi
 		}
 	}
 
-	@Nullable
+    @NonNull
+    private Callback getCallback() {
+        return new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    HTTPUtil.checkResponse(response);
+                    if (mOntimeredEditedListener != null) {
+                        mOntimeredEditedListener.timerEdited(true);
+                    }
+                    if (getDialog() != null && getDialog().isShowing()) {
+                        dismiss();
+                    }
+                } catch (Exception e) {
+                    catchException(e);
+                }
+            }
+        };
+    }
+
+    @Nullable
 	public static String buildTimerUrl(Timer timer) {
 		final HTTPUtil.UrlBuilder builder;
 		try {

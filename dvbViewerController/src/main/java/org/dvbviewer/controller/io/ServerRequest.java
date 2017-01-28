@@ -17,15 +17,13 @@ package org.dvbviewer.controller.io;
 
 import org.dvbviewer.controller.utils.ServerConsts;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
+
+import okhttp3.Callback;
 
 /**
  * The Class ServerRequest.
  * 
- * @author RayBa
- * @date 06.04.2012
  */
 public class ServerRequest {
 
@@ -33,15 +31,11 @@ public class ServerRequest {
 
 
 	/**
-	 * Gets the rS string.
+	 * Gets a string result from the backend
 	 *
 	 * @param request the request
-	 * @return the rS string
-	 * @throws AuthenticationException the authentication exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws URISyntaxException the URI syntax exception
-	 * @author RayBa
-	 * @date 13.04.2012
+	 * @return the string response string
+	 * @throws Exception the exception
 	 */
 	public static String getRSString(String request) throws Exception {
 		return HTTPUtil.getString(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
@@ -51,20 +45,26 @@ public class ServerRequest {
 
 
 	/**
-	 * Executes a Recording Service Get request, with no return value.
+	 * Executes a server GET request, with no return value.
 	 * 
-	 * For example used to send Timer to the Recording Service.
-	 *
 	 * @param request the request
-	 * @throws URISyntaxException the URI syntax exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws AuthenticationException the authentication exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @author RayBa
-	 * @date 13.04.2012
+	 * @throws Exception the exception
 	 */
 	public static void executeRSGet(String request) throws Exception {
 		HTTPUtil.executeGet(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
+	}
+
+	/**
+	 * Executes an async server GET request
+	 *
+	 * For example used to send Timer to the Recording Service.
+	 *
+	 * @param request the Backend request
+	 * @param callback the Callback to execute
+	 * @throws Exception the exception
+	 */
+	public static void executeAsync(String request, Callback callback) {
+		HTTPUtil.getAsyncResponse(request, ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD, callback);
 	}
 
 	public static InputStream getInputStream(String request) throws Exception {

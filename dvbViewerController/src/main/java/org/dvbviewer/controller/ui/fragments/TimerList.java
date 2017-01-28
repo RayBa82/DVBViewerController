@@ -23,6 +23,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -276,6 +277,9 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == TimerDetails.TIMER_RESULT && resultCode == TimerDetails.RESULT_CHANGED) {
+            Snackbar snackbar = Snackbar
+                    .make(getView(), "Timer edited", Snackbar.LENGTH_LONG);
+            snackbar.show();
 			refresh();
 		}
 	}

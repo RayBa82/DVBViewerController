@@ -35,16 +35,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:maxLines="1"
+                    android:maxLines="2"
                     android:nextFocusLeft="@id/titleField"
                     android:nextFocusUp="@id/titleField" />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/activeBox"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -146,7 +147,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|center_horizontal"
-                        android:padding="5dp"></TextView>
+                        android:padding="5dp"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="?android:textColorPrimary"></TextView>
                 </LinearLayout>
 
                 <LinearLayout
@@ -163,9 +166,10 @@
 
                     <Spinner
                         android:id="@+id/postRecordingSpinner"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:entries="@array/postRecoridngActions" />
+                        android:entries="@array/postRecoridngActions"
+                        android:textAppearance="?android:textAppearanceMedium" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
