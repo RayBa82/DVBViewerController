@@ -207,7 +207,7 @@ public class TimerDetails extends AppCompatDialogFragment implements OnDateSetLi
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_timer_details, container, true);
+		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_timer_details, container, false);
 		titleField = (TextView) v.findViewById(R.id.titleField);
 		dateField = (DateField) v.findViewById(R.id.dateField);
 		activeBox = (CheckBox) v.findViewById(R.id.activeBox);
