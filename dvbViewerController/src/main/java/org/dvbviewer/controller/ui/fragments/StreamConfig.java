@@ -46,7 +46,6 @@ import android.widget.Spinner;
 
 import com.google.gson.Gson;
 import com.nineoldandroids.animation.IntEvaluator;
-import com.nineoldandroids.animation.ValueAnimator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -113,7 +112,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		mFileType = getArguments().getParcelable(EXTRA_FILE_TYPE);
 		mStreamType = StreamType.DIRECT;
         mTitle = getArguments().getString(EXTRA_TITLE);
-		seekable = mFileType != FileType.CHANNEL && mStreamType != StreamType.DIRECT;
+		seekable = mFileType != FileType.CHANNEL;
 
 		if (seekable) {
 			DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
@@ -430,9 +429,9 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			int heightMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(1073741823, View.MeasureSpec.AT_MOST);
 			collapsable.measure(widthMeasureSpec, heightMeasureSpec);
 			collapsable.setVisibility(View.VISIBLE);
-			ValueAnimator animator = ValueAnimator.ofObject(new HeightEvaluator(collapsable), 0, collapsable.getMeasuredHeight());
-			animator.setDuration(500);
-			animator.start();
+//			ValueAnimator animator = ValueAnimator.ofObject(new HeightEvaluator(collapsable), 0, collapsable.getMeasuredHeight());
+//			animator.setDuration(500);
+//			animator.start();
 		}
 	}
 
