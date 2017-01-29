@@ -35,8 +35,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.io.ServerRequest;
@@ -77,6 +77,15 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	public static final String		EXTRA_ACTIVE		= "_active";
 	public static final String		EXTRA_PRE			= "_pre";
 	public static final String		EXTRA_POST			= "_post";
+    public static final String		EXTRA_EVENT_ID		= "_event_id";
+    public static final String		EXTRA_PDC   		= "_pdc";
+    public static final String		EXTRA_ADJUST_PAT	= "AdjustPAT";
+    public static final String		EXTRA_ALL_AUDIO		= "AllAudio";
+    public static final String		EXTRA_DVB_SUBS		= "DVBSubs";
+    public static final String		EXTRA_TELETEXT		= "Teletext";
+    public static final String		EXTRA_EIT_EPG		= "EITEPG";
+    public static final String		EXTRA_MONITOR_PDC	= "MonitorPDC";
+    public static final String		EXTRA_STATUS_SPLIT	= "RunningStatusSplit";
 
 	private Timer					timer;
 	private TextView				channelField;
@@ -90,6 +99,8 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	private Calendar				cal;
 	private Spinner					postRecordSpinner;
 	private OnTimerEditedListener	mOntimeredEditedListener;
+    private Spinner monitoringSpinner;
+    private TextView monitoringLabel;
 
 
     /* (non-Javadoc)
@@ -99,51 +110,17 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		cal = GregorianCalendar.getInstance();
-		Date now = new Date();
-		DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-		if (timer == null && savedInstanceState == null) {
-			timer = new Timer();
-			timer.setId(getArguments().getLong(EXTRA_ID, -1l));
-			timer.setTitle(getArguments().getString(EXTRA_TITLE));
-			timer.setChannelName(getArguments().getString(EXTRA_CHANNEL_NAME));
-			timer.setChannelId(getArguments().getLong(EXTRA_CHANNEL_ID, 0));
-			Date start = new Date(getArguments().getLong(EXTRA_START, now.getTime()));
-			Date end = new Date(getArguments().getLong(EXTRA_END, now.getTime()));
-			timer.setStart(start);
-			timer.setEnd(end);
-			if (!getArguments().getBoolean(EXTRA_ACTIVE)) {
-				timer.setFlag(Timer.FLAG_DISABLED);
-			}
-			if (timer.getId() <= 0l) {
-				timer.setTimerAction(prefs.getInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, 0));
-				timer.setPre(prefs.getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5));
-				timer.setPost(prefs.getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5));
-			}else{
-				timer.setTimerAction(getArguments().getInt(EXTRA_ACTION, 0));
-				timer.setPre(getArguments().getInt(EXTRA_PRE, 5));
-				timer.setPost(getArguments().getInt(EXTRA_POST, 5));
-			}
+		if (savedInstanceState == null) {
+            bundleToTimer(getArguments());
 		}else if (savedInstanceState != null) {
-			timer = new Timer();
-			timer.setId(savedInstanceState.getLong(EXTRA_ID, 0));
-			timer.setTitle(savedInstanceState.getString(EXTRA_TITLE));
-			timer.setChannelName(savedInstanceState.getString(EXTRA_CHANNEL_NAME));
-			timer.setChannelId(savedInstanceState.getLong(EXTRA_CHANNEL_ID, 0));
-			timer.setStart(new Date(savedInstanceState.getLong(EXTRA_START, now.getTime())));
-			timer.setEnd(new Date(savedInstanceState.getLong(EXTRA_END, now.getTime())));
-			timer.setTimerAction(savedInstanceState.getInt(EXTRA_ACTION, 0));
-			timer.setPre(getArguments().getInt(EXTRA_PRE, 5));
-			timer.setPost(getArguments().getInt(EXTRA_POST, 5));
-			if (!savedInstanceState.getBoolean(EXTRA_ACTIVE)) {
-				timer.setFlag(Timer.FLAG_DISABLED);
-			}
+            bundleToTimer(savedInstanceState);
 		}
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.actionbarsherlock.app.SherlockDialogFragment#onAttach(android.app.Activity)
-	 */
+
+    /* (non-Javadoc)
+     * @see com.actionbarsherlock.app.SherlockDialogFragment#onAttach(android.app.Activity)
+     */
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -183,6 +160,12 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			if (!TextUtils.isEmpty(timer.getChannelName())) {
 				channelField.setText(timer.getChannelName());
 			}
+            if(StringUtils.isNotBlank(timer.getPdc())){
+                monitoringSpinner.setSelection(timer.getMonitorPDC());
+            }else{
+                monitoringLabel.setVisibility(View.GONE);
+                monitoringSpinner.setVisibility(View.GONE);
+            }
 		}
 		if (getDialog() != null) {
 			getDialog().setTitle(timer != null && timer.getId() <= 0 ? R.string.createTimer : R.string.editTimer);
@@ -195,17 +178,10 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
 		super.onSaveInstanceState(arg0);
-		arg0.putLong(EXTRA_ID, timer.getId());
-		arg0.putString(EXTRA_TITLE, timer.getTitle());
-		arg0.putString(EXTRA_CHANNEL_NAME, timer.getChannelName());
-		arg0.putLong(EXTRA_CHANNEL_ID, timer.getChannelId());
-		arg0.putLong(EXTRA_START, timer.getStart().getTime());
-		arg0.putLong(EXTRA_END, timer.getEnd().getTime());
-		arg0.putInt(EXTRA_ACTION, timer.getTimerAction());
-		arg0.putInt(EXTRA_PRE, timer.getPre());
-		arg0.putInt(EXTRA_POST, timer.getPost());
-		arg0.putBoolean(EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
+        timerToBundle(timer, arg0);
 	}
+
+
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
@@ -218,6 +194,8 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		activeBox = (SwitchCompat) v.findViewById(R.id.activeBox);
 		startField = (DateField) v.findViewById(R.id.startField);
 		postRecordSpinner = (Spinner) v.findViewById(R.id.postRecordingSpinner);
+        monitoringLabel = (TextView) v.findViewById(R.id.monitoringCaption);
+        monitoringSpinner = (Spinner) v.findViewById(R.id.monitoringgSpinner);
 
 		startTimeSetListener = new OnTimeSetListener() {
 
@@ -304,6 +282,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			timer.setEnd(stopField.getDate());
 			timer.setTitle(titleField.getText().toString());
 			timer.setTimerAction(postRecordSpinner.getSelectedItemPosition());
+            timer.setMonitorPDC(monitoringSpinner.getSelectedItemPosition());
 			if (activeBox.isChecked()){
 				timer.unsetFlag(Timer.FLAG_DISABLED);
 			}else{
@@ -367,6 +346,16 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			builder.addQueryParameter("endact", endAction);
             builder.addQueryParameter("pre", pre);
             builder.addQueryParameter("post", post);
+            addIfNotEmpty("pdc", timer.getPdc(), builder);
+            addIfPositive("audio", timer.getAllAudio(), builder);
+            addIfPositive("subs", timer.getDvbSubs(), builder);
+            addIfPositive("ttx", timer.getTeletext(), builder);
+            addIfPositive("eit", timer.getEitEPG(), builder);
+            final int epgMonitoring = timer.getMonitorPDC() - 1;
+            if(epgMonitoring >= 0){
+                builder.addQueryParameter("monitorpdc", "1");
+                builder.addQueryParameter("monforrec", String.valueOf(epgMonitoring));
+            }
 			if (timer.getId() >= 0) {
 				builder.addQueryParameter("id", String.valueOf(timer.getId()));
 			}
@@ -377,25 +366,79 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		return null;
 	}
 
+    private static HTTPUtil.UrlBuilder addIfPositive(String name, int value,  HTTPUtil.UrlBuilder builder){
+        if(value > 0){
+            builder.addQueryParameter(name, String.valueOf(value));
+        }
+        return builder;
+    }
+
+    private static HTTPUtil.UrlBuilder addIfNotEmpty(String name, String value,  HTTPUtil.UrlBuilder builder){
+        if(StringUtils.isNotBlank(value)){
+            builder.addQueryParameter(name, value);
+        }
+        return builder;
+    }
+
 	@NonNull
-	public static Bundle getIntentArgs(Timer timer) {
-		Bundle args = new Bundle();
-        args.putLong(TimerDetails.EXTRA_ID, timer.getId());
-		args.putString(TimerDetails.EXTRA_TITLE, timer.getTitle());
-		args.putString(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-		args.putLong(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-		args.putLong(TimerDetails.EXTRA_START, timer.getStart().getTime());
-		args.putLong(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-		args.putInt(TimerDetails.EXTRA_ACTION, timer.getTimerAction());
-		args.putInt(TimerDetails.EXTRA_PRE, timer.getPre());
-		args.putInt(TimerDetails.EXTRA_POST, timer.getPost());
-		args.putBoolean(TimerDetails.EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
-		return args;
+	public static Bundle buildBundle(Timer timer) {
+        Bundle bundle = new Bundle();
+        timerToBundle(timer, bundle);
+		return bundle;
 	}
 
-	/* (non-Javadoc)
-	 * @see android.view.View.OnLongClickListener#onLongClick(android.view.View)
-	 */
+    private void bundleToTimer(Bundle bundle) {
+        timer = new Timer();
+        timer.setId(bundle.getLong(EXTRA_ID, 0));
+        timer.setTitle(bundle.getString(EXTRA_TITLE));
+        timer.setChannelName(bundle.getString(EXTRA_CHANNEL_NAME));
+        timer.setChannelId(bundle.getLong(EXTRA_CHANNEL_ID, 0));
+        timer.setStart(new Date(bundle.getLong(EXTRA_START, System.currentTimeMillis())));
+        timer.setEnd(new Date(bundle.getLong(EXTRA_END, System.currentTimeMillis())));
+        timer.setTimerAction(bundle.getInt(EXTRA_ACTION, 0));
+        timer.setPre(bundle.getInt(EXTRA_PRE, 5));
+        timer.setPost(bundle.getInt(EXTRA_POST, 5));
+        timer.setEventId(bundle.getString(EXTRA_EVENT_ID));
+        timer.setPdc(bundle.getString(EXTRA_PDC));
+        timer.setAdjustPAT(bundle.getInt(EXTRA_ADJUST_PAT, -1));
+        timer.setAllAudio(bundle.getInt(EXTRA_ALL_AUDIO, -1));
+        timer.setDvbSubs(bundle.getInt(EXTRA_DVB_SUBS, -1));
+        timer.setTeletext(bundle.getInt(EXTRA_TELETEXT, -1));
+        timer.setEitEPG(bundle.getInt(EXTRA_EIT_EPG, -1));
+        timer.setMonitorPDC(bundle.getInt(EXTRA_MONITOR_PDC, -1));
+        timer.setRunningStatusSplit(bundle.getInt(EXTRA_STATUS_SPLIT, -1));
+        if (!bundle.getBoolean(EXTRA_ACTIVE)) {
+            timer.setFlag(Timer.FLAG_DISABLED);
+        }
+    }
+
+    @NonNull
+    private static void timerToBundle(Timer timer, Bundle bundle) {
+        bundle.putLong(EXTRA_ID, timer.getId());
+        bundle.putString(EXTRA_TITLE, timer.getTitle());
+        bundle.putString(EXTRA_CHANNEL_NAME, timer.getChannelName());
+        bundle.putLong(EXTRA_CHANNEL_ID, timer.getChannelId());
+        bundle.putLong(EXTRA_START, timer.getStart().getTime());
+        bundle.putLong(EXTRA_END, timer.getEnd().getTime());
+        bundle.putInt(EXTRA_ACTION, timer.getTimerAction());
+        bundle.putInt(EXTRA_PRE, timer.getPre());
+        bundle.putInt(EXTRA_POST, timer.getPost());
+        bundle.putString(EXTRA_EVENT_ID, timer.getEventId());
+        bundle.putString(EXTRA_PDC, timer.getPdc());
+        bundle.putString(EXTRA_PDC, timer.getPdc());
+        bundle.putInt(EXTRA_ADJUST_PAT, timer.getAdjustPAT());
+        bundle.putInt(EXTRA_ALL_AUDIO, timer.getAllAudio());
+        bundle.putInt(EXTRA_DVB_SUBS, timer.getDvbSubs());
+        bundle.putInt(EXTRA_TELETEXT, timer.getTeletext());
+        bundle.putInt(EXTRA_EIT_EPG, timer.getEitEPG());
+        bundle.putInt(EXTRA_MONITOR_PDC, timer.getMonitorPDC());
+        bundle.putInt(EXTRA_STATUS_SPLIT, timer.getRunningStatusSplit());
+        bundle.putBoolean(TimerDetails.EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
+    }
+
+    /* (non-Javadoc)
+     * @see android.view.View.OnLongClickListener#onLongClick(android.view.View)
+     */
 	@Override
 	public boolean onLongClick(View v) {
 		return true;

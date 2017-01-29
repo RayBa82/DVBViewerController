@@ -6,4 +6,9 @@
         <item>Standby</item>
         <item>Ruhemodus</item>
     </string-array>
+    <string-array name="epgMonitoring">
+        <item>Keine</item>
+        <item>Zeitaktualisiserung durch EPG </item>
+        <item>Start/Stop durch EPG-Status</item>
+    </string-array>
 </resources>

@@ -264,7 +264,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
             onDestroyActionMode(mode);
 			Timer timer = mAdapter.getItem(position);
 			TimerDetails timerdetails = TimerDetails.newInstance();
-			Bundle args = TimerDetails.getIntentArgs(timer);
+			Bundle args = TimerDetails.buildBundle(timer);
 			timerdetails.setArguments(args);
             timerdetails.setOnTimerEditedListener(this);
 			timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
@@ -272,7 +272,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			getListView().setItemChecked(position, !getListView().isItemChecked(position));
 			Timer timer = mAdapter.getItem(position);
 			Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
-			Bundle extras = TimerDetails.getIntentArgs(timer);
+			Bundle extras = TimerDetails.buildBundle(timer);
 			timerIntent.putExtras(extras);
 			startActivityForResult(timerIntent, TimerDetails.TIMER_RESULT);
 		}

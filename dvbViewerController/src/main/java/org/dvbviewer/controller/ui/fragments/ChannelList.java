@@ -31,7 +31,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -258,12 +257,12 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         Timer timer = cursorToTimer(c);
         if (UIUtils.isTablet(getActivity())) {
             TimerDetails timerdetails = TimerDetails.newInstance();
-            Bundle args = TimerDetails.getIntentArgs(timer);
+            Bundle args = TimerDetails.buildBundle(timer);
             timerdetails.setArguments(args);
             timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
         } else {
             Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
-            Bundle extras = TimerDetails.getIntentArgs(timer);
+            Bundle extras = TimerDetails.buildBundle(timer);
             timerIntent.putExtras(extras);
             startActivity(timerIntent);
         }
@@ -561,8 +560,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         final int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5);
         final Date start = epgStart > 0 ? new Date(epgStart) : new Date();
         final Date end = epgEnd > 0 ? new Date(epgEnd) : new Date(start.getTime() + (1000 * 60 * 120));
-        Log.i(ChannelList.class.getSimpleName(), "start: " + start.toString());
-        Log.i(ChannelList.class.getSimpleName(), "end: " + end.toString());
+        final String eventId = c.getString(c.getColumnIndex(EpgTbl.EVENT_ID));
+        final String pdc = c.getString(c.getColumnIndex(EpgTbl.PDC));
         Timer timer = new Timer();
         timer.setTitle(epgTitle);
         timer.setChannelId(channelID);
@@ -571,6 +570,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         timer.setEnd(end);
         timer.setPre(epgBefore);
         timer.setPost(epgAfter);
+        timer.setEventId(eventId);
+        timer.setPdc(pdc);
         timer.setTimerAction(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, 0));
         return timer;
     }

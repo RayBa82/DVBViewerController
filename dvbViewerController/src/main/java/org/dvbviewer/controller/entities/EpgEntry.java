@@ -61,6 +61,10 @@ public class EpgEntry implements Parcelable, IEPG {
 	
 	private String				channelLogo;
 
+	private String				eventId;
+
+	private String 				pdc;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -241,6 +245,12 @@ public class EpgEntry implements Parcelable, IEPG {
 		if (!TextUtils.isEmpty(this.description)) {
 			result.put(EpgTbl.DESC, this.description);
 		}
+        if (!TextUtils.isEmpty(this.eventId)) {
+            result.put(EpgTbl.EVENT_ID, this.eventId);
+        }
+        if (!TextUtils.isEmpty(this.pdc)) {
+            result.put(EpgTbl.PDC, this.pdc);
+        }
 		return result;
 	}
 
@@ -343,6 +353,22 @@ public class EpgEntry implements Parcelable, IEPG {
 	@Override
 	public void setChannelLogo(String channelLogo) {
 		this.channelLogo = channelLogo;
+	}
+
+	public String getEventId() {
+		return eventId;
+	}
+
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
+	}
+
+	public String getPDC() {
+		return pdc;
+	}
+
+	public void setPDC(String PDC) {
+		this.pdc = PDC;
 	}
 
 }
