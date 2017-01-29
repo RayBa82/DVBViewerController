@@ -188,10 +188,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     is = ServerRequest.getInputStream(builder.build().toString());
                     result = handler.parse(is);
                     if (result != null && !result.isEmpty()) {
-                        String[] columnNames = new String[]{EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END};
+                        String[] columnNames = new String[]{EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END, EpgTbl.PDC, EpgTbl.EVENT_ID};
                         cursor = new MatrixCursor(columnNames);
                         for (EpgEntry entry : result) {
-                            cursor.addRow(new Object[]{entry.getId(), entry.getEpgID(), entry.getTitle(), entry.getSubTitle(), entry.getDescription(), entry.getStart().getTime(), entry.getEnd().getTime()});
+                            cursor.addRow(new Object[]{entry.getId(), entry.getEpgID(), entry.getTitle(), entry.getSubTitle(), entry.getDescription(), entry.getStart().getTime(), entry.getEnd().getTime(), entry.getPDC(), entry.getEventId()});
                         }
                     }
 
