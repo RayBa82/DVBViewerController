@@ -17,4 +17,9 @@
         <item>veryslow</item>
         <item>placebo</item>
     </string-array>
+    <string-array name="epgMonitoring">
+        <item>None</item>
+        <item>Start/End time update from EPG</item>
+        <item>Start/Stop by EPG running status</item>
+    </string-array>
 </resources>

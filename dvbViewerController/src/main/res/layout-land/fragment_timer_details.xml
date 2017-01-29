@@ -1,68 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="480dp"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:minWidth="320dp"
     android:orientation="vertical">
 
     <ScrollView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fillViewport="true">
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="5dp">
 
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/titleCaption"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:text="@string/title" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/titleField"
+                    android:layout_width="match_parent"
+                    android:inputType="text"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:orientation="vertical"
-                    android:padding="5dp">
+                    android:maxLines="2" />
 
-                    <TextView
-                        android:id="@+id/titleCaption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/title" />
-
-                    <EditText
-                        android:id="@+id/titleField"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:nextFocusLeft="@id/titleField"
-                        android:nextFocusUp="@id/titleField"
-                        android:text="@string/title" />
-
-                </LinearLayout>
-
-
-                <CheckBox
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/activeBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/active" />
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
@@ -77,7 +65,7 @@
 
                     <TextView
                         android:id="@+id/dateCaption"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:text="@string/date"
@@ -85,7 +73,7 @@
 
                     <org.dvbviewer.controller.ui.widget.DateField
                         android:id="@+id/dateField"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"
                         android:inputType="none" />
@@ -106,8 +94,8 @@
 
                     <org.dvbviewer.controller.ui.widget.DateField
                         android:id="@+id/startField"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:focusable="false"
                         android:inputType="none" />
                 </LinearLayout>
@@ -127,8 +115,8 @@
 
                     <org.dvbviewer.controller.ui.widget.DateField
                         android:id="@+id/stopField"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:focusable="false"
                         android:inputType="none" />
                 </LinearLayout>
@@ -136,7 +124,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
@@ -157,10 +145,12 @@
 
                     <TextView
                         android:id="@+id/channelField"
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|center_horizontal"
-                        android:padding="5dp"></TextView>
+                        android:padding="5dp"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="?android:textColorPrimary"></TextView>
                 </LinearLayout>
 
                 <LinearLayout
@@ -177,11 +167,44 @@
 
                     <Spinner
                         android:id="@+id/postRecordingSpinner"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:entries="@array/postRecoridngActions" />
+                        android:entries="@array/postRecoridngActions"
+                        android:textAppearance="?android:textAppearanceMedium" />
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/monitoringCaption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EPG-Überwachung" />
+
+                    <Spinner
+                        android:id="@+id/monitoringgSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/epgMonitoring"
+                        android:padding="5dp"
+                        android:textAppearance="?android:textAppearanceMedium" />
+                </LinearLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 

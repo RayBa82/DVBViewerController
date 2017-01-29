@@ -55,6 +55,8 @@ public class EpgEntryHandler extends DefaultHandler {
 	private ContentHandler getContentHandler() {
 		RootElement root = new RootElement("epg");
 		Element programmeElement = root.getChild("programme");
+		Element eventId = programmeElement.getChild("eventid");
+		Element pdc = programmeElement.getChild("pdc");
 		Element titles = programmeElement.getChild("titles");
 		Element title = titles.getChild("title");
 		Element descriptions = programmeElement.getChild("descriptions");
@@ -87,6 +89,20 @@ public class EpgEntryHandler extends DefaultHandler {
 			}
 		});
 
+		eventId.setEndTextElementListener(new EndTextElementListener() {
+
+			@Override
+			public void end(String body) {
+				currentEPG.setEventId(body);
+			}
+		});
+		pdc.setEndTextElementListener(new EndTextElementListener() {
+
+			@Override
+			public void end(String body) {
+				currentEPG.setPDC(body);
+			}
+		});
 		title.setEndTextElementListener(new EndTextElementListener() {
 
 			@Override

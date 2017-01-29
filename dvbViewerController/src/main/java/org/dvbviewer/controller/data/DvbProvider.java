@@ -116,6 +116,8 @@ public class DvbProvider extends ContentProvider {
 			projectionMap.put(ChannelTbl.EPG_ID, ChannelTbl.ALIAS + "." + ChannelTbl.EPG_ID + " as " + ChannelTbl.EPG_ID);
 			projectionMap.put(NowTbl.TITLE, NowTbl.ALIAS + "." + NowTbl.TITLE + " as " + NowTbl.TITLE);
 			projectionMap.put(NowTbl.START, NowTbl.ALIAS + "." + NowTbl.START + " as " + NowTbl.START);
+			projectionMap.put(NowTbl.PDC, NowTbl.ALIAS + "." + NowTbl.PDC + " as " + NowTbl.PDC);
+			projectionMap.put(NowTbl.EVENT_ID, NowTbl.ALIAS + "." + NowTbl.EVENT_ID + " as " + NowTbl.EVENT_ID);
 			projectionMap.put(NowTbl.END, NowTbl.ALIAS + "." + NowTbl.END + " as " + NowTbl.END);
 			groupBy = ChannelTbl.ALIAS + "." + ChannelTbl._ID;
 			qb.setProjectionMap(projectionMap);

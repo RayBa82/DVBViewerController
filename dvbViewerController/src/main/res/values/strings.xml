@@ -159,4 +159,6 @@
     <!-- Remote -->
     <string name="remote_control">Control</string>
     <string name="remote_numbers">Numbers</string>
+    <string name="timer_saved">Timer saved</string>
+    <string name="epg_monitoring">EPG Monitoring</string>
 </resources>
