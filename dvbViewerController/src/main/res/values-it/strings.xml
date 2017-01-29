@@ -145,5 +145,6 @@
     <string name="version_unsupported_text">La tua versione del Recording Service non è supportata. Devi utilizzare una versione superiore a {0}.</string>
     <string name="version_unsupported_title">Versione non supportata</string>
     <string name="recording_folder">Directory registrazioni</string>
+    <string name="timer_saved">Timer saved</string>
     <!-- Remote -->
 </resources>

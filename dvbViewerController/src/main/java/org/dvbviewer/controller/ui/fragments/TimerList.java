@@ -278,7 +278,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == TimerDetails.TIMER_RESULT && resultCode == TimerDetails.RESULT_CHANGED) {
             Snackbar snackbar = Snackbar
-                    .make(getView(), "Timer edited", Snackbar.LENGTH_LONG);
+                    .make(getView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
             snackbar.show();
 			refresh();
 		}

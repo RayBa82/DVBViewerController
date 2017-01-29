@@ -158,4 +158,5 @@
     <!-- Remote -->
     <string name="remote_control">Dálkový ovladač</string>
     <string name="remote_numbers">Číselník</string>
+    <string name="timer_saved">Timer saved</string>
 </resources>

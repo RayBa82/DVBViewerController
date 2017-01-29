@@ -100,6 +100,7 @@
     <string name="status_current_unicast_clients">Rákapcsolt Unicast kliens</string>
     <string name="status_next_Rec">Következő felvétel</string>
     <string name="status_next_timer">Következő Timer</string>
+    <string name="timer_saved">Timer saved</string>
     <!-- Dialogs -->
     <!-- Preferences -->
     <!-- Error -->
