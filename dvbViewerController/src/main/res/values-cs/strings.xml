@@ -19,6 +19,7 @@
     <string name="common_colon">:&#160;</string>
     <string name="about_app">O programu DVBViewer Controller</string>
     <string name="version">Verze aplikace:</string>
+    <string name="common_all">Vše</string>
     <!-- Channels -->
     <string name="channelList">Seznam kanálů</string>
     <string name="refreshChannels">Synchronizovat kanály</string>
@@ -158,5 +159,4 @@
     <!-- Remote -->
     <string name="remote_control">Dálkový ovladač</string>
     <string name="remote_numbers">Číselník</string>
-    <string name="timer_saved">Timer saved</string>
 </resources>

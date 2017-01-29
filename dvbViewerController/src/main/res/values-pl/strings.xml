@@ -158,5 +158,4 @@
     <!-- Remote -->
     <string name="remote_control">Sterowanie</string>
     <string name="remote_numbers">Cyfry</string>
-    <string name="timer_saved">Timer saved</string>
 </resources>
