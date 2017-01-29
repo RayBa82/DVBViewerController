@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:minHeight="480dp"
     android:minWidth="320dp"
     android:orientation="vertical">
@@ -38,9 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="text"
-                    android:maxLines="2"
-                    android:nextFocusLeft="@id/titleField"
-                    android:nextFocusUp="@id/titleField" />
+                    android:maxLines="2" />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/activeBox"
