@@ -257,6 +257,10 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		return v;
 	}
 
+    public void setOnTimerEditedListener(OnTimerEditedListener onTimerEditedListener) {
+        this.mOntimeredEditedListener = onTimerEditedListener;
+    }
+
 	/* (non-Javadoc)
 	 * @see android.app.DatePickerDialog.OnDateSetListener#onDateSet(android.widget.DatePicker, int, int, int)
 	 */
@@ -327,12 +331,12 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
+                    if (getDialog() != null && getDialog().isShowing()) {
+                        dismiss();
+                    }
                     HTTPUtil.checkResponse(response);
                     if (mOntimeredEditedListener != null) {
                         mOntimeredEditedListener.timerEdited(true);
-                    }
-                    if (getDialog() != null && getDialog().isShowing()) {
-                        dismiss();
                     }
                 } catch (Exception e) {
                     catchException(e);

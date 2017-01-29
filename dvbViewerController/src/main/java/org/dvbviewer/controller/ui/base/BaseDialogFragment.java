@@ -17,9 +17,9 @@ package org.dvbviewer.controller.ui.base;
 
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.io.AuthenticationException;
@@ -58,6 +58,12 @@ public class BaseDialogFragment extends AppCompatDialogFragment {
      * @param context the context to show the toast
 	 * @param message the message to display
 	 */
+	/**
+	 * Possibility to show a Toastmessage from non UI threads.
+	 *
+	 * @param context the context to show the toast
+	 * @param message the message to display
+	 */
 	protected void showToast(final Context context, final String message) {
 		if (context != null && !isDetached()) {
 			Runnable errorRunnable = new Runnable() {
@@ -65,9 +71,7 @@ public class BaseDialogFragment extends AppCompatDialogFragment {
 				@Override
 				public void run() {
 					if (!TextUtils.isEmpty(message)) {
-						Snackbar snackbar = Snackbar
-								.make(getActivity().findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
-						snackbar.show();
+						Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 					}
 				}
 			};

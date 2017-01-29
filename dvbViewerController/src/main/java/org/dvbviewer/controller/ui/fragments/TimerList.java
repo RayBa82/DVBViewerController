@@ -73,7 +73,7 @@ import java.util.List;
  * @author RayBa
  * @date 07.04.2013
  */
-public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, OnCheckedChangeListener, View.OnClickListener {
+public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, OnCheckedChangeListener, View.OnClickListener, TimerDetails.OnTimerEditedListener {
 
 	TimerAdapter	mAdapter;
 	ActionMode		mode;
@@ -164,7 +164,14 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		}
 	}
 
-	/**
+    @Override
+    public void timerEdited(boolean edited) {
+        if(edited){
+            timerSavedAction();
+        }
+    }
+
+    /**
 	 * The Class ViewHolder.
 	 *
 	 * @author RayBa
@@ -254,12 +261,13 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	@Override
 	public void onListItemClick(ListView parent, View view, int position, long id) {
 		if (UIUtils.isTablet(getActivity())) {
+            onDestroyActionMode(mode);
 			Timer timer = mAdapter.getItem(position);
 			TimerDetails timerdetails = TimerDetails.newInstance();
 			Bundle args = TimerDetails.getIntentArgs(timer);
 			timerdetails.setArguments(args);
+            timerdetails.setOnTimerEditedListener(this);
 			timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
-			onDestroyActionMode(mode);
 		} else {
 			getListView().setItemChecked(position, !getListView().isItemChecked(position));
 			Timer timer = mAdapter.getItem(position);
@@ -277,16 +285,25 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == TimerDetails.TIMER_RESULT && resultCode == TimerDetails.RESULT_CHANGED) {
-            Snackbar snackbar = Snackbar
-                    .make(getView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
-            snackbar.show();
-			refresh();
+            timerSavedAction();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.actionbarsherlock.app.SherlockFragment#onCreateOptionsMenu(android.view.Menu, android.view.MenuInflater)
-	 */
+
+    private void timerSavedAction() {
+        getView().post(new Runnable() {
+            @Override
+            public void run() {
+                Snackbar snackbar = Snackbar
+                        .make(getListView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
+                snackbar.show();
+                refresh();
+            }
+        });
+    }
+
+    /* (non-Javadoc)
+     * @see com.actionbarsherlock.app.SherlockFragment#onCreateOptionsMenu(android.view.Menu, android.view.MenuInflater)
+     */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
