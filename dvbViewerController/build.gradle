@@ -50,6 +50,7 @@ dependencies {
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.github.jrejaud:ViewPagerIndicator2:0.0.1'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'commons-io:commons-io:2.4'
@@ -61,3 +62,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 }
+
+
+apply plugin: 'com.google.gms.google-services'
