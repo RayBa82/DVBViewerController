@@ -80,6 +80,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	private static final String 					KEY_INDEX 					= ChannelPager.class.getName()+"KEY_INDEX";
 	public static final  String 					KEY_GROUP_INDEX 			= ChannelPager.class.getName()+"KEY_GROUP_INDEX";
 	public static final  String                     KEY_GROUP_ID      	        = ChannelPager.class.getName() + "KEY_GROUP_ID";
+	public static final  String                     KEY_HIDE_FAV_SWITCH	        = ChannelPager.class.getName() + "KEY_HIDE_FAV_SWITCH";
 	private				 int 						mGroupIndex 				= AdapterView.INVALID_POSITION;
 	private 			 HashMap<Integer, Integer> 	index 						= new HashMap<>();
 	private static final int 						SYNCHRONIZE_CHANNELS 		= 0;
@@ -91,6 +92,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	private 			 boolean 					showNowPlaying;
 	private 			 boolean 					showNowPlayingWifi;
 	private 			 boolean 					refreshGroupType;
+	private 			 boolean 					hideFavSwitch 				= false;
 	private 			 View 						mProgress;
 	private 			 Cursor 					mGroupCursor;
 	private 			 ViewPager 					mPager;
@@ -137,6 +139,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		showNowPlaying = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING, true);
 		showNowPlayingWifi = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY, true);
 		if (savedInstanceState == null && getArguments() != null) {
+			hideFavSwitch = getArguments().getBoolean(KEY_HIDE_FAV_SWITCH, false);
 			if (getArguments().containsKey(KEY_GROUP_INDEX)) {
 				mGroupIndex = getArguments().getInt(KEY_GROUP_INDEX);
 			}
@@ -199,17 +202,12 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		mPagerIndicator = (PagerTitleStrip) view.findViewById(R.id.titles);
 		mPagerIndicator.setVisibility(showGroups ? View.VISIBLE : View.GONE);
 		View c = view.findViewById(R.id.bottom_container);
-		c.setVisibility(View.GONE);
+		if (c != null) {
+			c.setVisibility(View.GONE);
+		}
 		return view;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.actionbarsherlock.app.SherlockFragment#onCreateOptionsMenu(android
-	 * .view.Menu, android.view.MenuInflater)
-	 */
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -222,15 +220,13 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		super.onCreateOptionsMenu(menu, inflater);
 
 		inflater.inflate(R.menu.channel_pager, menu);
-		for (int i = 0; i < menu.size(); i++) {
-			if (menu.getItem(i).getItemId() == R.id.menuChannelList) {
-				menu.getItem(i).setVisible(showFavs);
-			} else if (menu.getItem(i).getItemId() == R.id.menuFavourties) {
-				menu.getItem(i).setVisible(!showFavs);
-			}
+		if (!hideFavSwitch) {
+			menu.findItem(R.id.menuChannelList).setVisible(showFavs);
+			menu.findItem(R.id.menuFavourties).setVisible(!showFavs);
+		} else {
+			menu.findItem(R.id.menuChannelList).setVisible(false);
+			menu.findItem(R.id.menuFavourties).setVisible(false);
 		}
-		menu.findItem(R.id.menuChannelList).setVisible(showFavs);
-		menu.findItem(R.id.menuFavourties).setVisible(!showFavs);
 	}
 
 	/*

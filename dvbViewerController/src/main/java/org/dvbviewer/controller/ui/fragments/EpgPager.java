@@ -142,8 +142,10 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.pager, container, false);
 		ActionToolbar bootomBar = (ActionToolbar) v.findViewById(R.id.toolbar);
-		bootomBar.inflateMenu(R.menu.channel_epg_bottom_bar);
-		bootomBar.setOnMenuItemClickListener(this);
+        if(bootomBar != null) {
+            bootomBar.inflateMenu(R.menu.channel_epg_bottom_bar);
+            bootomBar.setOnMenuItemClickListener(this);
+        }
 		return v;
 	}
 
@@ -170,12 +172,32 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
 		int itemId = item.getItemId();
+        final EpgDateInfo info = (EpgDateInfo) getActivity();
 		switch (itemId) {
 			case R.id.menuRefresh:
-				final EpgDateInfo info = (EpgDateInfo) getActivity();
 				info.setEpgDate(System.currentTimeMillis());
 				refresh();
 				break;
+            case R.id.menuPrev:
+                info.setEpgDate(DateUtils.substractDay(new Date(info.getEpgDate())).getTime());
+                refreshOptionsMenu();
+                break;
+            case R.id.menuNext:
+                info.setEpgDate(DateUtils.addDay(new Date(info.getEpgDate())).getTime());
+                refreshOptionsMenu();
+                break;
+            case R.id.menuToday:
+                info.setEpgDate(new Date().getTime());
+                refreshOptionsMenu();
+                break;
+            case R.id.menuNow:
+                info.setEpgDate(DateUtils.setCurrentTime(new Date()).getTime());
+                refreshOptionsMenu();
+                break;
+            case R.id.menuEvening:
+                info.setEpgDate(DateUtils.setEveningTime(new Date(info.getEpgDate())).getTime());
+                refreshOptionsMenu();
+                break;
 			default:
 				return false;
 		}
@@ -209,14 +231,18 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 			default:
 				return false;
 		}
-		getActivity().supportInvalidateOptionsMenu();
-		ChannelEpg mCurrent;
-		mCurrent = (ChannelEpg) mAdapter.instantiateItem(mPager, mPager.getCurrentItem());
-		mCurrent.refresh();
+        refreshOptionsMenu();
 		return true;
 	}
 
-	@Override
+    private void refreshOptionsMenu() {
+        getActivity().supportInvalidateOptionsMenu();
+        ChannelEpg mCurrent;
+        mCurrent = (ChannelEpg) mAdapter.instantiateItem(mPager, mPager.getCurrentItem());
+        mCurrent.refresh();
+    }
+
+    @Override
 	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
 	}

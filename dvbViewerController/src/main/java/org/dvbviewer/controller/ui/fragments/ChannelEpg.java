@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -92,6 +93,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     private TextView dayIndicator;
     private EpgDateInfo mDateInfo;
     private Date lastRefresh;
+    private View header;
 
     @Override
     protected int getLayoutRessource() {
@@ -123,19 +125,19 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         setListAdapter(mAdapter);
         setListShown(false);
         getListView().setOnItemClickListener(this);
-        channelLogo.setImageBitmap(null);
-        if (channel != null) {
+        if(header != null && channel != null){
+            channelLogo.setImageBitmap(null);
             mImageCacher.cancelDisplayTask(channelLogo);
             String url = ServerConsts.REC_SERVICE_URL + "/" + logoUrl;
             mImageCacher.displayImage(url, channelLogo);
             channelName.setText(channel);
-        }
-        if (DateUtils.isToday(mDateInfo.getEpgDate())) {
-            dayIndicator.setText(R.string.today);
-        } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
-            dayIndicator.setText(R.string.tomorrow);
-        } else {
-            dayIndicator.setText(DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+            if (DateUtils.isToday(mDateInfo.getEpgDate())) {
+                dayIndicator.setText(R.string.today);
+            } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
+                dayIndicator.setText(R.string.tomorrow);
+            } else {
+                dayIndicator.setText(DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+            }
         }
 
         setEmptyText(getResources().getString(R.string.no_epg));
@@ -215,12 +217,26 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         mAdapter.changeCursor(cursor);
         mAdapter.notifyDataSetChanged();
         setSelection(0);
+        final String dateText;
         if (DateUtils.isToday(mDateInfo.getEpgDate())) {
-            dayIndicator.setText(R.string.today);
+            dateText = getString(R.string.today);
         } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
-            dayIndicator.setText(R.string.tomorrow);
+            dateText = getString(R.string.tomorrow);
         } else {
-            dayIndicator.setText(DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+            dateText = DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY);
+        }
+        if(header != null ){
+            if (DateUtils.isToday(mDateInfo.getEpgDate())) {
+                dayIndicator.setText(R.string.today);
+            } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
+                dayIndicator.setText(R.string.tomorrow);
+            } else {
+                dayIndicator.setText(DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+            }
+            dayIndicator.setText(dateText);
+        }else {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            activity.getSupportActionBar().setSubtitle(dateText);
         }
         lastRefresh = new Date(mDateInfo.getEpgDate());
         setListShown(true);
@@ -233,6 +249,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         if (v != null){
+            header = v.findViewById(R.id.epg_header);
             channelLogo = (ImageView) v.findViewById(R.id.icon);
             channelName = (TextView) v.findViewById(R.id.title);
             dayIndicator = (TextView) v.findViewById(R.id.dayIndicator);
