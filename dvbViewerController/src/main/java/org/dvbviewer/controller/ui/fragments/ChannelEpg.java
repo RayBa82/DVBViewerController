@@ -139,7 +139,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         }
 
         setEmptyText(getResources().getString(R.string.no_epg));
-        getLoaderManager().initLoader(channelPos, savedInstanceState, this);
+        getLoaderManager().initLoader(0, savedInstanceState, this);
     }
 
     private void fillFromBundle(Bundle savedInstanceState) {
@@ -157,7 +157,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        if (isVisibleToUser && isVisible()) {
             refreshDate();
         }
     }
@@ -168,7 +168,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 
-        return new EpgLoader<Cursor>(getContext(), mDateInfo) {
+        return new EpgLoader(getContext(), mDateInfo) {
 
             @Override
             public Cursor loadInBackground() {
@@ -213,6 +213,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
         mAdapter.changeCursor(cursor);
+        mAdapter.notifyDataSetChanged();
         setSelection(0);
         if (DateUtils.isToday(mDateInfo.getEpgDate())) {
             dayIndicator.setText(R.string.today);
@@ -342,7 +343,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     public void refresh() {
         setListShown(false);
-        getLoaderManager().restartLoader(channelPos, getArguments(), this);
+        getLoaderManager().restartLoader(0, getArguments(), this).forceLoad();
     }
 
     /**
@@ -366,8 +367,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         outState.putLong(KEY_CHANNEL_ID, channelId);
         outState.putLong(KEY_EPG_ID, epgId);
         outState.putString(KEY_CHANNEL_LOGO, logoUrl);
-        outState.putInt(KEY_EPG_ID, channelPos);
-        outState.putInt(KEY_EPG_ID, favPos);
+        outState.putInt(KEY_CHANNEL_POS, channelPos);
+        outState.putInt(KEY_FAV_POS, favPos);
         outState.putLong(KEY_EPG_DAY, mDateInfo.getEpgDate());
     }
 
@@ -478,8 +479,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
-        arg0.reset();
-        mAdapter.swapCursor(null);
     }
 
     /**

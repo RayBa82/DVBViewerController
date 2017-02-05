@@ -20,19 +20,20 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <com.github.jrejaud.viewpagerindicator2.TitlePageIndicator
-        android:id="@+id/titles"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:visibility="gone"/>
-
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/bottom_container"
-        android:layout_below="@+id/titles">
+        android:layout_alignParentTop="true">
+
+        <android.support.v4.view.PagerTitleStrip
+            android:id="@+id/titles"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:visibility="gone" />
 
     </android.support.v4.view.ViewPager>
 

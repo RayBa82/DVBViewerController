@@ -268,7 +268,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 			bundle.putString(ChannelEpg.KEY_CHANNEL_LOGO, chan.getLogoUrl());
 			bundle.putInt(ChannelEpg.KEY_CHANNEL_POS, chan.getPosition());
 			bundle.putInt(ChannelEpg.KEY_FAV_POS, chan.getFavPosition());
-			return Fragment.instantiate(getActivity(), ChannelEpg.class.getName(), bundle);
+			return Fragment.instantiate(getContext(), ChannelEpg.class.getName(), bundle);
 		}
 
 		@Override
@@ -276,7 +276,14 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 			return POSITION_NONE;
 		}
 
-	}
+        @Override
+        public int getCount() {
+            if (getCursor() == null || getCursor().isClosed()) {
+                return 0;
+            }
+            return getCursor().getCount();
+        }
+    }
 
 	/**
 	 * Sets the position.
@@ -341,8 +348,9 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	private void resetLoader() {
 		DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
 		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
-		mAdapter.swapCursor(null);
-		mAdapter.notifyDataSetChanged();
+        mAdapter = new PagerAdapter(getChildFragmentManager());
+        mPager.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
 		getLoaderManager().destroyLoader(0);
 		getLoaderManager().restartLoader(0, getArguments(), this);
 	}

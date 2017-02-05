@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
@@ -39,7 +40,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import com.github.jrejaud.viewpagerindicator2.TitlePageIndicator;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
@@ -96,7 +96,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	private 			 ViewPager 					mPager;
 	private 			 NetworkInfo 				mNetworkInfo;
 	private 			 PagerAdapter 				mAdapter;
-	private 			 TitlePageIndicator	 		mPagerIndicator;
+	private 			 PagerTitleStrip 			mPagerIndicator;
 	private 			 DVBViewerPreferences 		prefs;
 	private 			 OnGroupChangedListener 	mGroupCHangedListener;
 	private 			 OnGroupTypeChangedListener	mOnGroupTypeCHangedListener;
@@ -166,8 +166,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		getActivity().setTitle(showFavs ? R.string.favourites : R.string.channelList);
 		mPager.setAdapter(mAdapter);
 		mPager.setPageMargin((int) UIUtils.dipToPixel(getActivity(), 25));
-		mPagerIndicator.setViewPager(mPager);
-		mPagerIndicator.setOnPageChangeListener(this);
+		mPager.addOnPageChangeListener(this);
 
 		int loaderId = LOAD_CHANNELS;
 		if (savedInstanceState == null) {
@@ -197,7 +196,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		View view = inflater.inflate(R.layout.pager, container, false);
 		mProgress = view.findViewById(android.R.id.progress);
 		mPager = (ViewPager) view.findViewById(R.id.pager);
-		mPagerIndicator = (TitlePageIndicator) view.findViewById(R.id.titles);
+		mPagerIndicator = (PagerTitleStrip) view.findViewById(R.id.titles);
 		mPagerIndicator.setVisibility(showGroups ? View.VISIBLE : View.GONE);
 		View c = view.findViewById(R.id.bottom_container);
 		c.setVisibility(View.GONE);
@@ -321,7 +320,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			args.putInt(ChannelList.KEY_CHANNEL_INDEX, getChannelIndex(position));
 			args.putBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, showFavs);
 			args.putBoolean(ChannelList.KEY_HAS_OPTIONMENU, false);
-			return Fragment.instantiate(getActivity(), ChannelList.class.getName(), args);
+			return Fragment.instantiate(getContext(), ChannelList.class.getName(), args);
 		}
 
 		@Override
@@ -581,7 +580,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		mAdapter.notifyDataSetChanged();
 		mAdapter = new PagerAdapter(getChildFragmentManager(), mGroupCursor);
 		mPager.setAdapter(mAdapter);
-		mPagerIndicator.notifyDataSetChanged();
+		mAdapter.notifyDataSetChanged();
 		getLoaderManager().destroyLoader(id);
 		getLoaderManager().restartLoader(id, getArguments(), this);
 		showProgress(true);
@@ -633,7 +632,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	public void onPageSelected(int position) {
 		mGroupIndex = position;
 		if (mGroupCHangedListener != null) {
-			mGroupCHangedListener.groupChanged(mAdapter.getGroupId(mGroupIndex), mPager.getCurrentItem(), getChannelIndex(mGroupIndex));
+			mGroupCHangedListener.groupChanged(mAdapter.getGroupId(mGroupIndex), mGroupIndex, getChannelIndex(mGroupIndex));
 		}
 	}
 

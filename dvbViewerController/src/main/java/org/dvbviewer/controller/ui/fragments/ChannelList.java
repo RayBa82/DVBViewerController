@@ -453,9 +453,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     public void onResume() {
         super.onResume();
         setTitle();
-        if (!UIUtils.isTablet(getActivity())) {
-            clearSelection();
-        }
     }
 
     private void setTitle() {
@@ -507,6 +504,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     c.moveToPosition(mChannelIndex);
                     Channel chan = cursorToChannel(c);
                     try {
+
                         final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), chan.getChannelID(), chan.getName());
                         getActivity().startActivity(videoIntent);
                         AnalyticsTracker.trackQuickStream(getActivity().getApplication());
