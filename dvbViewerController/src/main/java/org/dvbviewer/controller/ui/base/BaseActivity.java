@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.BuildConfig;
@@ -45,7 +46,7 @@ import org.dvbviewer.controller.utils.Config;
 public abstract class BaseActivity extends AppCompatActivity {
 
 	public static final String	DATA	= "_uri";
-    public static final String TAG = BaseActivity.class.getSimpleName();
+	protected FirebaseAnalytics mFirebaseAnalytics;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -54,6 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
         if (!BuildConfig.DEBUG){
+			mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
             ((App) getApplication()).getTracker();
         }
 	}
