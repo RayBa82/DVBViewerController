@@ -37,7 +37,6 @@ import android.widget.AdapterView;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
 import org.dvbviewer.controller.entities.Channel;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.ui.base.CursorPagerAdapter;
 import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
 import org.dvbviewer.controller.ui.widget.ActionToolbar;
@@ -57,8 +56,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	private             int                     	mGroupIndex       	    = AdapterView.INVALID_POSITION;
 	private 			ViewPager 					mPager;
 	private 			PagerAdapter 				mAdapter;
-	private OnChannelScrolledListener mOnCHannelChanedListener;
-	private 			Boolean                 	showFavs;
+	private             OnChannelScrolledListener   mOnCHannelChanedListener;
 
 
 	/*
@@ -84,8 +82,6 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mAdapter = new PagerAdapter(getChildFragmentManager());
-		DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
 		boolean showOptionsMenu = true;
 		if (getArguments() != null){
 			showOptionsMenu = !getArguments().getBoolean(KEY_HIDE_OPTIONSMENU, false);
@@ -249,6 +245,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 
 	@Override
 	public void onPageSelected(int position) {
+		chanIndex = position;
 		if (mOnCHannelChanedListener != null){
 			mOnCHannelChanedListener.channelChanged(mGroupId, position);
 		}
@@ -372,8 +369,6 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	}
 
 	private void resetLoader() {
-		DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
         mAdapter = new PagerAdapter(getChildFragmentManager());
         mPager.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();

@@ -300,22 +300,13 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			if (mCursor == null){
 				return null;
 			}
-			long groupId = -1;
-			if (showGroups) {
-				if (showExtraGroup) {
-					mCursor.moveToPosition(position - 1);
-					groupId = position > 0 ? mCursor.getLong(mCursor.getColumnIndex(GroupTbl._ID)) : -1;
-				} else {
-					mCursor.moveToPosition(position);
-					groupId = mCursor.getLong(mCursor.getColumnIndex(GroupTbl._ID));
-				}
-			}
+			mCursor.moveToPosition(position);
+			long groupId = mCursor.getLong(mCursor.getColumnIndex(GroupTbl._ID));
 			Bundle args = new Bundle();
 			args.putLong(ChannelPager.KEY_GROUP_ID, groupId);
 			args.putInt(ChannelPager.KEY_GROUP_INDEX, position);
 			args.putInt(ChannelList.KEY_CHANNEL_INDEX, getChannelIndex(position));
 			args.putBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, showFavs);
-			args.putBoolean(ChannelList.KEY_HAS_OPTIONMENU, false);
 			return Fragment.instantiate(getContext(), ChannelList.class.getName(), args);
 		}
 
