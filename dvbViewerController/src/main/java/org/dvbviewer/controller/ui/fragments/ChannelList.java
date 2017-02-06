@@ -76,7 +76,6 @@ import java.util.Date;
 public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cursor>, OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     public static final Uri                         BASE_CONTENT_URI	        = Uri.parse("content://org.dvbviewer.controller/channelselector");
-    public static final String                      KEY_HAS_OPTIONMENU          = "HAS_OPTIONMENU";
     public static final String                      KEY_CHANNEL_INDEX 	        = ChannelList.class.getName() + "KEY_CHANNEL_INDEX";
     private static final int                        LOADER_CHANNELLIST          = 101;
     private             long                        mGroupId                    = -1;
@@ -453,9 +452,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     public void onResume() {
         super.onResume();
         setTitle();
-        if (!UIUtils.isTablet(getActivity())) {
-            clearSelection();
-        }
     }
 
     private void setTitle() {
@@ -507,6 +503,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     c.moveToPosition(mChannelIndex);
                     Channel chan = cursorToChannel(c);
                     try {
+
                         final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), chan.getChannelID(), chan.getName());
                         getActivity().startActivity(videoIntent);
                         AnalyticsTracker.trackQuickStream(getActivity().getApplication());

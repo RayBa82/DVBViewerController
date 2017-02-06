@@ -36,7 +36,6 @@ import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListen
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
 import org.dvbviewer.controller.ui.fragments.Dashboard;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
-import org.dvbviewer.controller.ui.fragments.EpgPager;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.TimerList;
@@ -227,7 +226,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 		channelListIntent.putExtra(ChannelPager.KEY_GROUP_ID, groupId);
 		channelListIntent.putExtra(ChannelPager.KEY_GROUP_INDEX, groupIndex);
 		channelListIntent.putExtra(ChannelList.KEY_CHANNEL_INDEX, channelIndex);
-		channelListIntent.putExtra(EpgPager.KEY_HIDE_OPTIONSMENU, true);
+		channelListIntent.putExtra(ChannelPager.KEY_HIDE_FAV_SWITCH, true);
 		startActivity(channelListIntent);
 
 	}

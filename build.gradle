@@ -2,7 +2,7 @@
 def majorVersion = 1
 def minorVersion = 2
 def patchVersion = 0
-def buildNumber = 10
+def buildNumber = 11
 def buildVersionCode;
 def buildVersionName
 buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
@@ -14,6 +14,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.google.gms:google-services:3.0.0'
     }
 }
 ext {
@@ -22,7 +23,7 @@ ext {
     buildToolsVersion = "25.0.2"
     minSdkVersion = 9
     targetSdkVersion = 25
-    appcompatVersion = "+"
+    appcompatVersion = "25.1.1"
     versionCode = buildVersionCode
     versionName = buildVersionName
 }

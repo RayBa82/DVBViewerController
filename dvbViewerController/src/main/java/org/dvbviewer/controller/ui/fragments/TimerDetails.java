@@ -347,6 +347,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
             builder.addQueryParameter("pre", pre);
             builder.addQueryParameter("post", post);
             addIfNotEmpty("pdc", timer.getPdc(), builder);
+            addIfNotEmpty("epgevent", timer.getEventId(), builder);
             addIfPositive("audio", timer.getAllAudio(), builder);
             addIfPositive("subs", timer.getDvbSubs(), builder);
             addIfPositive("ttx", timer.getTeletext(), builder);

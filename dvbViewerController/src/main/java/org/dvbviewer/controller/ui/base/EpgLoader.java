@@ -16,16 +16,16 @@
 package org.dvbviewer.controller.ui.base;
 
 import android.content.Context;
+import android.support.v4.content.CursorLoader;
 
 import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
 
 /**
  * The Class EpgLoader.
  *
- * @param <D> the
  * @author RayBa
  */
-public abstract class EpgLoader<D> extends AsyncLoader<D>{
+public abstract class EpgLoader extends CursorLoader {
 	
 	private final 	EpgDateInfo mDateInfo;
 	private 		long 		mEpgDate;
@@ -55,7 +55,8 @@ public abstract class EpgLoader<D> extends AsyncLoader<D>{
 	 */
 	@Override
 	public boolean takeContentChanged() {
-		return mEpgDate != mDateInfo.getEpgDate();
+
+		return super.takeContentChanged() || mEpgDate != mDateInfo.getEpgDate();
 	}
 
 }
