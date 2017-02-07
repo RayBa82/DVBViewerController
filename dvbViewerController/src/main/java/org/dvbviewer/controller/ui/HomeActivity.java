@@ -85,6 +85,9 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 				tran = getSupportFragmentManager().beginTransaction();
                 chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
+                Bundle bundle = new Bundle();
+                bundle.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
+                chans.setArguments(bundle);
 				tran.add(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
 				tran.commit();
 				setTitle(R.string.channelList);
