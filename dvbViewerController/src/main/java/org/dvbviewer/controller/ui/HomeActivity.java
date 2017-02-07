@@ -58,14 +58,17 @@ import java.util.List;
  */
 public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
 
-	private View					multiContainer;
+    public static final String ENABLE_DRAWER = "ENABLE_DRAWER";
+    private View					multiContainer;
 	private ArrayAdapter 			mSpinnerAdapter;
 	private Spinner 				mClientSpinner;
 	private DVBViewerPreferences 	prefs;
+    private ChannelPager chans;
+    private boolean enableDrawer;
 
-	/* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.base.BaseActivity#onCreate(android.os.Bundle)
-	 */
+    /* (non-Javadoc)
+     * @see org.dvbviewer.controller.ui.base.BaseActivity#onCreate(android.os.Bundle)
+     */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_drawer);
@@ -78,10 +81,11 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			tran.add(R.id.left_content, dashboard);
 			tran.commit();
 			if (multiContainer != null) {
+                enableDrawer = true;
 				tran = getSupportFragmentManager().beginTransaction();
-				ChannelPager chans = new ChannelPager();
+                chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
-				tran.add(multiContainer.getId(), chans);
+				tran.add(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
 				tran.commit();
 				setTitle(R.string.channelList);
 			}
@@ -93,10 +97,12 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 				prefs = new DVBViewerPreferences(this);
 				prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, false).commit();
 			}
-		}
-
+		}else{
+            enableDrawer = savedInstanceState.getBoolean(ENABLE_DRAWER, false);
+        }
 		initRemoteSpinner();
-	}
+        setDrawerEnabled(enableDrawer);
+    }
 
 	private void initRemoteSpinner() {
 		mClientSpinner = (Spinner) findViewById(R.id.clientSpinner);
@@ -139,6 +145,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	 */
 	@Override
 	public void onDashboarButtonClick(View v) {
+        enableDrawer = false;
 		switch (v.getId()) {
 		case R.id.home_btn_remote:
 			if (multiContainer != null) {
@@ -152,9 +159,13 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			break;
 		case R.id.home_btn_channels:
 			if (multiContainer != null) {
+                enableDrawer = true;
 				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-				ChannelPager chans = new ChannelPager();
+                chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
+                Bundle bundle = new Bundle();
+                bundle.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
+                chans.setArguments(bundle);
 				tran.replace(multiContainer.getId(), chans);
 				tran.commit();
 				setTitle(R.string.channelList);
@@ -198,6 +209,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 		if (mClientSpinner != null){
 			mClientSpinner.setVisibility(View.GONE);
 		}
+        setDrawerEnabled(enableDrawer);
 	}
 
 	@Override
@@ -253,5 +265,18 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 		return mClientSpinner.getSelectedItem();
 	}
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        super.onItemClick(parent, view, position, id);
+        if(chans != null){
+            chans.setPosition(position);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(ENABLE_DRAWER, enableDrawer);
+    }
 
 }

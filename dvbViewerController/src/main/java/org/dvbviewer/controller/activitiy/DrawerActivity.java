@@ -57,6 +57,22 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 		mDrawerToggle.syncState();
     }
 
+	protected void setDrawerEnabled(boolean enabled){
+		if ( enabled ) {
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+			mDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
+			mDrawerToggle.setDrawerIndicatorEnabled(true);
+			mDrawerToggle.syncState();
+
+		}
+		else {
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+			mDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
+			mDrawerToggle.setDrawerIndicatorEnabled(false);
+			mDrawerToggle.syncState();
+		}
+	}
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
