@@ -15,10 +15,14 @@
  */
 package org.dvbviewer.controller.ui.phone;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
+import org.dvbviewer.controller.data.DbConsts;
 import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.fragments.EpgPager;
 
@@ -50,6 +54,22 @@ public class EpgPagerActivity extends GroupDrawerActivity {
 		}else {
 				mEpgPager = (EpgPager) getSupportFragmentManager().findFragmentByTag(EPG_PAGER_TAG);
 		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		super.onItemClick(parent, view, position, id);
+		final Cursor c = mDrawerAdapter.getCursor();
+		if (mEpgPager != null && c != null && c.getCount() >= position){
+			mDrawerAdapter.getCursor().moveToPosition(position);
+			long groupId = c.getLong(c.getColumnIndex(DbConsts.GroupTbl._ID));
+			mEpgPager.refresh(groupId, 0);
+		}
+	}
+
+	@Override
+	public void groupChanged(long groupId, int groupIndex, int channelIndex) {
+
 	}
 
 }

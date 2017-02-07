@@ -44,7 +44,7 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 				this,  mDrawerLayout, mToolbar,
 				R.string.app_name, R.string.app_name
 		);
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDrawerLayout.addDrawerListener(mDrawerToggle);
 		setDisplayHomeAsUpEnabled(true);
 
 		mDrawerAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item_group, null, new String[]{DbConsts.GroupTbl.NAME}, new int[]{android.R.id.text1}, 0);
@@ -56,6 +56,22 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 		super.onPostCreate(savedInstanceState);
 		mDrawerToggle.syncState();
     }
+
+	protected void setDrawerEnabled(boolean enabled){
+		if ( enabled ) {
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+			mDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
+			mDrawerToggle.setDrawerIndicatorEnabled(true);
+			mDrawerToggle.syncState();
+
+		}
+		else {
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+			mDrawerToggle.onDrawerStateChanged(DrawerLayout.STATE_IDLE);
+			mDrawerToggle.setDrawerIndicatorEnabled(false);
+			mDrawerToggle.syncState();
+		}
+	}
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
