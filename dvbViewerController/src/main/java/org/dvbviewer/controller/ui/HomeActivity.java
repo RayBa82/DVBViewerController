@@ -265,6 +265,9 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 
 	@Override
 	public Object getSelectedTarget() {
+		if(mClientSpinner == null){
+			return null;
+		}
 		return mClientSpinner.getSelectedItem();
 	}
 

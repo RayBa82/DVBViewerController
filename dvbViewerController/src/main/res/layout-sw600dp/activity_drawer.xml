@@ -12,6 +12,13 @@
         android:background="@drawable/ab_background"
         android:minHeight="?attr/actionBarSize">
 
+        <Spinner
+            android:id="@+id/clientSpinner"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:gravity="right" />
+
     </android.support.v7.widget.Toolbar>
 
     <android.support.v4.widget.DrawerLayout
