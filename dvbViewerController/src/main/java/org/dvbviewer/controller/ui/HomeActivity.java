@@ -38,6 +38,8 @@ import org.dvbviewer.controller.ui.fragments.Dashboard;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
+import org.dvbviewer.controller.ui.fragments.StatusList;
+import org.dvbviewer.controller.ui.fragments.TaskList;
 import org.dvbviewer.controller.ui.fragments.TimerList;
 import org.dvbviewer.controller.ui.phone.AboutActivity;
 import org.dvbviewer.controller.ui.phone.ChannelListActivity;
@@ -148,10 +150,10 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	 */
 	@Override
 	public void onDashboarButtonClick(View v) {
-        enableDrawer = false;
 		switch (v.getId()) {
 		case R.id.home_btn_remote:
 			if (multiContainer != null) {
+				enableDrawer = false;
 				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
 				tran.replace(multiContainer.getId(), new Remote());
 				tran.commit();
@@ -178,6 +180,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			break;
 		case R.id.home_btn_timers:
 			if (multiContainer != null) {
+				enableDrawer = false;
 				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
 				tran.replace(multiContainer.getId(), new TimerList());
 				tran.commit();
@@ -188,6 +191,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			break;
 		case R.id.home_btn_recordings:
 			if (multiContainer != null) {
+				enableDrawer = false;
 				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
 				tran.replace(multiContainer.getId(), new RecordingList());
 				tran.commit();
@@ -200,10 +204,26 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			startActivity(new Intent(this, PreferencesActivity.class));
 			break;
 		case R.id.home_btn_tasks:
-			startActivity(new Intent(this, TaskActivity.class));
+			if (multiContainer != null) {
+				enableDrawer = false;
+				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+				tran.replace(multiContainer.getId(), new TaskList());
+				tran.commit();
+				setTitle(R.string.tasks);
+			} else {
+				startActivity(new Intent(this, TaskActivity.class));
+			}
 			break;
 		case R.id.home_btn_status:
-			startActivity(new Intent(this, StatusActivity.class));
+			if (multiContainer != null) {
+				enableDrawer = false;
+				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+				tran.replace(multiContainer.getId(), new StatusList());
+				tran.commit();
+				setTitle(R.string.status);
+			} else {
+				startActivity(new Intent(this, StatusActivity.class));
+			}
 			break;
 
 		default:
