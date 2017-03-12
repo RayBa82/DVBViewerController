@@ -57,7 +57,7 @@ public class ChannelRoot {
 	
 	public ContentValues toContentValues() {
 		ContentValues result = new ContentValues();
-		if (this.id != null && !this.id.equals(0l)) {
+		if (this.id != null) {
 			result.put(RootTbl._ID, id);
 		}
 		if (this.name != null && !TextUtils.isEmpty(this.name)) {

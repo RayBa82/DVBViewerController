@@ -81,7 +81,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private             long                        mGroupId                    = -1;
     private             int                         mGroupIndex                 = -1;
     private             int                         mChannelIndex               = -1;
-    private             boolean                     showFavs;
     private             DVBViewerPreferences        prefs;
     private             ChannelAdapter              mAdapter;
     private             OnChannelSelectedListener   mCHannelSelectedListener;
@@ -96,7 +95,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = new DVBViewerPreferences(getContext());
-        showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
         mAdapter = new ChannelAdapter(getContext());
         getExtras(savedInstanceState);
         registerObserver();
@@ -150,7 +148,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         super.onActivityCreated(savedInstanceState);
         setListAdapter(mAdapter);
         getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        setEmptyText(showFavs ? getResources().getString(R.string.no_favourites) : getResources().getString(R.string.no_channels));
+        setEmptyText(getResources().getString(R.string.no_channels));
         Loader<Cursor> loader = getLoaderManager().initLoader(LOADER_CHANNELLIST, savedInstanceState, this);
         setListShown(!(!isResumed() || loader.isStarted()));
         setSelection(mChannelIndex);
@@ -455,7 +453,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     }
 
     private void setTitle() {
-        getActivity().setTitle(showFavs ? R.string.favourites : R.string.channelList);
+        getActivity().setTitle(R.string.channelList);
     }
 
     /**

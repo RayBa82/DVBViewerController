@@ -46,6 +46,8 @@ public class DbConsts {
 		/** The name. */
 		public static final String	NAME		= "name";
 
+		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+
 	}
 
 	/**

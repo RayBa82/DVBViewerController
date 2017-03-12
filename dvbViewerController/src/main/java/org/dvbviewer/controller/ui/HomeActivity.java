@@ -30,6 +30,7 @@ import android.widget.Spinner;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
+import org.dvbviewer.controller.data.DbConsts;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
@@ -274,6 +275,23 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
         if(chans != null){
             chans.setPosition(position);
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        super.onItemSelected(parent, view, position, id);
+        if(chans != null){
+            FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+            chans = new ChannelPager();
+            chans.setHasOptionsMenu(true);
+            Bundle bundle = new Bundle();
+            bundle.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
+            chans.setArguments(bundle);
+            tran.replace(multiContainer.getId(), chans);
+            tran.commit();
+            setTitle(R.string.channelList);
+        }
+        getContentResolver().notifyChange(DbConsts.GroupTbl.CONTENT_URI, null);
     }
 
     @Override

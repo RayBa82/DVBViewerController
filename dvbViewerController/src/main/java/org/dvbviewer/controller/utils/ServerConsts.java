@@ -17,7 +17,7 @@ public class ServerConsts {
 	public static int		REC_SERVICE_WOL_PORT			= 9;
 	public static String	REC_SERVICE_PASSWORD			= "";
 
-	public static final String	URL_CHANNELS					= "/api/getchannelsxml.html?logo=1";
+	public static final String	URL_CHANNELS					= "/api/getchannelsxml.html?logo=1&fav=1";
 	public static final String	URL_FAVS						= "/api/getchannelsxml.html?logo=1&favonly=1";
 	public static final String	URL_VERSION						= "/api/version.html";
 	public static final String	URL_STATUS						= "/api/status.html";

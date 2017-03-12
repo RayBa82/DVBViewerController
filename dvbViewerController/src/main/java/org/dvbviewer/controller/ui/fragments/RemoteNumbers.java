@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.ui.base.AbstractRemote;
 import org.dvbviewer.controller.utils.ActionID;
 
@@ -49,8 +48,6 @@ public class RemoteNumbers extends AbstractRemote {
     private Button btnNumberForward = null;
 
     private View content;
-    private DVBViewerPreferences prefs;
-    private boolean useFavs;
     private OnRemoteButtonClickListener remoteButtonClickListener;
 
     /* (non-Javadoc)
@@ -68,8 +65,6 @@ public class RemoteNumbers extends AbstractRemote {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         inititalize();
-        prefs = new DVBViewerPreferences(getActivity());
-        useFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
     }
 
     /* (non-Javadoc)
@@ -131,31 +126,31 @@ public class RemoteNumbers extends AbstractRemote {
         String command = "";
         switch (v.getId()) {
             case R.id.ButtonOne:
-                command = useFavs ? ActionID.CMD_FAV_1 : ActionID.CMD_REMOTE_1;
+                command = ActionID.CMD_REMOTE_1;
                 break;
             case R.id.ButtonTwo:
-                command = useFavs ? ActionID.CMD_FAV_2 : ActionID.CMD_REMOTE_2;
+                command = ActionID.CMD_REMOTE_2;
                 break;
             case R.id.ButtonThree:
-                command = useFavs ? ActionID.CMD_FAV_3 : ActionID.CMD_REMOTE_3;
+                command = ActionID.CMD_REMOTE_3;
                 break;
             case R.id.ButtonFour:
-                command = useFavs ? ActionID.CMD_FAV_4 : ActionID.CMD_REMOTE_4;
+                command = ActionID.CMD_REMOTE_4;
                 break;
             case R.id.ButtonFive:
-                command = useFavs ? ActionID.CMD_FAV_5 : ActionID.CMD_REMOTE_5;
+                command = ActionID.CMD_REMOTE_5;
                 break;
             case R.id.ButtonSix:
-                command = useFavs ? ActionID.CMD_FAV_6 : ActionID.CMD_REMOTE_6;
+                command = ActionID.CMD_REMOTE_6;
                 break;
             case R.id.ButtonSeven:
-                command = useFavs ? ActionID.CMD_FAV_7 : ActionID.CMD_REMOTE_7;
+                command = ActionID.CMD_REMOTE_7;
                 break;
             case R.id.ButtonEight:
-                command = useFavs ? ActionID.CMD_FAV_8 : ActionID.CMD_REMOTE_8;
+                command = ActionID.CMD_REMOTE_8;
                 break;
             case R.id.ButtonNine:
-                command = useFavs ? ActionID.CMD_FAV_9 : ActionID.CMD_REMOTE_9;
+                command = ActionID.CMD_REMOTE_9;
                 break;
             case R.id.ButtonZero:
                 command = ActionID.CMD_REMOTE_0;

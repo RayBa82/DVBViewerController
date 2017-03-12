@@ -21,6 +21,7 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 	protected ListView				mDrawerList;
 	private   ActionBarDrawerToggle	mDrawerToggle;
 	protected SimpleCursorAdapter 	mDrawerAdapter;
+    protected SimpleCursorAdapter 	mRootAdapter;
 
 	/*
 	 * (non-Javadoc)
@@ -36,7 +37,7 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 		mDrawerLayout.setDrawerShadow(android.R.color.white, GravityCompat.END);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 		mDrawerList.setOnItemClickListener(this);
-		Toolbar mToolbar = (Toolbar) findViewById(R.id.simple_toolbar);
+		Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_Spinner);
 		if (mToolbar != null){
 			setSupportActionBar(mToolbar);
 		}
@@ -46,8 +47,9 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 		);
 		mDrawerLayout.addDrawerListener(mDrawerToggle);
 		setDisplayHomeAsUpEnabled(true);
-
-		mDrawerAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item_group, null, new String[]{DbConsts.GroupTbl.NAME}, new int[]{android.R.id.text1}, 0);
+        int[] adapterRowViews=new int[]{android.R.id.text1};
+        mRootAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_dropdown_item, null, new String[]{DbConsts.RootTbl.NAME}, adapterRowViews,0);
+		mDrawerAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item_group, null, new String[]{DbConsts.GroupTbl.NAME}, adapterRowViews, 0);
 		mDrawerList.setAdapter(mDrawerAdapter);
 	}
 

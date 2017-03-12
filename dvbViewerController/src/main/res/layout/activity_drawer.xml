@@ -4,14 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/simple_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/ab_background"
-        android:minHeight="?attr/actionBarSize">
-
-    </android.support.v7.widget.Toolbar>
+    <include layout="@layout/toolbar_spinner"/>
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"

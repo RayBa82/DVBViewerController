@@ -48,17 +48,16 @@ public class ChannelHandler extends DefaultHandler {
     ChannelRoot currentRoot;
     ChannelGroup currentGroup;
     Channel currentChannel = null;
-    private int favPosition;
     private String favRootName;
+    private long rootId = 1;
 
-    public List<ChannelRoot> parse(InputStream inputStream, boolean fav) throws SAXException, IOException {
-        Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler(fav));
+    public List<ChannelRoot> parse(InputStream inputStream) throws SAXException, IOException {
+        Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
         return rootElements;
     }
 
     @NonNull
-    private ContentHandler getContentHandler(final boolean fav) {
-        favPosition = 1;
+    private ContentHandler getContentHandler() {
         RootElement channels = new RootElement("channels");
         Element rootElement = channels.getChild("root");
         Element groupElement = rootElement.getChild("group");
@@ -78,7 +77,8 @@ public class ChannelHandler extends DefaultHandler {
             public void start(Attributes attributes) {
                 currentRoot = new ChannelRoot();
                 currentRoot.setName(attributes.getValue("name"));
-                favRootName = fav ? currentRoot.getName() : StringUtils.EMPTY;
+                currentRoot.setId(rootId++);
+                favRootName = currentRoot.getName();
                 rootElements.add(currentRoot);
             }
         });
@@ -88,7 +88,6 @@ public class ChannelHandler extends DefaultHandler {
                 currentGroup = new ChannelGroup();
                 currentGroup.setName(attributes.getValue("name").replaceFirst(favRootName, StringUtils.EMPTY));
                 currentRoot.getGroups().add(currentGroup);
-                currentGroup.setType(fav ? ChannelGroup.TYPE_FAV : ChannelGroup.TYPE_CHAN);
             }
         });
 
@@ -96,11 +95,10 @@ public class ChannelHandler extends DefaultHandler {
             public void start(Attributes attributes) {
                 currentChannel = new Channel();
                 currentChannel.setChannelID(NumberUtils.toLong(attributes.getValue("ID")));
-                currentChannel.setPosition(fav ? favPosition : NumberUtils.toInt(attributes.getValue("nr")));
+                currentChannel.setPosition(NumberUtils.toInt(attributes.getValue("nr")));
                 currentChannel.setName(attributes.getValue("name"));
                 currentChannel.setEpgID(NumberUtils.toLong(attributes.getValue("EPGID")));
                 currentGroup.getChannels().add(currentChannel);
-                favPosition++;
             }
         });
 

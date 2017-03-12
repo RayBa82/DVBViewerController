@@ -53,13 +53,12 @@ public class DVBViewerPreferences {
 	public static final String	KEY_SELECTED_CLIENT			            = "KEY_SELECTED_CLIENT";
 	public static final String	KEY_CHANNELS_SHOW_NOW_PLAYING			= "KEY_CHANNELS_SHOW_NOW_PLAYING";
 	public static final String	KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY	= "KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY";
-	public static final String	KEY_CHANNELS_USE_FAVS					= "KEY_CHANNELS_USE_FAVS";
-	public static final String	KEY_CHANNELS_SYNCED						= "KEY_CHANNELS_SYNCED_1_2_0-10";
+	public static final String	KEY_ROOT_ID								= "KEY_ROOT_ID";
+	public static final String	KEY_CHANNELS_SYNCED						= "KEY_CHANNELS_SYNCED_1_2_0-12_";
 	public static final String	KEY_TIMER_TIME_BEFORE					= "KEY_TIMER_TIME_BEFORE";
 	public static final String	KEY_TIMER_TIME_AFTER					= "KEY_TIMER_TIME_AFTER";
 	public static final String	KEY_TIMER_DEF_AFTER_RECORD				= "KEY_TIMER_DEF_AFTER_RECORD";
 	public static final String 	KEY_CHANNELS_SHOW_GROUPS 				= "KEY_CHANNELS_SHOW_GROUPS";
-	public static final String 	KEY_CHANNELS_SHOW_ALL_AS_GROUP 			= "KEY_CHANNELS_SHOW_ALL_AS_GROUP";
 
 	/**
 	 * Streaming Preferences Keys

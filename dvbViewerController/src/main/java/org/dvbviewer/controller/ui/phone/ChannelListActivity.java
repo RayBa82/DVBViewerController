@@ -28,7 +28,6 @@ import android.widget.AdapterView;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
 import org.dvbviewer.controller.data.DbConsts;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
@@ -138,8 +137,25 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 	@Override
 	public void groupTypeChanged(int type) {
 		groupTypeChanged = true;
-		showFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
 		getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
 		groupIndex = 0;
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		super.onItemSelected(parent, view, position, id);
+			FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+			mChannelPager = new ChannelPager();
+			mChannelPager.setHasOptionsMenu(true);
+			Bundle bundle = new Bundle();
+			mChannelPager.setArguments(bundle);
+			tran.replace(R.id.left_content, mChannelPager, CHANNEL_PAGER_TAG);
+			tran.commit();
+			setTitle(R.string.channelList);
+		if (container != null){
+			final Cursor data = mDrawerAdapter.getCursor();
+			data.moveToPosition(0);
+			mEpgPager.refresh(data.getLong(data.getColumnIndex(DbConsts.GroupTbl._ID)), 0);
+		}
 	}
 }
