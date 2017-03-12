@@ -31,12 +31,11 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 	 */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_drawer);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerLayout.setDrawerShadow(android.R.color.white, GravityCompat.END);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 		mDrawerList.setOnItemClickListener(this);
-		Toolbar mToolbar = (Toolbar) findViewById(R.id.simple_toolbar);
+		Toolbar mToolbar = (Toolbar) findViewById(R.id.home_toolbar);
 		if (mToolbar != null){
 			setSupportActionBar(mToolbar);
 		}

@@ -256,7 +256,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void setTitle(CharSequence title) {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
 		if (toolbar != null) {
-			setSupportActionBarTitle(R.string.app_name);
+			setSupportActionBarTitle(title);
 			toolbar.setTitle(title);
 		} else {
 			setSupportActionBarTitle(title);
@@ -268,7 +268,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void setTitle(int titleId) {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
 		if (toolbar != null) {
-			setSupportActionBarTitle(R.string.app_name);
 			toolbar.setTitle(titleId);
 		}else {
 			setSupportActionBarTitle(titleId);

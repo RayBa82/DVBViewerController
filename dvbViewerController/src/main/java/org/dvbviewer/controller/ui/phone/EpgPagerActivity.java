@@ -39,6 +39,7 @@ public class EpgPagerActivity extends GroupDrawerActivity {
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		setContentView(R.layout.activity_drawer);
 		super.onCreate(savedInstanceState);
 		initFragments(savedInstanceState);
 	}

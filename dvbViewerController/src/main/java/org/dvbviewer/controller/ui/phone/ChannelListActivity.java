@@ -49,6 +49,7 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
 	 */
 	public void onCreate(Bundle savedInstanceState) {
+		setContentView(R.layout.activity_drawer);
 		super.onCreate(savedInstanceState);
 		container = findViewById(R.id.right_content);
 		initFragments(savedInstanceState);

@@ -61,7 +61,8 @@ import java.util.List;
 public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
 
     public static final String ENABLE_DRAWER = "ENABLE_DRAWER";
-    private View					multiContainer;
+	public static final String TITLE 		 = "title";
+	private View					multiContainer;
 	private ArrayAdapter 			mSpinnerAdapter;
 	private Spinner 				mClientSpinner;
 	private DVBViewerPreferences 	prefs;
@@ -73,7 +74,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
      */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		setContentView(R.layout.activity_drawer);
+		setContentView(R.layout.activity_home);
 		super.onCreate(savedInstanceState);
 		multiContainer = findViewById(R.id.right_content);
 		prefs = new DVBViewerPreferences(this);
@@ -104,6 +105,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			}
 		}else{
             enableDrawer = savedInstanceState.getBoolean(ENABLE_DRAWER, false);
+			setTitle(savedInstanceState.getString(TITLE));
         }
 		initRemoteSpinner();
         setDrawerEnabled(enableDrawer);
@@ -303,6 +305,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(ENABLE_DRAWER, enableDrawer);
+		outState.putString(TITLE, getTitle().toString());
     }
 
 }
