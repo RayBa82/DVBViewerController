@@ -11,6 +11,7 @@
         <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
         <item name="dialogTheme">@style/Dialog.MinWidth</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="Theme.DVB.NoActionBar" parent="@style/Theme.AppCompat.NoActionBar">
@@ -22,6 +23,7 @@
         <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
         <item name="dialogTheme">@style/Dialog.MinWidth</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
 </resources>
