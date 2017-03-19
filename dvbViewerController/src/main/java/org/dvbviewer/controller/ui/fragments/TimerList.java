@@ -73,7 +73,7 @@ import java.util.List;
  * @author RayBa
  * @date 07.04.2013
  */
-public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, OnCheckedChangeListener, View.OnClickListener, TimerDetails.OnTimerEditedListener {
+public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, OnCheckedChangeListener, View.OnClickListener, TimerDetails.OnTimerEditedListener, DialogInterface.OnDismissListener {
 
 	TimerAdapter	mAdapter;
 	ActionMode		mode;
@@ -171,7 +171,12 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
         }
     }
 
-    /**
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		getActivity().setTitle(R.string.timer);
+	}
+
+	/**
 	 * The Class ViewHolder.
 	 *
 	 * @author RayBa
@@ -266,6 +271,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			TimerDetails timerdetails = TimerDetails.newInstance();
 			Bundle args = TimerDetails.buildBundle(timer);
 			timerdetails.setArguments(args);
+			timerdetails.setTargetFragment(this, 0);
             timerdetails.setOnTimerEditedListener(this);
 			timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
 		} else {

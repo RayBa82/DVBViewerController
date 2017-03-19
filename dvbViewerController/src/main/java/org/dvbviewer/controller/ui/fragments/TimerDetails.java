@@ -18,9 +18,11 @@ package org.dvbviewer.controller.ui.fragments;
 import android.app.Activity;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
@@ -465,6 +467,15 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		 */
 		void timerEdited(boolean edited);
 		
+	}
+
+	@Override
+	public void onDismiss(final DialogInterface dialog) {
+		super.onDismiss(dialog);
+		Fragment parentFragment = getTargetFragment();
+		if (parentFragment instanceof DialogInterface.OnDismissListener) {
+			((DialogInterface.OnDismissListener) parentFragment).onDismiss(dialog);
+		}
 	}
 	
 }
