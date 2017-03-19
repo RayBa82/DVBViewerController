@@ -1,48 +1,48 @@
-<org.dvbviewer.controller.ui.widget.DashboardLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.dvbviewer.controller.ui.widget.DashboardLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:padding="8dp" >
 
-    <Button
+    <ImageButton
         android:id="@+id/home_btn_remote"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/btn_dash_remote"
+        app:srcCompat="@drawable/dash_remote_48dp"
         android:text="@string/remote" />
 
     <Button
         android:id="@+id/home_btn_channels"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/btn_dash_tvguide"
+        android:drawableTop="@drawable/dash_tv_48dp"
         android:text="@string/channelList" />
 
     <Button
         android:id="@+id/home_btn_timers"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/btn_dash_timer"
+        android:drawableTop="@drawable/dash_timer_48dp"
         android:text="@string/timer" />
 
     <Button
         android:id="@+id/home_btn_recordings"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/btn_dash_recservice"
+        android:drawableTop="@drawable/dash_recordings_48dp"
         android:text="@string/recordings" />
 
     <Button
         android:id="@+id/home_btn_tasks"
-        android:drawableTop="@drawable/btn_dash_task"
+        android:drawableTop="@drawable/dash_task_48dp"
         style="@style/DashboardButton"
         android:text="@string/tasks" />
     
     <Button
         android:id="@+id/home_btn_status"
-        android:drawableTop="@drawable/btn_dash_status"
+        android:drawableTop="@drawable/dash_info_48dp"
         style="@style/DashboardButton"
         android:text="@string/status" />
 
     <Button
         android:id="@+id/home_btn_settings"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/btn_dash_conf"
+        android:drawableTop="@drawable/dash_settings_48dp"
         android:text="@string/preferences" />
 
 

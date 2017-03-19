@@ -11,6 +11,7 @@ android {
         versionName rootProject.versionName
         versionCode rootProject.versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {

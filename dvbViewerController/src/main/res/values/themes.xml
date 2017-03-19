@@ -8,6 +8,7 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="android:actionBarStyle" tools:ignore="NewApi">@style/ActionBarStyle</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
         <item name="dialogTheme">@style/Dialog.MinWidth</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
@@ -20,6 +21,7 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="android:actionBarStyle" tools:ignore="NewApi">@style/ActionBarStyle</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
         <item name="dialogTheme">@style/Dialog.MinWidth</item>
         <item name="android:windowSoftInputMode">stateHidden</item>

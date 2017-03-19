@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 
     <style name="ThemeDialogWhenLarge" parent="android:style/Theme"/>
@@ -16,5 +16,9 @@
 
     <!-- Action Mode Overflow List -->
     <style name="PopupMenu" parent="Widget.AppCompat.ListView.Menu"/>
+
+    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_more_vert_white_24dp</item>
+    </style>
 
 </resources>
