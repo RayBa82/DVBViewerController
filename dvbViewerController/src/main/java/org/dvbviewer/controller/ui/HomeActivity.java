@@ -20,6 +20,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -104,6 +105,10 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 				prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, false).commit();
 			}
 		}else{
+			Fragment frag = getSupportFragmentManager().findFragmentByTag(CHANNEL_PAGER_TAG);
+			if (frag != null && frag instanceof ChannelPager) {
+				chans = (ChannelPager) frag;
+			}
             enableDrawer = savedInstanceState.getBoolean(ENABLE_DRAWER, false);
 			setTitle(savedInstanceState.getString(TITLE));
         }
@@ -173,7 +178,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
                 Bundle bundle = new Bundle();
                 bundle.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
                 chans.setArguments(bundle);
-				tran.replace(multiContainer.getId(), chans);
+				tran.replace(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
 				tran.commit();
 				setTitle(R.string.channelList);
 			} else {
