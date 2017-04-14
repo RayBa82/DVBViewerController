@@ -77,6 +77,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private static final String recordingUrl			= "/upnp/recordings/";
 	private static final Gson 	gson					= new Gson();
 	public static final String	EXTRA_FILE_ID			= "_fileID";
+	public static final String	M3U8_MIME_TYPE			= "video/m3u8";
 	public static final String	EXTRA_FILE_TYPE			= "_fileType";
 	public static final String	EXTRA_DIALOG_TITLE_RES	= "_dialog_title_res";
     public static final String  EXTRA_TITLE             = "title";
@@ -369,8 +370,13 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 
 
 	private static Intent getTranscodedUrl(final long id, String title, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
-		final String baseUrl = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM + preset.getExtension();
-		final HTTPUtil.UrlBuilder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
+		final StringBuilder baseUrl = new StringBuilder(ServerConsts.REC_SERVICE_URL);
+		if (preset.isIPhone()){
+			baseUrl.append(ServerConsts.URL_M3U8);
+		} else {
+			baseUrl.append(ServerConsts.URL_FLASHSTREAM + preset.getExtension());
+		}
+		final HTTPUtil.UrlBuilder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl.toString()));
 		final String idParam = recording ? "recid" : "chid";
 		builder.addQueryParameter("preset", preset.getTitle());
 		builder.addQueryParameter("ffPreset", encodingSpeed);
@@ -404,9 +410,12 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				FfMpegPrefs result = null;
 				String ffmpegprefsString;
 				try {
-					ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+					ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_IPHONE_FFMPEGPREFS);
 					FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
-					result = prefsHandler.parse(ffmpegprefsString);
+					result = prefsHandler.parse(ffmpegprefsString, true);
+					ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
+					FfMpegPrefs ffMpegPrefs = prefsHandler.parse(ffmpegprefsString, false);
+					result.getPresets().addAll(ffMpegPrefs.getPresets());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
