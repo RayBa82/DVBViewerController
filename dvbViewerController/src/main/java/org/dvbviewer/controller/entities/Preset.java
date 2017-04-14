@@ -48,6 +48,8 @@ public class Preset {
         this.mimeType = mimeType;
     }
 
+    boolean iPhone = false;
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof Preset){
@@ -66,5 +68,13 @@ public class Preset {
     @Override
     public String toString() {
         return this.title;
+    }
+
+    public boolean isIPhone() {
+        return iPhone;
+    }
+
+    public void setIPhone(boolean iPhone) {
+        this.iPhone = iPhone;
     }
 }
