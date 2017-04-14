@@ -27,6 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.utils.IoUtils;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
@@ -35,18 +37,19 @@ import org.dvbviewer.controller.entities.Status.Folder;
 import org.dvbviewer.controller.entities.Status.StatusItem;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.data.Status1Handler;
 import org.dvbviewer.controller.io.data.Status2Handler;
+import org.dvbviewer.controller.io.data.StatusHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
-import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.CategoryAdapter;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
-import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.text.MessageFormat;
 
 /**
@@ -102,7 +105,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                         showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                         return result;
                     }
-                    result = getStatus(new DVBViewerPreferences(getActivity()), version, null);
+                    result = getStatus(new DVBViewerPreferences(getActivity()), version);
                 } catch (Exception e) {
                     catchException(getClass().getSimpleName(), e);
                 }
@@ -112,20 +115,17 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         return loader;
     }
 
-    public static Status getStatus(DVBViewerPreferences prefs, String version, @Nullable JSONObject trackingData) throws Exception {
+    public static Status getStatus(DVBViewerPreferences prefs, String version) throws Exception {
         Status result;
-        result = requestStatusFromServer(ServerConsts.URL_STATUS2, trackingData, "status2");
+        result = requestStatusFromServer(ServerConsts.URL_STATUS2, new Status2Handler());
         addVersionItem(result, version);
-        String jsonClients = RecordingService.getDVBViewerTargets();
-        AnalyticsTracker.addData(trackingData, "dvbviewerTargets", jsonClients);
-        String ffmpegPrefsIni =  RecordingService.getFfmpegPrefs();
-        AnalyticsTracker.addData(trackingData, "ffmpegPrefsIni", ffmpegPrefsIni);
         SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
+        prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
+        String jsonClients = RecordingService.getDVBViewerTargets();
         if (jsonClients != null) {
             prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
         }
-        prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-        Status oldStatus = requestStatusFromServer(ServerConsts.URL_STATUS, trackingData, "status");
+        Status oldStatus = requestStatusFromServer(ServerConsts.URL_STATUS, new Status1Handler());
         if (oldStatus != null){
             result.getItems().addAll(oldStatus.getItems());
             prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.getEpgBefore());
@@ -136,15 +136,14 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         return result;
     }
 
-    private static Status requestStatusFromServer(String url, @Nullable JSONObject trackingData, String key) {
+    private static Status requestStatusFromServer(String url, StatusHandler handler) throws Exception {
         Status result = null;
+        InputStream statusXml = null;
         try {
-            String statusXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
-            AnalyticsTracker.addData(trackingData, key, statusXml);
-            Status2Handler status2Handler = new Status2Handler();
-            result = status2Handler.parse(statusXml);
-        } catch (Exception e) {
-            e.printStackTrace();
+            statusXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + url);
+            result = handler.parse(statusXml);
+        }finally {
+            IoUtils.closeSilently(statusXml);
         }
         return result;
     }
@@ -312,6 +311,8 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                     holder.statusText.setText(mRes.getStringArray(R.array.postRecoridngActions)[NumberUtils.toInt(mItems.get(position).getValue())]);
                     break;
                 case R.string.status_last_ui_access:
+                    holder.statusText.setText(DateUtils.secondsToReadableFormat(NumberUtils.toLong(mItems.get(position).getValue())*-1l));
+                    break;
                 case R.string.status_next_Rec:
                 case R.string.status_next_timer:
                     holder.statusText.setText(DateUtils.secondsToReadableFormat(NumberUtils.toLong(mItems.get(position).getValue())));

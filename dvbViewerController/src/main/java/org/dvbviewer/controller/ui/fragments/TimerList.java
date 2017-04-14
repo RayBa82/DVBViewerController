@@ -23,6 +23,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -35,12 +36,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Timer;
@@ -58,6 +59,7 @@ import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -69,11 +71,14 @@ import java.util.List;
  * @author RayBa
  * @date 07.04.2013
  */
-public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, OnCheckedChangeListener, View.OnClickListener {
+public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, TimerDetails.OnTimerEditedListener, DialogInterface.OnDismissListener, AdapterView.OnItemLongClickListener {
 
+	public static final String ACTION_MODE        = "action_mode";
+	public static final String CHECKED_ITEM_COUNT = "checked_item_count";
 	TimerAdapter	mAdapter;
 	ActionMode		mode;
 	ProgressDialog	progressDialog;
+	private boolean actionMode;
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -95,22 +100,15 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		Loader<List<Timer>> loader = getLoaderManager().initLoader(0, savedInstanceState, this);
 		setListShown(!(!isResumed() || loader.isStarted()));
 		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		getListView().setOnItemLongClickListener(this);
 		setEmptyText(getResources().getString(R.string.no_timer));
-		if (mode != null) {
-			AppCompatActivity activty = (AppCompatActivity) getActivity();
-			mode = activty.startSupportActionMode(this);
+		if (savedInstanceState != null && savedInstanceState.getBoolean(ACTION_MODE, false)) {
+			AppCompatActivity activity = (AppCompatActivity) getActivity();
+			mode = activity.startSupportActionMode(this);
+			updateActionModeTitle(savedInstanceState.getInt(CHECKED_ITEM_COUNT));
+		}else{
+			getActivity().setTitle(R.string.timer);
 		}
-		getActivity().setTitle(R.string.timer);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.base.BaseListFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-	 */
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// View v = getActivity().getLayoutInflater().inflate(R.layout.list,
-		// null);
-		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	/* (non-Javadoc)
@@ -123,13 +121,16 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			@Override
 			public List<Timer> loadInBackground() {
 				List<Timer> result = null;
+				InputStream xml = null;
 				try {
-					String xml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_LIST);
+					xml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_LIST);
 					TimerHandler hanler = new TimerHandler();
 					result = hanler.parse(xml);
 					Collections.sort(result);
 				} catch (Exception e) {
 					catchException(getClass().getSimpleName(), e);
+				}finally {
+					IoUtils.closeSilently(xml);
 				}
 				return result;
 			}
@@ -157,6 +158,18 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		}
 	}
 
+    @Override
+    public void timerEdited(boolean edited) {
+        if(edited){
+            timerSavedAction();
+        }
+    }
+
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		getActivity().setTitle(R.string.timer);
+	}
+
 	/**
 	 * The Class ViewHolder.
 	 *
@@ -169,7 +182,6 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 		TextView				title;
 		TextView				channelName;
 		TextView				date;
-		CheckBox				check;
 	}
 
 	/**
@@ -211,16 +223,12 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 				holder.title = (TextView) convertView.findViewById(R.id.title);
 				holder.channelName = (TextView) convertView.findViewById(R.id.channelName);
 				holder.date = (TextView) convertView.findViewById(R.id.date);
-				holder.check = (CheckBox) convertView.findViewById(R.id.checkIndicator);
-				holder.check.setOnCheckedChangeListener(TimerList.this);
-				holder.check.setOnClickListener(TimerList.this); 
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
 			Timer o = getItem(position);
 			if (o != null) {
-				holder.check.setTag(position);
 				holder.title.setText(o.getTitle());
 				holder.channelName.setText(o.getChannelName());
 				String date = DateUtils.getDateInLocalFormat(o.getStart());
@@ -244,38 +252,46 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	/* (non-Javadoc)
      * @see org.dvbviewer.controller.ui.base.BaseListFragment#onListItemClick(android.widget.ListView, android.view.View, int, long)
      */
-    @Override
-    public void onListItemClick(ListView parent, View view, int position, long id) {
-            if (UIUtils.isTablet(getActivity())) {
-                    Timer timer = mAdapter.getItem(position);
-                    TimerDetails timerdetails = TimerDetails.newInstance();
-                    Bundle args = new Bundle();
-                    args.putLong(TimerDetails.EXTRA_ID, timer.getId());
-                    args.putString(TimerDetails.EXTRA_TITLE, timer.getTitle());
-                    args.putString(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-                    args.putLong(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-                    args.putLong(TimerDetails.EXTRA_START, timer.getStart().getTime());
-                    args.putLong(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-                    args.putInt(TimerDetails.EXTRA_ACTION, timer.getTimerAction());
-                    args.putBoolean(TimerDetails.EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
-                    timerdetails.setArguments(args);
-                    timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
-                    onDestroyActionMode(mode);
-            }else {
-                    getListView().setItemChecked(position, !getListView().isItemChecked(position));
-                    Timer timer = mAdapter.getItem(position);
-                    Intent i = new Intent(getActivity(), TimerDetailsActivity.class);
-                    i.putExtra(TimerDetails.EXTRA_ID, timer.getId());
-                    i.putExtra(TimerDetails.EXTRA_TITLE, timer.getTitle());
-                    i.putExtra(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-                    i.putExtra(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-                    i.putExtra(TimerDetails.EXTRA_START, timer.getStart().getTime());
-                    i.putExtra(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-                    i.putExtra(TimerDetails.EXTRA_ACTION, timer.getTimerAction());
-                    i.putExtra(TimerDetails.EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
-                    startActivityForResult(i, TimerDetails.TIMER_RESULT);
-            }
-    }
+	@Override
+	public void onListItemClick(ListView parent, View view, int position, long id) {
+		if (actionMode) {
+			view.setSelected(!view.isSelected());
+			int count = getCheckedItemCount();
+			updateActionModeTitle(count);
+			if (getCheckedItemCount() == 0) {
+				mode.finish();
+			}
+		} else {
+			if (UIUtils.isTablet(getActivity())) {
+				onDestroyActionMode(mode);
+				Timer timer = mAdapter.getItem(position);
+				TimerDetails timerdetails = TimerDetails.newInstance();
+				Bundle args = TimerDetails.buildBundle(timer);
+				timerdetails.setArguments(args);
+				timerdetails.setTargetFragment(this, 0);
+				timerdetails.setOnTimerEditedListener(this);
+				timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
+			} else {
+				getListView().setItemChecked(position, !getListView().isItemChecked(position));
+				Timer timer = mAdapter.getItem(position);
+				Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
+				Bundle extras = TimerDetails.buildBundle(timer);
+				timerIntent.putExtras(extras);
+				startActivityForResult(timerIntent, TimerDetails.TIMER_RESULT);
+			}
+		}
+
+	}
+
+	/* (non-Javadoc)
+ * @see android.support.v4.app.Fragment#onSaveInstanceState(android.os.Bundle)
+ */
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean(ACTION_MODE, actionMode);
+		outState.putInt(CHECKED_ITEM_COUNT, getCheckedItemCount());
+	}
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onActivityResult(int, int, android.content.Intent)
@@ -284,13 +300,25 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == TimerDetails.TIMER_RESULT && resultCode == TimerDetails.RESULT_CHANGED) {
-			refresh();
+            timerSavedAction();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.actionbarsherlock.app.SherlockFragment#onCreateOptionsMenu(android.view.Menu, android.view.MenuInflater)
-	 */
+
+    private void timerSavedAction() {
+        getView().post(new Runnable() {
+            @Override
+            public void run() {
+                Snackbar snackbar = Snackbar
+                        .make(getListView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
+                snackbar.show();
+                refresh();
+            }
+        });
+    }
+
+    /* (non-Javadoc)
+     * @see com.actionbarsherlock.app.SherlockFragment#onCreateOptionsMenu(android.view.Menu, android.view.MenuInflater)
+     */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
@@ -298,31 +326,11 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	}
 
 	/* (non-Javadoc)
-	 * @see android.widget.CompoundButton.OnCheckedChangeListener#onCheckedChanged(android.widget.CompoundButton, boolean)
-	 */
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		getListView().setItemChecked((Integer) buttonView.getTag(), isChecked);
-		int checkedCount = getCheckedItemCount();
-		if (mode == null && checkedCount > 0) {
-			AppCompatActivity activity = (AppCompatActivity) getActivity();
-			mode = activity.startSupportActionMode(TimerList.this);
-		} else if (checkedCount <= 0) {
-			if (mode != null) {
-				mode.finish();
-				mode = null;
-			}
-		}
-		if (mode != null) {
-			mode.setTitle(checkedCount + " " + getResources().getString(R.string.selected));
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see com.actionbarsherlock.view.ActionMode.Callback#onCreateActionMode(com.actionbarsherlock.view.ActionMode, com.actionbarsherlock.view.Menu)
 	 */
 	@Override
 	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		actionMode = true;
 		getActivity().getMenuInflater().inflate(R.menu.actionmode_recording, menu);
 		return true;
 	}
@@ -433,7 +441,8 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	 */
 	@Override
 	public void onDestroyActionMode(ActionMode mode) {
-			clearSelection();
+		actionMode = false;
+		clearSelection();
 	}
 
 	/**
@@ -475,6 +484,23 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			// No button clicked
 			break;
 		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		getListView().setItemChecked(position, true);
+		int count = getCheckedItemCount();
+		if (actionMode == false) {
+			actionMode = true;
+			AppCompatActivity activty = (AppCompatActivity) getActivity();
+			mode = activty.startSupportActionMode(TimerList.this);
+		}
+		updateActionModeTitle(count);
+		return true;
+	}
+
+	private void updateActionModeTitle(int count) {
+		mode.setTitle(count + " " + getResources().getString(R.string.selected));
 	}
 
 	/**
@@ -525,12 +551,4 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			return false;
 		}
 	}
-
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 }

@@ -35,20 +35,24 @@ public class Timer implements Comparable<Timer> {
 
 
 	private long				id = -1;
-
 	private long				channelId;
-
 	private String				channelName;
-
 	private String				title;
-
 	private Date				start;
-
 	private Date				end;
-
 	private int					timerAction;
-
-	private int					flags = FLAG_EXECUTABLE;
+	private int					pre;
+	private int					post;
+	private String				eventId;
+	private String				pdc;
+	private int					adjustPAT           = -1;
+	private int					allAudio            = -1;
+	private int					dvbSubs             = -1;
+	private int					teletext            = -1;
+	private int					eitEPG              = -1;
+	private int					monitorPDC          = -1;
+	private int                 runningStatusSplit  = -1;
+	private int					flags               = FLAG_EXECUTABLE;
 
 	/**
 	 * Gets the title.
@@ -203,6 +207,95 @@ public class Timer implements Comparable<Timer> {
 	public void setChannelName(String channelName) {
 		this.channelName = channelName;
 	}
+
+	public int getPost() {
+		return post;
+	}
+
+	public void setPost(int post) {
+		this.post = post;
+	}
+
+	public int getPre() {
+		return pre;
+	}
+
+	public void setPre(int pre) {
+		this.pre = pre;
+	}
+
+	public String getPdc() {
+		return pdc;
+	}
+
+	public void setPdc(String pdc) {
+		this.pdc = pdc;
+	}
+
+	public String getEventId() {
+		return eventId;
+	}
+
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
+	}
+
+	public int getAdjustPAT() {
+		return adjustPAT;
+	}
+
+	public void setAdjustPAT(int adjustPAT) {
+		this.adjustPAT = adjustPAT;
+	}
+
+	public int getAllAudio() {
+		return allAudio;
+	}
+
+	public void setAllAudio(int allAudio) {
+		this.allAudio = allAudio;
+	}
+
+	public int getDvbSubs() {
+		return dvbSubs;
+	}
+
+	public void setDvbSubs(int dvbSubs) {
+		this.dvbSubs = dvbSubs;
+	}
+
+	public int getTeletext() {
+		return teletext;
+	}
+
+	public void setTeletext(int teletext) {
+		this.teletext = teletext;
+	}
+
+	public int getEitEPG() {
+		return eitEPG;
+	}
+
+	public void setEitEPG(int eitEPG) {
+		this.eitEPG = eitEPG;
+	}
+
+	public int getMonitorPDC() {
+		return monitorPDC;
+	}
+
+	public void setMonitorPDC(int monitorPDC) {
+		this.monitorPDC = monitorPDC;
+	}
+
+	public int getRunningStatusSplit() {
+		return runningStatusSplit;
+	}
+
+	public void setRunningStatusSplit(int runningStatusSplit) {
+		this.runningStatusSplit = runningStatusSplit;
+	}
+
 
 	/**
 	 * Gets the flags.

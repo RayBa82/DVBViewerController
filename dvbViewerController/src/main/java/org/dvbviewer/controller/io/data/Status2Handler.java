@@ -31,15 +31,17 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
- * The Class StatusHandler.
+ * The Class Status1Handler.
  *
  * @author RayBa
  * @date 01.07.2012
  */
-public class Status2Handler extends DefaultHandler {
+public class Status2Handler extends DefaultHandler implements StatusHandler {
 
     Status status = null;
     Folder currentFolder = null;
@@ -47,13 +49,13 @@ public class Status2Handler extends DefaultHandler {
     /**
      * Parses the.
      *
-     * @param xml the xml
+     * @param is the is
      * @return the status©
      * @throws SAXException
      * @author RayBa
      * @date 01.07.2012
      */
-    public Status parse(String xml) throws SAXException {
+    public Status parse(InputStream is) throws SAXException, IOException {
         RootElement root = new RootElement("status");
         Element recordcount = root.getChild("reccount");
         Element streamclientcount = root.getChild("streamclientcount");
@@ -247,7 +249,7 @@ public class Status2Handler extends DefaultHandler {
                 status.getFolders().add(currentFolder);
             }
         });
-        Xml.parse(xml, root.getContentHandler());
+        Xml.parse(is, Xml.Encoding.UTF_8, root.getContentHandler());
         return status;
 
     }

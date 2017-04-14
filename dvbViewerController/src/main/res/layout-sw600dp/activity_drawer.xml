@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/home_toolbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="@drawable/ab_background"
+        android:minHeight="?attr/actionBarSize">
+
+        <Spinner
+            android:id="@+id/clientSpinner"
+            android:layout_width="wrap_content"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:gravity="right" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- The main content view -->
+        <LinearLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/left_content"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" />
+
+            <View style="@style/HorizontalDivider" />
+
+            <FrameLayout
+                android:id="@+id/right_content"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+        <!-- The navigation drawer -->
+        <ListView
+            android:id="@+id/left_drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@drawable/background_grey"
+            android:choiceMode="singleChoice"
+            android:divider="@color/white_transparent"
+            android:dividerHeight="1dp"
+            android:textColor="@color/black_transparent" />
+
+    </android.support.v4.widget.DrawerLayout>
+
+</LinearLayout>
+

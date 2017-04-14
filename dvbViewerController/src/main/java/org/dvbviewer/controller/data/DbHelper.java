@@ -16,7 +16,6 @@
 package org.dvbviewer.controller.data;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -31,7 +30,6 @@ import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.EpgEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,7 +41,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	private static final String	DATABASE_NAME		= "dvbviewercontroller.db";
 
-	private static final int	DATABASE_VERSION	= 1;
+	private static final int	DATABASE_VERSION	= 2;
 
 	private Context				mContext;
 
@@ -68,14 +66,14 @@ public class DbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		createChannelTable(db);
-		db.execSQL("CREATE TABLE " + EpgTbl.TABLE_NAME + "(" + EpgTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + EpgTbl.EPG_ID + " INTEGER," + EpgTbl.START + " INTEGER, " + EpgTbl.END + " INTEGER," + EpgTbl.TITLE + " TEXT," + EpgTbl.SUBTITLE + " TEXT," + EpgTbl.DESC + " TEXT);");
-		db.execSQL("CREATE TABLE " + NowTbl.TABLE_NAME + "(" + NowTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + NowTbl.EPG_ID + " INTEGER," + NowTbl.START + " INTEGER, " + NowTbl.END + " INTEGER," + NowTbl.TITLE + " TEXT," + NowTbl.SUBTITLE + " TEXT," + NowTbl.DESC + " TEXT);");
-		db.execSQL("CREATE TABLE " + RootTbl.TABLE_NAME + "(" + RootTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + RootTbl.NAME + " TEXT);");
-		db.execSQL("CREATE TABLE " + GroupTbl.TABLE_NAME + "(" + GroupTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + GroupTbl.ROOT_ID + " INTEGER," + GroupTbl.NAME + " TEXT," + GroupTbl.TYPE + " INTEGER);");
 	}
 
 	public void createChannelTable(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE " + ChannelTbl.TABLE_NAME + "(" + ChannelTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + ChannelTbl.CHANNEL_ID + " INTEGER," + ChannelTbl.GROUP_ID + " INTEGER," + ChannelTbl.FAV_GROUP_ID + " INTEGER," + ChannelTbl.NAME + " TEXT," + ChannelTbl.POSITION + " INTEGER, " + ChannelTbl.FAV_POSITION + " INTEGER, " + ChannelTbl.FAV_ID + " INTEGER," + ChannelTbl.EPG_ID + " INTEGER," + ChannelTbl.LOGO_URL + " TEXT," + ChannelTbl.FLAGS + " INTEGER);");
+		db.execSQL("CREATE TABLE " + EpgTbl.TABLE_NAME + "(" + EpgTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + EpgTbl.EPG_ID + " INTEGER," + EpgTbl.START + " INTEGER, " + EpgTbl.END + " INTEGER," + EpgTbl.TITLE + " TEXT," + EpgTbl.SUBTITLE + " TEXT," + EpgTbl.DESC + " TEXT," + EpgTbl.EVENT_ID + " TEXT," + EpgTbl.PDC + " TEXT);");
+		db.execSQL("CREATE TABLE " + NowTbl.TABLE_NAME + "(" + NowTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + NowTbl.EPG_ID + " INTEGER," + NowTbl.START + " INTEGER, " + NowTbl.END + " INTEGER," + NowTbl.TITLE + " TEXT," + NowTbl.SUBTITLE + " TEXT," + NowTbl.DESC + " TEXT," + NowTbl.EVENT_ID + " TEXT," + NowTbl.PDC + " TEXT);");
+		db.execSQL("CREATE TABLE " + RootTbl.TABLE_NAME + "(" + RootTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + RootTbl.NAME + " TEXT);");
+		db.execSQL("CREATE TABLE " + GroupTbl.TABLE_NAME + "(" + GroupTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + GroupTbl.ROOT_ID + " INTEGER," + GroupTbl.NAME + " TEXT," + GroupTbl.TYPE + " INTEGER);");
 	}
 
 	/*
@@ -89,47 +87,13 @@ public class DbHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.i(this.getClass().getSimpleName(), "Upgrading database from version " + oldVersion + " to " + newVersion);
 		switch (newVersion) {
-		case 2:
-			db.execSQL("ALTER TABLE " + ChannelTbl.TABLE_NAME + " ADD COLUMN " + ChannelTbl.LOGO_URL + " TEXT");
-			break;
-		case 3:
-			List<Channel> result = new ArrayList<>();
-			Cursor c = db.rawQuery("SELECT * FROM " + ChannelTbl.TABLE_NAME, null);
-			while (c.moveToNext()) {
-				Channel channel = new Channel();
-				channel.setChannelID(c.getLong(c.getColumnIndex(ChannelTbl._ID)));
-				channel.setEpgID(c.getLong(c.getColumnIndex(ChannelTbl.EPG_ID)));
-				channel.setName(c.getString(c.getColumnIndex(ChannelTbl.NAME)));
-				channel.setPosition(c.getInt(c.getColumnIndex(ChannelTbl.POSITION)));
-				channel.setFavPosition(c.getInt(c.getColumnIndex(ChannelTbl.FAV_POSITION)));
-				channel.setFlags(c.getInt(c.getColumnIndex(ChannelTbl.FLAGS)));
-				channel.setLogoUrl(c.getString(c.getColumnIndex(ChannelTbl.LOGO_URL)));
-				result.add(channel);
-			}
-			c.close();
-			db.execSQL("DROP TABLE " + ChannelTbl.TABLE_NAME);
-			createChannelTable(db);
-			db.beginTransaction();
-			db.execSQL("DELETE FROM " + ChannelTbl.TABLE_NAME);
-			try {
-				for (Channel channel : result) {
-					db.insert(ChannelTbl.TABLE_NAME, null, channel.toContentValues());
-				}
-				db.setTransactionSuccessful();
-			} finally {
-				db.endTransaction();
-			}
-			break;
-		case 4:
-			db.execSQL("ALTER TABLE " + ChannelTbl.TABLE_NAME + " ADD COLUMN " + ChannelTbl.GROUP_ID + " INTEGER");
-			db.execSQL("ALTER TABLE " + ChannelTbl.TABLE_NAME + " ADD COLUMN " + ChannelTbl.FAV_GROUP_ID + " INTEGER");
-			db.execSQL("CREATE TABLE IF NOT EXISTS " + RootTbl.TABLE_NAME + "(" + RootTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + RootTbl.NAME + " TEXT);");
-			db.execSQL("CREATE TABLE IF NOT EXISTS " + GroupTbl.TABLE_NAME + "(" + GroupTbl._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + GroupTbl.ROOT_ID + " INTEGER," + GroupTbl.NAME + " TEXT," + GroupTbl.TYPE + " INTEGER);");
-			break;
-
 		default:
-			// db.execSQL("DROP TABLE IF EXISTS " + ChannelTbl.TABLE_NAME);
-			// db.execSQL("DROP TABLE IF EXISTS " + EpgTbl.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + ChannelTbl.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + EpgTbl.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + NowTbl.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + GroupTbl.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + RootTbl.TABLE_NAME);
+			createChannelTable(db);
 			break;
 		}
 	}

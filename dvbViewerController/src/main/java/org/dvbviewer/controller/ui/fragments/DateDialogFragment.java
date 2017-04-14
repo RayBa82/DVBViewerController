@@ -23,7 +23,7 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,7 +35,7 @@ import java.util.GregorianCalendar;
  * @author RayBa
  * @date 07.04.2013
  */
-public class DateDialogFragment extends DialogFragment {
+public class DateDialogFragment extends AppCompatDialogFragment {
 
 	public static final int		TYPE_DATE	= 1;
 	public static final int		TYPE_TIME	= 2;

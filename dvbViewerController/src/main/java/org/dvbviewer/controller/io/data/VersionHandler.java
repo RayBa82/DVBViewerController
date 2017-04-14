@@ -36,18 +36,6 @@ public class VersionHandler extends DefaultHandler {
 
 	String	result	= null;
 
-	/**
-	 * Parses the.
-	 *
-	 * @param xml the xml
-	 * @return the version©
-	 * @throws SAXException
-	 */
-	public String parse(String xml) throws SAXException {
-		Xml.parse(xml, getContentHandler());
-		return result;
-	}
-
 	public String parse(InputStream inputStream) throws SAXException, IOException {
 		Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
 		return result;

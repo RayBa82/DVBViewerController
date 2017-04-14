@@ -79,4 +79,8 @@
         <item name="android:maxHeight">16dip</item>
     </style>
 
+    <style name="Dialog.MinWidth" parent="Theme.AppCompat.Dialog.MinWidth">
+        <item name="windowMinWidthMajor">80%</item>
+    </style>
+
 </resources>

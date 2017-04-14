@@ -25,7 +25,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The Class DateUtils.
@@ -80,25 +79,12 @@ public class DateUtils extends android.text.format.DateUtils {
 	}
 
 	/**
-	 * converts time (in milliseconds) to human-readable format
-	 *  "<dd:>hh:mm:ss"
+	 * converts time (in seconds) to human-readable format
 	 */
-	public static String secondsToReadableFormat(long duration) {
-		String res;
-		long days  = TimeUnit.SECONDS.toDays(duration);
-		long hours = TimeUnit.SECONDS.toHours(duration)
-				- TimeUnit.DAYS.toHours(TimeUnit.SECONDS.toDays(duration));
-		long minutes = TimeUnit.SECONDS.toMinutes(duration)
-				- TimeUnit.HOURS.toMinutes(TimeUnit.SECONDS.toHours(duration));
-		long seconds = TimeUnit.SECONDS.toSeconds(duration)
-				- TimeUnit.MINUTES.toSeconds(TimeUnit.SECONDS.toMinutes(duration));
-		if (days == 0) {
-			res = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-		}
-		else {
-			res = String.format("%dd%02d:%02d:%02d", days, hours, minutes, seconds);
-		}
-		return res;
+	public static CharSequence secondsToReadableFormat(long duration) {
+		final long now = System.currentTimeMillis();
+		final long time = now + (duration * 1000);
+		return DateUtils.getRelativeTimeSpanString(time, now, DateUtils.SECOND_IN_MILLIS);
 	}
 
 	/**

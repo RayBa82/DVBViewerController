@@ -17,12 +17,14 @@ package org.dvbviewer.controller.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -46,7 +48,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
@@ -55,14 +59,17 @@ import org.dvbviewer.controller.entities.Recording;
 import org.dvbviewer.controller.io.AuthenticationException;
 import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
+import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.RecordingHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.DateUtils;
+import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
@@ -190,17 +197,14 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		switch (item.getItemId()) {
 			case R.id.menuStream:
 				if (UIUtils.isTablet(getActivity())) {
+					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
 					StreamConfig cfg = StreamConfig.newInstance();
-					Bundle arguments = new Bundle();
-					arguments.putInt(StreamConfig.EXTRA_FILE_ID, (int) mAdapter.getItem(selectedPosition).getId());
-					arguments.putInt(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
-					arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
 					cfg.setArguments(arguments);
 					cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
 				} else {
+					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
 					Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
-					streamConfig.putExtra(StreamConfig.EXTRA_FILE_ID, (int) mAdapter.getItem(selectedPosition).getId());
-					streamConfig.putExtra(StreamConfig.EXTRA_FILE_TYPE, StreamConfig.FILE_TYPE_RECORDING);
+					streamConfig.putExtras(arguments);
 					startActivity(streamConfig);
 				}
 				return true;
@@ -209,6 +213,16 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				break;
 		}
 		return false;
+	}
+
+	@NonNull
+	private Bundle getIntentExtras(IEPG recording) {
+		Bundle arguments = new Bundle();
+		arguments.putLong(StreamConfig.EXTRA_FILE_ID, recording.getId());
+		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.RECORDING);
+		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+		arguments.putString(StreamConfig.EXTRA_TITLE, recording.getTitle());
+		return arguments;
 	}
 
 	/**
@@ -236,6 +250,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public class RecordingAdapter extends ArrayListAdapter<Recording> {
 
 		private final ImageLoader imageLoader;
+		private final DisplayImageOptions options;
 
 		/**
 		 * The Constructor.
@@ -248,6 +263,13 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		public RecordingAdapter(Context context) {
 			super();
 			imageLoader = ImageLoader.getInstance();
+			options = new DisplayImageOptions.Builder()
+					.cacheInMemory(true)
+					.cacheOnDisk(true)
+					.showImageForEmptyUri(R.drawable.play_circle_outline) // resource or drawable
+					.showImageOnFail(R.drawable.play_circle_outline) // r
+					.displayer(new FadeInBitmapDisplayer(500, true, true, false))
+					.build();
 		}
 
 		/*
@@ -270,6 +292,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				holder.contextMenu = (ImageView) convertView.findViewById(R.id.contextMenu);
 				holder.contextMenu.setOnClickListener(RecordingList.this);
 				holder.thumbNailContainer = convertView.findViewById(R.id.thumbNailContainer);
+				holder.thumbNailContainer.setOnClickListener(RecordingList.this);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -289,8 +312,9 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					holder.thumbNailContainer.setVisibility(View.GONE);
 				}else{
 					holder.thumbNailContainer.setVisibility(View.VISIBLE);
-					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail);
+					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail, options);
 				}
+				holder.thumbNailContainer.setTag(position);
 				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());
 				holder.contextMenu.setTag(position);
@@ -565,6 +589,21 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				popup.getMenuInflater().inflate(R.menu.context_menu_recordinglist, popup.getMenu());
 				popup.setOnMenuItemClickListener(this);
 				popup.show();
+				break;
+			case R.id.thumbNailContainer:
+				try {
+					selectedPosition = (Integer) v.getTag();
+					final IEPG recording = mAdapter.getItem(selectedPosition);
+					final Intent videoIntent = StreamConfig.buildRecordingUrl(getActivity(), recording.getId(), recording.getTitle());
+					getActivity().startActivity(videoIntent);
+					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+				} catch (ActivityNotFoundException e) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+					e.printStackTrace();
+				} catch (UrlBuilderException e) {
+					e.printStackTrace();
+				}
 				break;
 
 			default:

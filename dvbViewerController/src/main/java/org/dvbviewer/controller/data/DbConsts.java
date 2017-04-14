@@ -143,6 +143,8 @@ public class DbConsts {
 		/** The table name. */
 		public static final String	TABLE_NAME	= "favs";
 
+		/** The Constant CONTENT_URI. */
+		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 	}
 
 	/**
@@ -174,6 +176,10 @@ public class DbConsts {
 		/** The desc. */
 		public static final String	DESC		= "desc";
 
+		public static final String	EVENT_ID	= "event_id";
+
+		public static final String	PDC			= "pdc";
+
 	}
 
 	/**
@@ -204,6 +210,10 @@ public class DbConsts {
 
 		/** The desc. */
 		public static final String	DESC		= EpgTbl.DESC;
+
+		public static final String	EVENT_ID	= EpgTbl.EVENT_ID;
+
+		public static final String	PDC		= EpgTbl.PDC;
 
 		/** The alias. */
 		public static final String	ALIAS		= "nowAlias";

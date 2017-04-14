@@ -46,18 +46,6 @@ public class EpgEntryHandler extends DefaultHandler {
 	List<EpgEntry>	epgList		= null;
 	EpgEntry		currentEPG	= null;
 
-	/**
-	 * Parses the.
-	 *
-	 * @param xml the xml
-	 * @return the list©
-	 * @throws SAXException
-	 */
-	public List<EpgEntry> parse(String xml) throws SAXException {
-		Xml.parse(xml, getContentHandler());
-		return epgList;
-	}
-
 	public List<EpgEntry> parse(InputStream inputStream) throws SAXException, IOException {
 		Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
 		return epgList;
@@ -67,6 +55,8 @@ public class EpgEntryHandler extends DefaultHandler {
 	private ContentHandler getContentHandler() {
 		RootElement root = new RootElement("epg");
 		Element programmeElement = root.getChild("programme");
+		Element eventId = programmeElement.getChild("eventid");
+		Element pdc = programmeElement.getChild("pdc");
 		Element titles = programmeElement.getChild("titles");
 		Element title = titles.getChild("title");
 		Element descriptions = programmeElement.getChild("descriptions");
@@ -99,6 +89,20 @@ public class EpgEntryHandler extends DefaultHandler {
 			}
 		});
 
+		eventId.setEndTextElementListener(new EndTextElementListener() {
+
+			@Override
+			public void end(String body) {
+				currentEPG.setEventId(body);
+			}
+		});
+		pdc.setEndTextElementListener(new EndTextElementListener() {
+
+			@Override
+			public void end(String body) {
+				currentEPG.setPDC(body);
+			}
+		});
 		title.setEndTextElementListener(new EndTextElementListener() {
 
 			@Override

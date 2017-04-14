@@ -36,7 +36,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.github.jrejaud.viewpagerindicator2.TitlePageIndicator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -72,7 +71,6 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     private final Type type = new TypeToken<List<String>>() {
     }.getType();
     private ViewPager mPager;
-    private TitlePageIndicator indicator;
     private OnTargetsChangedListener onTargetsChangedListener;
 
     /* (non-Javadoc)
@@ -99,7 +97,6 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
             spinnerPosition = savedInstanceState.getInt(KEY_SPINNER_POS, 0);
         }
         mPager.setAdapter(new PagerAdapter(getChildFragmentManager()));
-        indicator.setViewPager(mPager);
     }
 
     private void initActionBar() {
@@ -163,7 +160,6 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPager = (ViewPager) view.findViewById(R.id.pager);
-        indicator = (TitlePageIndicator) view.findViewById(R.id.titles);
     }
 
     @Override
@@ -243,8 +239,11 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
 
     @Override
     public void OnRemoteButtonClick(String action) {
-        Object target = onTargetsChangedListener != null ? onTargetsChangedListener.getSelectedTarget() : mClientSpinner.getSelectedItem();
-        String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, target, action);
+        final Object target = onTargetsChangedListener != null ? onTargetsChangedListener.getSelectedTarget() : mClientSpinner.getSelectedItem();
+        if (target == null) {
+            return;
+        }
+        final String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, target, action);
         ServerRequest.DVBViewerCommand httpCommand = new ServerRequest.DVBViewerCommand(request);
         Thread executionThread = new Thread(httpCommand);
         executionThread.start();

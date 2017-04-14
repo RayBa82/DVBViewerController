@@ -47,18 +47,6 @@ public class RecordingHandler extends DefaultHandler {
 	List<Recording> recordingList    = null;
 	Recording       currentRecording = null;
 
-	/**
-	 * Parses the.
-	 *
-	 * @param xml the xml
-	 * @return the list©
-	 * @throws SAXException
-	 */
-	public List<Recording> parse(String xml) throws SAXException {
-		Xml.parse(xml, getContentHandler());
-		return recordingList;
-	}
-
 	public List<Recording> parse(InputStream inputStream) throws SAXException, IOException {
 		Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
 		return recordingList;

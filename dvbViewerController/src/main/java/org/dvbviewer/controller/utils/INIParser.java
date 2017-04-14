@@ -2,13 +2,8 @@
 package org.dvbviewer.controller.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -35,49 +30,6 @@ public class INIParser {
     initFromString(iniString);
   }
 
-  /**
-   * Creates a new <code>INIParser</code> instance from the given file.
-   * <code>aCharset</code> specifies the character encoding of the file.
-   *
-   * @param aFile INI file to parse
-   * @param aCharset character encoding of file
-   * @throws FileNotFoundException if <code>aFile</code> does not exist.
-   * @throws IOException if there is a problem reading the given file.
-   */
-  public INIParser(File aFile, Charset aCharset)
-          throws IOException {
-    initFromFile(aFile, aCharset);
-  }
-
-  /**
-   * Creates a new <code>INIParser</code> instance from the given file,
-   * which is assumed to be in the <code>UTF-8</code> charset.
-   *
-   * @param aFile INI file to parse
-   * @throws FileNotFoundException if <code>aFile</code> does not exist.
-   * @throws IOException if there is a problem reading the given file.
-   */
-  public INIParser(File aFile) throws IOException {
-    initFromFile(aFile, Charset.forName("UTF-8"));
-  }
-
-  /**
-   * Parses given INI file.
-   *
-   * @param aFile INI file to parse
-   * @param aCharset character encoding of file
-   * @throws FileNotFoundException if <code>aFile</code> does not exist.
-   * @throws IOException if there is a problem reading the given file.
-   */
-  private void initFromFile(File aFile, Charset aCharset)
-          throws IOException {
-    FileInputStream fileStream = new FileInputStream(aFile);
-    InputStreamReader inStream = new InputStreamReader(fileStream, aCharset);
-    BufferedReader reader = new BufferedReader(inStream);
-
-    initFromReader(reader);
-  }
-
   private void initFromString(String string)
           throws IOException {
     StringReader inStream = new StringReader(string);
@@ -87,7 +39,7 @@ public class INIParser {
   }
 
   private void initFromReader(BufferedReader reader) throws IOException {
-    mSections = new LinkedHashMap<String, Properties>();
+    mSections = new LinkedHashMap<>();
     String currSection = null;
     String line;
     while ((line = reader.readLine()) != null) {
@@ -142,7 +94,7 @@ public class INIParser {
    *
    * @return an iterator over the section names
    */
-  public Iterator getSections() {
+  public Iterator<String> getSections() {
     return mSections.keySet().iterator();
   }
 

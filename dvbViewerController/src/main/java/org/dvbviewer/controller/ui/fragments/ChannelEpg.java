@@ -23,10 +23,9 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,7 +40,6 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.IoUtils;
-import com.squareup.okhttp.HttpUrl;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts.EpgTbl;
@@ -74,13 +72,14 @@ import java.util.List;
  * @author RayBa
  */
 public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener {
-    public static final String KEY_CHANNEL_NAME = "KEY_CHANNEL_NAME";
-    public static final String KEY_CHANNEL_ID = "KEY_CHANNEL_ID";
-    public static final String KEY_CHANNEL_LOGO = "KEY_CHANNEL_LOGO";
-    public static final String KEY_CHANNEL_POS = "KEY_CHANNEL_POS";
-    public static final String KEY_FAV_POS = "KEY_FAV_POS";
-    public static final String KEY_EPG_ID = "KEY_EPG_ID";
-    public static final String KEY_EPG_DAY = "EPG_DAY";
+
+    public static final String KEY_CHANNEL_NAME = ChannelEpg.class.getName()+"KEY_CHANNEL_NAME";
+    public static final String KEY_CHANNEL_ID   = ChannelEpg.class.getName()+"KEY_CHANNEL_ID";
+    public static final String KEY_CHANNEL_LOGO = ChannelEpg.class.getName()+"KEY_CHANNEL_LOGO";
+    public static final String KEY_CHANNEL_POS  = ChannelEpg.class.getName()+"KEY_CHANNEL_POS";
+    public static final String KEY_FAV_POS      = ChannelEpg.class.getName()+"KEY_FAV_POS";
+    public static final String KEY_EPG_ID       = ChannelEpg.class.getName()+"KEY_EPG_ID";
+    public static final String KEY_EPG_DAY      = ChannelEpg.class.getName()+"EPG_DAY";
     private ChannelEPGAdapter mAdapter;
     private String channel;
     private long channelId;
@@ -94,6 +93,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     private TextView dayIndicator;
     private EpgDateInfo mDateInfo;
     private Date lastRefresh;
+    private View header;
 
     @Override
     protected int getLayoutRessource() {
@@ -125,23 +125,23 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         setListAdapter(mAdapter);
         setListShown(false);
         getListView().setOnItemClickListener(this);
-        channelLogo.setImageBitmap(null);
-        if (channel != null) {
+        if(header != null && channel != null){
+            channelLogo.setImageBitmap(null);
             mImageCacher.cancelDisplayTask(channelLogo);
             String url = ServerConsts.REC_SERVICE_URL + "/" + logoUrl;
             mImageCacher.displayImage(url, channelLogo);
             channelName.setText(channel);
-        }
-        if (DateUtils.isToday(mDateInfo.getEpgDate().getTime())) {
-            dayIndicator.setText(R.string.today);
-        } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate().getTime())) {
-            dayIndicator.setText(R.string.tomorrow);
-        } else {
-            dayIndicator.setText(DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+            if (DateUtils.isToday(mDateInfo.getEpgDate())) {
+                dayIndicator.setText(R.string.today);
+            } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
+                dayIndicator.setText(R.string.tomorrow);
+            } else {
+                dayIndicator.setText(DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+            }
         }
 
         setEmptyText(getResources().getString(R.string.no_epg));
-        getLoaderManager().initLoader(channelPos, savedInstanceState, this);
+        getLoaderManager().initLoader(0, savedInstanceState, this);
     }
 
     private void fillFromBundle(Bundle savedInstanceState) {
@@ -159,7 +159,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        if (isVisibleToUser && isVisible()) {
             refreshDate();
         }
     }
@@ -169,13 +169,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      */
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-        Loader<Cursor> loader = new EpgLoader<Cursor>(getContext(), mDateInfo) {
 
-            @Override
-            protected void onForceLoad() {
-                super.onForceLoad();
-                setListShown(false);
-            }
+        return new EpgLoader(getContext(), mDateInfo) {
 
             @Override
             public Cursor loadInBackground() {
@@ -183,22 +178,22 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                 InputStream is = null;
                 try {
                     List<EpgEntry> result;
-                    Date now = mDateInfo.getEpgDate();
-                    String nowFloat = DateUtils.getFloatDate(now);
-                    Date tommorrow = DateUtils.addDay(now);
-                    String tommorrowFloat = DateUtils.getFloatDate(tommorrow);
-                    HttpUrl.Builder builder = buildBaseEpgUrl()
+                    final Date now = new Date(mDateInfo.getEpgDate());
+                    final String nowFloat = DateUtils.getFloatDate(now);
+                    final Date tommorrow = DateUtils.addDay(now);
+                    final String tommorrowFloat = DateUtils.getFloatDate(tommorrow);
+                    HTTPUtil.UrlBuilder builder = buildBaseEpgUrl()
                             .addQueryParameter("channel", String.valueOf(epgId))
                             .addQueryParameter("start", String.valueOf(nowFloat))
                             .addQueryParameter("end", String.valueOf(tommorrowFloat));
-                    EpgEntryHandler handler = new EpgEntryHandler();
+                    final EpgEntryHandler handler = new EpgEntryHandler();
                     is = ServerRequest.getInputStream(builder.build().toString());
                     result = handler.parse(is);
                     if (result != null && !result.isEmpty()) {
-                        String[] columnNames = new String[]{EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END};
+                        String[] columnNames = new String[]{EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END, EpgTbl.PDC, EpgTbl.EVENT_ID};
                         cursor = new MatrixCursor(columnNames);
                         for (EpgEntry entry : result) {
-                            cursor.addRow(new Object[]{entry.getId(), entry.getEpgID(), entry.getTitle(), entry.getSubTitle(), entry.getDescription(), entry.getStart().getTime(), entry.getEnd().getTime()});
+                            cursor.addRow(new Object[]{entry.getId(), entry.getEpgID(), entry.getTitle(), entry.getSubTitle(), entry.getDescription(), entry.getStart().getTime(), entry.getEnd().getTime(), entry.getPDC(), entry.getEventId()});
                         }
                     }
 
@@ -212,8 +207,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                 return cursor;
             }
         };
-
-        return loader;
     }
 
     /* (non-Javadoc)
@@ -222,15 +215,30 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
         mAdapter.changeCursor(cursor);
+        mAdapter.notifyDataSetChanged();
         setSelection(0);
-        if (DateUtils.isToday(mDateInfo.getEpgDate().getTime())) {
-            dayIndicator.setText(R.string.today);
-        } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate().getTime())) {
-            dayIndicator.setText(R.string.tomorrow);
+        final String dateText;
+        if (DateUtils.isToday(mDateInfo.getEpgDate())) {
+            dateText = getString(R.string.today);
+        } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
+            dateText = getString(R.string.tomorrow);
         } else {
-            dayIndicator.setText(DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+            dateText = DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY);
         }
-        lastRefresh = mDateInfo.getEpgDate();
+        if(header != null ){
+            if (DateUtils.isToday(mDateInfo.getEpgDate())) {
+                dayIndicator.setText(R.string.today);
+            } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
+                dayIndicator.setText(R.string.tomorrow);
+            } else {
+                dayIndicator.setText(DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY));
+            }
+            dayIndicator.setText(dateText);
+        }else {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            activity.getSupportActionBar().setSubtitle(dateText);
+        }
+        lastRefresh = new Date(mDateInfo.getEpgDate());
         setListShown(true);
     }
 
@@ -241,6 +249,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         if (v != null){
+            header = v.findViewById(R.id.epg_header);
             channelLogo = (ImageView) v.findViewById(R.id.icon);
             channelName = (TextView) v.findViewById(R.id.title);
             dayIndicator = (TextView) v.findViewById(R.id.dayIndicator);
@@ -345,31 +354,22 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
 
     }
 
-    public static class ToolbarActionClickListener implements Toolbar.OnMenuItemClickListener {
-
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            return false;
-        }
-    }
-
     /**
-     * Refresh.
+     * Refreshs the data
      *
-     * @param force the force
      */
-    public void refresh(boolean force) {
+    public void refresh() {
         setListShown(false);
-        getLoaderManager().restartLoader(channelPos, getArguments(), this);
+        getLoaderManager().restartLoader(0, getArguments(), this).forceLoad();
     }
 
     /**
      * Refresh date.
      *
      */
-    public void refreshDate() {
-        if (lastRefresh != null && lastRefresh.getTime() != mDateInfo.getEpgDate().getTime()) {
-            refresh(true);
+    private void refreshDate() {
+        if (lastRefresh != null && lastRefresh.getTime() != mDateInfo.getEpgDate()) {
+            refresh();
         }
     }
 
@@ -384,9 +384,9 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         outState.putLong(KEY_CHANNEL_ID, channelId);
         outState.putLong(KEY_EPG_ID, epgId);
         outState.putString(KEY_CHANNEL_LOGO, logoUrl);
-        outState.putInt(KEY_EPG_ID, channelPos);
-        outState.putInt(KEY_EPG_ID, favPos);
-        outState.putLong(KEY_EPG_DAY, mDateInfo.getEpgDate().getTime());
+        outState.putInt(KEY_CHANNEL_POS, channelPos);
+        outState.putInt(KEY_FAV_POS, favPos);
+        outState.putLong(KEY_EPG_DAY, mDateInfo.getEpgDate());
     }
 
     /* (non-Javadoc)
@@ -396,7 +396,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.channel_epg, menu);
-        menu.findItem(R.id.menuPrev).setEnabled(!DateUtils.isToday(mDateInfo.getEpgDate().getTime()));
+        menu.findItem(R.id.menuPrev).setEnabled(!DateUtils.isToday(mDateInfo.getEpgDate()));
     }
 
     /* (non-Javadoc)
@@ -435,24 +435,13 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     timer = cursorToTimer(c);
                     if (UIUtils.isTablet(getActivity())) {
                         TimerDetails timerdetails = TimerDetails.newInstance();
-                        Bundle args = new Bundle();
-                        args.putString(TimerDetails.EXTRA_TITLE, timer.getTitle());
-                        args.putString(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-                        args.putLong(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-                        args.putLong(TimerDetails.EXTRA_START, timer.getStart().getTime());
-                        args.putLong(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-                        args.putInt(TimerDetails.EXTRA_ACTION, timer.getTimerAction());
-                        args.putBoolean(TimerDetails.EXTRA_ACTIVE, true);
+                        Bundle args = TimerDetails.buildBundle(timer);
                         timerdetails.setArguments(args);
                         timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
                     }else{
                         Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
-                        timerIntent.putExtra(TimerDetails.EXTRA_TITLE, timer.getTitle());
-                        timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_NAME, timer.getChannelName());
-                        timerIntent.putExtra(TimerDetails.EXTRA_CHANNEL_ID, timer.getChannelId());
-                        timerIntent.putExtra(TimerDetails.EXTRA_START, timer.getStart().getTime());
-                        timerIntent.putExtra(TimerDetails.EXTRA_END, timer.getEnd().getTime());
-                        timerIntent.putExtra(TimerDetails.EXTRA_ACTIVE, true);
+                        Bundle extras = TimerDetails.buildBundle(timer);
+                        timerIntent.putExtras(extras);
                         startActivity(timerIntent);
                     }
                     return true;
@@ -464,7 +453,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     startActivity(details);
                     return true;
                 case R.id.menuSwitch:
-                    DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+                    final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
                     String cid = ":" + String.valueOf(channelId);
                     String switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
                     DVBViewerCommand command = new DVBViewerCommand(switchRequest);
@@ -490,33 +479,23 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
          *
          * @param date the new epg date
          */
-        void setEpgDate(Date date);
+        void setEpgDate(long date);
 
         /**
          * Gets the epg date.
          *
          * @return the epg date
          */
-        Date getEpgDate();
+        long getEpgDate();
 
     }
 
-    /**
-     * Sets the date info.
-     *
-     * @param mDateInfo the new date info
-     */
-    public void setDateInfo(EpgDateInfo mDateInfo) {
-        this.mDateInfo = mDateInfo;
-    }
 
     /* (non-Javadoc)
      * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoaderReset(android.support.v4.content.Loader)
      */
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
-        arg0.reset();
-        mAdapter.swapCursor(null);
     }
 
     /**
@@ -526,34 +505,34 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
      * @return the timer©
      */
     private Timer cursorToTimer(Cursor c) {
-        String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : channel;
+        final String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : channel;
         long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
         long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
-        DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+        final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
         int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5);
         int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5);
-        Date start = epgStart > 0 ? new Date(epgStart) : new Date();
-        Date end = epgEnd > 0 ? new Date(epgEnd) : new Date();
-        Log.i(ChannelList.class.getSimpleName(), start.toString());
-        Log.i(ChannelList.class.getSimpleName(), start.toString());
-        Log.i(ChannelList.class.getSimpleName(), start.toString());
-        start = DateUtils.addMinutes(start, 0 - epgBefore);
-        end = DateUtils.addMinutes(end, epgAfter);
+        final Date start = epgStart > 0 ? new Date(epgStart) : new Date();
+        final Date end = epgEnd > 0 ? new Date(epgEnd) : new Date();
+        final String eventId = c.getString(c.getColumnIndex(EpgTbl.EVENT_ID));
+        final String pdc = c.getString(c.getColumnIndex(EpgTbl.PDC));
         Timer timer = new Timer();
         timer.setTitle(epgTitle);
         timer.setChannelId(channelId);
         timer.setChannelName(channel);
         timer.setStart(start);
         timer.setEnd(end);
+        timer.setPre(epgBefore);
+        timer.setPost(epgAfter);
+        timer.setEventId(eventId);
+        timer.setPdc(pdc);
         timer.setTimerAction(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, 0));
         return timer;
     }
 
-    public static HttpUrl.Builder buildBaseEpgUrl() throws UrlBuilderException {
-        HttpUrl.Builder builder = HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EPG)
+    public static HTTPUtil.UrlBuilder buildBaseEpgUrl() throws UrlBuilderException {
+        return HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EPG)
                 .addQueryParameter("utf8", "1")
                 .addQueryParameter("lvl", "2");
-        return builder;
     }
 
 }

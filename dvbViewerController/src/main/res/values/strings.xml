@@ -19,6 +19,7 @@
     <string name="common_colon">:&#160;</string>
     <string name="about_app">About DVBViewer Controller</string>
     <string name="version">App Version:</string>
+    <string name="common_all">All</string>
     <!-- Channels -->
     <string name="channelList">Channel List</string>
     <string name="refreshChannels">Synchronize channels</string>
@@ -136,10 +137,6 @@
     <string name="pref_item_password_summary">Password if required</string>
     <string name="pref_item_rs_wol_on_start">Send WOL on App start</string>
     <string name="pref_item_rs_wol_on_start_summary">Tries to wake up the Recording Service on start</string>
-    <string name="pref_item_rs_live_stream_port">Live Streaming Port</string>
-    <string name="pref_item_rs_live_stream_port_summary">Port for live TV streaming</string>
-    <string name="pref_item_rs_media_stream_port">Media Streaming Port</string>
-    <string name="pref_item_rs_media_stream_port_summary">Port for Media streaming</string>
     <string name="pref_item_channel_show_current_program">Show current program</string>
     <string name="pref_item_channel_show_current_program_summary">Shows the current program in the channel list</string>
     <string name="pref_item_channel_show_current_program_wifi">Only on WIFI</string>
@@ -162,4 +159,6 @@
     <!-- Remote -->
     <string name="remote_control">Control</string>
     <string name="remote_numbers">Numbers</string>
+    <string name="timer_saved">Timer saved</string>
+    <string name="epg_monitoring">EPG Monitoring</string>
 </resources>
