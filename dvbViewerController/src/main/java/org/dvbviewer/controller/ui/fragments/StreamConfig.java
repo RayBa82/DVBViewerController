@@ -371,7 +371,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 
 	private static Intent getTranscodedUrl(final long id, String title, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
 		final StringBuilder baseUrl = new StringBuilder(ServerConsts.REC_SERVICE_URL);
-		if (preset.isIPhone()){
+		if (StreamConfig.M3U8_MIME_TYPE.equals(preset.getMimeType())){
 			baseUrl.append(ServerConsts.URL_M3U8);
 		} else {
 			baseUrl.append(ServerConsts.URL_FLASHSTREAM + preset.getExtension());
@@ -405,21 +405,25 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	@Override
 	public Loader<FfMpegPrefs> onCreateLoader(int id, Bundle args) {
 		return new AsyncLoader<FfMpegPrefs>(getContext()) {
+
 			@Override
 			public FfMpegPrefs loadInBackground() {
-				FfMpegPrefs result = null;
-				String ffmpegprefsString;
+				final FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
+				final String iPhonePrefsString = getPrefs(ServerConsts.URL_IPHONE_FFMPEGPREFS);
+				FfMpegPrefs result = prefsHandler.parse(iPhonePrefsString);
+				final String ffmpegprefsString = getPrefs(ServerConsts.URL_FFMPEGPREFS);
+				final FfMpegPrefs ffMpegPrefs = prefsHandler.parse(ffmpegprefsString);
+				result.getPresets().addAll(ffMpegPrefs.getPresets());
+				return result;
+			}
+
+			private String getPrefs(String url) {
 				try {
-					ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_IPHONE_FFMPEGPREFS);
-					FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
-					result = prefsHandler.parse(ffmpegprefsString, true);
-					ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
-					FfMpegPrefs ffMpegPrefs = prefsHandler.parse(ffmpegprefsString, false);
-					result.getPresets().addAll(ffMpegPrefs.getPresets());
-				} catch (Exception e) {
+					return ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+				}catch (Exception e){
 					e.printStackTrace();
 				}
-				return result;
+				return null;
 			}
 		};
 	}

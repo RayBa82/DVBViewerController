@@ -36,32 +36,45 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    dependencies {
+        compile project(':showCaseView')
+        compile 'com.android.support:appcompat-v7:' + rootProject.ext.appcompatVersion
+        compile 'com.android.support:preference-v7:' + rootProject.ext.appcompatVersion
+        compile 'com.android.support:design:' + rootProject.ext.appcompatVersion
+        compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.6.0'
+        compile 'com.google.android.gms:play-services-analytics:10.0.1'
+        compile 'com.google.code.gson:gson:2.4'
+        compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+        compile 'org.apache.commons:commons-lang3:3.4'
+        compile 'com.google.firebase:firebase-crash:10.0.1'
+        compile 'com.google.firebase:firebase-core:10.0.1'
+        testCompile 'junit:junit:4.12'
+        androidTestCompile 'commons-io:commons-io:2.4'
+        androidTestCompile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.6.0'
+        androidTestCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.6.0'
+        androidTestCompile('com.android.support.test:runner:0.5') {
+            // Necessary if your app targets Marshmallow (since the test runner
+            // hasn't moved to Marshmallow yet)
+            exclude group: 'com.android.support', module: 'support-annotations'
+        }
 
-}
-
-dependencies {
-    compile project(':showCaseView')
-    compile 'com.android.support:appcompat-v7:' + rootProject.ext.appcompatVersion
-    compile 'com.android.support:preference-v7:' + rootProject.ext.appcompatVersion
-    compile 'com.android.support:design:' + rootProject.ext.appcompatVersion
-    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.6.0'
-    compile 'com.google.android.gms:play-services-analytics:10.0.1'
-    compile 'com.google.code.gson:gson:2.4'
-    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'junit:junit:4.12'
-    androidTestCompile 'commons-io:commons-io:2.4'
-    androidTestCompile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.6.0'
-    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        // Set this dependency to use JUnit 4 rules
+        androidTestCompile('com.android.support.test:rules:0.5') {
+            // Necessary if your app targets Marshmallow (since the test runner
+            // hasn't moved to Marshmallow yet)
+            exclude group: 'com.android.support', module: 'support-annotations'
+        }
+        // Set this dependency to build and run Espresso tests
+        androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
+            exclude group: 'com.android.support', module: 'support-annotations'
+            exclude group: 'com.android.support', module: 'support-v4'
+            exclude group: 'com.android.support', module: 'design'
+            exclude group: 'com.android.support', module: 'recyclerview-v7'
+        }
     }
+
 }
+
 
 
 apply plugin: 'com.google.gms.google-services'

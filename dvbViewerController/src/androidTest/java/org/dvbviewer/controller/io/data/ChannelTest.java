@@ -2,9 +2,8 @@ package org.dvbviewer.controller.io.data;
 
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
 import android.util.Log;
 
 import org.dvbviewer.controller.entities.ChannelRoot;
@@ -14,11 +13,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class ChannelTest extends InstrumentationTestCase {
+public class ChannelTest {
 
     private static final String TAG = ChannelTest.class.getSimpleName();
 
@@ -35,7 +38,7 @@ public class ChannelTest extends InstrumentationTestCase {
                 assertEquals(true, tmp != null);
                 Log.d(TAG, "parsed " + (tmp != null ? tmp.size() : "0") + " channel groups");
                 successCount++;
-            }catch (JSONException | SAXException e){
+            }catch (IOException| JSONException | SAXException e){
                 e.printStackTrace();
             }
         }

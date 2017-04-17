@@ -1,11 +1,11 @@
 package org.dvbviewer.controller.io.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.entities.FfMpegPrefs;
 import org.dvbviewer.controller.entities.Preset;
 import org.dvbviewer.controller.ui.fragments.StreamConfig;
 import org.dvbviewer.controller.utils.INIParser;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 /**
@@ -13,7 +13,7 @@ import java.util.Iterator;
  */
 public class FFMPEGPrefsHandler {
 
-    public FfMpegPrefs parse(String ffmpegprefs, boolean iphone) {
+    public FfMpegPrefs parse(String ffmpegprefs) {
         FfMpegPrefs ffPrefs = new FfMpegPrefs();
         try {
             INIParser iniParser = new INIParser(ffmpegprefs);
@@ -24,17 +24,17 @@ public class FFMPEGPrefsHandler {
                 if (isPreset(iniParser, sectionName)){
                     Preset preset = new Preset();
                     preset.setTitle(sectionName);
-                    if(iphone){
-                        preset.setIPhone(true);
+                    final String mimeType = iniParser.getString(sectionName, "MimeType");
+                    if(StringUtils.isEmpty(mimeType)){
                         preset.setMimeType(StreamConfig.M3U8_MIME_TYPE);
                     }else {
-                        preset.setMimeType(iniParser.getString(sectionName, "MimeType"));
+                        preset.setMimeType(mimeType);
                     }
                     preset.setExtension(iniParser.getString(sectionName, "Ext"));
                     ffPrefs.getPresets().add(preset);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return ffPrefs;
