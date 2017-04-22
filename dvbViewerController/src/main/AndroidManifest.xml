@@ -80,6 +80,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.phone.AboutActivity" />
+        <activity android:name=".ui.phone.MedialistActivity" />
 
         <provider
             android:name=".data.DvbProvider"

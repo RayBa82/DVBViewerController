@@ -26,6 +26,7 @@ public class ServerConsts {
 	public static final String	URL_TIMER_CREATE				= "/api/timeradd.html";
 	public static final String	URL_TIMER_EDIT					= "/api/timeredit.html";
 	public static final String	URL_TIMER_LIST					= "/api/timerlist.html?utf8=2";
+	public static final String	URL_MEDIA_LIST					= "/api/mediafiles.html?thumbs=1";
 	public static final String	URL_TIMER_DELETE				= "/api/timerdelete.html?id=";
 	public static final String	URL_EXECUTE_TASK				= "/tasks.html?aktion=tasks&task=";
 	public static final String  URL_SEND_COMMAND                = "/api/dvbcommand.html?target={0}&cmd=-x{1}";

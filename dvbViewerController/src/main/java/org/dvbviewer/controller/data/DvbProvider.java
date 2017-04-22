@@ -55,6 +55,8 @@ public class DvbProvider extends ContentProvider {
 	
 	private static final int		GROUPS					= 300;
 
+	private static final int		MEDIAS					= 400;
+
 	private static final UriMatcher	sUriMatcher				= buildUriMatcher();
 
 	/**
@@ -74,6 +76,7 @@ public class DvbProvider extends ContentProvider {
 		matcher.addURI(authority, FavTbl.TABLE_NAME, FAVOURITES);
 		matcher.addURI(authority, EpgTbl.TABLE_NAME, EPG);
 		matcher.addURI(authority, GroupTbl.TABLE_NAME, GROUPS);
+		matcher.addURI(authority, DbConsts.MediaTbl.TABLE_NAME, MEDIAS);
 		return matcher;
 	}
 
@@ -95,43 +98,47 @@ public class DvbProvider extends ContentProvider {
 		String groupBy = null;
 		HashMap<String, String> projectionMap;
 		switch (sUriMatcher.match(uri)) {
-		case CHANNELS:
-			qb = new SQLiteQueryBuilder();
-			qb.setTables(ChannelTbl.TABLE_NAME);
-			break;
-		case FAVOURITES:
-			qb = new SQLiteQueryBuilder();
-			qb.setTables(ChannelTbl.TABLE_NAME);
-			break;
-		case NOW_PLAYING_CHANNELS:
-			qb = new SQLiteQueryBuilder();
-			qb.setTables(ChannelTbl.AS_ALIAS + " LEFT JOIN " + NowTbl.AS_ALIAS + " on (" + ChannelTbl.ALIAS + "." + ChannelTbl.EPG_ID + " = " + NowTbl.ALIAS + "." + NowTbl.EPG_ID + " AND " + NowTbl.ALIAS + "." + NowTbl.START + " < " + new Date().getTime() + " AND " + NowTbl.ALIAS + "." + NowTbl.END + " > " + new Date().getTime() + ")");
-			projectionMap = new HashMap<String, String>();
-			projectionMap.put(ChannelTbl._ID, ChannelTbl.ALIAS + "." + ChannelTbl._ID + " as " + ChannelTbl._ID);
-			projectionMap.put(ChannelTbl.CHANNEL_ID, ChannelTbl.ALIAS + "." + ChannelTbl.CHANNEL_ID + " as " + ChannelTbl.CHANNEL_ID);
-			projectionMap.put(ChannelTbl.POSITION, ChannelTbl.ALIAS + "." + ChannelTbl.POSITION + " as " + ChannelTbl.POSITION);
-			projectionMap.put(ChannelTbl.LOGO_URL, ChannelTbl.ALIAS + "." + ChannelTbl.LOGO_URL + " as " + ChannelTbl.LOGO_URL);
-			projectionMap.put(ChannelTbl.FAV_POSITION, ChannelTbl.ALIAS + "." + ChannelTbl.FAV_POSITION + " as " + ChannelTbl.FAV_POSITION);
-			projectionMap.put(ChannelTbl.NAME, ChannelTbl.ALIAS + "." + ChannelTbl.NAME + " as " + ChannelTbl.NAME);
-			projectionMap.put(ChannelTbl.EPG_ID, ChannelTbl.ALIAS + "." + ChannelTbl.EPG_ID + " as " + ChannelTbl.EPG_ID);
-			projectionMap.put(NowTbl.TITLE, NowTbl.ALIAS + "." + NowTbl.TITLE + " as " + NowTbl.TITLE);
-			projectionMap.put(NowTbl.START, NowTbl.ALIAS + "." + NowTbl.START + " as " + NowTbl.START);
-			projectionMap.put(NowTbl.PDC, NowTbl.ALIAS + "." + NowTbl.PDC + " as " + NowTbl.PDC);
-			projectionMap.put(NowTbl.EVENT_ID, NowTbl.ALIAS + "." + NowTbl.EVENT_ID + " as " + NowTbl.EVENT_ID);
-			projectionMap.put(NowTbl.END, NowTbl.ALIAS + "." + NowTbl.END + " as " + NowTbl.END);
-			groupBy = ChannelTbl.ALIAS + "." + ChannelTbl._ID;
-			qb.setProjectionMap(projectionMap);
-			break;
-		case EPG:
-			qb = new SQLiteQueryBuilder();
-			qb.setTables(EpgTbl.TABLE_NAME);
-			break;
-		case GROUPS:
-			qb = new SQLiteQueryBuilder();
-			qb.setTables(GroupTbl.TABLE_NAME);
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI " + uri);
+			case CHANNELS:
+				qb = new SQLiteQueryBuilder();
+				qb.setTables(ChannelTbl.TABLE_NAME);
+				break;
+			case FAVOURITES:
+				qb = new SQLiteQueryBuilder();
+				qb.setTables(ChannelTbl.TABLE_NAME);
+				break;
+			case NOW_PLAYING_CHANNELS:
+				qb = new SQLiteQueryBuilder();
+				qb.setTables(ChannelTbl.AS_ALIAS + " LEFT JOIN " + NowTbl.AS_ALIAS + " on (" + ChannelTbl.ALIAS + "." + ChannelTbl.EPG_ID + " = " + NowTbl.ALIAS + "." + NowTbl.EPG_ID + " AND " + NowTbl.ALIAS + "." + NowTbl.START + " < " + new Date().getTime() + " AND " + NowTbl.ALIAS + "." + NowTbl.END + " > " + new Date().getTime() + ")");
+				projectionMap = new HashMap<>();
+				projectionMap.put(ChannelTbl._ID, ChannelTbl.ALIAS + "." + ChannelTbl._ID + " as " + ChannelTbl._ID);
+				projectionMap.put(ChannelTbl.CHANNEL_ID, ChannelTbl.ALIAS + "." + ChannelTbl.CHANNEL_ID + " as " + ChannelTbl.CHANNEL_ID);
+				projectionMap.put(ChannelTbl.POSITION, ChannelTbl.ALIAS + "." + ChannelTbl.POSITION + " as " + ChannelTbl.POSITION);
+				projectionMap.put(ChannelTbl.LOGO_URL, ChannelTbl.ALIAS + "." + ChannelTbl.LOGO_URL + " as " + ChannelTbl.LOGO_URL);
+				projectionMap.put(ChannelTbl.FAV_POSITION, ChannelTbl.ALIAS + "." + ChannelTbl.FAV_POSITION + " as " + ChannelTbl.FAV_POSITION);
+				projectionMap.put(ChannelTbl.NAME, ChannelTbl.ALIAS + "." + ChannelTbl.NAME + " as " + ChannelTbl.NAME);
+				projectionMap.put(ChannelTbl.EPG_ID, ChannelTbl.ALIAS + "." + ChannelTbl.EPG_ID + " as " + ChannelTbl.EPG_ID);
+				projectionMap.put(NowTbl.TITLE, NowTbl.ALIAS + "." + NowTbl.TITLE + " as " + NowTbl.TITLE);
+				projectionMap.put(NowTbl.START, NowTbl.ALIAS + "." + NowTbl.START + " as " + NowTbl.START);
+				projectionMap.put(NowTbl.PDC, NowTbl.ALIAS + "." + NowTbl.PDC + " as " + NowTbl.PDC);
+				projectionMap.put(NowTbl.EVENT_ID, NowTbl.ALIAS + "." + NowTbl.EVENT_ID + " as " + NowTbl.EVENT_ID);
+				projectionMap.put(NowTbl.END, NowTbl.ALIAS + "." + NowTbl.END + " as " + NowTbl.END);
+				groupBy = ChannelTbl.ALIAS + "." + ChannelTbl._ID;
+				qb.setProjectionMap(projectionMap);
+				break;
+			case EPG:
+				qb = new SQLiteQueryBuilder();
+				qb.setTables(EpgTbl.TABLE_NAME);
+				break;
+			case GROUPS:
+				qb = new SQLiteQueryBuilder();
+				qb.setTables(GroupTbl.TABLE_NAME);
+				break;
+			case MEDIAS:
+				qb = new SQLiteQueryBuilder();
+				qb.setTables(DbConsts.MediaTbl.TABLE_NAME);
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 
 		SQLiteDatabase db = dbHelper.getWritableDatabase();

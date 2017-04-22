@@ -22,6 +22,12 @@
         android:text="@string/timer" />
 
     <Button
+        android:id="@+id/home_btn_medias"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/btn_dash_recservice"
+        android:text="Medias" />
+
+    <Button
         android:id="@+id/home_btn_recordings"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/btn_dash_recservice"

@@ -223,4 +223,22 @@ public class DbConsts {
 
 	}
 
+	public static class MediaTbl implements BaseColumns {
+
+		/** The table name. */
+		public static final String	TABLE_NAME				= "mediaFile";
+
+		/** The name. */
+		public static final String	NAME					= "name";
+
+		/** The position. */
+		public static final String	PARENT					= "parent";
+
+		/** The fav position. */
+		public static final String	DIR_ID					= "dirId";
+
+		public static final Uri	CONTENT_URI	= BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
+
+	}
+
 }
