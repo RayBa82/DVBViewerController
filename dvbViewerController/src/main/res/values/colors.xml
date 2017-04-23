@@ -35,6 +35,7 @@
     <color name="bright_foreground_disabled_dark">#ff4c4c4c</color>
     <color name="dim_foreground_dark">#bebebe</color>
     <color name="dim_foreground_disabled_dark">#80bebebe</color>
+    <color name="home_icon_color">#80bebebe</color>
     <color name="holo_red_dark">#ffcc0000</color>
 
 

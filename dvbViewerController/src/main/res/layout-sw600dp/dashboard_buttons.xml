@@ -1,17 +1,10 @@
-<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="4dp"
-    app:alignmentMode="alignMargins"
-    app:columnCount="2"
-    app:rowCount="4"
-    app:rowOrderPreserved="false"
-    app:useDefaultMargins="true">
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_remote"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
@@ -26,16 +19,16 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_remote"
                 style="@style/DashboardButton"
+                android:id="@+id/img_remote"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_remote_48dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_remote"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/img_remote"
                 android:text="@string/remote" />
 
         </RelativeLayout>
@@ -59,16 +52,16 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_program"
                 style="@style/DashboardButton"
+                android:id="@+id/img_program"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_tv_48dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_program"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/img_program"
                 android:text="@string/channelList" />
 
         </RelativeLayout>
@@ -92,16 +85,16 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_timers"
                 style="@style/DashboardButton"
+                android:id="@+id/img_timers"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_timer_48dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_timers"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/img_timers"
                 android:text="@string/timer" />
 
         </RelativeLayout>
@@ -125,16 +118,16 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_medias"
                 style="@style/DashboardButton"
+                android:id="@+id/img_medias"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_recordings_48dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_medias"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/img_medias"
                 android:text="Medias" />
 
         </RelativeLayout>
@@ -158,16 +151,16 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_recordings"
                 style="@style/DashboardButton"
+                android:id="@+id/img_recordings"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_recordings_48dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_recordings"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/img_recordings"
                 android:text="@string/recordings" />
 
         </RelativeLayout>
@@ -191,16 +184,16 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_tasks"
                 style="@style/DashboardButton"
+                android:id="@+id/img_tasks"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_task_48dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_tasks"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/img_tasks"
                 android:text="@string/tasks" />
 
         </RelativeLayout>
@@ -224,16 +217,16 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_status"
                 style="@style/DashboardButton"
+                android:id="@+id/img_status"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_info_48dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_status"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/img_status"
                 android:text="@string/status" />
 
         </RelativeLayout>
@@ -257,21 +250,20 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/img_preferences"
                 style="@style/DashboardButton"
+                android:id="@+id/img_preferences"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_settings_48dp" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/img_preferences"
                 android:layout_centerHorizontal="true"
+                android:layout_below="@id/img_preferences"
                 android:text="@string/preferences" />
 
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 
-
-</android.support.v7.widget.GridLayout>
+</merge>
