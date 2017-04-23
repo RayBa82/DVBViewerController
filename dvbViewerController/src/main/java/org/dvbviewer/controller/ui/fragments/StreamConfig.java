@@ -23,10 +23,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -65,6 +67,8 @@ import org.dvbviewer.controller.utils.StreamType;
 import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.dvbviewer.controller.utils.URLUtil;
+
+import java.io.InputStream;
 
 /**
  * DialogFragment to show the stream settings.
@@ -409,26 +413,42 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			@Override
 			public FfMpegPrefs loadInBackground() {
 				final FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
-				final String iPhonePrefsString = getPrefs(ServerConsts.URL_IPHONE_FFMPEGPREFS);
-				FfMpegPrefs result = prefsHandler.parse(iPhonePrefsString);
-				final String ffmpegprefsString = getPrefs(ServerConsts.URL_FFMPEGPREFS);
-				final FfMpegPrefs ffMpegPrefs = prefsHandler.parse(ffmpegprefsString);
+				FfMpegPrefs result = getPrefs(ServerConsts.URL_IPHONE_FFMPEGPREFS,
+						prefsHandler,
+                        R.raw.iphoneprefs);
+				final FfMpegPrefs ffMpegPrefs = getPrefs(ServerConsts.URL_FFMPEGPREFS,
+						prefsHandler, R.raw.ffmpegprefs);
 				result.getPresets().addAll(ffMpegPrefs.getPresets());
 				return result;
 			}
 
-			private String getPrefs(String url) {
+			private FfMpegPrefs getPrefs(String url, FFMPEGPrefsHandler handler, int defaults) {
 				try {
-					return ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+					final String prefString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+					return handler.parse(prefString);
 				}catch (Exception e){
-					e.printStackTrace();
+					return getDefaultPrefs(handler, defaults);
 				}
-				return null;
+
 			}
 		};
 	}
 
-	@Override
+    @Nullable
+    private FfMpegPrefs getDefaultPrefs(FFMPEGPrefsHandler handler, int defaults) {
+        try {
+            final Resources res = getResources();
+            final InputStream in_s = res.openRawResource(defaults);
+            final byte[] b = new byte[in_s.available()];
+            in_s.read(b);
+            return handler.parse(new String(b));
+        } catch (Exception e) {
+            Log.e(StreamConfig.class.getSimpleName(), "Error reading default presets", e);
+        }
+        return new FfMpegPrefs();
+    }
+
+    @Override
 	public void onLoadFinished(Loader<FfMpegPrefs> loader, FfMpegPrefs data) {
 		if (data != null && !data.getPresets().isEmpty()) {
 			final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, data.getPresets());

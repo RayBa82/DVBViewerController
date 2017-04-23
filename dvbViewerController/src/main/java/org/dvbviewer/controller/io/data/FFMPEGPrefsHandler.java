@@ -13,29 +13,25 @@ import java.util.Iterator;
  */
 public class FFMPEGPrefsHandler {
 
-    public FfMpegPrefs parse(String ffmpegprefs) {
+    public FfMpegPrefs parse(String ffmpegprefs) throws Exception {
         FfMpegPrefs ffPrefs = new FfMpegPrefs();
-        try {
-            INIParser iniParser = new INIParser(ffmpegprefs);
-            ffPrefs.setVersion(iniParser.getString("Version", "Version"));
-            Iterator<String> sectionIterator = iniParser.getSections();
-            while(sectionIterator.hasNext()){
-                String sectionName = sectionIterator.next();
-                if (isPreset(iniParser, sectionName)){
-                    Preset preset = new Preset();
-                    preset.setTitle(sectionName);
-                    final String mimeType = iniParser.getString(sectionName, "MimeType");
-                    if(StringUtils.isEmpty(mimeType)){
-                        preset.setMimeType(StreamConfig.M3U8_MIME_TYPE);
-                    }else {
-                        preset.setMimeType(mimeType);
-                    }
-                    preset.setExtension(iniParser.getString(sectionName, "Ext"));
-                    ffPrefs.getPresets().add(preset);
+        INIParser iniParser = new INIParser(ffmpegprefs);
+        ffPrefs.setVersion(iniParser.getString("Version", "Version"));
+        Iterator<String> sectionIterator = iniParser.getSections();
+        while (sectionIterator.hasNext()) {
+            String sectionName = sectionIterator.next();
+            if (isPreset(iniParser, sectionName)) {
+                Preset preset = new Preset();
+                preset.setTitle(sectionName);
+                final String mimeType = iniParser.getString(sectionName, "MimeType");
+                if (StringUtils.isEmpty(mimeType)) {
+                    preset.setMimeType(StreamConfig.M3U8_MIME_TYPE);
+                } else {
+                    preset.setMimeType(mimeType);
                 }
+                preset.setExtension(iniParser.getString(sectionName, "Ext"));
+                ffPrefs.getPresets().add(preset);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return ffPrefs;
     }
