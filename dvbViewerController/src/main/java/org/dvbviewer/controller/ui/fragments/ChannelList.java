@@ -504,7 +504,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Channel chan = cursorToChannel(c);
                     try {
 
-                        final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), chan.getChannelID(), chan.getName());
+                        final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
                         getActivity().startActivity(videoIntent);
                         AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                     } catch (UrlBuilderException e) {

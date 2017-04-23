@@ -60,7 +60,7 @@ public class DVBViewerPreferences {
 	public static final String	KEY_TIMER_DEF_AFTER_RECORD				= "KEY_TIMER_DEF_AFTER_RECORD";
 	public static final String 	KEY_CHANNELS_SHOW_GROUPS 				= "KEY_CHANNELS_SHOW_GROUPS";
 	public static final String 	KEY_CHANNELS_SHOW_ALL_AS_GROUP 			= "KEY_CHANNELS_SHOW_ALL_AS_GROUP";
-	public static final String 	KEY_MEDIAS_SYNCED 						= "KEY_MEDIAS_SYNCED";
+	public static final String 	KEY_MEDIAS_SYNCED 						= "KEY_MEDIAS_SYNCED_04";
 
 	/**
 	 * Streaming Preferences Keys

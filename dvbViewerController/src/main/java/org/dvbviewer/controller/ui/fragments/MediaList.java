@@ -80,7 +80,7 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		recList.setAdapter(mAdapter);
-		if(mediasSynced) {
+		if(!mediasSynced) {
 			getLoaderManager().initLoader(SYNC_LOADER_ID, savedInstanceState, this);
 		}else {
 			getLoaderManager().initLoader(MEDIA_LOADER_ID, savedInstanceState, this);

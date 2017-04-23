@@ -18,7 +18,6 @@ import org.dvbviewer.controller.entities.MediaFile;
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHolder>{
 
     private Cursor mCursor;
-
     private OnMediaClickListener listener;
 
     public MediaAdapter(OnMediaClickListener listener) {
@@ -47,9 +46,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
                 mCursor.moveToPosition(position);
                 final String name = mCursor.getString(mCursor.getColumnIndex(DbConsts.MediaTbl.NAME));
                 final long id = mCursor.getLong(mCursor.getColumnIndex(DbConsts.MediaTbl._ID));
+                final long dirId = mCursor.getLong(mCursor.getColumnIndex(DbConsts.MediaTbl.DIR_ID));
                 final MediaFile file = new MediaFile();
                 file.setName(name);
                 file.setId(id);
+                file.setDirId(dirId);
                 listener.onMediaClick(file);
             }
         });

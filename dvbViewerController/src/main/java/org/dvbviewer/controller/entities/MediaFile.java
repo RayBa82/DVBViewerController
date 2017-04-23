@@ -34,7 +34,7 @@ public class MediaFile {
 	private Long id;
 
 	/** The dirId. */
-	private Long dirId;
+	private long dirId;
 	
 	/** The name. */
 	private String			name;
@@ -48,11 +48,11 @@ public class MediaFile {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public Long getDirId() {
+	public long getDirId() {
 		return dirId;
 	}
 
@@ -86,8 +86,11 @@ public class MediaFile {
 
 	public ContentValues toContentValues() {
 		ContentValues result = new ContentValues();
-		if (this.dirId != null && !this.dirId.equals(0l)) {
-			result.put(DbConsts.MediaTbl._ID, dirId);
+		if (this.id != null && this.id > 0l) {
+			result.put(DbConsts.MediaTbl._ID, id);
+		}
+		if (this.dirId > 0l) {
+			result.put(DbConsts.MediaTbl.DIR_ID, dirId);
 		}
 		if (this.name != null && !TextUtils.isEmpty(this.name)) {
 			result.put(DbConsts.MediaTbl.NAME, this.name);

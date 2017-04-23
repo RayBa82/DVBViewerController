@@ -16,37 +16,30 @@
 package org.dvbviewer.controller.io.data;
 
 import android.sax.Element;
+import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.sax.StartElementListener;
 import android.util.Xml;
 
-import org.dvbviewer.controller.entities.MediaFile;
+import org.dvbviewer.controller.entities.VideoFile;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MediaHandler extends DefaultHandler {
+public class VideoHandler extends DefaultHandler {
 
-	List<MediaFile> mediaFiles = null;
+	List<VideoFile> mediaFiles = null;
+	VideoFile currentFile = null;
 
-	/**
-	 * Parses the.
-	 *
-	 * @param xml the xml
-	 * @return the list©
-	 * @author RayBa
-	 * @throws SAXException 
-	 * @date 05.07.2012
-	 */
-	public List<MediaFile> parse(InputStream xml) throws SAXException, IOException {
-		RootElement root = new RootElement("videodirs");
-		Element dir = root.getChild("dir");
+	public List<VideoFile> parse(InputStream xml) throws SAXException, IOException {
+		RootElement root = new RootElement("videofiles");
+		Element dir = root.getChild("file");
+		Element thumb = dir.getChild("thumb");
 		root.setStartElementListener(new StartElementListener() {
 
 			@Override
@@ -57,33 +50,34 @@ public class MediaHandler extends DefaultHandler {
 
 		dir.setStartElementListener(new StartElementListener() {
 			public void start(Attributes attributes) {
-				final String path = attributes.getValue("path");
-				final String[] pathArray = path.replace("\\", "/").split("/");
-				List<MediaFile> currentFiles = mediaFiles;
-				MediaFile file = null;
-				for (String folder : Arrays.copyOfRange(pathArray, 1, pathArray.length)){
-					file = getMediaFileFromList(folder, currentFiles);
-					currentFiles = file.getChildren();
-				}
-				final String dirId = attributes.getValue("dirid");
-				file.setDirId(Long.valueOf(dirId));
+				currentFile = new VideoFile();
+				mediaFiles.add(currentFile);
+				final String name = attributes.getValue("name");
+				final String objid = attributes.getValue("objid");
+				final String title = attributes.getValue("title");
+				final String dur = attributes.getValue("dur");
+				final String hres = attributes.getValue("hres");
+				final String vres = attributes.getValue("vres");
+				currentFile.setName(name);
+				currentFile.setId(Long.valueOf(objid));
+				currentFile.setTitle(title);
+				currentFile.setDur(Integer.valueOf(dur));
+				currentFile.setHres(Integer.valueOf(hres));
+				currentFile.setVres(Integer.valueOf(vres));
 			}
+		});
+
+		thumb.setEndTextElementListener(new EndTextElementListener() {
+
+			@Override
+			public void end(String body) {
+				currentFile.setThumb(body);
+			}
+
 		});
 
 		Xml.parse(xml, Xml.Encoding.UTF_8, root.getContentHandler());
 		return mediaFiles;
-	}
-
-	private MediaFile getMediaFileFromList(final String name, final List<MediaFile> medias){
-		for(MediaFile media : medias) {
-			if (media.getName().equals(name)) {
-				return media;
-			}
-		}
-		final MediaFile file = new MediaFile();
-		file.setName(name);
-		medias.add(file);
-		return file;
 	}
 
 }

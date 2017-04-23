@@ -594,7 +594,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				try {
 					selectedPosition = (Integer) v.getTag();
 					final IEPG recording = mAdapter.getItem(selectedPosition);
-					final Intent videoIntent = StreamConfig.buildRecordingUrl(getActivity(), recording.getId(), recording.getTitle());
+					final Intent videoIntent = StreamConfig.buildLiveUrl(getActivity(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 					getActivity().startActivity(videoIntent);
 					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 				} catch (ActivityNotFoundException e) {
