@@ -38,8 +38,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
-                .showImageForEmptyUri(R.drawable.play_circle_outline) // resource or drawable
-                .showImageOnFail(R.drawable.play_circle_outline) // r
+                .showImageForEmptyUri(R.drawable.ic_play_white_40dp) // resource or drawable
+                .showImageOnFail(R.drawable.ic_play_white_40dp) // r
                 .displayer(new FadeInBitmapDisplayer(500, true, true, false))
                 .build();
     }

@@ -24,7 +24,7 @@
     <Button
         android:id="@+id/home_btn_medias"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/btn_dash_recservice"
+        android:drawableTop="@drawable/dash_recordings_48dp"
         android:text="Medias" />
 
     <Button
