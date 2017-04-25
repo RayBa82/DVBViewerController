@@ -372,6 +372,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		builder.addQueryParameter("preset", preset.getTitle());
 		builder.addQueryParameter("ffPreset", encodingSpeed);
 		builder.addQueryParameter(fileType.transcodedParam, String.valueOf(id));
+		builder.addQueryParameter("track", "-1");
 		if (start > 0) {
 			builder.addQueryParameter("start", String.valueOf(start));
 		}
