@@ -44,11 +44,11 @@ public class TestUtils {
     }
 
     @Nullable
-    public static List<ChannelRoot> getChannels(int resId) throws JSONException, SAXException {
+    public static List<ChannelRoot> getChannels(int resId) throws JSONException, SAXException, IOException {
         JSONObject json = new JSONObject(TestUtils.getStringFromFile(InstrumentationRegistry.getContext(), resId));
         String chanXml = json.getString("channels");
         ChannelHandler chanHandler = new ChannelHandler();
-        List<ChannelRoot> channelRoots = chanHandler.parse(chanXml);
+        List<ChannelRoot> channelRoots = chanHandler.parse(IOUtils.toInputStream(chanXml), false);
         return channelRoots;
     }
 

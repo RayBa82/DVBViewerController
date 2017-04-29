@@ -23,10 +23,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -66,6 +68,8 @@ import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 import org.dvbviewer.controller.utils.URLUtil;
 
+import java.io.InputStream;
+
 /**
  * DialogFragment to show the stream settings.
  *
@@ -77,6 +81,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	private static final String recordingUrl			= "/upnp/recordings/";
 	private static final Gson 	gson					= new Gson();
 	public static final String	EXTRA_FILE_ID			= "_fileID";
+	public static final String	M3U8_MIME_TYPE			= "video/m3u8";
 	public static final String	EXTRA_FILE_TYPE			= "_fileType";
 	public static final String	EXTRA_DIALOG_TITLE_RES	= "_dialog_title_res";
     public static final String  EXTRA_TITLE             = "title";
@@ -369,8 +374,13 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 
 
 	private static Intent getTranscodedUrl(final long id, String title, final Preset preset, final String encodingSpeed, final boolean recording, final int start) throws UrlBuilderException {
-		final String baseUrl = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FLASHSTREAM + preset.getExtension();
-		final HTTPUtil.UrlBuilder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl));
+		final StringBuilder baseUrl = new StringBuilder(ServerConsts.REC_SERVICE_URL);
+		if (StreamConfig.M3U8_MIME_TYPE.equals(preset.getMimeType())){
+			baseUrl.append(ServerConsts.URL_M3U8);
+		} else {
+			baseUrl.append(ServerConsts.URL_FLASHSTREAM + preset.getExtension());
+		}
+		final HTTPUtil.UrlBuilder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl.toString()));
 		final String idParam = recording ? "recid" : "chid";
 		builder.addQueryParameter("preset", preset.getTitle());
 		builder.addQueryParameter("ffPreset", encodingSpeed);
@@ -399,23 +409,46 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 	@Override
 	public Loader<FfMpegPrefs> onCreateLoader(int id, Bundle args) {
 		return new AsyncLoader<FfMpegPrefs>(getContext()) {
+
 			@Override
 			public FfMpegPrefs loadInBackground() {
-				FfMpegPrefs result = null;
-				String ffmpegprefsString;
-				try {
-					ffmpegprefsString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
-					FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
-					result = prefsHandler.parse(ffmpegprefsString);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				final FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
+				FfMpegPrefs result = getPrefs(ServerConsts.URL_IPHONE_FFMPEGPREFS,
+						prefsHandler,
+                        R.raw.iphoneprefs);
+				final FfMpegPrefs ffMpegPrefs = getPrefs(ServerConsts.URL_FFMPEGPREFS,
+						prefsHandler, R.raw.ffmpegprefs);
+				result.getPresets().addAll(ffMpegPrefs.getPresets());
 				return result;
+			}
+
+			private FfMpegPrefs getPrefs(String url, FFMPEGPrefsHandler handler, int defaults) {
+				try {
+					final String prefString = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + url);
+					return handler.parse(prefString);
+				}catch (Exception e){
+					return getDefaultPrefs(handler, defaults);
+				}
+
 			}
 		};
 	}
 
-	@Override
+    @Nullable
+    private FfMpegPrefs getDefaultPrefs(FFMPEGPrefsHandler handler, int defaults) {
+        try {
+            final Resources res = getResources();
+            final InputStream in_s = res.openRawResource(defaults);
+            final byte[] b = new byte[in_s.available()];
+            in_s.read(b);
+            return handler.parse(new String(b));
+        } catch (Exception e) {
+            Log.e(StreamConfig.class.getSimpleName(), "Error reading default presets", e);
+        }
+        return new FfMpegPrefs();
+    }
+
+    @Override
 	public void onLoadFinished(Loader<FfMpegPrefs> loader, FfMpegPrefs data) {
 		if (data != null && !data.getPresets().isEmpty()) {
 			final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, data.getPresets());

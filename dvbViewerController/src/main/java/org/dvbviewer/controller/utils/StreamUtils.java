@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Preset;
+import org.dvbviewer.controller.ui.fragments.StreamConfig;
 
 import java.util.Arrays;
 
@@ -33,9 +34,8 @@ public class StreamUtils {
         }
         if (p == null) {
             p = new Preset();
-            p.setTitle("TS Mid 1200 kbit");
-            p.setExtension(".ts");
-            p.setMimeType("video/mpeg");
+            p.setTitle("HLS Mid 1200 kbit");
+            p.setMimeType(StreamConfig.M3U8_MIME_TYPE);
         }
         return p;
     }

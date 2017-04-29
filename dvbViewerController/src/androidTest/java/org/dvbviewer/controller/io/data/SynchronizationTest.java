@@ -3,10 +3,10 @@ package org.dvbviewer.controller.io.data;
 
 import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
-import android.test.suitebuilder.annotation.SmallTest;
 
+import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
@@ -18,13 +18,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class SynchronizationTest extends InstrumentationTestCase {
+public class SynchronizationTest {
 
     @Test
     public void parseChannels() {
@@ -146,8 +150,8 @@ public class SynchronizationTest extends InstrumentationTestCase {
             JSONObject json = new JSONObject(TestUtils.getStringFromFile(InstrumentationRegistry.getContext(), resId));
             String chanXml = json.getString("channels");
             ChannelHandler chanHandler = new ChannelHandler();
-            channelRoots = chanHandler.parse(chanXml, false);
-        } catch (SAXException | JSONException e) {
+            channelRoots = chanHandler.parse(IOUtils.toInputStream(chanXml), false);
+        } catch (IOException |SAXException | JSONException e) {
             e.printStackTrace();
         }
         return channelRoots;
