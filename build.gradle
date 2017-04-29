@@ -20,10 +20,10 @@ buildscript {
 ext {
     applicationId = "org.dvbviewer.controller"
     compileSdkVersion = 25
-    buildToolsVersion = "25.0.2"
+    buildToolsVersion = "25.0.3"
     minSdkVersion = 9
     targetSdkVersion = 25
-    appcompatVersion = "25.2.0"
+    appcompatVersion = "25.3.1"
     versionCode = buildVersionCode
     versionName = buildVersionName
 }
