@@ -20,6 +20,7 @@
     <string name="about_app">Über DVBViewer Controller</string>
     <string name="version">App Version:</string>
     <string name="common_all">Alle</string>
+    <string name="delete">Löschen</string>
     <!-- Channels -->
     <string name="channelList">Senderliste</string>
     <string name="refreshChannels">Sender syncronisieren</string>

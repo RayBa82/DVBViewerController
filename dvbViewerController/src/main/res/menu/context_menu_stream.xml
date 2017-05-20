@@ -2,19 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menuSwitch"
+        android:id="@+id/menuStreamDirect"
         android:enabled="true"
-        android:title="@string/switch_to"
+        android:title="@string/streamDirect"
         android:visible="true" />
     <item
-        android:id="@+id/menuRecord"
+        android:id="@+id/menuStreamTranscoded"
         android:enabled="true"
-        android:title="@string/record"
+        android:title="@string/streamTranscoded"
         android:visible="true" />
     <item
-        android:id="@+id/menuTimer"
+        android:id="@+id/menuStreamConfig"
         android:enabled="true"
-        android:title="@string/createTimer"
+        android:title="@string/streamConfig"
         android:visible="true" />
 
 </menu>

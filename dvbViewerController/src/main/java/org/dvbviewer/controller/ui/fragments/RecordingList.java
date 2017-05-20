@@ -195,7 +195,13 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menuStream:
+			case R.id.menuStreamDirect:
+				streamDirect(mAdapter.getItem(selectedPosition));
+				return true;
+			case R.id.menuStreamTranscoded:
+				streamTranscoded(mAdapter.getItem(selectedPosition));
+				return true;
+			case R.id.menuStreamConfig:
 				if (UIUtils.isTablet(getContext())) {
 					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
 					StreamConfig cfg = StreamConfig.newInstance();
@@ -208,11 +214,42 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					startActivity(streamConfig);
 				}
 				return true;
+			case R.id.menuDelete:
+				getListView().setItemChecked(selectedPosition, true);
+				AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+				builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
+				return true;
 
 			default:
 				break;
 		}
 		return false;
+	}
+
+	private void streamDirect(IEPG recording) {
+		try {
+			final Intent videoIntent = StreamConfig.getDirectUrl(recording.getId(), recording.getTitle(), FileType.RECORDING);
+			getActivity().startActivity(videoIntent);
+			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+		} catch (ActivityNotFoundException e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+			builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+			e.printStackTrace();
+		}
+	}
+
+	private void streamTranscoded(IEPG recording) {
+		try {
+			final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+			getActivity().startActivity(videoIntent);
+			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+		} catch (ActivityNotFoundException e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+			builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+			e.printStackTrace();
+		} catch (UrlBuilderException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@NonNull
@@ -557,7 +594,9 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					Recording[] array = new Recording[recordings.size()];
 					deleter.execute(recordings.toArray(array));
 				}
-				mode.finish();
+				if(mode != null) {
+					mode.finish();
+				}
 				break;
 
 			case DialogInterface.BUTTON_NEGATIVE:
@@ -586,7 +625,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			case R.id.contextMenu:
 				selectedPosition = (Integer) v.getTag();
 				PopupMenu popup = new PopupMenu(getContext(), v);
-				popup.getMenuInflater().inflate(R.menu.context_menu_recordinglist, popup.getMenu());
+				popup.inflate(R.menu.context_menu_stream);
+				popup.inflate(R.menu.context_menu_recordinglist);
 				popup.setOnMenuItemClickListener(this);
 				popup.show();
 				break;
@@ -594,7 +634,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				try {
 					selectedPosition = (Integer) v.getTag();
 					final IEPG recording = mAdapter.getItem(selectedPosition);
-					final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+					final Intent videoIntent = StreamConfig.buildQuickUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 					getActivity().startActivity(videoIntent);
 					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 				} catch (ActivityNotFoundException e) {

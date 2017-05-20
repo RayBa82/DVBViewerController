@@ -340,7 +340,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 	}
 	
 	
-	public static Intent buildLiveUrl(Context context, long id, String title, FileType fileType) throws UrlBuilderException {
+	public static Intent buildQuickUrl(Context context, long id, String title, FileType fileType) throws UrlBuilderException {
 		final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
 		boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
 		if (direct) {
@@ -356,6 +356,11 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 		return intent;
 	}
 
+	public static Intent getTranscodedUrl(Context context, final long id, String title, final FileType fileType) throws UrlBuilderException {
+		final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
+		final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
+		return getTranscodedUrl(id, title, StreamUtils.getDefaultPreset(prefs), encodingSpeed, fileType, 0);
+	}
 
 	private static Intent getTranscodedUrl(final long id, String title, final Preset preset, final String encodingSpeed, final FileType fileType, final int start) throws UrlBuilderException {
 		final StringBuilder baseUrl = new StringBuilder(ServerConsts.REC_SERVICE_URL);
@@ -380,7 +385,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 		return videoIntent;
 	}
 
-	private static Intent getDirectUrl(long id, String title, FileType fileType){
+	public static Intent getDirectUrl(long id, String title, FileType fileType){
 		final StringBuilder baseUrl = new StringBuilder(ServerConsts.REC_SERVICE_URL).append("/upnp/" + fileType.directPath).append(id).append(".ts");
 		final String videoUrl = URLUtil.buildProtectedRSUrl(baseUrl.toString());
 		Log.d(Tag, "playing video: " + videoUrl);

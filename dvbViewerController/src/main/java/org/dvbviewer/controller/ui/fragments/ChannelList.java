@@ -215,12 +215,18 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         Cursor c = mAdapter.getCursor();
         c.moveToPosition(mChannelIndex);
         switch (item.getItemId()) {
-            case R.id.menuTimer:
-                showTimerDialog(c);
+            case R.id.menuStreamDirect:
+                streamDirect(c);
                 return true;
-            case R.id.menuStream:
+            case R.id.menuStreamTranscoded:
+                streamTranscoded(c);
+                return true;
+            case R.id.menuStreamConfig:
                 showStreamConfig(c);
                 return true;
+            case R.id.menuTimer:
+            showTimerDialog(c);
+            return true;
             case R.id.menuSwitch:
                 switchChannel(c);
                 return true;
@@ -232,6 +238,34 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 break;
         }
         return false;
+    }
+
+    private void streamDirect(final Cursor c) {
+        try {
+            Channel chan = cursorToChannel(c);
+            final Intent videoIntent = StreamConfig.getDirectUrl(chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            getActivity().startActivity(videoIntent);
+            AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+        } catch (ActivityNotFoundException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+            e.printStackTrace();
+        }
+    }
+
+    private void streamTranscoded(final Cursor c) {
+        try {
+            Channel chan = cursorToChannel(c);
+            final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            getActivity().startActivity(videoIntent);
+            AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+        } catch (ActivityNotFoundException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+            e.printStackTrace();
+        } catch (UrlBuilderException e) {
+            e.printStackTrace();
+        }
     }
 
     private void switchChannel(Cursor c) {
@@ -493,7 +527,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         switch (v.getId()) {
             case R.id.contextMenu:
                 PopupMenu popup = new PopupMenu(getContext(), v);
-                popup.getMenuInflater().inflate(R.menu.context_menu_channellist, popup.getMenu());
+                popup.inflate(R.menu.context_menu_stream);
+                popup.inflate(R.menu.context_menu_channellist);
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
                 break;
@@ -504,7 +539,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Channel chan = cursorToChannel(c);
                     try {
 
-                        final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+                        final Intent videoIntent = StreamConfig.buildQuickUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
                         getActivity().startActivity(videoIntent);
                         AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                     } catch (UrlBuilderException e) {
