@@ -146,7 +146,7 @@
     <string name="error_common">Błąd</string>
     <string name="error_unknonwn_host">Nieznany adres</string>
     <string name="error_connection_timeout">Limit czasu połączenia</string>
-    <string name="error_parsing_xml">Nie można  przetworzyć danych XML</string>
+    <string name="error_parsing_xml">Nie udało się  przetworzyć danych XML</string>
     <string name="error_invalid_url">Niewłaściwy adres</string>
     <string name="error_invalid_credentials">Błąd autoryzacji</string>
     <string name="support_this_app">Wsparcie aplikacji</string>
@@ -158,4 +158,6 @@
     <!-- Remote -->
     <string name="remote_control">Sterowanie</string>
     <string name="remote_numbers">Cyfry</string>
+    <string name="timer_saved">Program zapisany</string>
+    <string name="epg_monitoring">Monitorowanie EPG</string>
 </resources>

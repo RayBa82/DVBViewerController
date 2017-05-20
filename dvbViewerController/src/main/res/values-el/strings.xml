@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="app_name">"DVBViewer Controller "</string>
+    <string name="remote">"Τηλεχειριστήριο "</string>
+    <string name="title">"Τίτλος "</string>
+    <string name="cancel">"Ακύρωση "</string>
+    <string name="ok">OK</string>
+    <string name="refresh">"Ανανέωση "</string>
+    <string name="record">"Εγγραφή "</string>
+    <string name="yes">"Ναι "</string>
+    <string name="no">"Όχι "</string>
+    <string name="selected">"επιλεγμένα "</string>
+    <string name="switch_to">"Αλλαγή καναλιού "</string>
+    <string name="minutes">"λεπτά "</string>
+    <string name="gmt">GMT</string>
+    <string name="details">"Λεπτομέρειες "</string>
+    <string name="about">"Περί "</string>
+    <string name="common_colon">&#160;</string>
+    <string name="about_app">"Περί DVBViewer Controller "</string>
+    <string name="version">Έκδοση Εφαρμογής :</string>
+    <string name="common_all">"Όλα "</string>
+    <!-- Channels -->
+    <string name="channelList">"Λίστα Καναλιών "</string>
+    <string name="refreshChannels">"Συγχρονισμός καναλιών "</string>
+    <string name="refresh_now_playing">Ανανέωση EPG</string>
+    <string name="favourites">"Αγαπημένα "</string>
+    <string name="no_channels">"Δεν βρέθηκαν κανάλια "</string>
+    <string name="no_favourites">"Δεν βρέθηκαν αγαπημένα "</string>
+    <!-- EPG -->
+    <string name="channelEPG">"EPG καναλιών "</string>
+    <string name="today">"Σήμερα "</string>
+    <string name="time">"Ωρα "</string>
+    <string name="now">"Τώρα "</string>
+    <string name="evening">"Απόγευμα "</string>
+    <string name="tomorrow">"αύριο "</string>
+    <string name="previousDay">"Προηγούμενη μέρα "</string>
+    <string name="nextDay">"Επόμενη μέρα "</string>
+    <string name="no_epg">Δεν βρέθηκαν δεδομένα EPG</string>
+    <!-- Recordings -->
+    <string name="recordings">"Λίστα εγγραφών "</string>
+    <string name="no_recordings">"Δεν βρέθηκαν εγγραφές "</string>
+    <string name="busyDeleteRecordings">&#8230;</string>
+    <!-- Timer -->
+    <string name="timer">Χρονοδιακόπτης</string>
+    <string name="createTimer">Δημιουργία χρονοδιακόπτη</string>
+    <string name="editTimer">Επεξεργασία χρονοδιακόπτη</string>
+    <string name="date">"Ημερομηνία "</string>
+    <string name="active">"Ενεργός "</string>
+    <string name="start">"Έναρξη "</string>
+    <string name="stop">"Τερματισμός "</string>
+    <string name="channel">"Κανάλι "</string>
+    <string name="postTimerAction">"Μετά Εγγραφής "</string>
+    <string name="busyDeleteTimer">Διαγραφή χρονιδιακόπτη</string>
+    <string name="no_timer">Δεν βρέθηκε χρονοδιακόπτης</string>
+    <!-- Streaming -->
+    <string name="streamConfig">Επεξεργασία ροής</string>
+    <string name="stream">Ροή</string>
+    <string name="quality">"Ποιότητα "</string>
+    <string name="aspectRatio">"Aspect Ratio "</string>
+    <string name="ffmpegpreset">Ταχύτητα κωδικοποίησης</string>
+    <string name="maxHeight">"Μέγιστο Ύψος "</string>
+    <string name="maxWidth">"Μέγιστο Πλάτος "</string>
+    <string name="streamStart">Έναρξη ροής</string>
+    <string name="streamTranscoded">Επανακωδιδοποιημένη ροή</string>
+    <string name="streamDirect">Απευθείας ροή</string>
+    <string name="stream_position">"Θέση "</string>
+    <string name="stream_hours_hint">HH</string>
+    <!-- Tasks -->
+    <!-- Status -->
+    <!-- Dialogs -->
+    <!-- Preferences -->
+    <!-- Error -->
+    <!-- Remote -->
+</resources>
