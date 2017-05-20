@@ -71,7 +71,7 @@ import java.util.List;
  * @author RayBa
  * @date 07.04.2013
  */
-public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, TimerDetails.OnTimerEditedListener, DialogInterface.OnDismissListener, AdapterView.OnItemLongClickListener {
+public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, TimerDetails.OnTimerEditedListener, AdapterView.OnItemLongClickListener {
 
 	public static final String ACTION_MODE        = "action_mode";
 	public static final String CHECKED_ITEM_COUNT = "checked_item_count";
@@ -164,11 +164,6 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
             timerSavedAction();
         }
     }
-
-	@Override
-	public void onDismiss(DialogInterface dialog) {
-		getActivity().setTitle(R.string.timer);
-	}
 
 	/**
 	 * The Class ViewHolder.

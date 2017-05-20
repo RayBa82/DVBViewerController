@@ -509,8 +509,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
         long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
         final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
-        int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5);
-        int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5);
+        int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, DVBViewerPreferences.DEFAULT_TIMER_TIME_BEFORE);
+        int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, DVBViewerPreferences.DEFAULT_TIMER_TIME_AFTER);
         final Date start = epgStart > 0 ? new Date(epgStart) : new Date();
         final Date end = epgEnd > 0 ? new Date(epgEnd) : new Date();
         final String eventId = c.getString(c.getColumnIndex(EpgTbl.EVENT_ID));

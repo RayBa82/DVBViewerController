@@ -62,6 +62,9 @@ public class DVBViewerPreferences {
 	public static final String 	KEY_CHANNELS_SHOW_ALL_AS_GROUP 			= "KEY_CHANNELS_SHOW_ALL_AS_GROUP";
 	public static final String 	KEY_MEDIAS_SYNCED 						= "KEY_MEDIAS_SYNCED_04";
 
+	public static final int	DEFAULT_TIMER_TIME_BEFORE					= 5;
+	public static final int	DEFAULT_TIMER_TIME_AFTER					= 10;
+
 	/**
 	 * Streaming Preferences Keys
 	 */

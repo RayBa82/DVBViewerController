@@ -118,7 +118,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 
 		if (seekable) {
 			DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
-			preTime = String.valueOf(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 0));
+			preTime = String.valueOf(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, DVBViewerPreferences.DEFAULT_TIMER_TIME_BEFORE));
 		}
 	}
 

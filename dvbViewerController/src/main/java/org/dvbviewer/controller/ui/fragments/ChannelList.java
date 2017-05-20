@@ -553,8 +553,8 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         final long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
         final long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
         final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
-        final int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5);
-        final int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5);
+        final int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, DVBViewerPreferences.DEFAULT_TIMER_TIME_BEFORE);
+        final int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, DVBViewerPreferences.DEFAULT_TIMER_TIME_AFTER);
         final Date start = epgStart > 0 ? new Date(epgStart) : new Date();
         final Date end = epgEnd > 0 ? new Date(epgEnd) : new Date(start.getTime() + (1000 * 60 * 120));
         final String eventId = c.getString(c.getColumnIndex(EpgTbl.EVENT_ID));
