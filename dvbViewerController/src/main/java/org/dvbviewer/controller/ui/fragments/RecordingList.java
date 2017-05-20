@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -27,6 +26,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.PopupMenu;
@@ -103,7 +103,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mAdapter = new RecordingAdapter(getActivity());
+		mAdapter = new RecordingAdapter(getContext());
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
 	}
@@ -196,14 +196,14 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menuStream:
-				if (UIUtils.isTablet(getActivity())) {
+				if (UIUtils.isTablet(getContext())) {
 					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
 					StreamConfig cfg = StreamConfig.newInstance();
 					cfg.setArguments(arguments);
 					cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
 				} else {
 					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
-					Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
+					Intent streamConfig = new Intent(getContext(), StreamConfigActivity.class);
 					streamConfig.putExtras(arguments);
 					startActivity(streamConfig);
 				}
@@ -315,7 +315,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail, options);
 				}
 				holder.thumbNailContainer.setTag(position);
-				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
+				holder.date.setText(DateUtils.formatDateTime(getContext(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());
 				holder.contextMenu.setTag(position);
 			}
@@ -338,7 +338,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				mode.finish();
 			}
 		} else {
-			Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
+			Intent details = new Intent(getContext(), IEpgDetailsActivity.class);
 			IEPG entry = mAdapter.getItem(position);
 			details.putExtra(IEPG.class.getSimpleName(), entry);
 			startActivity(details);
@@ -384,7 +384,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				/**
 				 * Alertdialog to confirm the delete of Recordings
 				 */
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 				builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
 				break;
 
@@ -585,7 +585,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		switch (v.getId()) {
 			case R.id.contextMenu:
 				selectedPosition = (Integer) v.getTag();
-				PopupMenu popup = new PopupMenu(getActivity(), v);
+				PopupMenu popup = new PopupMenu(getContext(), v);
 				popup.getMenuInflater().inflate(R.menu.context_menu_recordinglist, popup.getMenu());
 				popup.setOnMenuItemClickListener(this);
 				popup.show();
@@ -594,11 +594,11 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				try {
 					selectedPosition = (Integer) v.getTag();
 					final IEPG recording = mAdapter.getItem(selectedPosition);
-					final Intent videoIntent = StreamConfig.buildLiveUrl(getActivity(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+					final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 					getActivity().startActivity(videoIntent);
 					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 				} catch (ActivityNotFoundException e) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 					builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
 					e.printStackTrace();
 				} catch (UrlBuilderException e) {
@@ -616,7 +616,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	@Override
 	public void onAsyncActionStart() {
-		progressDialog = new ProgressDialog(getActivity());
+		progressDialog = new ProgressDialog(getContext());
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		progressDialog.setMessage(getResources().getString(R.string.busyDeleteRecordings));
 		progressDialog.setIndeterminate(true);

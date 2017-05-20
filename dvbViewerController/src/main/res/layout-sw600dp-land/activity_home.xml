@@ -15,9 +15,9 @@
         <Spinner
             android:id="@+id/clientSpinner"
             android:layout_width="wrap_content"
-            android:visibility="gone"
             android:layout_height="wrap_content"
-            android:gravity="right" />
+            android:gravity="right"
+            android:visibility="gone" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -32,20 +32,21 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:id="@+id/left_content"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="3" />
+                android:layout_weight="3"
+                android:orientation="vertical" />
 
             <View style="@style/HorizontalDivider" />
 
             <LinearLayout
-                android:orientation="vertical"
                 android:id="@+id/right_content"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="5"/>
+                android:layout_weight="5"
+                android:orientation="vertical"
+                android:padding="5dp" />
 
         </LinearLayout>
         <!-- The navigation drawer -->

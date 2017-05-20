@@ -121,7 +121,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         super.onActivityCreated(savedInstanceState);
         ImageLoader mImageCacher = ImageLoader.getInstance();
         fillFromBundle(getArguments());
-        mAdapter = new ChannelEPGAdapter(getActivity());
+        mAdapter = new ChannelEPGAdapter(getContext());
         setListAdapter(mAdapter);
         setListShown(false);
         getListView().setOnItemClickListener(this);
@@ -223,7 +223,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
             dateText = getString(R.string.tomorrow);
         } else {
-            dateText = DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY);
+            dateText = DateUtils.formatDateTime(getContext(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY);
         }
         if(header != null ){
             if (DateUtils.isToday(mDateInfo.getEpgDate())) {
@@ -278,7 +278,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         c.moveToPosition(position);
         IEPG entry = cursorToEpgEntry(c);
 
-        Intent i = new Intent(getActivity(), IEpgDetailsActivity.class);
+        Intent i = new Intent(getContext(), IEpgDetailsActivity.class);
         i.putExtra(IEPG.class.getSimpleName(), entry);
         startActivity(i);
     }
@@ -327,7 +327,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             holder.contextMenu.setTag(c.getPosition());
             long millis = c.getLong(c.getColumnIndex(EpgTbl.START));
             int flags = DateUtils.FORMAT_SHOW_TIME;
-            String date = DateUtils.formatDateTime(getActivity(), millis, flags);
+            String date = DateUtils.formatDateTime(context, millis, flags);
             holder.startTime.setText(date);
             holder.title.setText(c.getString(c.getColumnIndex(EpgTbl.TITLE)));
             String subTitle = c.getString(c.getColumnIndex(EpgTbl.SUBTITLE));
@@ -407,7 +407,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         switch (v.getId()) {
             case R.id.contextMenu:
                 selectedPosition = (int) v.getTag();
-                PopupMenu popup = new PopupMenu(getActivity(), v);
+                PopupMenu popup = new PopupMenu(getContext(), v);
                 popup.getMenuInflater().inflate(R.menu.context_menu_epg, popup.getMenu());
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
@@ -433,20 +433,20 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     return true;
                 case R.id.menuTimer:
                     timer = cursorToTimer(c);
-                    if (UIUtils.isTablet(getActivity())) {
+                    if (UIUtils.isTablet(getContext())) {
                         TimerDetails timerdetails = TimerDetails.newInstance();
                         Bundle args = TimerDetails.buildBundle(timer);
                         timerdetails.setArguments(args);
                         timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
                     }else{
-                        Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
+                        Intent timerIntent = new Intent(getContext(), TimerDetailsActivity.class);
                         Bundle extras = TimerDetails.buildBundle(timer);
                         timerIntent.putExtras(extras);
                         startActivity(timerIntent);
                     }
                     return true;
                 case R.id.menuDetails:
-                    Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
+                    Intent details = new Intent(getContext(), IEpgDetailsActivity.class);
                     c.moveToPosition(pos);
                     IEPG entry = cursorToEpgEntry(c);
                     details.putExtra(IEPG.class.getSimpleName(), entry);

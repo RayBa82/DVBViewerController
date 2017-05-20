@@ -317,13 +317,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	private void setSupportActionBarSubtitleTitle(int titleId) {
 		if (getSupportActionBar() != null) {
-			getSupportActionBar().setTitle(titleId);
+			getSupportActionBar().setSubtitle(titleId);
 		}
 	}
 
 	private void setSupportActionBarSubtitleTitle(CharSequence title) {
 		if (getSupportActionBar() != null) {
-			getSupportActionBar().setTitle(title);
+			getSupportActionBar().setSubtitle(title);
 		}
 	}
 

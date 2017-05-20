@@ -37,12 +37,13 @@ import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListen
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
 import org.dvbviewer.controller.ui.fragments.Dashboard;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
-import org.dvbviewer.controller.ui.fragments.MediaList;
+import org.dvbviewer.controller.ui.fragments.MediaFragment;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.StatusList;
 import org.dvbviewer.controller.ui.fragments.TaskList;
 import org.dvbviewer.controller.ui.fragments.TimerList;
+import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
 import org.dvbviewer.controller.ui.phone.AboutActivity;
 import org.dvbviewer.controller.ui.phone.ChannelListActivity;
 import org.dvbviewer.controller.ui.phone.MedialistActivity;
@@ -71,6 +72,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	private DVBViewerPreferences 	prefs;
     private ChannelPager chans;
     private boolean enableDrawer;
+	private OnBackPressedListener onBackPressedListener;
 
     /* (non-Javadoc)
      * @see org.dvbviewer.controller.ui.base.BaseActivity#onCreate(android.os.Bundle)
@@ -159,6 +161,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	 */
 	@Override
 	public void onDashboarButtonClick(View v) {
+		onBackPressedListener = null;
 		switch (v.getId()) {
 			case R.id.home_btn_remote:
 				if (multiContainer != null) {
@@ -237,8 +240,10 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_medias:
 				if (multiContainer != null) {
 					enableDrawer = false;
+					final MediaFragment mediaFragment = new MediaFragment();
+					onBackPressedListener = mediaFragment;
 					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-					tran.replace(multiContainer.getId(), new MediaList());
+					tran.replace(multiContainer.getId(), mediaFragment);
 					tran.commit();
 				} else {
 					startActivity(new Intent(this, MedialistActivity.class));
@@ -324,5 +329,17 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
         outState.putBoolean(ENABLE_DRAWER, enableDrawer);
 		outState.putString(TITLE, getTitle().toString());
     }
+
+	@Override
+	public void onBackPressed() {
+		boolean result = false;
+		if(onBackPressedListener != null) {
+			result = onBackPressedListener.onBackPressed();
+		}
+		if(!result) {
+			super.onBackPressed();
+		}
+
+	}
 
 }

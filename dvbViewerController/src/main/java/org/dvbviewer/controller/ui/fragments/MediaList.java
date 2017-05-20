@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * Fragment for EPG details or Timer details.
  */
-public class MediaList extends RecyclerViewFragment implements LoaderManager.LoaderCallbacks<Cursor>, MediaAdapter.OnMediaClickListener {
+public class MediaList extends RecyclerViewFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final String KEY_PARENT_ID 	= MediaList.class.getSimpleName() + "KEY_PARENT_ID";
 
@@ -67,10 +67,12 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 		activity.setTitle(R.string.details);
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
-		mAdapter = new MediaAdapter(this);
+		mAdapter = new MediaAdapter(mediaClickListener);
 		DVBViewerPreferences preferences = new DVBViewerPreferences(getContext());
 		mediasSynced = preferences.getBoolean(DVBViewerPreferences.KEY_MEDIAS_SYNCED, false);
-		parentId = getArguments().getLong(KEY_PARENT_ID, 0);
+		if(getArguments() != null) {
+			parentId = getArguments().getLong(KEY_PARENT_ID, 0);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -91,6 +93,9 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 	@Override
 	public void onAttach(Context activity) {
 		super.onAttach(activity);
+		if(getParentFragment() != null && getParentFragment() instanceof MediaAdapter.OnMediaClickListener) {
+			mediaClickListener = (MediaAdapter.OnMediaClickListener) getParentFragment();
+		}
 		if (activity instanceof MediaAdapter.OnMediaClickListener) {
 			mediaClickListener = (MediaAdapter.OnMediaClickListener) activity;
 		}
@@ -156,8 +161,4 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 
 	}
 
-	@Override
-	public void onMediaClick(MediaFile mediaFile) {
-		mediaClickListener.onMediaClick(mediaFile);
-	}
 }

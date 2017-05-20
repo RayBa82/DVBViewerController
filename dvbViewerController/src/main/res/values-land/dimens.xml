@@ -15,7 +15,7 @@
     <dimen name="default_padding_small">10dp</dimen>
     <dimen name="default_padding_medium">15dp</dimen>
 
-    <integer name="gridRows">4</integer>
-    <integer name="gridCols">2</integer>
+    <integer name="gridRows">2</integer>
+    <integer name="gridCols">4</integer>
 
 </resources>

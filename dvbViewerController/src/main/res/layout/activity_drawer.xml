@@ -14,9 +14,9 @@
         <Spinner
             android:id="@+id/clientSpinner"
             android:layout_width="wrap_content"
-            android:visibility="gone"
             android:layout_height="wrap_content"
-            android:gravity="right" />
+            android:gravity="right"
+            android:visibility="gone" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -28,7 +28,7 @@
         <FrameLayout
             android:id="@+id/left_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
         <!-- The navigation drawer -->
         <ListView
             android:id="@+id/left_drawer"
@@ -39,7 +39,7 @@
             android:choiceMode="singleChoice"
             android:divider="@color/white_transparent"
             android:dividerHeight="1dp"
-            android:textColor="@color/black_transparent"/>
+            android:textColor="@color/black_transparent" />
 
     </android.support.v4.widget.DrawerLayout>
 

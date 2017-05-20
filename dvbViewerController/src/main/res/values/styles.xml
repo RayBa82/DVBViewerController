@@ -19,6 +19,7 @@
     <style name="DashboardButton">
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:background">@android:color/transparent</item>
@@ -27,7 +28,7 @@
     <style name="commonTitle" parent="@android:style/TextAppearance">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/primary_text_color</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:maxLines">2</item>
     </style>
@@ -35,7 +36,7 @@
     <style name="commonSubTitle" parent="@android:style/TextAppearance">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@drawable/secondary_text_dark</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:textSize">@dimen/text_size_small</item>
     </style>
 
@@ -76,8 +77,15 @@
         <item name="android:maxHeight">16dip</item>
     </style>
 
-    <style name="Dialog.MinWidth" parent="Theme.AppCompat.Dialog.MinWidth">
-        <item name="windowMinWidthMajor">80%</item>
+    <style name="DialogStyle" parent="Theme.AppCompat.Dialog.MinWidth">
+        <item name="windowMinWidthMajor">50%</item>
+        <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
+    </style>
+
+
+    <style name="DialogWindowTitle" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="android:background">@drawable/ab_background</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
     </style>
 
 </resources>

@@ -147,7 +147,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		AppCompatActivity activity = (AppCompatActivity) getActivity();
-		if (activity instanceof BaseActivity){
+		if (activity instanceof BaseActivity && getDialog() == null){
 			BaseActivity a = (BaseActivity) activity;
 			a.setSubTitle(R.string.details);
 		}
@@ -262,15 +262,15 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		DateDialogFragment f;
 		switch (v.getId()) {
 		case R.id.dateField:
-			f = DateDialogFragment.newInstance(getActivity(), TimerDetails.this, dateField.getDate());
+			f = DateDialogFragment.newInstance(getContext(), TimerDetails.this, dateField.getDate());
 			f.show(getActivity().getSupportFragmentManager(), "datepicker");
 			break;
 		case R.id.startField:
-			f = DateDialogFragment.newInstance(getActivity(), startTimeSetListener, startField.getDate());
+			f = DateDialogFragment.newInstance(getContext(), startTimeSetListener, startField.getDate());
 			f.show(getActivity().getSupportFragmentManager(), "startTimePicker");
 			break;
 		case R.id.stopField:
-			f = DateDialogFragment.newInstance(getActivity(), stopTimeSetListener, stopField.getDate());
+			f = DateDialogFragment.newInstance(getContext(), stopTimeSetListener, stopField.getDate());
 			f.show(getActivity().getSupportFragmentManager(), "stopTimePicker");
 			break;
 		case R.id.buttonCancel:

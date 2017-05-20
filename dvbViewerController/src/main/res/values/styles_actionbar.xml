@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <style name="ThemeDialogWhenLarge" parent="android:style/Theme"/>
+    <style name="ThemeDialogWhenLarge" parent="Theme.AppCompat.DialogWhenLarge"/>
 
     <style name="ActionBarStyle" parent="Widget.AppCompat.Light.ActionBar">
         <item name="background">@drawable/ab_background</item>
@@ -12,13 +12,6 @@
     <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
         <item name="android:background">@drawable/ab_background</item>
         <item name="background">@drawable/ab_background</item>
-    </style>
-
-    <!-- Action Mode Overflow List -->
-    <style name="PopupMenu" parent="Widget.AppCompat.ListView.Menu"/>
-
-    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:drawable">@drawable/ic_more_vert_white_24dp</item>
     </style>
 
 </resources>

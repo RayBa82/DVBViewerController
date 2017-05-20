@@ -17,8 +17,8 @@
 <resources>
 
     <color name="white_transparent">#50FFFFFF</color>
-	<color name="dark_orange">#fd7208</color>
-    <color name="light_orange">#f79428</color>
+	<color name="dark_orange">#8c3600</color>
+    <color name="light_orange">#b73a00</color>
     <color name="primary_text_color">@android:color/white</color>
 	<color name="selectorLongclickHoloDark">#CC0099CC</color>
 	
@@ -35,8 +35,13 @@
     <color name="bright_foreground_disabled_dark">#ff4c4c4c</color>
     <color name="dim_foreground_dark">#bebebe</color>
     <color name="dim_foreground_disabled_dark">#80bebebe</color>
-    <color name="home_icon_color">#80bebebe</color>
+    <color name="home_icon_color">?android:attr/textColorPrimary</color>
+    <color name="menu_icon_color">?android:attr/textColorSecondary</color>
     <color name="holo_red_dark">#ffcc0000</color>
+    <color name="blueDark">#000079</color>
+    <color name="blueLight">#004089</color>
+    <color name="red_dark">#8c0000</color>
+    <color name="red_light">#a3000d</color>
 
 
 </resources>

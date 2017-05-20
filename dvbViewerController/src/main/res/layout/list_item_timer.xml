@@ -23,12 +23,13 @@
 
     <TextView
         android:id="@+id/date"
+        style="@style/commonSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/contextMenu"
         android:layout_toRightOf="@+id/recIndicator"
         android:ellipsize="marquee"
-        android:singleLine="true" />
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/title"
@@ -53,10 +54,11 @@
 
         <TextView
             android:id="@+id/channelName"
+            style="@style/commonSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
-            android:singleLine="true" />
+            android:maxLines="1" />
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.ClickableRelativeLayout>

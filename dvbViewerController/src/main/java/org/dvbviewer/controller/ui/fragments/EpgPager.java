@@ -109,7 +109,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPager.setAdapter(mAdapter);
-		mPager.setPageMargin((int) UIUtils.dipToPixel(getActivity(), 25));
+		mPager.setPageMargin((int) UIUtils.dipToPixel(getContext(), 25));
 		mPager.setCurrentItem(chanIndex);
 		mPager.addOnPageChangeListener(this);
 		getLoaderManager().initLoader(0, null, this);

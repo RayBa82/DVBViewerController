@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +28,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -172,7 +172,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             selection.append(ChannelTbl.GROUP_ID).append(" = ").append(mGroupId);
         }
 
-        loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection.toString(), null, ChannelTbl.POSITION);
+        loader = new CursorLoader(getContext(), ChannelTbl.CONTENT_URI_NOW, null, selection.toString(), null, ChannelTbl.POSITION);
         return loader;
     }
 
@@ -254,13 +254,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void showTimerDialog(Cursor c) {
         Timer timer = cursorToTimer(c);
-        if (UIUtils.isTablet(getActivity())) {
+        if (UIUtils.isTablet(getContext())) {
             TimerDetails timerdetails = TimerDetails.newInstance();
             Bundle args = TimerDetails.buildBundle(timer);
             timerdetails.setArguments(args);
             timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
         } else {
-            Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
+            Intent timerIntent = new Intent(getContext(), TimerDetailsActivity.class);
             Bundle extras = TimerDetails.buildBundle(timer);
             timerIntent.putExtras(extras);
             startActivity(timerIntent);
@@ -269,14 +269,14 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void showStreamConfig(Cursor cursor) {
         Channel chan = cursorToChannel(cursor);
-        if (UIUtils.isTablet(getActivity())) {
+        if (UIUtils.isTablet(getContext())) {
             Bundle arguments = getIntentExtras(chan);
             StreamConfig cfg = StreamConfig.newInstance();
             cfg.setArguments(arguments);
             cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
         } else {
             Bundle arguments = getIntentExtras(chan);
-            Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
+            Intent streamConfig = new Intent(getContext(), StreamConfigActivity.class);
             streamConfig.putExtras(arguments);
             startActivity(streamConfig);
         }
@@ -492,7 +492,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         mChannelIndex = (Integer) v.getTag();
         switch (v.getId()) {
             case R.id.contextMenu:
-                PopupMenu popup = new PopupMenu(getActivity(), v);
+                PopupMenu popup = new PopupMenu(getContext(), v);
                 popup.getMenuInflater().inflate(R.menu.context_menu_channellist, popup.getMenu());
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
@@ -511,7 +511,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                         e.printStackTrace();
                     }
                 } catch (ActivityNotFoundException e) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
                     e.printStackTrace();
                 }
@@ -552,7 +552,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         final String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : name;
         final long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
         final long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
-        final DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+        final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
         final int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5);
         final int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5);
         final Date start = epgStart > 0 ? new Date(epgStart) : new Date();

@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -29,9 +28,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,12 +59,12 @@ import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
+import org.dvbviewer.controller.ui.base.BaseDialogFragment;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.StreamType;
 import org.dvbviewer.controller.utils.StreamUtils;
-import org.dvbviewer.controller.utils.UIUtils;
 import org.dvbviewer.controller.utils.URLUtil;
 
 import java.io.InputStream;
@@ -74,12 +73,9 @@ import java.io.InputStream;
  * DialogFragment to show the stream settings.
  *
  */
-public class StreamConfig extends DialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener, LoaderManager.LoaderCallbacks<FfMpegPrefs> {
+public class StreamConfig extends BaseDialogFragment implements OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener, LoaderManager.LoaderCallbacks<FfMpegPrefs> {
 
 	private static final String	Tag						= StreamConfig.class.getSimpleName();
-	private static final String	liveUrl					= "/upnp/channelstream/";
-	private static final String recordingUrl			= "/upnp/recordings/";
-	private static final String videoUrl				= "/upnp/video/";
 	private static final Gson 	gson					= new Gson();
 	public static final String	EXTRA_FILE_ID			= "_fileID";
 	public static final String	M3U8_MIME_TYPE			= "video/m3u8";
@@ -121,7 +117,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		seekable = mFileType != FileType.CHANNEL;
 
 		if (seekable) {
-			DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
+			DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
 			preTime = String.valueOf(prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 0));
 		}
 	}
@@ -249,7 +245,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 				AnalyticsTracker.trackTranscodedStream(getActivity().getApplication());
 			}
         } catch (ActivityNotFoundException e) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
         } catch (UrlBuilderException e) {
 			Log.e(Tag, "Error creating Stream URL", e);
@@ -266,7 +262,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 		Intent videoIntent;
 		videoIntent = getVideoIntent(fileType);
 		startActivity(videoIntent);
-		if (UIUtils.isTablet(getActivity())) {
+		if (getDialog() != null) {
             getDialog().dismiss();
         } else {
             getActivity().finish();
@@ -306,7 +302,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
 			editor.putBoolean("stream_external", false);
 			editor.commit();
 			onClick(startButton);
-			if (UIUtils.isTablet(getActivity())) {
+			if (getDialog() != null) {
 				getDialog().dismiss();
 			} else {
 				getActivity().finish();
@@ -439,7 +435,7 @@ public class StreamConfig extends DialogFragment implements OnClickListener, Dia
     @Override
 	public void onLoadFinished(Loader<FfMpegPrefs> loader, FfMpegPrefs data) {
 		if (data != null && !data.getPresets().isEmpty()) {
-			final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, data.getPresets());
+			final ArrayAdapter<Preset> dataAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, data.getPresets());
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			int pos = data.getPresets().indexOf(StreamUtils.getDefaultPreset(prefs));
 			startHours.clearFocus();

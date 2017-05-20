@@ -76,6 +76,9 @@ public class VideoList extends RecyclerViewFragment implements LoaderManager.Loa
 	@Override
 	public void onAttach(Context activity) {
 		super.onAttach(activity);
+		if(getParentFragment() != null && getParentFragment() instanceof VideoAdapter.OnVideoClickListener) {
+			videoClickListener = (VideoAdapter.OnVideoClickListener) getParentFragment();
+		}
 		if (activity instanceof VideoAdapter.OnVideoClickListener) {
 			videoClickListener = (VideoAdapter.OnVideoClickListener) activity;
 		}
@@ -122,6 +125,8 @@ public class VideoList extends RecyclerViewFragment implements LoaderManager.Loa
 
 	@Override
 	public void onVideoClick(VideoFile videoFile) {
-		videoClickListener.onVideoClick(videoFile);
+		if(videoClickListener != null) {
+			videoClickListener.onVideoClick(videoFile);
+		}
 	}
 }

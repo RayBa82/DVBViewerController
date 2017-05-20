@@ -132,7 +132,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		mAdapter = new PagerAdapter(getChildFragmentManager(), mGroupCursor);
 		ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 		mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		prefs = new DVBViewerPreferences(getActivity());
+		prefs = new DVBViewerPreferences(getContext());
 		showGroups = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_GROUPS, true);
 		showExtraGroup = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_ALL_AS_GROUP, false);
 		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
@@ -168,7 +168,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		super.onActivityCreated(savedInstanceState);
 		getActivity().setTitle(showFavs ? R.string.favourites : R.string.channelList);
 		mPager.setAdapter(mAdapter);
-		mPager.setPageMargin((int) UIUtils.dipToPixel(getActivity(), 25));
+		mPager.setPageMargin((int) UIUtils.dipToPixel(getContext(), 25));
 		mPager.addOnPageChangeListener(this);
 
 		int loaderId = LOAD_CHANNELS;

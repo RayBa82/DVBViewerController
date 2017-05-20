@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:padding="4dp"
     app:alignmentMode="alignMargins"
-    app:columnCount="2"
-    app:rowCount="4"
+    app:columnCount="@integer/gridCols"
+    app:rowCount="@integer/gridRows"
     app:rowOrderPreserved="false"
     app:useDefaultMargins="true">
 
@@ -13,8 +13,9 @@
         android:id="@+id/home_btn_remote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
         android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
+        android:foregroundTint="@color/blueDark"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
@@ -109,39 +110,6 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/home_btn_medias"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        app:cardUseCompatPadding="true"
-        app:layout_columnWeight="1"
-        app:layout_gravity="fill"
-        app:layout_rowWeight="1">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/img_medias"
-                style="@style/DashboardButton"
-                android:layout_centerInParent="true"
-                app:srcCompat="@drawable/dash_recordings_48dp" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/img_medias"
-                android:layout_centerHorizontal="true"
-                android:text="Medias" />
-
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
         android:id="@+id/home_btn_recordings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -169,6 +137,39 @@
                 android:layout_below="@id/img_recordings"
                 android:layout_centerHorizontal="true"
                 android:text="@string/recordings" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/home_btn_medias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        app:cardUseCompatPadding="true"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        app:layout_rowWeight="1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/img_medias"
+                style="@style/DashboardButton"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/dash_video_library_48dp" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/img_medias"
+                android:layout_centerHorizontal="true"
+                android:text="Medias" />
 
         </RelativeLayout>
 
