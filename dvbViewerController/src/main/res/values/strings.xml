@@ -94,7 +94,7 @@
     <string name="WOL">Wake Recording Service</string>
     <!-- Status -->
     <string name="status">Status</string>
-    <string name="status_rs_version">Recording Service Version</string>
+    <string name="status_server_version">Server Version</string>
     <string name="status_current_recordings">Running Recordings</string>
     <string name="status_current_clients">Connected Clients</string>
     <string name="status_current_rtsp_clients">Connected RTSP Clients</string>

@@ -153,7 +153,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             status = new Status();
         }
         StatusItem versionItem = new StatusItem();
-        versionItem.setNameRessource(R.string.status_rs_version);
+        versionItem.setNameRessource(R.string.status_server_version);
         versionItem.setValue(version);
         status.getItems().add(0, versionItem);
         return status;

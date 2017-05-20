@@ -94,7 +94,7 @@
     <string name="WOL">Recording Service wecken</string>
     <!-- Status -->
     <string name="status">Status</string>
-    <string name="status_rs_version">Recording Service Version</string>
+    <string name="status_server_version">Server Version</string>
     <string name="status_current_recordings">Laufende Aufnahmen</string>
     <string name="status_current_clients">Verbundene Clients</string>
     <string name="status_current_rtsp_clients">Verbundene RTSP Clients</string>
