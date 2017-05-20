@@ -93,7 +93,6 @@
     <string name="WOL">Recordin Service felkeltése</string>
     <!-- Status -->
     <string name="status">Státusz</string>
-    <string name="status_rs_version">Recording Service Verzió</string>
     <string name="status_current_recordings">Folyó felvételek</string>
     <string name="status_current_clients">Rákapcsolt kliens</string>
     <string name="status_current_rtsp_clients">Rákapcsolt RTSP kliens</string>

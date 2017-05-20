@@ -93,7 +93,6 @@
     <string name="WOL">Obudź Usługę nagrywania</string>
     <!-- Status -->
     <string name="status">Status</string>
-    <string name="status_rs_version">Wersja Usługi nagrywania</string>
     <string name="status_current_recordings">Trwające nagrania</string>
     <string name="status_current_clients">Podłączeni klienci</string>
     <string name="status_current_rtsp_clients">Połączeni klienci RTSP</string>

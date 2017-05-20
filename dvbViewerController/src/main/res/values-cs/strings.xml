@@ -94,7 +94,6 @@
     <string name="WOL">Probudit nahrávací službu</string>
     <!-- Status -->
     <string name="status">Aktuální stav</string>
-    <string name="status_rs_version">Verze nahrávací služby</string>
     <string name="status_current_recordings">Spuštěná nahrávání</string>
     <string name="status_current_clients">Připojení klienti</string>
     <string name="status_current_rtsp_clients">Připojení RTSP klienti</string>
