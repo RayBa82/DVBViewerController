@@ -21,6 +21,8 @@
     <string name="version">App Version:</string>
     <string name="common_all">All</string>
     <string name="delete">Delete</string>
+    <string name="none">None</string>
+    <string name="def">Default</string>
     <!-- Channels -->
     <string name="channelList">Channel List</string>
     <string name="refreshChannels">Synchronize channels</string>

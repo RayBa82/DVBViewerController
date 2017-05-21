@@ -45,7 +45,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.gson.Gson;
-import com.nineoldandroids.animation.IntEvaluator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -67,6 +66,9 @@ import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.URLUtil;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * DialogFragment to show the stream settings.
@@ -81,21 +83,23 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 	public static final String	EXTRA_FILE_TYPE			= "_fileType";
 	public static final String	EXTRA_DIALOG_TITLE_RES	= "_dialog_title_res";
 	public static final String  EXTRA_TITLE             = "title";
+	private View 				collapsable;
+	private Button				startButton;
 	private EditText			startHours;
 	private EditText			startMinutes;
 	private EditText			startSeconds;
 	private Spinner				qualitySpinner;
 	private Spinner 			encodingSpeedSpinner;
-	private Button				startButton;
+	private Spinner 			audioTrackSpinner;
+	private Spinner 			subTitleSpinner;
 	private String				preTime;
 	private int					title					= 0;
 	private boolean				seekable				= false;
-    private String				mTitle				    = StringUtils.EMPTY;
+	private String				mTitle				    = StringUtils.EMPTY;
 	private StreamType			mStreamType;
-    private FileType            mFileType;
+	private FileType            mFileType;
 	private long				mFileId					= -1;
 	private SharedPreferences	prefs;
-	private View collapsable;
 
 
 	/* (non-Javadoc)
@@ -157,7 +161,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 	 */
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_stream_config, container, false);
+		final View v = inflater.inflate(R.layout.fragment_stream_config, container, false);
 
 		collapsable = v.findViewById(R.id.collapsable);
 		collapsable.setVisibility(View.GONE);
@@ -168,15 +172,39 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 		int encodingSpeed = StreamUtils.getEncodingSpeedIndex(getContext(), prefs);
 		encodingSpeedSpinner.setSelection(encodingSpeed);
 		encodingSpeedSpinner.setOnItemSelectedListener(this);
+
+		audioTrackSpinner = (Spinner) v.findViewById(R.id.audioSpinner);
+		audioTrackSpinner.setOnItemSelectedListener(this);
+		final List<String> audioTracks = new LinkedList<>();
+		audioTracks.add(getResources().getString(R.string.def));
+		audioTracks.add(getResources().getString(R.string.common_all));
+		audioTracks.addAll(Arrays.asList(getResources().getStringArray(R.array.tracks)));
+		String[] audio = new String[audioTracks.size()];
+		audio = audioTracks.toArray(audio);
+		ArrayAdapter<String> audioAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, audio); //selected item will look like a spinner set from XML
+		audioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		audioTrackSpinner.setAdapter(audioAdapter);
+
+		subTitleSpinner = (Spinner) v.findViewById(R.id.subTitleSpinner);
+		subTitleSpinner.setOnItemSelectedListener(this);
+		final List<String> subTitleTracks = new LinkedList<>();
+		subTitleTracks.add(getResources().getString(R.string.none));
+		subTitleTracks.add(getResources().getString(R.string.common_all));
+		subTitleTracks.addAll(Arrays.asList(getResources().getStringArray(R.array.tracks)));
+		String[] subs = new String[subTitleTracks.size()];
+		subs = subTitleTracks.toArray(subs);
+		ArrayAdapter<String> subAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, subs); //selected item will look like a spinner set from XML
+		subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		subTitleSpinner.setAdapter(subAdapter);
 		
 		startButton = (Button) v.findViewById(R.id.startTranscodedButton);
 		startButton.setOnClickListener(this);
-		Button startDirectStreamButton = (Button) v.findViewById(R.id.startDirectButton);
+		final Button startDirectStreamButton = (Button) v.findViewById(R.id.startDirectButton);
 		startDirectStreamButton.setOnClickListener(this);
 		startHours = (EditText) v.findViewById(R.id.stream_hours);
 		startMinutes = (EditText) v.findViewById(R.id.stream_minutes);
 		startSeconds = (EditText) v.findViewById(R.id.stream_seconds);
-		View positionContainer = v.findViewById(R.id.streamPositionContainer);
+		final View positionContainer = v.findViewById(R.id.streamPositionContainer);
 
 		/**
 		 * Hide Position Row if streaming non seekable content
@@ -446,9 +474,6 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 			int heightMeasureSpec = ViewGroup.MeasureSpec.makeMeasureSpec(1073741823, View.MeasureSpec.AT_MOST);
 			collapsable.measure(widthMeasureSpec, heightMeasureSpec);
 			collapsable.setVisibility(View.VISIBLE);
-//			ValueAnimator animator = ValueAnimator.ofObject(new HeightEvaluator(collapsable), 0, collapsable.getMeasuredHeight());
-//			animator.setDuration(500);
-//			animator.start();
 		}
 	}
 
@@ -456,24 +481,5 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 	public void onLoaderReset(Loader<FfMpegPrefs> loader) {
 
 	}
-
-
-	private static class HeightEvaluator extends IntEvaluator {
-
-		private final View v;
-		public HeightEvaluator(View v) {
-			this.v = v;
-		}
-
-		@Override
-		public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
-			int height = super.evaluate(fraction, startValue, endValue);
-			final ViewGroup.LayoutParams params = v.getLayoutParams();
-			params.height = height;
-			v.setLayoutParams(params);
-			return height;
-		}
-	}
-
 
 }

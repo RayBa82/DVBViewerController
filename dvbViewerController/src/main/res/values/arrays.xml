@@ -17,6 +17,18 @@
         <item>veryslow</item>
         <item>placebo</item>
     </string-array>
+    <string-array name="tracks" translatable="true">
+        <item>Track 1</item>
+        <item>Track 2</item>
+        <item>Track 3</item>
+        <item>Track 4</item>
+        <item>Track 5</item>
+        <item>Track 6</item>
+        <item>Track 7</item>
+        <item>Track 8</item>
+        <item>Track 9</item>
+        <item>Track 10</item>
+    </string-array>
     <string-array name="epgMonitoring">
         <item>None</item>
         <item>Start/End time update from EPG</item>
