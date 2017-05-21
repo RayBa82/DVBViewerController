@@ -31,7 +31,7 @@ public class ServerConsts {
 	public static final String	URL_EXECUTE_TASK				= "/tasks.html?aktion=tasks&task=";
 	public static final String  URL_SEND_COMMAND                = "/api/dvbcommand.html?target={0}&cmd=-x{1}";
 	public static final String	URL_SWITCH_COMMAND				= "/api/dvbcommand.html?target={0}&cmd=-c{1}";
-	public static final String	URL_DELETE_RECORDING			= "/rec_listnew.html?aktion=delete_rec&recid=";
+	public static final String	URL_DELETE_RECORDING			= "/api/recdelete.html?delfile=1&recid={0}";
 	public static final String	URL_FLASHSTREAM					= "/flashstream/stream";
 	public static final String	URL_M3U8						= "/master.m3u8";
 	public static final String	URL_TARGETS					    = "/api/dvbcommand.html";

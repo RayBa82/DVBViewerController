@@ -53,6 +53,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Recording;
@@ -74,6 +75,7 @@ import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -91,11 +93,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public static final String ACTION_MODE        = "action_mode";
 	public static final String CHECKED_ITEM_COUNT = "checked_item_count";
 
-	RecordingAdapter mAdapter;
-	ActionMode       mode;
-	int              selectedPosition;
-	ProgressDialog   progressDialog;
-	private boolean actionMode;
+	private RecordingAdapter    mAdapter;
+	private RecordingDeleter    deleter;
+	private ProgressDialog      progressDialog;
+	private ActionMode          mode;
+	private int                 selectedPosition;
+	private boolean             actionMode;
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -215,7 +218,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				}
 				return true;
 			case R.id.menuDelete:
-				getListView().setItemChecked(selectedPosition, true);
+				List<Recording> recordings = Collections.singletonList(mAdapter.getItem(selectedPosition));
+				deleter = new RecordingDeleter(recordings, this);
 				AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 				builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
 				return true;
@@ -418,11 +422,23 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menuDelete:
-				/**
-				 * Alertdialog to confirm the delete of Recordings
-				 */
-				AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-				builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
+				SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
+				if (checkedPositions != null && checkedPositions.size() > 0) {
+
+					int size = checkedPositions.size();
+					List<Recording> recordings = new ArrayList<Recording>();
+					for (int i = 0; i < size; i++) {
+						if (checkedPositions.valueAt(i)) {
+							recordings.add(mAdapter.getItem(checkedPositions.keyAt(i)));
+						}
+					}
+					deleter = new RecordingDeleter(recordings, this);
+					/**
+					 * Alertdialog to confirm the delete of Recordings
+					 */
+					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
+				}
 				break;
 
 			default:
@@ -515,6 +531,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public static class RecordingDeleter extends AsyncTask<Recording, Void, Boolean> {
 
 		AsyncCallback callback;
+		List<Recording> recordings;
 
 		/**
 		 * Instantiates a new recording deleter.
@@ -523,7 +540,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		 * @author RayBa
 		 * @date 07.04.2013
 		 */
-		public RecordingDeleter(AsyncCallback callback) {
+		public RecordingDeleter(List<Recording> recordings, AsyncCallback callback) {
+			this.recordings = recordings;
 			this.callback = callback;
 		}
 
@@ -534,6 +552,13 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		protected void onPreExecute() {
 			super.onPreExecute();
 			callback.onAsyncActionStart();
+		}
+
+		public void execute() {
+			if (CollectionUtils.isNotEmpty(recordings)) {
+				Recording[] array = new Recording[recordings.size()];
+				execute(recordings.toArray(array));
+			}
 		}
 
 		/* (non-Javadoc)
@@ -559,7 +584,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			}
 			for (int i = 0; i < count; i++) {
 				try {
-					ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_DELETE_RECORDING + params[i].getId());
+					final String path = MessageFormat.format(ServerConsts.URL_DELETE_RECORDING, params[i].getId());
+					ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + path);
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
 				} catch (DefaultHttpException e) {
@@ -580,19 +606,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public void onClick(DialogInterface dialog, int which) {
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:
-				SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
-				if (checkedPositions != null && checkedPositions.size() > 0) {
-
-					int size = checkedPositions.size();
-					RecordingDeleter deleter = new RecordingDeleter(this);
-					List<Recording> recordings = new ArrayList<Recording>();
-					for (int i = 0; i < size; i++) {
-						if (checkedPositions.valueAt(i)) {
-							recordings.add(mAdapter.getItem(checkedPositions.keyAt(i)));
-						}
-					}
-					Recording[] array = new Recording[recordings.size()];
-					deleter.execute(recordings.toArray(array));
+				if(deleter != null) {
+					deleter.execute();
 				}
 				if(mode != null) {
 					mode.finish();
