@@ -13,18 +13,20 @@
     <application
         android:name="App"
         android:allowBackup="true"
-        android:supportsRtl="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.DVB">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DVB"
+        android:windowSoftInputMode="adjustPan|adjustResize">
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/analytics_global_config" />
 
         <activity
             android:name=".ui.HomeActivity"
+            android:label="@string/app_name"
             android:theme="@style/Theme.DVB.NoActionBar"
-            android:label="@string/app_name">
+            android:windowSoftInputMode="adjustPan|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,7 +45,8 @@
             android:theme="@style/Theme.DVB.NoActionBar" />
         <activity
             android:name=".ui.phone.TimerlistActivity"
-            android:label="@string/timer" />
+            android:label="@string/timer"
+            android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
             android:name=".ui.phone.TaskActivity"
             android:label="@string/tasks" />
@@ -68,8 +71,7 @@
             android:label="@string/streamConfig" />
         <activity
             android:name=".ui.phone.IEpgDetailsActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:label="@string/app_name"></activity>
         <activity android:name=".ui.phone.AboutActivity" />
         <activity android:name=".ui.phone.MedialistActivity" />
 
