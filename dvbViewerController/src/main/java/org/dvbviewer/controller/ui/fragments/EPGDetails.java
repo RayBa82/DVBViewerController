@@ -49,7 +49,6 @@ public class EPGDetails extends BaseDialogFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		setRetainInstance(true);
 		epg = getArguments().getParcelable(IEPG.class.getSimpleName());
 	}
 
