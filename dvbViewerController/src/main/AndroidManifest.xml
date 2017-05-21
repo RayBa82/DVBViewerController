@@ -16,8 +16,7 @@
         android:supportsRtl="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.DVB"
-        android:windowSoftInputMode="stateHidden">
+        android:theme="@style/Theme.DVB">
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/analytics_global_config" />
@@ -63,21 +62,13 @@
             android:theme="@style/Theme.DVB.NoActionBar" />
         <activity
             android:name=".ui.phone.TimerDetailsActivity"
-            android:label="@string/timer"
-            android:windowSoftInputMode="adjustPan" />
+            android:label="@string/timer" />
         <activity
             android:name=".ui.phone.StreamConfigActivity"
-            android:label="@string/streamConfig"
-            android:windowSoftInputMode="adjustPan" />
+            android:label="@string/streamConfig" />
         <activity
             android:name=".ui.phone.IEpgDetailsActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.ALTERNATIVE" />
-            </intent-filter>
+            android:label="@string/app_name">
         </activity>
         <activity android:name=".ui.phone.AboutActivity" />
         <activity android:name=".ui.phone.MedialistActivity" />

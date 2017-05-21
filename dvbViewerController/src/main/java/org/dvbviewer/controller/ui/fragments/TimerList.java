@@ -304,7 +304,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
             @Override
             public void run() {
                 Snackbar snackbar = Snackbar
-                        .make(getListView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
+                        .make(getView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
                 snackbar.show();
                 refresh();
             }
