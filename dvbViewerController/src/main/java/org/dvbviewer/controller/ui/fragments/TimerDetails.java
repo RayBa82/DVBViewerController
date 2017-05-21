@@ -15,10 +15,10 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.Activity;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -127,10 +127,10 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
      * @see com.actionbarsherlock.app.SherlockDialogFragment#onAttach(android.app.Activity)
      */
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if (activity instanceof OnTimerEditedListener) {
-			mOntimeredEditedListener = (OnTimerEditedListener) activity;
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		if (context instanceof OnTimerEditedListener) {
+			mOntimeredEditedListener = (OnTimerEditedListener) context;
 		}
 	}
 
