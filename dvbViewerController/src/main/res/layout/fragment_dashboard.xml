@@ -169,7 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_medias"
                 android:layout_centerHorizontal="true"
-                android:text="Medias" />
+                android:text="@string/medias" />
 
         </RelativeLayout>
 

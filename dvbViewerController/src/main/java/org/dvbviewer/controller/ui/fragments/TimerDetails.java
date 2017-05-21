@@ -17,13 +17,13 @@ package org.dvbviewer.controller.ui.fragments;
 
 import android.app.Activity;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.app.Dialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
@@ -45,7 +45,6 @@ import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
-import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.base.BaseDialogFragment;
 import org.dvbviewer.controller.ui.widget.DateField;
 import org.dvbviewer.controller.utils.DateUtils;
@@ -150,11 +149,6 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		AppCompatActivity activity = (AppCompatActivity) getActivity();
-		if (activity instanceof BaseActivity && getDialog() == null){
-			BaseActivity a = (BaseActivity) activity;
-			a.setSubTitle(R.string.details);
-		}
 		if (timer != null) {
 			final boolean create = timer.getId() < 0l;
 			titleField.setText(timer.getTitle());
@@ -178,14 +172,18 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
                 monitoringSpinner.setVisibility(View.GONE);
             }
 		}
-		if (getDialog() != null) {
-			getDialog().setTitle(timer != null && timer.getId() <= 0 ? R.string.createTimer : R.string.editTimer);
-		}
 	}
-	
+
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		final Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.setTitle(timer != null && timer.getId() <= 0 ? R.string.createTimer : R.string.editTimer);
+		return dialog;
+	}
+
 	/* (non-Javadoc)
-	 * @see android.support.v4.app.DialogFragment#onSaveInstanceState(android.os.Bundle)
-	 */
+         * @see android.support.v4.app.DialogFragment#onSaveInstanceState(android.os.Bundle)
+         */
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
 		super.onSaveInstanceState(arg0);

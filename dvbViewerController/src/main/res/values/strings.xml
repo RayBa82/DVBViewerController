@@ -42,6 +42,8 @@
     <string name="recordings">Recording List</string>
     <string name="no_recordings">No recordings found</string>
     <string name="busyDeleteRecordings">Deleting Recording&#8230;</string>
+    <!-- Medias -->
+    <string name="medias">Medias</string>
     <!-- Timer -->
     <string name="timer">Timer</string>
     <string name="createTimer">Create Timer</string>

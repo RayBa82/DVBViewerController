@@ -99,6 +99,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	private ActionMode          mode;
 	private int                 selectedPosition;
 	private boolean             actionMode;
+	private IEpgDetailsActivity.OnIEPGClickListener clickListener;
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -122,7 +123,6 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		Loader<List<Recording>> loader = getLoaderManager().initLoader(0, savedInstanceState, this);
 		setListShown(!(!isResumed() || loader.isStarted()));
 		setEmptyText(getResources().getString(R.string.no_recordings));
-		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		getListView().setOnItemLongClickListener(this);
 		if (savedInstanceState != null && savedInstanceState.getBoolean(ACTION_MODE, false)) {
 			AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -180,6 +180,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		getListView().setItemChecked(position, true);
 		int count = getCheckedItemCount();
 		if (actionMode == false) {
@@ -379,8 +380,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				mode.finish();
 			}
 		} else {
-			Intent details = new Intent(getContext(), IEpgDetailsActivity.class);
 			IEPG entry = mAdapter.getItem(position);
+			if(clickListener != null) {
+				clickListener.onIEPGClick(entry);
+				return;
+			}
+			Intent details = new Intent(getContext(), IEpgDetailsActivity.class);
 			details.putExtra(IEPG.class.getSimpleName(), entry);
 			startActivity(details);
 			clearSelection();
@@ -453,6 +458,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public void onDestroyActionMode(ActionMode mode) {
 		clearSelection();
+		getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		actionMode = false;
 	}
 
@@ -686,6 +692,15 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public void onAsyncActionStop() {
 		progressDialog.dismiss();
 		refresh();
+	}
+
+
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		if (context instanceof IEpgDetailsActivity.OnIEPGClickListener) {
+			clickListener = (IEpgDetailsActivity.OnIEPGClickListener) context;
+		}
 	}
 
 }

@@ -37,7 +37,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -130,7 +129,6 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Dialog dia = super.onCreateDialog(savedInstanceState);
-		dia.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		dia.setTitle(R.string.streamConfig);
 		return dia;
 	}
@@ -151,9 +149,6 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 	@Override
 	public void onActivityCreated(Bundle arg0) {
 		super.onActivityCreated(arg0);
-		if (getDialog() != null && title > 0) {
-			getDialog().setTitle(title);
-		}
 		getLoaderManager().initLoader(0, arg0, this);
 	}
 

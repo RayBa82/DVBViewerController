@@ -15,9 +15,8 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
+import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,12 +25,13 @@ import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
+import org.dvbviewer.controller.ui.base.BaseDialogFragment;
 import org.dvbviewer.controller.utils.DateUtils;
 
 /**
  * Fragment for EPG details or Timer details.
  */
-public class EPGDetails extends Fragment  {
+public class EPGDetails extends BaseDialogFragment {
 	
 
 	IEPG epg;
@@ -48,11 +48,9 @@ public class EPGDetails extends Fragment  {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		AppCompatActivity activity = (AppCompatActivity) getActivity();
-		activity.setTitle(R.string.details);
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
-		epg = getActivity().getIntent().getParcelableExtra(IEPG.class.getSimpleName());
+		epg = getArguments().getParcelable(IEPG.class.getSimpleName());
 	}
 
 	/* (non-Javadoc)
@@ -80,6 +78,13 @@ public class EPGDetails extends Fragment  {
 			}
 			desc.setText(epg.getDescription());
 		}
+	}
+
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		final Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.setTitle(R.string.details);
+		return dialog;
 	}
 
 	/* (non-Javadoc)

@@ -77,11 +77,9 @@
         <item name="android:maxHeight">16dip</item>
     </style>
 
-    <style name="DialogStyle" parent="Theme.AppCompat.Dialog.MinWidth">
-        <item name="windowMinWidthMajor">50%</item>
+    <style name="DialogStyle" parent="Theme.AppCompat.DialogWhenLarge">
         <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
     </style>
-
 
     <style name="DialogWindowTitle" parent="@style/Widget.AppCompat.Toolbar">
         <item name="android:background">@drawable/ab_background</item>

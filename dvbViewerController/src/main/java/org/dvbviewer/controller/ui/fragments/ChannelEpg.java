@@ -81,6 +81,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     public static final String KEY_EPG_ID       = ChannelEpg.class.getName()+"KEY_EPG_ID";
     public static final String KEY_EPG_DAY      = ChannelEpg.class.getName()+"EPG_DAY";
     private ChannelEPGAdapter mAdapter;
+    private IEpgDetailsActivity.OnIEPGClickListener clickListener;
     private String channel;
     private long channelId;
     private long epgId;
@@ -106,10 +107,11 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
+        if(context instanceof EpgDateInfo) {
             mDateInfo = (EpgDateInfo) context;
-        } catch (ClassCastException e) {
-            e.printStackTrace();
+        }
+        if(context instanceof IEpgDetailsActivity.OnIEPGClickListener) {
+            clickListener = (IEpgDetailsActivity.OnIEPGClickListener) context;
         }
     }
 
@@ -277,7 +279,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         Cursor c = mAdapter.getCursor();
         c.moveToPosition(position);
         IEPG entry = cursorToEpgEntry(c);
-
+        if(clickListener != null) {
+            clickListener.onIEPGClick(entry);
+            return;
+        }
         Intent i = new Intent(getContext(), IEpgDetailsActivity.class);
         i.putExtra(IEPG.class.getSimpleName(), entry);
         startActivity(i);

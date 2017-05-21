@@ -68,9 +68,8 @@ public class MedialistActivity extends BaseSinglePaneActivity implements MediaAd
 	 */
 	@Override
 	protected Fragment onCreatePane() {
-		Bundle b = new Bundle();
 		final MediaList mediaList = new MediaList();
-		mediaList.setArguments(b);
+		mediaList.setArguments(intentToFragmentArguments(getIntent()));
 		return mediaList;
 	}
 

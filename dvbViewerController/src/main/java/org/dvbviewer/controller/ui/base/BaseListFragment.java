@@ -102,7 +102,7 @@ public class BaseListFragment extends BaseFragment {
             Bundle savedInstanceState) {
         final int layoutRes = getLayoutRessource();
         if (layoutRes > 0) {
-            View v = getLayoutInflater(savedInstanceState).inflate(layoutRes, null);
+            View v = inflater.inflate(layoutRes, container, false);
             return v;
         }else {
             final Context context = getContext();
@@ -439,16 +439,18 @@ public class BaseListFragment extends BaseFragment {
 	 * @return the checked item count
 	 */
 	public int getCheckedItemCount() {
-		SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
-		int count = 0;
-		int size = checkedPositions.size();
-		if (size > 0) {
-			for (int i = 0; i < size; i++) {
-				if (checkedPositions.valueAt(i)) {
-					count++;
-				}
-			}
-		}
+        int count = 0;
+        SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
+        if(checkedPositions != null) {
+            int size = checkedPositions.size();
+            if (size > 0) {
+                for (int i = 0; i < size; i++) {
+                    if (checkedPositions.valueAt(i)) {
+                        count++;
+                    }
+                }
+            }
+        }
 		return count;
 	}
 

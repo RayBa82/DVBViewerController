@@ -32,11 +32,13 @@ import android.widget.Spinner;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
 import org.dvbviewer.controller.ui.fragments.Dashboard;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
+import org.dvbviewer.controller.ui.fragments.EPGDetails;
 import org.dvbviewer.controller.ui.fragments.MediaFragment;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
@@ -46,6 +48,7 @@ import org.dvbviewer.controller.ui.fragments.TimerList;
 import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
 import org.dvbviewer.controller.ui.phone.AboutActivity;
 import org.dvbviewer.controller.ui.phone.ChannelListActivity;
+import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
 import org.dvbviewer.controller.ui.phone.MedialistActivity;
 import org.dvbviewer.controller.ui.phone.PreferencesActivity;
 import org.dvbviewer.controller.ui.phone.RecordinglistActivity;
@@ -62,7 +65,7 @@ import java.util.List;
  *
  * @author RayBa
  */
-public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
+public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener, IEpgDetailsActivity.OnIEPGClickListener {
 
     public static final String ENABLE_DRAWER = "ENABLE_DRAWER";
 	public static final String TITLE 		 = "title";
@@ -340,6 +343,15 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			super.onBackPressed();
 		}
 
+	}
+
+	@Override
+	public void onIEPGClick(IEPG iepg) {
+		EPGDetails details = new EPGDetails();
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(IEPG.class.getSimpleName(), iepg);
+		details.setArguments(bundle);
+		details.show(getSupportFragmentManager(), IEPG.class.getName());
 	}
 
 }

@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-    android:minHeight="480dp"
-    android:minWidth="320dp"
     android:orientation="vertical">
 
     <ScrollView

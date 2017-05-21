@@ -22,10 +22,9 @@
         <item name="android:actionBarStyle" tools:ignore="NewApi">@style/ActionBarStyle</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
         <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
-        <item name="dialogTheme">@style/DialogStyle</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
         <item name="windowActionModeOverlay">true</item>
-        <item name="alertDialogTheme">@style/DialogStyle</item>
+        <item name="dialogTheme">@style/DialogStyle</item>
     </style>
 
 </resources>
