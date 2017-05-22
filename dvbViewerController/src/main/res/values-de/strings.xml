@@ -21,6 +21,8 @@
     <string name="version">App Version:</string>
     <string name="common_all">Alle</string>
     <string name="delete">Löschen</string>
+    <string name="none">Keine</string>
+    <string name="def">Standard</string>
     <!-- Channels -->
     <string name="channelList">Senderliste</string>
     <string name="refreshChannels">Sender syncronisieren</string>
@@ -42,6 +44,8 @@
     <string name="recordings">Aufnahmen</string>
     <string name="no_recordings">Keine Aufnahmen gefunden</string>
     <string name="busyDeleteRecordings">Aufnahmen werden gelöscht&#8230;</string>
+    <!-- Medias -->
+    <string name="medias">Medien</string>
     <!-- Timer -->
     <string name="timer">Timer</string>
     <string name="createTimer">Timer anlegen</string>

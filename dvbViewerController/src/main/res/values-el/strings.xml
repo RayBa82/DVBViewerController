@@ -41,6 +41,7 @@
     <string name="recordings">"Λίστα εγγραφών "</string>
     <string name="no_recordings">"Δεν βρέθηκαν εγγραφές "</string>
     <string name="busyDeleteRecordings">&#8230;</string>
+    <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Χρονοδιακόπτης</string>
     <string name="createTimer">Δημιουργία χρονοδιακόπτη</string>

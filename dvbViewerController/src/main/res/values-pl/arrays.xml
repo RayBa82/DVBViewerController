@@ -3,7 +3,7 @@
     <string-array name="postRecoridngActions">
         <item>Nic nie rób</item>
         <item>Wyłącz komp.</item>
-        <item>Wstrzymanie</item>
+        <item>Uśpienie</item>
         <item>Hibernacja</item>
     </string-array>
 </resources>

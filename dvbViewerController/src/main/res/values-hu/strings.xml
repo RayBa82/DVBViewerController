@@ -40,6 +40,7 @@
     <string name="recordings">Felvételek</string>
     <string name="no_recordings">Nem találtam felvételt</string>
     <string name="busyDeleteRecordings">Felvételeket törlöm&#8230;</string>
+    <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Timer</string>
     <string name="createTimer">Timer létesítése</string>

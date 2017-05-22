@@ -40,6 +40,7 @@
     <string name="recordings">Lista nagrań</string>
     <string name="no_recordings">Brak nagrań</string>
     <string name="busyDeleteRecordings">Usuń nagranie&#8230;</string>
+    <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Programator</string>
     <string name="createTimer">Utwórz nagranie</string>
