@@ -348,10 +348,34 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 				p.setEncodingSpeed(position);
 				break;
 			case R.id.audioSpinner:
-				p.setAudioTrack(position);
+				int audioTrack;
+				switch (position) {
+					case 0:
+						audioTrack = 0;
+						break;
+					case 1:
+						audioTrack = -1;
+						break;
+					default:
+						audioTrack = position -2;
+						break;
+				}
+				p.setAudioTrack(audioTrack);
 				break;
 			case R.id.subTitleSpinner:
-				p.setSubTitle(position);
+				int subtTitleTrack;
+				switch (position) {
+					case 0:
+						subtTitleTrack = -1;
+						break;
+					case 1:
+						subtTitleTrack = 0;
+						break;
+					default:
+						subtTitleTrack = position -2;
+						break;
+				}
+				p.setSubTitle(subtTitleTrack);
 				break;
 			default:
 				break;
@@ -398,9 +422,12 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 		builder.addQueryParameter("preset", preset.getTitle());
 		builder.addQueryParameter("ffPreset", StreamUtils.getEncodingSpeedName(context, preset));
 		builder.addQueryParameter(fileType.transcodedParam, String.valueOf(id));
-		builder.addQueryParameter("track", "-1");
+			builder.addQueryParameter("track", String.valueOf(preset.getAudioTrack()));
 		if (start > 0) {
 			builder.addQueryParameter("start", String.valueOf(start));
+		}
+		if(preset.getSubTitle() >= 0) {
+			builder.addQueryParameter("subs", String.valueOf(preset.getSubTitle()));
 		}
 		final Intent videoIntent = new Intent(Intent.ACTION_VIEW);
 		final String url = builder.build().toString();

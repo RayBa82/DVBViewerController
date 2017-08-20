@@ -26,9 +26,9 @@ public class Preset {
 
     private int encodingSpeed = 4;
 
-    private int audioTrack;
+    private int audioTrack = 0;
 
-    private int subTitle;
+    private int subTitle = -1;
 
     public String getTitle() {
         return title;
