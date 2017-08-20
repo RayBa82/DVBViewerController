@@ -15,7 +15,7 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -30,8 +30,6 @@ import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.adapter.VideoAdapter;
 import org.dvbviewer.controller.ui.base.BaseFragment;
 import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
-import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
-import org.dvbviewer.controller.utils.FileType;
 
 /**
  * The Class Remote.
@@ -40,6 +38,8 @@ import org.dvbviewer.controller.utils.FileType;
  * @date 07.04.2013
  */
 public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaClickListener, OnBackPressedListener, VideoAdapter.OnVideoClickListener{
+
+   private VideoAdapter.OnVideoClickListener videoClickListener;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
@@ -57,9 +57,17 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof VideoAdapter.OnVideoClickListener) {
+            videoClickListener = (VideoAdapter.OnVideoClickListener) context;
+        }
+    }
+
     /* (non-Javadoc)
-         * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-         */
+             * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+             */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_medias, container, false);
@@ -103,24 +111,23 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
 
     @Override
     public void onVideoClick(VideoFile videoFile) {
-        Bundle arguments = new Bundle();
-        arguments.putLong(StreamConfig.EXTRA_FILE_ID, videoFile.getId());
-        arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
-        arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-        arguments.putString(StreamConfig.EXTRA_TITLE, videoFile.getTitle());
-        Intent streamConfig = new Intent(getContext(), StreamConfigActivity.class);
-        streamConfig.putExtras(arguments);
-        startActivity(streamConfig);
+        if(videoClickListener != null){
+            videoClickListener.onVideoClick(videoFile);
+        }
     }
 
     @Override
-    public void onVideoStreamClick(VideoFile mediaFile) {
-
+    public void onVideoStreamClick(VideoFile videoFile) {
+        if(videoClickListener != null){
+            videoClickListener.onVideoStreamClick(videoFile);
+        }
     }
 
     @Override
-    public void onVideoContextClick(VideoFile mediaFile) {
-
+    public void onVideoContextClick(VideoFile videoFile) {
+        if(videoClickListener != null){
+            videoClickListener.onVideoContextClick(videoFile);
+        }
     }
 
 }

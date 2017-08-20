@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.dvbviewer.controller.ui.widget.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/content"
     android:layout_width="match_parent"
@@ -38,10 +38,32 @@
         <TextView
             android:layout_margin="4dp"
             android:id="@+id/name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             />
 
+    <LinearLayout
+        android:id="@id/widget_frame"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="top"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/contextMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="?attr/selectableItemBackground"
+            android:duplicateParentState="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            app:srcCompat="@drawable/ic_more_vert_white_16dp" />
+
     </LinearLayout>
+
+    </org.dvbviewer.controller.ui.widget.CheckableLinearLayout>

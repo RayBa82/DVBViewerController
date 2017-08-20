@@ -1,5 +1,6 @@
 package org.dvbviewer.controller.ui.adapter;
 
+import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -48,12 +49,8 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     }
 
     @Override
-    public VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.
-                from(parent.getContext()).
-                inflate(R.layout.list_item_video, parent, false);
-
-        return new VideoViewHolder(itemView);
+    public int getItemCount() {
+        return CollectionUtils.isNotEmpty(mFiles) ? mFiles.size() : 0;
     }
 
     @Override
@@ -67,6 +64,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
             holder.thumbNailContainer.setVisibility(View.VISIBLE);
             imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + "/" +file.getThumb(), holder.thumbNail, options);
         }
+        holder.thumbNailContainer.setTag(file);
+        holder.thumbNailContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final VideoFile file = (VideoFile) view.getTag();
+                listener.onVideoStreamClick(file);
+            }
+        });
         holder.itemView.setTag(file);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,21 +80,39 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
                 listener.onVideoClick(file);
             }
         });
+
+        holder.contextMenu.setTag(file);
+        holder.contextMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final VideoFile file = (VideoFile) v.getTag();
+                listener.onVideoContextClick(file);
+            }
+        });
     }
 
     @Override
-    public int getItemCount() {
-        return CollectionUtils.isNotEmpty(mFiles) ? mFiles.size() : 0;
+    public VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.list_item_video, parent, false);
+
+        return new VideoViewHolder(itemView);
     }
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.name)
         protected TextView name;
+
         @BindView(R.id.thumbNailContainer)
         protected View thumbNailContainer;
+
         @BindView(R.id.thumbNail)
         protected ImageView thumbNail;
+
+        @BindView(R.id.contextMenu)
+        protected AppCompatImageButton contextMenu;
 
         public VideoViewHolder(View v) {
             super(v);
@@ -106,9 +129,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
         void onVideoClick(VideoFile videoFile);
 
-        void onVideoStreamClick(VideoFile mediaFile);
+        void onVideoStreamClick(VideoFile videoFile);
 
-        void onVideoContextClick(VideoFile mediaFile);
+        void onVideoContextClick(VideoFile videoFile);
 
     }
 

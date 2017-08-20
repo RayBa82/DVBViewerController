@@ -33,6 +33,9 @@ import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.IEPG;
+import org.dvbviewer.controller.entities.VideoFile;
+import org.dvbviewer.controller.io.UrlBuilderException;
+import org.dvbviewer.controller.ui.adapter.VideoAdapter;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
@@ -43,6 +46,7 @@ import org.dvbviewer.controller.ui.fragments.MediaFragment;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.StatusList;
+import org.dvbviewer.controller.ui.fragments.StreamConfig;
 import org.dvbviewer.controller.ui.fragments.TaskList;
 import org.dvbviewer.controller.ui.fragments.TimerList;
 import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
@@ -56,7 +60,9 @@ import org.dvbviewer.controller.ui.phone.RemoteActivity;
 import org.dvbviewer.controller.ui.phone.StatusActivity;
 import org.dvbviewer.controller.ui.phone.TaskActivity;
 import org.dvbviewer.controller.ui.phone.TimerlistActivity;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.Config;
+import org.dvbviewer.controller.utils.FileType;
 
 import java.util.List;
 
@@ -65,7 +71,7 @@ import java.util.List;
  *
  * @author RayBa
  */
-public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener, IEpgDetailsActivity.OnIEPGClickListener {
+public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener, IEpgDetailsActivity.OnIEPGClickListener, VideoAdapter.OnVideoClickListener {
 
     public static final String ENABLE_DRAWER = "ENABLE_DRAWER";
 	public static final String TITLE 		 = "title";
@@ -352,6 +358,34 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 		bundle.putParcelable(IEPG.class.getSimpleName(), iepg);
 		details.setArguments(bundle);
 		details.show(getSupportFragmentManager(), IEPG.class.getName());
+	}
+
+	@Override
+	public void onVideoClick(VideoFile videoFile) {
+		Bundle arguments = new Bundle();
+		arguments.putLong(StreamConfig.EXTRA_FILE_ID, videoFile.getId());
+		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
+		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+		arguments.putString(StreamConfig.EXTRA_TITLE, videoFile.getTitle());
+		StreamConfig cfg = StreamConfig.newInstance();
+		cfg.setArguments(arguments);
+		cfg.show(getSupportFragmentManager(), StreamConfig.class.getName());
+	}
+
+	@Override
+	public void onVideoStreamClick(VideoFile videoFile) {
+		try {
+			final Intent videoIntent = StreamConfig.buildQuickUrl(this, videoFile.getId(), videoFile.getName(), FileType.VIDEO);
+			startActivity(videoIntent);
+			AnalyticsTracker.trackQuickStream(getApplication());
+		} catch (UrlBuilderException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onVideoContextClick(VideoFile videoFile) {
+
 	}
 
 }
