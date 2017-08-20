@@ -101,4 +101,15 @@ public class MedialistActivity extends BaseSinglePaneActivity implements MediaAd
 		streamConfig.putExtras(arguments);
 		startActivity(streamConfig);
 	}
+
+	@Override
+	public void onVideoStreamClick(VideoFile videoFile) {
+
+	}
+
+	@Override
+	public void onVideoContextClick(VideoFile videoFile) {
+
+	}
+
 }

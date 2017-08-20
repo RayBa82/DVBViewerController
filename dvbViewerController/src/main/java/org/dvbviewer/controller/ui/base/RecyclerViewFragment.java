@@ -1,6 +1,7 @@
 package org.dvbviewer.controller.ui.base;
 
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,21 +12,28 @@ import android.widget.ProgressBar;
 
 import org.dvbviewer.controller.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class RecyclerViewFragment extends BaseFragment {
 
-    protected RecyclerView recList;
+    @BindView(R.id.recyclerView)
+    protected RecyclerView recyclerView;
+
+    @BindView(R.id.progressBar)
     protected ProgressBar progressBar;
+
     private boolean mListShown = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.recycler_view, container, false);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        recList = (RecyclerView) view.findViewById(R.id.recyclerView);
-        recList.setHasFixedSize(true);
+        ButterKnife.bind(this, view);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        recyclerView.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recList.setLayoutManager(llm);
+        recyclerView.setLayoutManager(llm);
         return view;
     }
 
@@ -42,26 +50,26 @@ public class RecyclerViewFragment extends BaseFragment {
             if (animate) {
                 progressBar.startAnimation(AnimationUtils.loadAnimation(
                         getContext(), android.R.anim.fade_out));
-                recList.startAnimation(AnimationUtils.loadAnimation(
+                recyclerView.startAnimation(AnimationUtils.loadAnimation(
                         getContext(), android.R.anim.fade_in));
             } else {
                 progressBar.clearAnimation();
-                recList.clearAnimation();
+                recyclerView.clearAnimation();
             }
             progressBar.setVisibility(View.GONE);
-            recList.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
         } else {
             if (animate) {
                 progressBar.startAnimation(AnimationUtils.loadAnimation(
                         getContext(), android.R.anim.fade_in));
-                recList.startAnimation(AnimationUtils.loadAnimation(
+                recyclerView.startAnimation(AnimationUtils.loadAnimation(
                         getContext(), android.R.anim.fade_out));
             } else {
                 progressBar.clearAnimation();
-                recList.clearAnimation();
+                recyclerView.clearAnimation();
             }
             progressBar.setVisibility(View.VISIBLE);
-            recList.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
         }
     }
 }

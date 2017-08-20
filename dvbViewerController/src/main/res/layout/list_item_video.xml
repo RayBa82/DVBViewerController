@@ -1,23 +1,15 @@
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_view"
+    android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/list_selector_holo_dark"
+    android:layout_gravity="center_horizontal"
     android:clickable="true"
     android:foreground="?attr/selectableItemBackground"
     android:minHeight="?android:attr/listPreferredItemHeight"
+    android:orientation="horizontal"
     app:cardUseCompatPadding="true">
-
-    <LinearLayout
-        android:id="@+id/content"
-        android:padding="4dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center_horizontal"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:orientation="horizontal">
-
 
         <FrameLayout
             android:id="@+id/thumbNailContainer"
@@ -53,5 +45,3 @@
             />
 
     </LinearLayout>
-
-</android.support.v7.widget.CardView>

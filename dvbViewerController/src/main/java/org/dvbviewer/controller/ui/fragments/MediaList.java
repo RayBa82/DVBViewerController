@@ -66,7 +66,6 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		activity.setTitle(R.string.details);
 		setHasOptionsMenu(true);
-		setRetainInstance(true);
 		mAdapter = new MediaAdapter(mediaClickListener);
 		DVBViewerPreferences preferences = new DVBViewerPreferences(getContext());
 		mediasSynced = preferences.getBoolean(DVBViewerPreferences.KEY_MEDIAS_SYNCED, false);
@@ -81,7 +80,7 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		recList.setAdapter(mAdapter);
+		recyclerView.setAdapter(mAdapter);
 		if(!mediasSynced) {
 			getLoaderManager().initLoader(SYNC_LOADER_ID, savedInstanceState, this);
 		}else {

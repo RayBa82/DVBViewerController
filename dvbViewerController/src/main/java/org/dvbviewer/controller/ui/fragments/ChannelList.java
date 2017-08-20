@@ -245,6 +245,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             Channel chan = cursorToChannel(c);
             final Intent videoIntent = StreamConfig.getDirectUrl(chan.getChannelID(), chan.getName(), FileType.CHANNEL);
             getActivity().startActivity(videoIntent);
+            prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply();
             AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
         } catch (ActivityNotFoundException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -258,6 +259,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             Channel chan = cursorToChannel(c);
             final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
             getActivity().startActivity(videoIntent);
+            prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply();
             AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
         } catch (ActivityNotFoundException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

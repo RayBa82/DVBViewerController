@@ -47,12 +47,14 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        FragmentTransaction tran = getChildFragmentManager().beginTransaction();
-        MediaList mediaList = new MediaList();
-        Bundle bundle = new Bundle();
-        mediaList.setArguments(bundle);
-        tran.add(R.id.media_content, mediaList, "MEDIA_LIST_TAG");
-        tran.commit();
+        if(savedInstanceState == null) {
+            FragmentTransaction tran = getChildFragmentManager().beginTransaction();
+            MediaList mediaList = new MediaList();
+            Bundle bundle = new Bundle();
+            mediaList.setArguments(bundle);
+            tran.add(R.id.media_content, mediaList, "MEDIA_LIST_TAG");
+            tran.commit();
+        }
     }
 
     /* (non-Javadoc)
@@ -83,7 +85,6 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
         }
     }
 
-
     private void changeFragment(int id, Fragment fragment, Long tag){
         FragmentTransaction tran = getChildFragmentManager().beginTransaction();
         tran.replace(id, fragment, "MEDIA_LIST_TAG"+tag);
@@ -111,4 +112,15 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
         streamConfig.putExtras(arguments);
         startActivity(streamConfig);
     }
+
+    @Override
+    public void onVideoStreamClick(VideoFile mediaFile) {
+
+    }
+
+    @Override
+    public void onVideoContextClick(VideoFile mediaFile) {
+
+    }
+
 }

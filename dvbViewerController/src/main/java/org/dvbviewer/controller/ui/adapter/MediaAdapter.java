@@ -11,6 +11,9 @@ import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbConsts;
 import org.dvbviewer.controller.entities.MediaFile;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by rayba on 21.04.17.
  */
@@ -63,11 +66,12 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
 
     public static class MediaViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.name)
         protected TextView name;
 
         public MediaViewHolder(View v) {
             super(v);
-            name =  (TextView) v.findViewById(R.id.name);
+            ButterKnife.bind(this, v);
         }
 
     }

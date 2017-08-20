@@ -57,7 +57,6 @@ public class VideoList extends RecyclerViewFragment implements LoaderManager.Loa
 		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		activity.setTitle(R.string.details);
 		setHasOptionsMenu(true);
-		setRetainInstance(true);
 		mAdapter = new VideoAdapter(this);
 		dirId = getArguments().getLong(KEY_DIR_ID, 0);
 	}
@@ -68,7 +67,7 @@ public class VideoList extends RecyclerViewFragment implements LoaderManager.Loa
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		recList.setAdapter(mAdapter);
+		recyclerView.setAdapter(mAdapter);
 			getLoaderManager().initLoader(0, savedInstanceState, this);
 		setListShown(false);
 	}
@@ -127,6 +126,20 @@ public class VideoList extends RecyclerViewFragment implements LoaderManager.Loa
 	public void onVideoClick(VideoFile videoFile) {
 		if(videoClickListener != null) {
 			videoClickListener.onVideoClick(videoFile);
+		}
+	}
+
+	@Override
+	public void onVideoStreamClick(VideoFile videoFile) {
+		if(videoClickListener != null) {
+			videoClickListener.onVideoStreamClick(videoFile);
+		}
+	}
+
+	@Override
+	public void onVideoContextClick(VideoFile videoFile) {
+		if(videoClickListener != null) {
+			videoClickListener.onVideoContextClick(videoFile);
 		}
 	}
 }

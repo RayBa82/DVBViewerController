@@ -19,6 +19,9 @@ import org.dvbviewer.controller.utils.ServerConsts;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by rayba on 21.04.17.
  */
@@ -81,15 +84,16 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.name)
         protected TextView name;
+        @BindView(R.id.thumbNailContainer)
         protected View thumbNailContainer;
+        @BindView(R.id.thumbNail)
         protected ImageView thumbNail;
 
         public VideoViewHolder(View v) {
             super(v);
-            name = (TextView) v.findViewById(R.id.name);
-            thumbNailContainer = v.findViewById(R.id.thumbNailContainer);
-            thumbNail = (ImageView) v.findViewById(R.id.thumbNail);
+            ButterKnife.bind(this, v);
         }
 
     }
@@ -101,6 +105,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public interface OnVideoClickListener {
 
         void onVideoClick(VideoFile videoFile);
+
+        void onVideoStreamClick(VideoFile mediaFile);
+
+        void onVideoContextClick(VideoFile mediaFile);
 
     }
 

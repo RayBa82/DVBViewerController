@@ -299,16 +299,17 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 	 */
 	private Intent getVideoIntent(FileType fileType) throws UrlBuilderException {
 		Intent videoIntent;
-		if(mStreamType == StreamType.DIRECT){
+        final Preset preset = (Preset) qualitySpinner.getSelectedItem();
+        if(mStreamType == StreamType.DIRECT){
             videoIntent = getDirectUrl(mFileId, mTitle, fileType);
         }else{
-            final Preset preset = (Preset) qualitySpinner.getSelectedItem();
-            final String encodingSpeed = encodingSpeedSpinner.getSelectedItem().toString();
+            final int encodingSpeed = encodingSpeedSpinner.getSelectedItemPosition();
             int hours = TextUtils.isEmpty(startHours.getText()) ? 0 : NumberUtils.toInt(startHours.getText().toString());
             int minutes = TextUtils.isEmpty(startMinutes.getText()) ? 0 : NumberUtils.toInt(startMinutes.getText().toString());
             int seconds = TextUtils.isEmpty(startSeconds.getText()) ? 0 : NumberUtils.toInt(startSeconds.getText().toString());
             int start = 3600 * hours + 60 * minutes + seconds;
-            videoIntent = getTranscodedUrl(mFileId, mTitle, preset, encodingSpeed, fileType, start);
+            preset.setEncodingSpeed(encodingSpeed);
+            videoIntent = getTranscodedUrl(getContext(), mFileId, mTitle, preset, fileType, start);
         }
 		return videoIntent;
 	}
@@ -341,18 +342,21 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		Editor editor = prefs.edit();
+		Preset p = (Preset) qualitySpinner.getSelectedItem();
 		switch (parent.getId()) {
-		case R.id.qualitySpinner:
-			Preset p = (Preset) qualitySpinner.getSelectedItem();
-			editor.putString(DVBViewerPreferences.KEY_STREAM_PRESET, gson.toJson(p));
-			break;
-		case R.id.encodingSpeedSpinner:
-			editor.putInt(DVBViewerPreferences.KEY_STREAM_ENCODING_SPEED, position);
-			break;
-
-		default:
-			break;
+			case R.id.encodingSpeedSpinner:
+				p.setEncodingSpeed(position);
+				break;
+			case R.id.audioSpinner:
+				p.setAudioTrack(position);
+				break;
+			case R.id.subTitleSpinner:
+				p.setSubTitle(position);
+				break;
+			default:
+				break;
 		}
+		editor.putString(DVBViewerPreferences.KEY_STREAM_PRESET, gson.toJson(p));
 		editor.commit();
 	}
 
@@ -369,8 +373,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 		if (direct) {
 			return getDirectUrl(id, title, fileType);
 		}else {
-			final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
-			return getTranscodedUrl(id, title, StreamUtils.getDefaultPreset(prefs), encodingSpeed, fileType, 0);
+			return getTranscodedUrl(context, id, title, StreamUtils.getDefaultPreset(prefs), fileType, 0);
 		}
 	}
 
@@ -381,11 +384,10 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 
 	public static Intent getTranscodedUrl(Context context, final long id, String title, final FileType fileType) throws UrlBuilderException {
 		final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
-		final String encodingSpeed = StreamUtils.getEncodingSpeedName(context, prefs);
-		return getTranscodedUrl(id, title, StreamUtils.getDefaultPreset(prefs), encodingSpeed, fileType, 0);
+		return getTranscodedUrl(context, id, title, StreamUtils.getDefaultPreset(prefs), fileType, 0);
 	}
 
-	private static Intent getTranscodedUrl(final long id, String title, final Preset preset, final String encodingSpeed, final FileType fileType, final int start) throws UrlBuilderException {
+	private static Intent getTranscodedUrl(Context context, final long id, String title, final Preset preset, final FileType fileType, final int start) throws UrlBuilderException {
 		final StringBuilder baseUrl = new StringBuilder(ServerConsts.REC_SERVICE_URL);
 		if (StreamConfig.M3U8_MIME_TYPE.equals(preset.getMimeType())){
 			baseUrl.append(ServerConsts.URL_M3U8);
@@ -394,7 +396,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 		}
 		final HTTPUtil.UrlBuilder builder = HTTPUtil.getUrlBuilder(URLUtil.buildProtectedRSUrl(baseUrl.toString()));
 		builder.addQueryParameter("preset", preset.getTitle());
-		builder.addQueryParameter("ffPreset", encodingSpeed);
+		builder.addQueryParameter("ffPreset", StreamUtils.getEncodingSpeedName(context, preset));
 		builder.addQueryParameter(fileType.transcodedParam, String.valueOf(id));
 		builder.addQueryParameter("track", "-1");
 		if (start > 0) {

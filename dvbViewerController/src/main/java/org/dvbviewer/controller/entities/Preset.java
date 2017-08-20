@@ -24,6 +24,12 @@ public class Preset {
 
     private String mimeType;
 
+    private int encodingSpeed = 4;
+
+    private int audioTrack;
+
+    private int subTitle;
+
     public String getTitle() {
         return title;
     }
@@ -47,6 +53,32 @@ public class Preset {
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
+
+    public int getEncodingSpeed() {
+        return encodingSpeed;
+    }
+
+    public void setEncodingSpeed(int encodingSpeed) {
+        this.encodingSpeed = encodingSpeed;
+    }
+
+    public int getAudioTrack() {
+        return audioTrack;
+    }
+
+    public void setAudioTrack(int audioTrack) {
+        this.audioTrack = audioTrack;
+    }
+
+    public int getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(int subTitle) {
+        this.subTitle = subTitle;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
