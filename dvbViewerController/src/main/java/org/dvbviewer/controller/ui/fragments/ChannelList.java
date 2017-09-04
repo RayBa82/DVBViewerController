@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +28,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -172,7 +172,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             selection.append(ChannelTbl.GROUP_ID).append(" = ").append(mGroupId);
         }
 
-        loader = new CursorLoader(getActivity().getApplicationContext(), ChannelTbl.CONTENT_URI_NOW, null, selection.toString(), null, ChannelTbl.POSITION);
+        loader = new CursorLoader(getContext(), ChannelTbl.CONTENT_URI_NOW, null, selection.toString(), null, ChannelTbl.POSITION);
         return loader;
     }
 
@@ -215,12 +215,18 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         Cursor c = mAdapter.getCursor();
         c.moveToPosition(mChannelIndex);
         switch (item.getItemId()) {
-            case R.id.menuTimer:
-                showTimerDialog(c);
+            case R.id.menuStreamDirect:
+                streamDirect(c);
                 return true;
-            case R.id.menuStream:
+            case R.id.menuStreamTranscoded:
+                streamTranscoded(c);
+                return true;
+            case R.id.menuStreamConfig:
                 showStreamConfig(c);
                 return true;
+            case R.id.menuTimer:
+            showTimerDialog(c);
+            return true;
             case R.id.menuSwitch:
                 switchChannel(c);
                 return true;
@@ -232,6 +238,36 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 break;
         }
         return false;
+    }
+
+    private void streamDirect(final Cursor c) {
+        try {
+            Channel chan = cursorToChannel(c);
+            final Intent videoIntent = StreamConfig.getDirectUrl(chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            getActivity().startActivity(videoIntent);
+            prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply();
+            AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+        } catch (ActivityNotFoundException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+            e.printStackTrace();
+        }
+    }
+
+    private void streamTranscoded(final Cursor c) {
+        try {
+            Channel chan = cursorToChannel(c);
+            final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            getActivity().startActivity(videoIntent);
+            prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply();
+            AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+        } catch (ActivityNotFoundException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+            e.printStackTrace();
+        } catch (UrlBuilderException e) {
+            e.printStackTrace();
+        }
     }
 
     private void switchChannel(Cursor c) {
@@ -254,13 +290,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void showTimerDialog(Cursor c) {
         Timer timer = cursorToTimer(c);
-        if (UIUtils.isTablet(getActivity())) {
+        if (UIUtils.isTablet(getContext())) {
             TimerDetails timerdetails = TimerDetails.newInstance();
             Bundle args = TimerDetails.buildBundle(timer);
             timerdetails.setArguments(args);
             timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
         } else {
-            Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
+            Intent timerIntent = new Intent(getContext(), TimerDetailsActivity.class);
             Bundle extras = TimerDetails.buildBundle(timer);
             timerIntent.putExtras(extras);
             startActivity(timerIntent);
@@ -269,14 +305,14 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void showStreamConfig(Cursor cursor) {
         Channel chan = cursorToChannel(cursor);
-        if (UIUtils.isTablet(getActivity())) {
+        if (UIUtils.isTablet(getContext())) {
             Bundle arguments = getIntentExtras(chan);
             StreamConfig cfg = StreamConfig.newInstance();
             cfg.setArguments(arguments);
             cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
         } else {
             Bundle arguments = getIntentExtras(chan);
-            Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
+            Intent streamConfig = new Intent(getContext(), StreamConfigActivity.class);
             streamConfig.putExtras(arguments);
             startActivity(streamConfig);
         }
@@ -492,8 +528,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         mChannelIndex = (Integer) v.getTag();
         switch (v.getId()) {
             case R.id.contextMenu:
-                PopupMenu popup = new PopupMenu(getActivity(), v);
-                popup.getMenuInflater().inflate(R.menu.context_menu_channellist, popup.getMenu());
+                PopupMenu popup = new PopupMenu(getContext(), v);
+                popup.inflate(R.menu.context_menu_stream);
+                popup.inflate(R.menu.context_menu_channellist);
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
                 break;
@@ -504,14 +541,14 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Channel chan = cursorToChannel(c);
                     try {
 
-                        final Intent videoIntent = StreamConfig.buildLiveUrl(getContext(), chan.getChannelID(), chan.getName());
+                        final Intent videoIntent = StreamConfig.buildQuickUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
                         getActivity().startActivity(videoIntent);
                         AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                     } catch (UrlBuilderException e) {
                         e.printStackTrace();
                     }
                 } catch (ActivityNotFoundException e) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
                     e.printStackTrace();
                 }
@@ -552,9 +589,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         final String epgTitle = !c.isNull(c.getColumnIndex(EpgTbl.TITLE)) ? c.getString(c.getColumnIndex(EpgTbl.TITLE)) : name;
         final long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
         final long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
-        final DVBViewerPreferences prefs = new DVBViewerPreferences(getActivity());
-        final int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5);
-        final int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5);
+        final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
+        final int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, DVBViewerPreferences.DEFAULT_TIMER_TIME_BEFORE);
+        final int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, DVBViewerPreferences.DEFAULT_TIMER_TIME_AFTER);
         final Date start = epgStart > 0 ? new Date(epgStart) : new Date();
         final Date end = epgEnd > 0 ? new Date(epgEnd) : new Date(start.getTime() + (1000 * 60 * 120));
         final String eventId = c.getString(c.getColumnIndex(EpgTbl.EVENT_ID));

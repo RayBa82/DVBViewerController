@@ -72,8 +72,8 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        mStatusAdapter = new StatusAdapter(getActivity());
-        mAdapter = new CategoryAdapter(getActivity());
+        mStatusAdapter = new StatusAdapter(getContext());
+        mAdapter = new CategoryAdapter(getContext());
     }
 
     /*
@@ -105,7 +105,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
                         showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                         return result;
                     }
-                    result = getStatus(new DVBViewerPreferences(getActivity()), version);
+                    result = getStatus(new DVBViewerPreferences(getContext()), version);
                 } catch (Exception e) {
                     catchException(getClass().getSimpleName(), e);
                 }
@@ -153,7 +153,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             status = new Status();
         }
         StatusItem versionItem = new StatusItem();
-        versionItem.setNameRessource(R.string.status_rs_version);
+        versionItem.setNameRessource(R.string.status_server_version);
         versionItem.setValue(version);
         status.getItems().add(0, versionItem);
         return status;
@@ -166,7 +166,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
     public void onLoadFinished(Loader<Status> loader, Status status) {
         if (status != null) {
             mStatusAdapter.setItems(status.getItems());
-            FolderAdapter folderAdapter = new FolderAdapter(getActivity());
+            FolderAdapter folderAdapter = new FolderAdapter(getContext());
             folderAdapter.setItems(status.getFolders());
             mAdapter.addSection(getString(R.string.status), mStatusAdapter);
             mAdapter.addSection(getString(R.string.recording_folder), folderAdapter);

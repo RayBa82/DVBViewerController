@@ -18,6 +18,7 @@ package org.dvbviewer.controller.ui.phone;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.EPGDetails;
 
@@ -46,8 +47,17 @@ public class IEpgDetailsActivity extends BaseSinglePaneActivity {
 	 */
 	@Override
 	protected Fragment onCreatePane() {
-		return new EPGDetails();
+		Bundle bundle = intentToFragmentArguments(getIntent());
+		EPGDetails details = new EPGDetails();
+		details.setArguments(bundle);
+		return details ;
 	}
-	
+
+
+	public interface OnIEPGClickListener {
+
+		void onIEPGClick(final IEPG iepg);
+
+	}
 
 }

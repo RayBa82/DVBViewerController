@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,6 +25,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
@@ -71,7 +71,7 @@ import java.util.List;
  * @author RayBa
  * @date 07.04.2013
  */
-public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, TimerDetails.OnTimerEditedListener, DialogInterface.OnDismissListener, AdapterView.OnItemLongClickListener {
+public class TimerList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, TimerDetails.OnTimerEditedListener, AdapterView.OnItemLongClickListener {
 
 	public static final String ACTION_MODE        = "action_mode";
 	public static final String CHECKED_ITEM_COUNT = "checked_item_count";
@@ -86,7 +86,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mAdapter = new TimerAdapter(getActivity());
+		mAdapter = new TimerAdapter(getContext());
 		setHasOptionsMenu(true);
 	}
 
@@ -165,11 +165,6 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
         }
     }
 
-	@Override
-	public void onDismiss(DialogInterface dialog) {
-		getActivity().setTitle(R.string.timer);
-	}
-
 	/**
 	 * The Class ViewHolder.
 	 *
@@ -239,8 +234,8 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 				}
 				holder.layout.setError(o.isFlagSet(Timer.FLAG_EXECUTABLE));
 				holder.layout.setDisabled(o.isFlagSet(Timer.FLAG_DISABLED));
-				String start = DateUtils.getTimeInLocalFormat(getActivity(), o.getStart());
-				String end = DateUtils.getTimeInLocalFormat(getActivity(), o.getEnd());
+				String start = DateUtils.getTimeInLocalFormat(getContext(), o.getStart());
+				String end = DateUtils.getTimeInLocalFormat(getContext(), o.getEnd());
 				holder.date.setText(date + "  " + start + " - " + end);
 				holder.recIndicator.setVisibility(o.isFlagSet(Timer.FLAG_RECORDING) ? View.VISIBLE : View.GONE);
 			}
@@ -262,7 +257,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 				mode.finish();
 			}
 		} else {
-			if (UIUtils.isTablet(getActivity())) {
+			if (UIUtils.isTablet(getContext())) {
 				onDestroyActionMode(mode);
 				Timer timer = mAdapter.getItem(position);
 				TimerDetails timerdetails = TimerDetails.newInstance();
@@ -274,7 +269,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			} else {
 				getListView().setItemChecked(position, !getListView().isItemChecked(position));
 				Timer timer = mAdapter.getItem(position);
-				Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
+				Intent timerIntent = new Intent(getContext(), TimerDetailsActivity.class);
 				Bundle extras = TimerDetails.buildBundle(timer);
 				timerIntent.putExtras(extras);
 				startActivityForResult(timerIntent, TimerDetails.TIMER_RESULT);
@@ -309,7 +304,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
             @Override
             public void run() {
                 Snackbar snackbar = Snackbar
-                        .make(getListView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
+                        .make(getView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
                 snackbar.show();
                 refresh();
             }
@@ -353,7 +348,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 			/**
 			 * Alertdialog to confirm the delete of Recordings
 			 */
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 			builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
 			break;
 
@@ -519,7 +514,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	 */
 	@Override
 	public void onAsyncActionStart() {
-		progressDialog = new ProgressDialog(getActivity());
+		progressDialog = new ProgressDialog(getContext());
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		progressDialog.setMessage(getResources().getString(R.string.busyDeleteTimer));
 		progressDialog.setIndeterminate(true);

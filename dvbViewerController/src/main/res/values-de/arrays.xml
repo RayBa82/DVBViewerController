@@ -6,9 +6,21 @@
         <item>Standby</item>
         <item>Ruhemodus</item>
     </string-array>
+    <string-array name="tracks" translatable="true">
+        <item>Spur 1</item>
+        <item>Spur 2</item>
+        <item>Spur 3</item>
+        <item>Spur 4</item>
+        <item>Spur 5</item>
+        <item>Spur 6</item>
+        <item>Spur 7</item>
+        <item>Spur 8</item>
+        <item>Spur 9</item>
+        <item>Spur 10</item>
+    </string-array>
     <string-array name="epgMonitoring">
         <item>Keine</item>
-        <item>Zeitaktualisiserung durch EPG </item>
+        <item>Zeitaktualisiserung durch EPG</item>
         <item>Start/Stop durch EPG-Status</item>
     </string-array>
 </resources>

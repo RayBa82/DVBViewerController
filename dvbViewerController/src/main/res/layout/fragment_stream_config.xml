@@ -3,8 +3,6 @@
     android:id="@+id/scrollview"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:minHeight="480dp"
-    android:minWidth="320dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -17,7 +15,7 @@
             android:layout_height="wrap_content"
             android:minHeight="@dimen/list_preferred_item_height_small"
             android:orientation="vertical"
-            android:paddingRight="?android:attr/scrollbarSize" >
+            android:paddingRight="?android:attr/scrollbarSize">
 
             <TextView
                 android:id="@+id/directStreamTitle"
@@ -49,8 +47,8 @@
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/collapsable"
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
@@ -120,10 +118,54 @@
                     <Spinner
                         android:id="@+id/encodingSpeedSpinner"
                         android:layout_width="match_parent"
-                        android:layout_gravity="center_vertical"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="1"
                         android:entries="@array/ffmpegPresets" />
+                </TableRow>
+
+                <TableRow
+                    style="@style/StreamDialogTableRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:text="Audio Spur" />
+
+                    <Spinner
+                        android:id="@+id/audioSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:entries="@array/tracks"
+                        android:focusable="true" />
+                </TableRow>
+
+                <TableRow
+                    style="@style/StreamDialogTableRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:text="Untertitel Spur" />
+
+                    <Spinner
+                        android:id="@+id/subTitleSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:entries="@array/tracks"
+                        android:focusable="true" />
                 </TableRow>
 
                 <TableRow
@@ -143,8 +185,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
                         android:orientation="horizontal">
 
                         <EditText

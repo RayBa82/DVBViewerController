@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -27,6 +26,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.PopupMenu;
@@ -53,6 +53,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Recording;
@@ -74,6 +75,7 @@ import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -91,11 +93,13 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public static final String ACTION_MODE        = "action_mode";
 	public static final String CHECKED_ITEM_COUNT = "checked_item_count";
 
-	RecordingAdapter mAdapter;
-	ActionMode       mode;
-	int              selectedPosition;
-	ProgressDialog   progressDialog;
-	private boolean actionMode;
+	private RecordingAdapter    mAdapter;
+	private RecordingDeleter    deleter;
+	private ProgressDialog      progressDialog;
+	private ActionMode          mode;
+	private int                 selectedPosition;
+	private boolean             actionMode;
+	private IEpgDetailsActivity.OnIEPGClickListener clickListener;
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -103,7 +107,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mAdapter = new RecordingAdapter(getActivity());
+		mAdapter = new RecordingAdapter(getContext());
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
 	}
@@ -119,7 +123,6 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		Loader<List<Recording>> loader = getLoaderManager().initLoader(0, savedInstanceState, this);
 		setListShown(!(!isResumed() || loader.isStarted()));
 		setEmptyText(getResources().getString(R.string.no_recordings));
-		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		getListView().setOnItemLongClickListener(this);
 		if (savedInstanceState != null && savedInstanceState.getBoolean(ACTION_MODE, false)) {
 			AppCompatActivity activity = (AppCompatActivity) getActivity();
@@ -177,6 +180,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		getListView().setItemChecked(position, true);
 		int count = getCheckedItemCount();
 		if (actionMode == false) {
@@ -195,24 +199,62 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menuStream:
-				if (UIUtils.isTablet(getActivity())) {
+			case R.id.menuStreamDirect:
+				streamDirect(mAdapter.getItem(selectedPosition));
+				return true;
+			case R.id.menuStreamTranscoded:
+				streamTranscoded(mAdapter.getItem(selectedPosition));
+				return true;
+			case R.id.menuStreamConfig:
+				if (UIUtils.isTablet(getContext())) {
 					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
 					StreamConfig cfg = StreamConfig.newInstance();
 					cfg.setArguments(arguments);
 					cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
 				} else {
 					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
-					Intent streamConfig = new Intent(getActivity(), StreamConfigActivity.class);
+					Intent streamConfig = new Intent(getContext(), StreamConfigActivity.class);
 					streamConfig.putExtras(arguments);
 					startActivity(streamConfig);
 				}
+				return true;
+			case R.id.menuDelete:
+				List<Recording> recordings = Collections.singletonList(mAdapter.getItem(selectedPosition));
+				deleter = new RecordingDeleter(recordings, this);
+				AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+				builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
 				return true;
 
 			default:
 				break;
 		}
 		return false;
+	}
+
+	private void streamDirect(IEPG recording) {
+		try {
+			final Intent videoIntent = StreamConfig.getDirectUrl(recording.getId(), recording.getTitle(), FileType.RECORDING);
+			getActivity().startActivity(videoIntent);
+			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+		} catch (ActivityNotFoundException e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+			builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+			e.printStackTrace();
+		}
+	}
+
+	private void streamTranscoded(IEPG recording) {
+		try {
+			final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+			getActivity().startActivity(videoIntent);
+			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
+		} catch (ActivityNotFoundException e) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+			builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
+			e.printStackTrace();
+		} catch (UrlBuilderException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@NonNull
@@ -266,8 +308,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			options = new DisplayImageOptions.Builder()
 					.cacheInMemory(true)
 					.cacheOnDisk(true)
-					.showImageForEmptyUri(R.drawable.play_circle_outline) // resource or drawable
-					.showImageOnFail(R.drawable.play_circle_outline) // r
+					.showImageForEmptyUri(R.drawable.ic_play_white_40dp) // resource or drawable
+					.showImageOnFail(R.drawable.ic_play_white_40dp) // r
 					.displayer(new FadeInBitmapDisplayer(500, true, true, false))
 					.build();
 		}
@@ -315,7 +357,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail, options);
 				}
 				holder.thumbNailContainer.setTag(position);
-				holder.date.setText(DateUtils.formatDateTime(getActivity(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
+				holder.date.setText(DateUtils.formatDateTime(getContext(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
 				holder.channelName.setText(o.getChannel());
 				holder.contextMenu.setTag(position);
 			}
@@ -338,8 +380,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				mode.finish();
 			}
 		} else {
-			Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
 			IEPG entry = mAdapter.getItem(position);
+			if(clickListener != null) {
+				clickListener.onIEPGClick(entry);
+				return;
+			}
+			Intent details = new Intent(getContext(), IEpgDetailsActivity.class);
 			details.putExtra(IEPG.class.getSimpleName(), entry);
 			startActivity(details);
 			clearSelection();
@@ -381,11 +427,23 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menuDelete:
-				/**
-				 * Alertdialog to confirm the delete of Recordings
-				 */
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
+				SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
+				if (checkedPositions != null && checkedPositions.size() > 0) {
+
+					int size = checkedPositions.size();
+					List<Recording> recordings = new ArrayList<Recording>();
+					for (int i = 0; i < size; i++) {
+						if (checkedPositions.valueAt(i)) {
+							recordings.add(mAdapter.getItem(checkedPositions.keyAt(i)));
+						}
+					}
+					deleter = new RecordingDeleter(recordings, this);
+					/**
+					 * Alertdialog to confirm the delete of Recordings
+					 */
+					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+					builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
+				}
 				break;
 
 			default:
@@ -400,6 +458,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	@Override
 	public void onDestroyActionMode(ActionMode mode) {
 		clearSelection();
+		getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		actionMode = false;
 	}
 
@@ -478,6 +537,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public static class RecordingDeleter extends AsyncTask<Recording, Void, Boolean> {
 
 		AsyncCallback callback;
+		List<Recording> recordings;
 
 		/**
 		 * Instantiates a new recording deleter.
@@ -486,7 +546,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		 * @author RayBa
 		 * @date 07.04.2013
 		 */
-		public RecordingDeleter(AsyncCallback callback) {
+		public RecordingDeleter(List<Recording> recordings, AsyncCallback callback) {
+			this.recordings = recordings;
 			this.callback = callback;
 		}
 
@@ -497,6 +558,13 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		protected void onPreExecute() {
 			super.onPreExecute();
 			callback.onAsyncActionStart();
+		}
+
+		public void execute() {
+			if (CollectionUtils.isNotEmpty(recordings)) {
+				Recording[] array = new Recording[recordings.size()];
+				execute(recordings.toArray(array));
+			}
 		}
 
 		/* (non-Javadoc)
@@ -522,7 +590,8 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			}
 			for (int i = 0; i < count; i++) {
 				try {
-					ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_DELETE_RECORDING + params[i].getId());
+					final String path = MessageFormat.format(ServerConsts.URL_DELETE_RECORDING, params[i].getId());
+					ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + path);
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
 				} catch (DefaultHttpException e) {
@@ -543,21 +612,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public void onClick(DialogInterface dialog, int which) {
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:
-				SparseBooleanArray checkedPositions = getListView().getCheckedItemPositions();
-				if (checkedPositions != null && checkedPositions.size() > 0) {
-
-					int size = checkedPositions.size();
-					RecordingDeleter deleter = new RecordingDeleter(this);
-					List<Recording> recordings = new ArrayList<Recording>();
-					for (int i = 0; i < size; i++) {
-						if (checkedPositions.valueAt(i)) {
-							recordings.add(mAdapter.getItem(checkedPositions.keyAt(i)));
-						}
-					}
-					Recording[] array = new Recording[recordings.size()];
-					deleter.execute(recordings.toArray(array));
+				if(deleter != null) {
+					deleter.execute();
 				}
-				mode.finish();
+				if(mode != null) {
+					mode.finish();
+				}
 				break;
 
 			case DialogInterface.BUTTON_NEGATIVE:
@@ -585,8 +645,9 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		switch (v.getId()) {
 			case R.id.contextMenu:
 				selectedPosition = (Integer) v.getTag();
-				PopupMenu popup = new PopupMenu(getActivity(), v);
-				popup.getMenuInflater().inflate(R.menu.context_menu_recordinglist, popup.getMenu());
+				PopupMenu popup = new PopupMenu(getContext(), v);
+				popup.inflate(R.menu.context_menu_stream);
+				popup.inflate(R.menu.context_menu_recordinglist);
 				popup.setOnMenuItemClickListener(this);
 				popup.show();
 				break;
@@ -594,11 +655,11 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				try {
 					selectedPosition = (Integer) v.getTag();
 					final IEPG recording = mAdapter.getItem(selectedPosition);
-					final Intent videoIntent = StreamConfig.buildRecordingUrl(getActivity(), recording.getId(), recording.getTitle());
+					final Intent videoIntent = StreamConfig.buildQuickUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 					getActivity().startActivity(videoIntent);
 					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 				} catch (ActivityNotFoundException e) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 					builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
 					e.printStackTrace();
 				} catch (UrlBuilderException e) {
@@ -616,7 +677,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	 */
 	@Override
 	public void onAsyncActionStart() {
-		progressDialog = new ProgressDialog(getActivity());
+		progressDialog = new ProgressDialog(getContext());
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		progressDialog.setMessage(getResources().getString(R.string.busyDeleteRecordings));
 		progressDialog.setIndeterminate(true);
@@ -631,6 +692,15 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public void onAsyncActionStop() {
 		progressDialog.dismiss();
 		refresh();
+	}
+
+
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		if (context instanceof IEpgDetailsActivity.OnIEPGClickListener) {
+			clickListener = (IEpgDetailsActivity.OnIEPGClickListener) context;
+		}
 	}
 
 }

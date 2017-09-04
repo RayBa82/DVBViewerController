@@ -15,15 +15,16 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.Activity;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.app.Dialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -38,12 +39,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
-import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.base.BaseDialogFragment;
 import org.dvbviewer.controller.ui.widget.DateField;
 import org.dvbviewer.controller.utils.DateUtils;
@@ -103,9 +104,11 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	private OnTimerEditedListener	mOntimeredEditedListener;
     private Spinner monitoringSpinner;
     private TextView monitoringLabel;
+	private AppCompatEditText preField;
+	private AppCompatEditText postField;
 
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see android.support.v4.app.DialogFragment#onCreate(android.os.Bundle)
      */
 	@Override
@@ -124,10 +127,10 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
      * @see com.actionbarsherlock.app.SherlockDialogFragment#onAttach(android.app.Activity)
      */
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		if (activity instanceof OnTimerEditedListener) {
-			mOntimeredEditedListener = (OnTimerEditedListener) activity;
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		if (context instanceof OnTimerEditedListener) {
+			mOntimeredEditedListener = (OnTimerEditedListener) context;
 		}
 	}
 
@@ -146,17 +149,17 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		AppCompatActivity activity = (AppCompatActivity) getActivity();
-		if (activity instanceof BaseActivity){
-			BaseActivity a = (BaseActivity) activity;
-			a.setSubTitle(R.string.details);
-		}
 		if (timer != null) {
+			final boolean create = timer.getId() < 0l;
 			titleField.setText(timer.getTitle());
 			dateField.setDate(timer.getStart());
+			final Date start = create ? timer.getStart() : DateUtils.addMinutes(timer.getStart(), timer.getPre());
+			final Date stop = create ? timer.getEnd() : DateUtils.addMinutes(timer.getEnd(), timer.getPost() * -1);
 			activeBox.setChecked(!timer.isFlagSet(Timer.FLAG_DISABLED));
-			startField.setTime(timer.getStart());
-			stopField.setTime(timer.getEnd());
+			startField.setTime(start);
+			stopField.setTime(stop);
+			preField.setText(String.valueOf(timer.getPre()));
+			postField.setText(String.valueOf(timer.getPost()));
 			final boolean invalidindex = timer.getTimerAction() >= postRecordSpinner.getCount();
 			postRecordSpinner.setSelection(invalidindex ? 0 : timer.getTimerAction());
 			if (!TextUtils.isEmpty(timer.getChannelName())) {
@@ -169,14 +172,18 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
                 monitoringSpinner.setVisibility(View.GONE);
             }
 		}
-		if (getDialog() != null) {
-			getDialog().setTitle(timer != null && timer.getId() <= 0 ? R.string.createTimer : R.string.editTimer);
-		}
 	}
-	
+
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		final Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.setTitle(timer != null && timer.getId() <= 0 ? R.string.createTimer : R.string.editTimer);
+		return dialog;
+	}
+
 	/* (non-Javadoc)
-	 * @see android.support.v4.app.DialogFragment#onSaveInstanceState(android.os.Bundle)
-	 */
+         * @see android.support.v4.app.DialogFragment#onSaveInstanceState(android.os.Bundle)
+         */
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
 		super.onSaveInstanceState(arg0);
@@ -195,6 +202,8 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		dateField = (DateField) v.findViewById(R.id.dateField);
 		activeBox = (SwitchCompat) v.findViewById(R.id.activeBox);
 		startField = (DateField) v.findViewById(R.id.startField);
+		preField = (AppCompatEditText) v.findViewById(R.id.pre);
+		postField = (AppCompatEditText) v.findViewById(R.id.post);
 		postRecordSpinner = (Spinner) v.findViewById(R.id.postRecordingSpinner);
         monitoringLabel = (TextView) v.findViewById(R.id.monitoringCaption);
         monitoringSpinner = (Spinner) v.findViewById(R.id.monitoringgSpinner);
@@ -262,15 +271,15 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		DateDialogFragment f;
 		switch (v.getId()) {
 		case R.id.dateField:
-			f = DateDialogFragment.newInstance(getActivity(), TimerDetails.this, dateField.getDate());
+			f = DateDialogFragment.newInstance(getContext(), TimerDetails.this, dateField.getDate());
 			f.show(getActivity().getSupportFragmentManager(), "datepicker");
 			break;
 		case R.id.startField:
-			f = DateDialogFragment.newInstance(getActivity(), startTimeSetListener, startField.getDate());
+			f = DateDialogFragment.newInstance(getContext(), startTimeSetListener, startField.getDate());
 			f.show(getActivity().getSupportFragmentManager(), "startTimePicker");
 			break;
 		case R.id.stopField:
-			f = DateDialogFragment.newInstance(getActivity(), stopTimeSetListener, stopField.getDate());
+			f = DateDialogFragment.newInstance(getContext(), stopTimeSetListener, stopField.getDate());
 			f.show(getActivity().getSupportFragmentManager(), "stopTimePicker");
 			break;
 		case R.id.buttonCancel:
@@ -285,6 +294,8 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			timer.setTitle(titleField.getText().toString());
 			timer.setTimerAction(postRecordSpinner.getSelectedItemPosition());
             timer.setMonitorPDC(monitoringSpinner.getSelectedItemPosition());
+			timer.setPre(NumberUtils.toInt(preField.getText().toString()));
+			timer.setPost(NumberUtils.toInt(postField.getText().toString()));
 			if (activeBox.isChecked()){
 				timer.unsetFlag(Timer.FLAG_DISABLED);
 			}else{
@@ -328,16 +339,22 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 
     @Nullable
 	public static String buildTimerUrl(Timer timer) {
-		final HTTPUtil.UrlBuilder builder;
 		try {
-			builder = HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + (timer.getId() < 0l ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT));
+			final boolean create = timer.getId() < 0l;
 			final String title = timer.getTitle();
-            final String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(timer.getStart()));
-            final String start = String.valueOf(DateUtils.getMinutesOfDay(timer.getStart()));
-            final String stop = String.valueOf(DateUtils.getMinutesOfDay(timer.getEnd()));
-            final String endAction = String.valueOf(timer.getTimerAction());
-            final String pre = String.valueOf(timer.getPre());
-            final String post  = String.valueOf(timer.getPost());
+			final Date startDate = DateUtils.addMinutes(timer.getStart(), timer.getPre() * -1);
+			final Date stopDate = DateUtils.addMinutes(timer.getEnd(), timer.getPost());
+			final String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(startDate));
+			final String start = String.valueOf(DateUtils.getMinutesOfDay(startDate));
+			final String stop = String.valueOf(DateUtils.getMinutesOfDay(stopDate));
+			final String endAction = String.valueOf(timer.getTimerAction());
+			final String pre = String.valueOf(timer.getPre());
+			final String post  = String.valueOf(timer.getPost());
+
+			final StringBuilder stringBuilder = new StringBuilder(ServerConsts.REC_SERVICE_URL);
+			stringBuilder.append(create ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT);
+			final HTTPUtil.UrlBuilder builder;
+			builder = HTTPUtil.getUrlBuilder(stringBuilder.toString());
 			builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
 			builder.addQueryParameter("dor", days);
 			builder.addQueryParameter("encoding", "255");

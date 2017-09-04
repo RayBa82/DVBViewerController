@@ -81,6 +81,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     public static final String KEY_EPG_ID       = ChannelEpg.class.getName()+"KEY_EPG_ID";
     public static final String KEY_EPG_DAY      = ChannelEpg.class.getName()+"EPG_DAY";
     private ChannelEPGAdapter mAdapter;
+    private IEpgDetailsActivity.OnIEPGClickListener clickListener;
     private String channel;
     private long channelId;
     private long epgId;
@@ -106,10 +107,11 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try {
+        if(context instanceof EpgDateInfo) {
             mDateInfo = (EpgDateInfo) context;
-        } catch (ClassCastException e) {
-            e.printStackTrace();
+        }
+        if(context instanceof IEpgDetailsActivity.OnIEPGClickListener) {
+            clickListener = (IEpgDetailsActivity.OnIEPGClickListener) context;
         }
     }
 
@@ -121,7 +123,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         super.onActivityCreated(savedInstanceState);
         ImageLoader mImageCacher = ImageLoader.getInstance();
         fillFromBundle(getArguments());
-        mAdapter = new ChannelEPGAdapter(getActivity());
+        mAdapter = new ChannelEPGAdapter(getContext());
         setListAdapter(mAdapter);
         setListShown(false);
         getListView().setOnItemClickListener(this);
@@ -223,7 +225,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         } else if (DateUtils.isTomorrow(mDateInfo.getEpgDate())) {
             dateText = getString(R.string.tomorrow);
         } else {
-            dateText = DateUtils.formatDateTime(getActivity(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY);
+            dateText = DateUtils.formatDateTime(getContext(), mDateInfo.getEpgDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY);
         }
         if(header != null ){
             if (DateUtils.isToday(mDateInfo.getEpgDate())) {
@@ -277,8 +279,11 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         Cursor c = mAdapter.getCursor();
         c.moveToPosition(position);
         IEPG entry = cursorToEpgEntry(c);
-
-        Intent i = new Intent(getActivity(), IEpgDetailsActivity.class);
+        if(clickListener != null) {
+            clickListener.onIEPGClick(entry);
+            return;
+        }
+        Intent i = new Intent(getContext(), IEpgDetailsActivity.class);
         i.putExtra(IEPG.class.getSimpleName(), entry);
         startActivity(i);
     }
@@ -327,7 +332,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
             holder.contextMenu.setTag(c.getPosition());
             long millis = c.getLong(c.getColumnIndex(EpgTbl.START));
             int flags = DateUtils.FORMAT_SHOW_TIME;
-            String date = DateUtils.formatDateTime(getActivity(), millis, flags);
+            String date = DateUtils.formatDateTime(context, millis, flags);
             holder.startTime.setText(date);
             holder.title.setText(c.getString(c.getColumnIndex(EpgTbl.TITLE)));
             String subTitle = c.getString(c.getColumnIndex(EpgTbl.SUBTITLE));
@@ -407,7 +412,7 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         switch (v.getId()) {
             case R.id.contextMenu:
                 selectedPosition = (int) v.getTag();
-                PopupMenu popup = new PopupMenu(getActivity(), v);
+                PopupMenu popup = new PopupMenu(getContext(), v);
                 popup.getMenuInflater().inflate(R.menu.context_menu_epg, popup.getMenu());
                 popup.setOnMenuItemClickListener(this);
                 popup.show();
@@ -433,20 +438,20 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     return true;
                 case R.id.menuTimer:
                     timer = cursorToTimer(c);
-                    if (UIUtils.isTablet(getActivity())) {
+                    if (UIUtils.isTablet(getContext())) {
                         TimerDetails timerdetails = TimerDetails.newInstance();
                         Bundle args = TimerDetails.buildBundle(timer);
                         timerdetails.setArguments(args);
                         timerdetails.show(getActivity().getSupportFragmentManager(), TimerDetails.class.getName());
                     }else{
-                        Intent timerIntent = new Intent(getActivity(), TimerDetailsActivity.class);
+                        Intent timerIntent = new Intent(getContext(), TimerDetailsActivity.class);
                         Bundle extras = TimerDetails.buildBundle(timer);
                         timerIntent.putExtras(extras);
                         startActivity(timerIntent);
                     }
                     return true;
                 case R.id.menuDetails:
-                    Intent details = new Intent(getActivity(), IEpgDetailsActivity.class);
+                    Intent details = new Intent(getContext(), IEpgDetailsActivity.class);
                     c.moveToPosition(pos);
                     IEPG entry = cursorToEpgEntry(c);
                     details.putExtra(IEPG.class.getSimpleName(), entry);
@@ -509,8 +514,8 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         long epgStart = c.getLong(c.getColumnIndex(EpgTbl.START));
         long epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END));
         final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
-        int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 5);
-        int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, 5);
+        int epgBefore = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, DVBViewerPreferences.DEFAULT_TIMER_TIME_BEFORE);
+        int epgAfter = prefs.getPrefs().getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, DVBViewerPreferences.DEFAULT_TIMER_TIME_AFTER);
         final Date start = epgStart > 0 ? new Date(epgStart) : new Date();
         final Date end = epgEnd > 0 ? new Date(epgEnd) : new Date();
         final String eventId = c.getString(c.getColumnIndex(EpgTbl.EVENT_ID));

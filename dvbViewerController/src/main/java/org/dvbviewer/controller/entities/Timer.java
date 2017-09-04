@@ -31,9 +31,6 @@ public class Timer implements Comparable<Timer> {
 	public static final int		FLAG_RECORDING			= 1 << 1;					// 0x02
 	public static final int		FLAG_DISABLED			= 1 << 2;					// 0x02
 
-	public static final int		TIMERACTION_RECORDING	= 0;
-
-
 	private long				id = -1;
 	private long				channelId;
 	private String				channelName;

@@ -49,12 +49,7 @@ public class StreamUtils {
         return encodingSpeed;
     }
 
-    public static int getDefaultStart(final SharedPreferences prefs) {
-        return prefs.getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, 0);
-    }
-
-    public static String getEncodingSpeedName(final Context context, final SharedPreferences prefs) {
-        final int index = getEncodingSpeedIndex(context, prefs);
-        return context.getResources().getStringArray(R.array.ffmpegPresets)[index];
+    public static String getEncodingSpeedName(final Context context, final Preset preset) {
+        return context.getResources().getStringArray(R.array.ffmpegPresets)[preset.getEncodingSpeed()];
     }
 }

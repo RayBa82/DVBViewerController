@@ -32,25 +32,37 @@ import android.widget.Spinner;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.entities.IEPG;
+import org.dvbviewer.controller.entities.VideoFile;
+import org.dvbviewer.controller.io.UrlBuilderException;
+import org.dvbviewer.controller.ui.adapter.VideoAdapter;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
 import org.dvbviewer.controller.ui.fragments.Dashboard;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
+import org.dvbviewer.controller.ui.fragments.EPGDetails;
+import org.dvbviewer.controller.ui.fragments.MediaFragment;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.StatusList;
+import org.dvbviewer.controller.ui.fragments.StreamConfig;
 import org.dvbviewer.controller.ui.fragments.TaskList;
 import org.dvbviewer.controller.ui.fragments.TimerList;
+import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
 import org.dvbviewer.controller.ui.phone.AboutActivity;
 import org.dvbviewer.controller.ui.phone.ChannelListActivity;
+import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
+import org.dvbviewer.controller.ui.phone.MedialistActivity;
 import org.dvbviewer.controller.ui.phone.PreferencesActivity;
 import org.dvbviewer.controller.ui.phone.RecordinglistActivity;
 import org.dvbviewer.controller.ui.phone.RemoteActivity;
 import org.dvbviewer.controller.ui.phone.StatusActivity;
 import org.dvbviewer.controller.ui.phone.TaskActivity;
 import org.dvbviewer.controller.ui.phone.TimerlistActivity;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.Config;
+import org.dvbviewer.controller.utils.FileType;
 
 import java.util.List;
 
@@ -59,7 +71,7 @@ import java.util.List;
  *
  * @author RayBa
  */
-public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener {
+public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener, IEpgDetailsActivity.OnIEPGClickListener, VideoAdapter.OnVideoClickListener {
 
     public static final String ENABLE_DRAWER = "ENABLE_DRAWER";
 	public static final String TITLE 		 = "title";
@@ -69,6 +81,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	private DVBViewerPreferences 	prefs;
     private ChannelPager chans;
     private boolean enableDrawer;
+	private OnBackPressedListener onBackPressedListener;
 
     /* (non-Javadoc)
      * @see org.dvbviewer.controller.ui.base.BaseActivity#onCreate(android.os.Bundle)
@@ -157,84 +170,97 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	 */
 	@Override
 	public void onDashboarButtonClick(View v) {
+		onBackPressedListener = null;
 		switch (v.getId()) {
-		case R.id.home_btn_remote:
-			if (multiContainer != null) {
-				enableDrawer = false;
-				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-				tran.replace(multiContainer.getId(), new Remote());
-				tran.commit();
-				setTitle(R.string.remote);
-			} else {
-				startActivity(new Intent(this, RemoteActivity.class));
-			}
-			break;
-		case R.id.home_btn_channels:
-			if (multiContainer != null) {
-                enableDrawer = true;
-				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-                chans = new ChannelPager();
-				chans.setHasOptionsMenu(true);
-                Bundle bundle = new Bundle();
-                bundle.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
-                chans.setArguments(bundle);
-				tran.replace(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
-				tran.commit();
-				setTitle(R.string.channelList);
-			} else {
-				startActivity(new Intent(this, ChannelListActivity.class));
-			}
-			break;
-		case R.id.home_btn_timers:
-			if (multiContainer != null) {
-				enableDrawer = false;
-				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-				tran.replace(multiContainer.getId(), new TimerList());
-				tran.commit();
-			} else {
+			case R.id.home_btn_remote:
+				if (multiContainer != null) {
+					enableDrawer = false;
+					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					tran.replace(multiContainer.getId(), new Remote());
+					tran.commit();
+					setTitle(R.string.remote);
+				} else {
+					startActivity(new Intent(this, RemoteActivity.class));
+				}
+				break;
+			case R.id.home_btn_channels:
+				if (multiContainer != null) {
+					enableDrawer = true;
+					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					chans = new ChannelPager();
+					chans.setHasOptionsMenu(true);
+					Bundle bundle = new Bundle();
+					bundle.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
+					chans.setArguments(bundle);
+					tran.replace(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
+					tran.commit();
+					setTitle(R.string.channelList);
+				} else {
+					startActivity(new Intent(this, ChannelListActivity.class));
+				}
+				break;
+			case R.id.home_btn_timers:
+				if (multiContainer != null) {
+					enableDrawer = false;
+					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					tran.replace(multiContainer.getId(), new TimerList());
+					tran.commit();
+				} else {
 
-				startActivity(new Intent(this, TimerlistActivity.class));
-			}
-			break;
-		case R.id.home_btn_recordings:
-			if (multiContainer != null) {
-				enableDrawer = false;
-				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-				tran.replace(multiContainer.getId(), new RecordingList());
-				tran.commit();
-				setTitle(R.string.recordings);
-			} else {
-				startActivity(new Intent(this, RecordinglistActivity.class));
-			}
-			break;
-		case R.id.home_btn_settings:
-			startActivity(new Intent(this, PreferencesActivity.class));
-			break;
-		case R.id.home_btn_tasks:
-			if (multiContainer != null) {
-				enableDrawer = false;
-				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-				tran.replace(multiContainer.getId(), new TaskList());
-				tran.commit();
-				setTitle(R.string.tasks);
-			} else {
-				startActivity(new Intent(this, TaskActivity.class));
-			}
-			break;
-		case R.id.home_btn_status:
-			if (multiContainer != null) {
-				enableDrawer = false;
-				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-				tran.replace(multiContainer.getId(), new StatusList());
-				tran.commit();
-				setTitle(R.string.status);
-			} else {
-				startActivity(new Intent(this, StatusActivity.class));
-			}
-			break;
+					startActivity(new Intent(this, TimerlistActivity.class));
+				}
+				break;
+			case R.id.home_btn_recordings:
+				if (multiContainer != null) {
+					enableDrawer = false;
+					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					tran.replace(multiContainer.getId(), new RecordingList());
+					tran.commit();
+					setTitle(R.string.recordings);
+				} else {
+					startActivity(new Intent(this, RecordinglistActivity.class));
+				}
+				break;
+			case R.id.home_btn_settings:
+				startActivity(new Intent(this, PreferencesActivity.class));
+				break;
+			case R.id.home_btn_tasks:
+				if (multiContainer != null) {
+					enableDrawer = false;
+					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					tran.replace(multiContainer.getId(), new TaskList());
+					tran.commit();
+					setTitle(R.string.tasks);
+				} else {
+					startActivity(new Intent(this, TaskActivity.class));
+				}
+				break;
+			case R.id.home_btn_status:
+				if (multiContainer != null) {
+					enableDrawer = false;
+					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					tran.replace(multiContainer.getId(), new StatusList());
+					tran.commit();
+					setTitle(R.string.status);
+				} else {
+					startActivity(new Intent(this, StatusActivity.class));
+				}
+				break;
+			case R.id.home_btn_medias:
+				if (multiContainer != null) {
+					enableDrawer = false;
+					final MediaFragment mediaFragment = new MediaFragment();
+					onBackPressedListener = mediaFragment;
+					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					tran.replace(multiContainer.getId(), mediaFragment);
+					tran.commit();
+				} else {
+					startActivity(new Intent(this, MedialistActivity.class));
+				}
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 		if (mClientSpinner != null){
 			mClientSpinner.setVisibility(View.GONE);
@@ -312,5 +338,54 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
         outState.putBoolean(ENABLE_DRAWER, enableDrawer);
 		outState.putString(TITLE, getTitle().toString());
     }
+
+	@Override
+	public void onBackPressed() {
+		boolean result = false;
+		if(onBackPressedListener != null) {
+			result = onBackPressedListener.onBackPressed();
+		}
+		if(!result) {
+			super.onBackPressed();
+		}
+
+	}
+
+	@Override
+	public void onIEPGClick(IEPG iepg) {
+		EPGDetails details = new EPGDetails();
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(IEPG.class.getSimpleName(), iepg);
+		details.setArguments(bundle);
+		details.show(getSupportFragmentManager(), IEPG.class.getName());
+	}
+
+	@Override
+	public void onVideoClick(VideoFile videoFile) {
+		Bundle arguments = new Bundle();
+		arguments.putLong(StreamConfig.EXTRA_FILE_ID, videoFile.getId());
+		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
+		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+		arguments.putString(StreamConfig.EXTRA_TITLE, videoFile.getTitle());
+		StreamConfig cfg = StreamConfig.newInstance();
+		cfg.setArguments(arguments);
+		cfg.show(getSupportFragmentManager(), StreamConfig.class.getName());
+	}
+
+	@Override
+	public void onVideoStreamClick(VideoFile videoFile) {
+		try {
+			final Intent videoIntent = StreamConfig.buildQuickUrl(this, videoFile.getId(), videoFile.getName(), FileType.VIDEO);
+			startActivity(videoIntent);
+			AnalyticsTracker.trackQuickStream(getApplication());
+		} catch (UrlBuilderException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onVideoContextClick(VideoFile videoFile) {
+
+	}
 
 }

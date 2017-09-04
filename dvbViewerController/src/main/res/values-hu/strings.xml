@@ -40,6 +40,7 @@
     <string name="recordings">Felvételek</string>
     <string name="no_recordings">Nem találtam felvételt</string>
     <string name="busyDeleteRecordings">Felvételeket törlöm&#8230;</string>
+    <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Timer</string>
     <string name="createTimer">Timer létesítése</string>
@@ -93,7 +94,6 @@
     <string name="WOL">Recordin Service felkeltése</string>
     <!-- Status -->
     <string name="status">Státusz</string>
-    <string name="status_rs_version">Recording Service Verzió</string>
     <string name="status_current_recordings">Folyó felvételek</string>
     <string name="status_current_clients">Rákapcsolt kliens</string>
     <string name="status_current_rtsp_clients">Rákapcsolt RTSP kliens</string>

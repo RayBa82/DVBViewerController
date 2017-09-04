@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -54,6 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
+		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         if (!BuildConfig.DEBUG){
 			mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
             ((App) getApplication()).getTracker();
@@ -315,13 +317,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	private void setSupportActionBarSubtitleTitle(int titleId) {
 		if (getSupportActionBar() != null) {
-			getSupportActionBar().setTitle(titleId);
+			getSupportActionBar().setSubtitle(titleId);
 		}
 	}
 
 	private void setSupportActionBarSubtitleTitle(CharSequence title) {
 		if (getSupportActionBar() != null) {
-			getSupportActionBar().setTitle(title);
+			getSupportActionBar().setSubtitle(title);
 		}
 	}
 
