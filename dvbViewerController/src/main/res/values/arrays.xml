@@ -17,7 +17,7 @@
         <item>veryslow</item>
         <item>placebo</item>
     </string-array>
-    <string-array name="tracks" translatable="true">
+    <string-array name="tracks">
         <item>Track 1</item>
         <item>Track 2</item>
         <item>Track 3</item>
