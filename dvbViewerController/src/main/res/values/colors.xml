@@ -16,21 +16,22 @@
 -->
 <resources>
 
-    <color name="white_transparent">#50FFFFFF</color>
+    <!-- see  http://developer.android.com/design/style/color.html-->
+    <color name="colorPrimary">#FF4D79B8</color>
+    <color name="colorAccent">#d45418</color>
     <color name="colorControlNormal">#E3F2FD</color>
+    <color name="colorControlActivated">#d45418</color>
     <color name="colorControlDash">#E3F2FD</color>
-	<color name="dark_orange">#8c3600</color>
+    <color name="white_transparent">#50FFFFFF</color>
+    <color name="dark_orange">#8c3600</color>
     <color name="light_orange">#b73a00</color>
     <color name="primary_text_color">@android:color/white</color>
 
     <color name="selectorLongclickHoloDark">#CC0099CC</color>
     <color name="selectorDisabledHoloDark">#80000000</color>
-	
-	
-	<!-- see  http://developer.android.com/design/style/color.html-->
-	<color name="baseDarkBlue">#FF4D79B8</color>
-	<color name="baseLightBlue">#FF70ABEF</color>
-	<color name="black_transparent">#AA000000</color>
+
+    <color name="baseLightBlue">#FF70ABEF</color>
+    <color name="black_transparent">#AA000000</color>
 
     <color name="background_light">#fff3f3f3</color>
     <color name="bright_foreground_dark">@color/background_light</color>

@@ -35,7 +35,7 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 		mDrawerLayout.setDrawerShadow(android.R.color.white, GravityCompat.END);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 		mDrawerList.setOnItemClickListener(this);
-		Toolbar mToolbar = (Toolbar) findViewById(R.id.home_toolbar);
+		Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		if (mToolbar != null){
 			setSupportActionBar(mToolbar);
 		}

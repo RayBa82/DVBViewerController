@@ -4,22 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/home_toolbar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:background="@drawable/ab_background"
-        android:minHeight="?attr/actionBarSize">
-
-        <Spinner
-            android:id="@+id/clientSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:visibility="gone" />
-
-    </android.support.v7.widget.Toolbar>
+    <include layout="@layout/app_bar" />
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"

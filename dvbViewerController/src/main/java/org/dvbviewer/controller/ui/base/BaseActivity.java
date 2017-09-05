@@ -256,7 +256,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	
 	@Override
 	public void setTitle(CharSequence title) {
-		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		if (toolbar != null) {
 			setSupportActionBarTitle(title);
 			toolbar.setTitle(title);
@@ -268,7 +268,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	
 	@Override
 	public void setTitle(int titleId) {
-		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		if (toolbar != null) {
 			toolbar.setTitle(titleId);
 		}else {
@@ -277,7 +277,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	}
 
 	public void setSubTitle(CharSequence title) {
-		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		if (toolbar != null) {
 			setSupportActionBarSubtitleTitle(R.string.app_name);
 			toolbar.setTitle(title);
@@ -288,7 +288,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
 	public void setSubTitle(int titleId) {
-		Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		if (toolbar != null) {
 			setSupportActionBarSubtitleTitle(R.string.app_name);
 			toolbar.setTitle(titleId);

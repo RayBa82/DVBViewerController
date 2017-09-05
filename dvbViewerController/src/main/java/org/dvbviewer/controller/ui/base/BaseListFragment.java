@@ -18,8 +18,10 @@ package org.dvbviewer.controller.ui.base;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,6 +36,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.utils.UIUtils;
 
 /**
@@ -116,8 +119,9 @@ public class BaseListFragment extends BaseFragment {
 			pframe.setVisibility(View.GONE);
 			pframe.setGravity(Gravity.CENTER);
 			
-			ProgressBar progress = new ProgressBar(context, null,
-					android.R.attr.progressBarStyle);
+			ProgressBar progress = new ProgressBar(context);
+            progress.getIndeterminateDrawable()
+                    .setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
 			pframe.addView(progress, new FrameLayout.LayoutParams(
 					ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			

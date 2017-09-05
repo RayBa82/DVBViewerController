@@ -83,7 +83,7 @@
     </style>
 
     <style name="HeaderContainer">
-        <item name="android:background">@drawable/ab_background</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="ProgressBarStyleHorizontal" parent="android:Widget.ProgressBar.Horizontal">
@@ -96,8 +96,9 @@
         <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
     </style>
 
-    <style name="DialogWindowTitle" parent="@style/Widget.AppCompat.Toolbar">
-        <item name="android:background">@drawable/ab_background</item>
+    <style name="DialogWindowTitle" parent="Theme.DVB.NoActionBar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
         <item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
     </style>
 

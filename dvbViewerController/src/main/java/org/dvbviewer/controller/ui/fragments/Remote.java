@@ -26,6 +26,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -63,7 +64,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
 
     private Toolbar mToolbar;
     private ArrayAdapter mSpinnerAdapter;
-    private Spinner mClientSpinner;
+    private AppCompatSpinner mClientSpinner;
     private int spinnerPosition;
     private static final String KEY_SPINNER_POS = "spinnerPosition";
     private DVBViewerPreferences prefs;
@@ -121,7 +122,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_remote, container, false);
-        mToolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        mToolbar = v.findViewById(R.id.toolbar);
 
         // Set an OnMenuItemClickListener to handle menu item clicks
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -133,7 +134,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         });
 
         mToolbar.setTitle(R.string.remote);
-        mClientSpinner = (Spinner) v.findViewById(R.id.clientSpinner);
+        mClientSpinner = v.findViewById(R.id.clientSpinner);
         mClientSpinner.setVisibility(View.GONE);
         mClientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

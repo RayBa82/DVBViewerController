@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,7 +78,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	public static final String TITLE 		 = "title";
 	private View					multiContainer;
 	private ArrayAdapter 			mSpinnerAdapter;
-	private Spinner 				mClientSpinner;
+	private AppCompatSpinner mClientSpinner;
 	private DVBViewerPreferences 	prefs;
     private ChannelPager chans;
     private boolean enableDrawer;
@@ -130,7 +131,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
     }
 
 	private void initRemoteSpinner() {
-		mClientSpinner = (Spinner) findViewById(R.id.clientSpinner);
+		mClientSpinner = findViewById(R.id.clientSpinner);
 		if (mClientSpinner != null){
 			mClientSpinner.setVisibility(View.GONE);
 			mClientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
