@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
@@ -305,11 +307,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		public RecordingAdapter(Context context) {
 			super();
 			imageLoader = ImageLoader.getInstance();
+			final Drawable placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
 			options = new DisplayImageOptions.Builder()
 					.cacheInMemory(true)
 					.cacheOnDisk(true)
-					.showImageForEmptyUri(R.drawable.ic_play_white_40dp) // resource or drawable
-					.showImageOnFail(R.drawable.ic_play_white_40dp) // r
+					.showImageForEmptyUri(placeHolder) // resource or drawable
+					.showImageOnFail(placeHolder) // r
 					.displayer(new FadeInBitmapDisplayer(500, true, true, false))
 					.build();
 		}
@@ -326,12 +329,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			if (convertView == null) {
 				convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_recording, parent, false);
 				holder = new ViewHolder();
-				holder.thumbNail = (ImageView) convertView.findViewById(R.id.thumbNail);
-				holder.title = (TextView) convertView.findViewById(R.id.title);
-				holder.subTitle = (TextView) convertView.findViewById(R.id.subTitle);
-				holder.channelName = (TextView) convertView.findViewById(R.id.channelName);
-				holder.date = (TextView) convertView.findViewById(R.id.date);
-				holder.contextMenu = (ImageView) convertView.findViewById(R.id.contextMenu);
+				holder.thumbNail = convertView.findViewById(R.id.thumbNail);
+				holder.title = convertView.findViewById(R.id.title);
+				holder.subTitle = convertView.findViewById(R.id.subTitle);
+				holder.channelName = convertView.findViewById(R.id.channelName);
+				holder.date = convertView.findViewById(R.id.date);
+				holder.contextMenu = convertView.findViewById(R.id.contextMenu);
 				holder.contextMenu.setOnClickListener(RecordingList.this);
 				holder.thumbNailContainer = convertView.findViewById(R.id.thumbNailContainer);
 				holder.thumbNailContainer.setOnClickListener(RecordingList.this);
