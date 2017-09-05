@@ -21,7 +21,7 @@
             style="@style/commonSubTitle"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:src="@drawable/ic_launcher"
+            android:src="@mipmap/ic_launcher"
             android:text="Test" />
 
         <TextView

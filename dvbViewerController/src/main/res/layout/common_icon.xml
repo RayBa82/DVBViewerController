@@ -5,7 +5,7 @@
         android:id="@+id/icon"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:src="@drawable/ic_launcher"
+        android:src="@mipmap/ic_launcher"
         android:adjustViewBounds="true"
         android:scaleType="centerInside"/>
 
