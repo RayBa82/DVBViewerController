@@ -12,19 +12,14 @@
         <item name="android:windowSoftInputMode">stateHidden</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="dialogTheme">@style/DialogStyle</item>
+        <item name="colorControlNormal">@color/colorControlNormal</item>
 
     </style>
 
-    <style name="Theme.DVB.NoActionBar" parent="@style/Theme.AppCompat.NoActionBar">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="android:actionModeStyle" tools:ignore="NewApi">@style/ActionModeStyle</item>
-        <item name="actionModeStyle">@style/ActionModeStyle</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/ActionBarStyle</item>
-        <item name="actionBarStyle">@style/ActionBarStyle</item>
-        <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
-        <item name="android:windowSoftInputMode">stateHidden</item>
-        <item name="windowActionModeOverlay">true</item>
-        <item name="dialogTheme">@style/DialogStyle</item>
+    <style name="Theme.DVB.NoActionBar" parent="Theme.DVB">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
 </resources>

@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/img_remote"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/img_program"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
@@ -92,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/img_timers"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
@@ -125,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/img_recordings"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
@@ -158,7 +158,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/img_medias"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
@@ -191,7 +191,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/img_tasks"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
@@ -224,7 +224,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/img_status"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
@@ -257,7 +257,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/img_preferences"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
