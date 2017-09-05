@@ -17,8 +17,8 @@
 <resources>
 
     <color name="white_transparent">#50FFFFFF</color>
-    <color name="colorControlNormal">#BBDEFB</color>
-    <color name="dashColorControl">#ffffff</color>
+    <color name="colorControlNormal">#E3F2FD</color>
+    <color name="colorControlDash">#E3F2FD</color>
 	<color name="dark_orange">#8c3600</color>
     <color name="light_orange">#b73a00</color>
     <color name="primary_text_color">@android:color/white</color>
