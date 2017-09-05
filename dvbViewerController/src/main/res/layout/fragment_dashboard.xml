@@ -3,26 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dp"
-    app:alignmentMode="alignMargins"
+    app:alignmentMode="alignBounds"
     app:columnCount="@integer/gridCols"
     app:rowCount="@integer/gridRows"
-    app:rowOrderPreserved="false"
+    app:rowOrderPreserved="true"
     app:useDefaultMargins="true">
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_remote"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:foregroundTint="@color/blueDark"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
         app:layout_rowWeight="1">
 
         <RelativeLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -45,17 +45,17 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_channels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
         app:layout_rowWeight="1">
 
         <RelativeLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -78,17 +78,17 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_timers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
         app:layout_rowWeight="1">
 
         <RelativeLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -111,17 +111,17 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_recordings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
         app:layout_rowWeight="1">
 
         <RelativeLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -144,17 +144,17 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_medias"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
         app:layout_rowWeight="1">
 
         <RelativeLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -177,17 +177,17 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_tasks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
         app:layout_rowWeight="1">
 
         <RelativeLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -210,17 +210,17 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
         app:layout_rowWeight="1">
 
         <RelativeLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -243,18 +243,18 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackground"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_gravity="fill"
         app:layout_rowWeight="1">
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:gravity="center"
             android:layout_height="match_parent">
 
             <android.support.v7.widget.AppCompatImageView
