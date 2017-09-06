@@ -39,18 +39,18 @@ android {
     }
     dependencies {
         compile project(':showCaseView')
-        compile 'com.android.support:appcompat-v7:' + rootProject.ext.appcompatVersion
-        compile 'com.android.support:preference-v7:' + rootProject.ext.appcompatVersion
-        compile 'com.android.support:design:' + rootProject.ext.appcompatVersion
-        compile 'com.android.support:cardview-v7:' + rootProject.ext.appcompatVersion
-        compile 'com.android.support:gridlayout-v7:' + rootProject.ext.appcompatVersion
+        compile 'com.android.support:appcompat-v7:' +project.compatVersion
+        compile 'com.android.support:design:'+ project.compatVersion
+        compile 'com.android.support:preference-v7:' + project.compatVersion
+        compile 'com.android.support:cardview-v7:' + project.compatVersion
+        compile 'com.android.support:gridlayout-v7:' + project.compatVersion
+        compile 'com.google.android.gms:play-services-analytics:' + project.playServiceVersion
+        compile 'com.google.firebase:firebase-crash:' + project.playServiceVersion
+        compile 'com.google.firebase:firebase-core:' + project.playServiceVersion
         compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.6.0'
-        compile 'com.google.android.gms:play-services-analytics:11.2.0'
         compile 'com.google.code.gson:gson:2.7'
         compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
         compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'com.google.firebase:firebase-crash:11.2.0'
-        compile 'com.google.firebase:firebase-core:11.2.0'
         compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.0'
         compile group: 'commons-io', name: 'commons-io', version: '2.4'
         compile 'com.jakewharton:butterknife:8.8.1'

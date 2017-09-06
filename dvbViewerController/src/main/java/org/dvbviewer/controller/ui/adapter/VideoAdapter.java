@@ -1,5 +1,8 @@
 package org.dvbviewer.controller.ui.adapter;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.AppCompatImageButton;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -36,14 +39,15 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     private final ImageLoader imageLoader;
     private final DisplayImageOptions options;
 
-    public VideoAdapter(OnVideoClickListener listener) {
+    public VideoAdapter(Context context, OnVideoClickListener listener) {
         this.listener = listener;
         imageLoader = ImageLoader.getInstance();
+        final Drawable placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
         options = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
-                .showImageForEmptyUri(R.drawable.ic_play_white_40dp) // resource or drawable
-                .showImageOnFail(R.drawable.ic_play_white_40dp) // r
+                .showImageForEmptyUri(placeHolder) // resource or drawable
+                .showImageOnFail(placeHolder) // r
                 .displayer(new FadeInBitmapDisplayer(500, true, true, false))
                 .build();
     }

@@ -57,7 +57,7 @@ public class VideoList extends RecyclerViewFragment implements LoaderManager.Loa
 		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		activity.setTitle(R.string.details);
 		setHasOptionsMenu(true);
-		mAdapter = new VideoAdapter(this);
+		mAdapter = new VideoAdapter(getContext(), this);
 		dirId = getArguments().getLong(KEY_DIR_ID, 0);
 	}
 

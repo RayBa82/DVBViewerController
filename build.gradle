@@ -2,7 +2,7 @@
 def majorVersion = 1
 def minorVersion = 3
 def patchVersion = 0
-def buildNumber = 3
+def buildNumber = 4
 def buildVersionCode;
 def buildVersionName
 buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
@@ -19,11 +19,10 @@ buildscript {
 }
 ext {
     applicationId = "org.dvbviewer.controller"
-    compileSdkVersion = 26
-    buildToolsVersion = "26.0.1"
-    minSdkVersion = 14
-    targetSdkVersion = 26
-    appcompatVersion = "26.0.1"
+    compileSdkVersion = project.compileSdkVersion.toInteger()
+    buildToolsVersion = project.buildToolsVersion
+    minSdkVersion = project.minSdkVersion.toInteger()
+    targetSdkVersion = project.targetSdkVersion.toInteger()
     versionCode = buildVersionCode
     versionName = buildVersionName
 }

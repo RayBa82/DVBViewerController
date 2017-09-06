@@ -16,14 +16,24 @@ public class FFMPEGPrefsHandlerTest {
 
     @Test
     public void testNullString() {
-        FfMpegPrefs result = handler.parse(null);
+        FfMpegPrefs result = null;
+        try {
+            result = handler.parse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         assertNotNull(result);
         assertNotNull(result.getPresets());
     }
 
     @Test
     public void testEmptyString() {
-        FfMpegPrefs result = handler.parse(StringUtils.EMPTY);
+        FfMpegPrefs result = null;
+        try {
+            result = handler.parse(StringUtils.EMPTY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         assertNotNull(result);
         assertNotNull(result.getPresets());
     }
