@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -477,7 +478,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         ViewTarget target = new ViewTarget(icon);
         ShowcaseView showCase = ShowcaseView.insertShowcaseView(target, getActivity(),
                 getActivity().getString(R.string.quick_stream_hint_title), getActivity().getString(R.string.quick_stream_hint_text), co);
-        showCase.setBackgroundColor(getResources().getColor(R.color.black_transparent));
+        showCase.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.black_transparent));
         showCase.show();
     }
 

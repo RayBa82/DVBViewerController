@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customstate="http://schemas.android.com/apk/res-auto">
+
+    <item android:drawable="@android:color/transparent" android:state_window_focused="false"/>
+    <item android:drawable="@color/disabled" android:state_enabled="false" android:state_focused="true"/>
+    <item android:drawable="@color/colorAccent" android:state_pressed="true"/>
+    <item android:drawable="@color/colorAccent" android:state_focused="true"/>
+    <item android:drawable="@color/colorPrimary" customstate:state_checked="true"/>
+    <item android:drawable="@color/disabled" customstate:state_disabled="true"/>
+    <item android:drawable="@color/error" customstate:state_error="true"/>
+
+</selector>

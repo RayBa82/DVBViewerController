@@ -39,6 +39,6 @@
         android:layout_gravity="bottom"
         android:layout_marginRight="@dimen/default_padding_medium"
         android:layout_marginEnd="@dimen/default_padding_medium"
-        android:background="@color/baseLightBlue" />
+        android:background="@color/colorPrimary" />
 
 </FrameLayout>

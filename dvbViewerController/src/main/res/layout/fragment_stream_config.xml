@@ -27,7 +27,7 @@
                 android:singleLine="true"
                 android:text="@string/streamDirect"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@drawable/primary_text_holo_dark" />
+                android:textColor="@color/primary_text_holo_dark" />
 
             <View
                 android:layout_width="fill_parent"
@@ -68,7 +68,7 @@
                     android:singleLine="true"
                     android:text="@string/streamTranscoded"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@drawable/primary_text_holo_dark" />
+                    android:textColor="@color/primary_text_holo_dark" />
 
                 <View
                     android:layout_width="fill_parent"
