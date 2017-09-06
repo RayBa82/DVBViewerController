@@ -43,8 +43,8 @@
     <color name="holo_red_dark">#ffcc0000</color>
     <color name="blueDark">#000079</color>
     <color name="blueLight">#004089</color>
-    <color name="red_dark">#8c0000</color>
-    <color name="red_light">#a3000d</color>
+    <color name="red_dark">#8C0000</color>
+    <color name="red_light">#CC0000</color>
 
 
 </resources>
