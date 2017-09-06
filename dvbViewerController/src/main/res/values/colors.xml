@@ -20,7 +20,7 @@
     <color name="colorPrimary">#2196F3</color>
     <color name="colorAccent">#64B5F6</color>
     <color name="colorControlNormal">#E3F2FD</color>
-    <color name="colorControlActivated">#d45418</color>
+    <color name="colorControlActivated">#3F51B5</color>
     <color name="colorControlDash">#E3F2FD</color>
     <color name="white_transparent">#50FFFFFF</color>
     <color name="dark_orange">#8c3600</color>
