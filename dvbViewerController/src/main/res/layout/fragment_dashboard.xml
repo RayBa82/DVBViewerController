@@ -13,7 +13,7 @@
         android:id="@+id/home_btn_remote"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?attr/selectableItemBackground"
+        android:foreground="?attr/selectableItemBackground"
         android:clickable="true"
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
