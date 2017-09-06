@@ -4,7 +4,6 @@
 
     <style name="Theme.DVB" parent="@style/Theme.AppCompat">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-        <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
         <item name="colorControlActivated">@color/colorControlActivated</item>
         <item name="windowActionModeOverlay">true</item>
