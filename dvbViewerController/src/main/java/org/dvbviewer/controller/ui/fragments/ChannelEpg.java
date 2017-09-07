@@ -42,7 +42,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts.EpgTbl;
+import org.dvbviewer.controller.data.ProviderConsts.EpgTbl;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
 import org.dvbviewer.controller.entities.IEPG;

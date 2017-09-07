@@ -19,12 +19,12 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
- * The Class DbConsts.
+ * The Class ProviderConsts.
  *
  * @author RayBa
  * @date 07.04.2013
  */
-public class DbConsts {
+public class ProviderConsts {
 
 	/** The Constant CONTENT_AUTHORITY. */
 	public static final String	CONTENT_AUTHORITY	= "org.dvbviewer.controller.provider";

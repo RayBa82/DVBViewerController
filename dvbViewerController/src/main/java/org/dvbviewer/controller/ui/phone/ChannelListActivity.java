@@ -27,7 +27,7 @@ import android.widget.AdapterView;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
-import org.dvbviewer.controller.data.DbConsts;
+import org.dvbviewer.controller.data.ProviderConsts;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.ui.base.BaseActivity;
@@ -133,7 +133,7 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 		}
 		if (container != null && groupTypeChanged){
 			data.moveToFirst();
-			mEpgPager.refresh(data.getLong(data.getColumnIndex(DbConsts.GroupTbl._ID)), 0);
+			mEpgPager.refresh(data.getLong(data.getColumnIndex(ProviderConsts.GroupTbl._ID)), 0);
 		}
 		groupTypeChanged = false;
 	}

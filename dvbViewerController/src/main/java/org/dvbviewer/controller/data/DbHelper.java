@@ -20,12 +20,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
-import org.dvbviewer.controller.data.DbConsts.EpgTbl;
-import org.dvbviewer.controller.data.DbConsts.GroupTbl;
-import org.dvbviewer.controller.data.DbConsts.MediaTbl;
-import org.dvbviewer.controller.data.DbConsts.NowTbl;
-import org.dvbviewer.controller.data.DbConsts.RootTbl;
+import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl;
+import org.dvbviewer.controller.data.ProviderConsts.EpgTbl;
+import org.dvbviewer.controller.data.ProviderConsts.GroupTbl;
+import org.dvbviewer.controller.data.ProviderConsts.MediaTbl;
+import org.dvbviewer.controller.data.ProviderConsts.NowTbl;
+import org.dvbviewer.controller.data.ProviderConsts.RootTbl;
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;

@@ -48,9 +48,9 @@ import com.espian.showcaseview.targets.ViewTarget;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts;
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
-import org.dvbviewer.controller.data.DbConsts.EpgTbl;
+import org.dvbviewer.controller.data.ProviderConsts;
+import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl;
+import org.dvbviewer.controller.data.ProviderConsts.EpgTbl;
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
@@ -77,7 +77,7 @@ import java.util.Date;
  */
 public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cursor>, OnClickListener, PopupMenu.OnMenuItemClickListener {
 
-    public static final Uri                         BASE_CONTENT_URI	        = Uri.parse(DbConsts.BASE_CONTENT_URI+"/channelselector");
+    public static final Uri                         BASE_CONTENT_URI	        = Uri.parse(ProviderConsts.BASE_CONTENT_URI+"/channelselector");
     public static final String                      KEY_CHANNEL_INDEX 	        = ChannelList.class.getName() + "KEY_CHANNEL_INDEX";
     private static final int                        LOADER_CHANNELLIST          = 101;
     private             long                        mGroupId                    = -1;

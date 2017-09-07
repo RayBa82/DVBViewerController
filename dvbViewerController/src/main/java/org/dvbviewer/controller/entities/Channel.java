@@ -19,7 +19,7 @@ import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
+import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl;
 
 // TODO: Auto-generated Javadoc
 /**

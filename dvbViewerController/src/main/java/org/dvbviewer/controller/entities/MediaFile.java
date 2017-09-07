@@ -18,7 +18,7 @@ package org.dvbviewer.controller.entities;
 import android.content.ContentValues;
 import android.text.TextUtils;
 
-import org.dvbviewer.controller.data.DbConsts;
+import org.dvbviewer.controller.data.ProviderConsts;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -87,16 +87,16 @@ public class MediaFile {
 	public ContentValues toContentValues() {
 		ContentValues result = new ContentValues();
 		if (this.id != null && this.id > 0l) {
-			result.put(DbConsts.MediaTbl._ID, id);
+			result.put(ProviderConsts.MediaTbl._ID, id);
 		}
 		if (this.dirId > 0l) {
-			result.put(DbConsts.MediaTbl.DIR_ID, dirId);
+			result.put(ProviderConsts.MediaTbl.DIR_ID, dirId);
 		}
 		if (this.name != null && !TextUtils.isEmpty(this.name)) {
-			result.put(DbConsts.MediaTbl.NAME, this.name);
+			result.put(ProviderConsts.MediaTbl.NAME, this.name);
 		}
 		if (this.parent != null) {
-			result.put(DbConsts.MediaTbl.PARENT, this.parent);
+			result.put(ProviderConsts.MediaTbl.PARENT, this.parent);
 		}
 		return result;
 	}
