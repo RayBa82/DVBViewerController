@@ -74,8 +74,6 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
         return v;
     }
 
-
-
     @Override
     public void onMediaClick(MediaFile mediaFile) {
         if(mediaFile.getDirId() <= 0) {

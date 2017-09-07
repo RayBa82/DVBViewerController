@@ -121,7 +121,7 @@ public class BaseListFragment extends BaseFragment {
 			
 			ProgressBar progress = new ProgressBar(context);
             progress.getIndeterminateDrawable()
-                    .setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+                    .setColorFilter(ContextCompat.getColor(getContext(), R.color.colorControlActivated), PorterDuff.Mode.SRC_IN);
 			pframe.addView(progress, new FrameLayout.LayoutParams(
 					ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			

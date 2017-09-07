@@ -23,6 +23,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.nostra13.universalimageloader.utils.IoUtils;
 
@@ -101,6 +104,20 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 	}
 
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.media_fragment, menu);
+	}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        setListShown(false);
+        parentId = 0l;
+        getLoaderManager().restartLoader(SYNC_LOADER_ID, null, this);
+        return true;
+    }
+
+    @Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		switch (id) {
 			case SYNC_LOADER_ID:
@@ -143,7 +160,7 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		switch (loader.getId()){
 			case SYNC_LOADER_ID:
-				getLoaderManager().initLoader(1, getArguments(), this);
+				getLoaderManager().restartLoader(MEDIA_LOADER_ID, getArguments(), this);
 				break;
 			case MEDIA_LOADER_ID:
 				mAdapter.setCursor(data);

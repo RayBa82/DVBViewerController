@@ -18,9 +18,10 @@
 
     <!-- see  http://developer.android.com/design/style/color.html-->
     <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
     <color name="colorAccent">#64B5F6</color>
     <color name="colorControlNormal">#E3F2FD</color>
-    <color name="colorControlActivated">#3F51B5</color>
+    <color name="colorControlActivated">#64B5F6</color>
     <color name="colorControlDash">#E3F2FD</color>
     <color name="menu_icon_color">#80bebebe</color>
     <color name="primaryTextColor">#F3F3F3</color>
@@ -32,7 +33,5 @@
 
     <color name="white_transparent">#50FFFFFF</color>
     <color name="black_transparent">#AA000000</color>
-
-
 
 </resources>

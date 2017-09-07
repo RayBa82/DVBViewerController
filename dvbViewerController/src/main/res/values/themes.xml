@@ -3,21 +3,19 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Theme.DVB" parent="@style/Theme.AppCompat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarStyleHorizontal</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+        <item name="colorControlActivated">@color/colorControlActivated</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
-        <item name="colorControlActivated">@color/colorControlActivated</item>
-        <item name="windowActionModeOverlay">true</item>
         <item name="dialogTheme">@style/DialogStyle</item>
-        <item name="colorControlNormal">@color/colorControlNormal</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-
     </style>
 
     <style name="Theme.DVB.NoActionBar" parent="Theme.DVB">
-        <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
     </style>
 
 </resources>
