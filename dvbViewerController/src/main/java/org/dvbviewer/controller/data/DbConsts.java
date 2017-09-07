@@ -30,7 +30,7 @@ public class DbConsts {
 	public static final String	CONTENT_AUTHORITY	= "org.dvbviewer.controller.provider";
 
 	/** The Constant BASE_CONTENT_URI. */
-	private static final Uri	BASE_CONTENT_URI	= Uri.parse("content://" + CONTENT_AUTHORITY);
+	public static final Uri	BASE_CONTENT_URI	= Uri.parse("content://" + CONTENT_AUTHORITY);
 
 	/**
 	 * The Class RootTbl.
