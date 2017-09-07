@@ -16,7 +16,6 @@
 package org.dvbviewer.controller;
 
 import android.app.Application;
-import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -57,7 +56,6 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 		if(BuildConfig.DEBUG){
 			FirebaseCrash.setCrashCollectionEnabled(false);
 		}
