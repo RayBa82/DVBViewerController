@@ -31,5 +31,5 @@ Thumbs.db
 .DS_Store
 
 
-dvbViewerController/manifest-merger-release-report.txt
-google-services.json
+manifest-merger-release-report.txt
+**/release/google-services.json

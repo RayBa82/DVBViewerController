@@ -57,7 +57,11 @@ public class App extends Application {
 	public void onCreate() {
 		super.onCreate();
 		if(BuildConfig.DEBUG){
-			FirebaseCrash.setCrashCollectionEnabled(false);
+			try {
+				FirebaseCrash.setCrashCollectionEnabled(false);
+			}catch (IllegalStateException e) {
+				Log.w(App.class.getSimpleName(), "Error intializing Firebase, might be invalid 'google-services.json' file", e);
+			}
 		}
 		DVBViewerPreferences prefs = new DVBViewerPreferences(this);
 		Config.IS_FIRST_START = prefs.getBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, true);
