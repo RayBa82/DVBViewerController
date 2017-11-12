@@ -5,7 +5,15 @@ import android.os.Parcelable;
 
 public enum FileType implements Parcelable {
 
-        CHANNEL, RECORDING, MEDIA;
+    CHANNEL("chid", "channelstream/"), RECORDING("recid", "recordings/"), VIDEO("objid", "video/");
+
+    public String transcodedParam;
+    public String directPath;
+
+    FileType(String transcodedParam, String directPath) {
+        this.transcodedParam = transcodedParam;
+        this.directPath = directPath;
+    }
 
         @Override
         public int describeContents() {

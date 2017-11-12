@@ -16,26 +16,22 @@
 -->
 <resources>
 
+    <!-- see  http://developer.android.com/design/style/color.html-->
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#64B5F6</color>
+    <color name="colorControlNormal">#E3F2FD</color>
+    <color name="colorControlActivated">#F4511E</color>
+    <color name="colorControlDash">#E3F2FD</color>
+    <color name="menu_icon_color">#80bebebe</color>
+    <color name="primaryTextColor">#F3F3F3</color>
+    <color name="secondaryTextColor">#BEBEBE</color>
+
+    <color name="error">#CC0000</color>
+    <color name="recording">#CC0000</color>
+    <color name="disabled">#80BEBEBE</color>
+
     <color name="white_transparent">#50FFFFFF</color>
-	<color name="dark_orange">#fd7208</color>
-    <color name="light_orange">#f79428</color>
-    <color name="primary_text_color">@android:color/white</color>
-	<color name="selectorLongclickHoloDark">#CC0099CC</color>
-	
-	<color name="selectorDisabledHoloDark">#80000000</color>
-	
-	
-	<!-- see  http://developer.android.com/design/style/color.html-->
-	<color name="baseDarkBlue">#FF4D79B8</color>
-	<color name="baseLightBlue">#FF70ABEF</color>
-	<color name="black_transparent">#AA000000</color>
-
-    <color name="background_light">#fff3f3f3</color>
-    <color name="bright_foreground_dark">@color/background_light</color>
-    <color name="bright_foreground_disabled_dark">#ff4c4c4c</color>
-    <color name="dim_foreground_dark">#bebebe</color>
-    <color name="dim_foreground_disabled_dark">#80bebebe</color>
-    <color name="holo_red_dark">#ffcc0000</color>
-
+    <color name="black_transparent">#AA000000</color>
 
 </resources>

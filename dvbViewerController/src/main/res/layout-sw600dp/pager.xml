@@ -29,6 +29,7 @@
 
         <android.support.v4.view.PagerTitleStrip
             android:id="@+id/titles"
+            style="@style/commonSubTitle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="5dp"

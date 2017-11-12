@@ -40,6 +40,7 @@
     <string name="recordings">Lista nagrań</string>
     <string name="no_recordings">Brak nagrań</string>
     <string name="busyDeleteRecordings">Usuń nagranie&#8230;</string>
+    <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Programator</string>
     <string name="createTimer">Utwórz nagranie</string>
@@ -93,7 +94,6 @@
     <string name="WOL">Obudź Usługę nagrywania</string>
     <!-- Status -->
     <string name="status">Status</string>
-    <string name="status_rs_version">Wersja Usługi nagrywania</string>
     <string name="status_current_recordings">Trwające nagrania</string>
     <string name="status_current_clients">Podłączeni klienci</string>
     <string name="status_current_rtsp_clients">Połączeni klienci RTSP</string>
@@ -146,7 +146,7 @@
     <string name="error_common">Błąd</string>
     <string name="error_unknonwn_host">Nieznany adres</string>
     <string name="error_connection_timeout">Limit czasu połączenia</string>
-    <string name="error_parsing_xml">Nie można  przetworzyć danych XML</string>
+    <string name="error_parsing_xml">Nie udało się  przetworzyć danych XML</string>
     <string name="error_invalid_url">Niewłaściwy adres</string>
     <string name="error_invalid_credentials">Błąd autoryzacji</string>
     <string name="support_this_app">Wsparcie aplikacji</string>
@@ -158,4 +158,6 @@
     <!-- Remote -->
     <string name="remote_control">Sterowanie</string>
     <string name="remote_numbers">Cyfry</string>
+    <string name="timer_saved">Program zapisany</string>
+    <string name="epg_monitoring">Monitorowanie EPG</string>
 </resources>

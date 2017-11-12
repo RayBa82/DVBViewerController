@@ -5,28 +5,28 @@
     <item
         android:id="@+id/menuRefresh"
         android:enabled="true"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="@drawable/ic_refresh_white_24dp"
         dvb:showAsAction="always"
         android:title="@string/refresh_now_playing"
         android:visible="true"/>
     <item
         android:id="@+id/menuChannelList"
         android:enabled="true"
-        android:icon="@drawable/ic_action_list"
+        android:icon="@drawable/ic_list_white_24dp"
         dvb:showAsAction="always"
         android:title="@string/channelList"
         android:visible="true"/>
     <item
         android:id="@+id/menuFavourties"
         android:enabled="true"
-        android:icon="@drawable/ic_action_favourite"
+        android:icon="@drawable/ic_favorite_white_24dp"
         dvb:showAsAction="always"
         android:title="@string/favourites"
         android:visible="true"/>
     <item
         android:id="@+id/menuSyncChannels"
         android:enabled="true"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="@drawable/ic_refresh_white_24dp"
         dvb:showAsAction="never"
         android:title="@string/refreshChannels"
         android:visible="true"/>

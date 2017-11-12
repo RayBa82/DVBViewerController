@@ -5,28 +5,28 @@
     <item
         android:id="@+id/menuPrev"
         android:enabled="true"
-        android:icon="@drawable/ic_action_previous"
+        android:icon="@drawable/ic_previous_white_24dp"
         dvb:showAsAction="always"
         android:title="@string/previousDay"
         android:visible="true"/>
     <item
         android:id="@+id/menuNext"
         android:enabled="true"
-        android:icon="@drawable/ic_action_next"
+        android:icon="@drawable/ic_next_white_24dp"
         dvb:showAsAction="always"
         android:title="@string/nextDay"
         android:visible="true"/>
     <item
         android:id="@+id/menuToday"
         android:enabled="true"
-        android:icon="@drawable/ic_action_today"
+        android:icon="@drawable/ic_date_white_24dp"
         dvb:showAsAction="always"
         android:title="@string/today"
         android:visible="true"/>
     <item
         android:id="@+id/menuTime"
         android:enabled="true"
-        android:icon="@drawable/ic_action_time"
+        android:icon="@drawable/ic_time_white_24dp"
         dvb:showAsAction="always"
         android:title="@string/time"
         android:visible="true">

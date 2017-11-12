@@ -40,6 +40,7 @@
     <string name="recordings">Registrazioni</string>
     <string name="no_recordings">Nessuna registrazione trovata</string>
     <string name="busyDeleteRecordings">Cancellazione Registrazione&#8230;</string>
+    <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Timer</string>
     <string name="createTimer">Crea Timer</string>
@@ -93,7 +94,6 @@
     <string name="WOL">Sveglia il Recording Service</string>
     <!-- Status -->
     <string name="status">Stato</string>
-    <string name="status_rs_version">Versione Recording Service</string>
     <string name="status_current_recordings">Registrazioni Avviate</string>
     <string name="status_current_clients">Client Connessi</string>
     <string name="status_epg_update_running">Aggiornamento EPG in corso</string>

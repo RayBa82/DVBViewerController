@@ -26,6 +26,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -63,7 +64,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
 
     private Toolbar mToolbar;
     private ArrayAdapter mSpinnerAdapter;
-    private Spinner mClientSpinner;
+    private AppCompatSpinner mClientSpinner;
     private int spinnerPosition;
     private static final String KEY_SPINNER_POS = "spinnerPosition";
     private DVBViewerPreferences prefs;
@@ -88,11 +89,11 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (!UIUtils.isTablet(getActivity())) {
+        if (!UIUtils.isTablet(getContext())) {
             ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         }
         initActionBar();
-        prefs = new DVBViewerPreferences(getActivity());
+        prefs = new DVBViewerPreferences(getContext());
         if (savedInstanceState != null) {
             spinnerPosition = savedInstanceState.getInt(KEY_SPINNER_POS, 0);
         }
@@ -121,7 +122,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_remote, container, false);
-        mToolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        mToolbar = v.findViewById(R.id.toolbar);
 
         // Set an OnMenuItemClickListener to handle menu item clicks
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -133,7 +134,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         });
 
         mToolbar.setTitle(R.string.remote);
-        mClientSpinner = (Spinner) v.findViewById(R.id.clientSpinner);
+        mClientSpinner = v.findViewById(R.id.clientSpinner);
         mClientSpinner.setVisibility(View.GONE);
         mClientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -209,7 +210,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
             onTargetsChangedListener.targetsChanged(getString(R.string.remote), data);
         } else if (data != null && !data.isEmpty()) {
             String[] arr = new String[data.size()];
-            mSpinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
+            mSpinnerAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
             mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             mClientSpinner.setAdapter(mSpinnerAdapter);
             String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);
@@ -277,10 +278,10 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    RemoteControl ctl = (RemoteControl) Fragment.instantiate(getActivity(), RemoteControl.class.getName());
+                    RemoteControl ctl = (RemoteControl) Fragment.instantiate(getContext(), RemoteControl.class.getName());
                     return ctl;
                 case 1:
-                    RemoteNumbers numbers = (RemoteNumbers) Fragment.instantiate(getActivity(), RemoteNumbers.class.getName());
+                    RemoteNumbers numbers = (RemoteNumbers) Fragment.instantiate(getContext(), RemoteNumbers.class.getName());
                     return numbers;
                 default:
                     return null;

@@ -60,7 +60,9 @@ public class RecordinglistActivity extends BaseSinglePaneActivity {
 	 */
 	@Override
 	protected Fragment onCreatePane() {
-		return new RecordingList();
+		final RecordingList recordingList = new RecordingList();
+		recordingList.setArguments(intentToFragmentArguments(getIntent()));
+		return recordingList;
 	}
 
 }

@@ -24,6 +24,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.security.ProviderInstaller;
+import com.google.firebase.crash.FirebaseCrash;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -54,7 +55,14 @@ public class App extends Application {
 	 */
 	@Override
 	public void onCreate() {
-		
+		super.onCreate();
+		if(BuildConfig.DEBUG){
+			try {
+				FirebaseCrash.setCrashCollectionEnabled(false);
+			}catch (IllegalStateException e) {
+				Log.w(App.class.getSimpleName(), "Error intializing Firebase, might be invalid 'google-services.json' file", e);
+			}
+		}
 		DVBViewerPreferences prefs = new DVBViewerPreferences(this);
 		Config.IS_FIRST_START = prefs.getBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, true);
 		Config.CHANNELS_SYNCED = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, false);
@@ -69,8 +77,7 @@ public class App extends Application {
 		ServerConsts.REC_SERVICE_PASSWORD = prefs.getString(DVBViewerPreferences.KEY_RS_PASSWORD, "");
 		ServerConsts.REC_SERVICE_MAC_ADDRESS = prefs.getString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS);
 		ServerConsts.REC_SERVICE_WOL_PORT = prefs.getInt(DVBViewerPreferences.KEY_RS_WOL_PORT, 9);
-		super.onCreate();
-		
+
 		/**
 		 * Thread to send a wake on lan request
 		 */

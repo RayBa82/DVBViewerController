@@ -35,7 +35,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
+import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl;
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.ui.base.CursorPagerAdapter;
 import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
@@ -109,7 +109,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		mPager.setAdapter(mAdapter);
-		mPager.setPageMargin((int) UIUtils.dipToPixel(getActivity(), 25));
+		mPager.setPageMargin((int) UIUtils.dipToPixel(getContext(), 25));
 		mPager.setCurrentItem(chanIndex);
 		mPager.addOnPageChangeListener(this);
 		getLoaderManager().initLoader(0, null, this);

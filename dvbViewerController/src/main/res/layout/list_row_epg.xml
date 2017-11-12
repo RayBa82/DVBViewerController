@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.dvbviewer.controller.ui.widget.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.dvbviewer.controller.ui.widget.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/checkable"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
             style="@style/commonSubTitle"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:src="@drawable/ic_launcher"
+            android:src="@mipmap/ic_launcher"
             android:text="Test" />
 
         <TextView
@@ -65,7 +65,7 @@
             android:duplicateParentState="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:src="@drawable/ic_more_vert_white_16dp" />
+            app:srcCompat="@drawable/ic_more_vert_white_16dp" />
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.CheckableLinearLayout>

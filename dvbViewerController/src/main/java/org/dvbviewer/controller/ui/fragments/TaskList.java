@@ -15,12 +15,12 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,27 +60,27 @@ public class TaskList extends BaseListFragment implements OnClickListener {
 		setHasOptionsMenu(true);
 		setRetainInstance(true);
 		Resources r = getResources();
-		sAdapter = new CategoryAdapter(getActivity());
+		sAdapter = new CategoryAdapter(getContext());
 
-		TaskAdapter system = new TaskAdapter(getActivity());
+		TaskAdapter system = new TaskAdapter(getContext());
 		system.addItem(new Task(r.getString(R.string.WOL), WOL_COMMAND));
 		system.addItem(new Task(r.getString(R.string.Standby), "Standby"));
 		system.addItem(new Task(r.getString(R.string.Hibernate), "Hibernate"));
 		system.addItem(new Task(r.getString(R.string.Shutdown), "Shutdown"));
 
-		TaskAdapter epg = new TaskAdapter(getActivity());
+		TaskAdapter epg = new TaskAdapter(getContext());
 		epg.addItem(new Task(r.getString(R.string.EPGStart), "EPGStart"));
 		epg.addItem(new Task(r.getString(R.string.EPGStop), "EPGStop"));
 		epg.addItem(new Task(r.getString(R.string.AutoTimer), "AutoTimer"));
 
-		TaskAdapter rec = new TaskAdapter(getActivity());
+		TaskAdapter rec = new TaskAdapter(getContext());
 		rec.addItem(new Task(r.getString(R.string.RefreshDB), "RefreshDB"));
 		rec.addItem(new Task(r.getString(R.string.CleanupDB), "CleanupDB"));
 		rec.addItem(new Task(r.getString(R.string.RebuildRecordedHistory), "RebuildRecordedHistory"));
 		rec.addItem(new Task(r.getString(R.string.ClearRecordingHistory), "ClearRecordingHistory"));
 		rec.addItem(new Task(r.getString(R.string.ClearRecordingStats), "ClearRecordingStats"));
 
-		TaskAdapter media = new TaskAdapter(getActivity());
+		TaskAdapter media = new TaskAdapter(getContext());
 		media.addItem(new Task(r.getString(R.string.UpdateMediaLibrary), "UpdateVideoDB"));
 		media.addItem(new Task(r.getString(R.string.CleanupPhotoDB), "CleanupPhotoDB"));
 		media.addItem(new Task(r.getString(R.string.CleanupVideoDB), "CleanupVideoDB"));
@@ -95,7 +95,6 @@ public class TaskList extends BaseListFragment implements OnClickListener {
 		sAdapter.addSection("EPG", epg);
 		sAdapter.addSection("Aufnahmen", rec);
 		sAdapter.addSection("Mediadateien", media);
-		// mAdapter = new TaskAdapter(getActivity());
 
 	}
 
@@ -137,7 +136,7 @@ public class TaskList extends BaseListFragment implements OnClickListener {
 				Thread wakeOnLanThread = new Thread(wakeOnLanRunnabel);
 				wakeOnLanThread.start();
 		}else {
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 			String question = MessageFormat.format(getResources().getString(R.string.task_execute_security_question), selectedTask.getTitle());
 			builder.setMessage(question).setPositiveButton("Yes", this).setTitle(R.string.dialog_confirmation_title).setNegativeButton("No", this).show();
 		}

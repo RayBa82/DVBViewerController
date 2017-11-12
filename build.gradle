@@ -1,9 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 def majorVersion = 1
-def minorVersion = 2
-def patchVersion = 1
-def buildNumber = 3
-def buildVersionCode;
+def minorVersion = 3
+def patchVersion = 0
+def buildNumber = 1
+def buildVersionCode
 def buildVersionName
 buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
 buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion} build ${buildNumber}"
@@ -11,27 +11,26 @@ buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion} build ${buil
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.google.gms:google-services:3.1.1'
     }
 }
 ext {
     applicationId = "org.dvbviewer.controller"
-    compileSdkVersion = 25
-    buildToolsVersion = "25.0.2"
-    minSdkVersion = 9
-    targetSdkVersion = 25
-    appcompatVersion = "25.2.0"
+    compileSdkVersion = project.compileSdkVersion.toInteger()
+    buildToolsVersion = project.buildToolsVersion
+    minSdkVersion = project.minSdkVersion.toInteger()
+    targetSdkVersion = project.targetSdkVersion.toInteger()
     versionCode = buildVersionCode
     versionName = buildVersionName
 }
 allprojects {
     repositories {
-        maven { url "http://dl.bintray.com/populov/maven" }
-        maven { url "https://jitpack.io" }
         jcenter()
-        mavenCentral()
+        google()
+        maven { url "https://jitpack.io" }
     }
 }

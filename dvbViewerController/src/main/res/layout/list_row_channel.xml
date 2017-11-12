@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <org.dvbviewer.controller.ui.widget.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/checkable"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_selector_holo_dark"
+    android:background="@drawable/selectable_background"
     android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
@@ -14,14 +15,14 @@
         android:id="@+id/iconContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector"
+        android:background="@drawable/selectable_background"
         android:clickable="true"
         android:padding="8dp">
 
         <FrameLayout
             android:layout_width="58dp"
             android:layout_height="40dp"
-            android:background="@drawable/bg_white">
+            android:background="@drawable/bg_channel_logo">
 
             <ImageView
                 android:id="@+id/icon"
@@ -29,7 +30,7 @@
                 android:layout_height="fill_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_launcher" />
+                android:src="@mipmap/ic_launcher" />
         </FrameLayout>
     </LinearLayout>
 
@@ -72,9 +73,10 @@
             android:id="@+id/progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="2dp"
             android:layout_alignLeft="@+id/position"
-            android:layout_below="@+id/epgTime" />
+            android:layout_below="@+id/epgTime"
+            android:indeterminate="false" />
 
         <TextView
             android:id="@+id/epgTitle"
@@ -107,7 +109,7 @@
             android:duplicateParentState="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:src="@drawable/ic_more_vert_white_16dp" />
+            app:srcCompat="@drawable/ic_more_vert_white_16dp" />
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.CheckableLinearLayout>

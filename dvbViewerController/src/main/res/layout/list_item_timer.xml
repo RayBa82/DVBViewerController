@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <org.dvbviewer.controller.ui.widget.ClickableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/checkable"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_selector_holo_dark"
+    android:background="@drawable/selectable_background"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:padding="4dp"
     android:paddingEnd="4dp"
     android:paddingRight="4dp">
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@+id/recIndicator"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="wrap_content"
+        app:srcCompat="@drawable/ic_record_24dp"
+        android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/date"
-        android:layout_alignLeft="@+id/title"
         android:layout_alignParentTop="true"
-        android:layout_alignTop="@+id/date"
-        android:layout_toRightOf="@id/checkIndicator"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:paddingRight="2dp"
+        android:paddingEnd="2dp"
         android:paddingTop="2dp" />
 
     <TextView
         android:id="@+id/date"
+        style="@style/commonSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/contextMenu"
         android:layout_toRightOf="@+id/recIndicator"
         android:ellipsize="marquee"
-        android:singleLine="true" />
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/title"
@@ -53,10 +56,11 @@
 
         <TextView
             android:id="@+id/channelName"
+            style="@style/commonSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
-            android:singleLine="true" />
+            android:maxLines="1" />
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.ClickableRelativeLayout>

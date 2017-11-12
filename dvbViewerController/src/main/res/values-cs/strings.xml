@@ -20,6 +20,7 @@
     <string name="about_app">O programu DVBViewer Controller</string>
     <string name="version">Verze aplikace:</string>
     <string name="common_all">Vše</string>
+    <string name="delete">Vymazat</string>
     <!-- Channels -->
     <string name="channelList">Seznam kanálů</string>
     <string name="refreshChannels">Synchronizovat kanály</string>
@@ -41,6 +42,7 @@
     <string name="recordings">Seznam nahrávek</string>
     <string name="no_recordings">Žádné nahrávky nenalezeny</string>
     <string name="busyDeleteRecordings">Odstranění nahrávky&#8230;</string>
+    <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Časovač</string>
     <string name="createTimer">Vytvořit časovač</string>
@@ -94,7 +96,6 @@
     <string name="WOL">Probudit nahrávací službu</string>
     <!-- Status -->
     <string name="status">Aktuální stav</string>
-    <string name="status_rs_version">Verze nahrávací služby</string>
     <string name="status_current_recordings">Spuštěná nahrávání</string>
     <string name="status_current_clients">Připojení klienti</string>
     <string name="status_current_rtsp_clients">Připojení RTSP klienti</string>

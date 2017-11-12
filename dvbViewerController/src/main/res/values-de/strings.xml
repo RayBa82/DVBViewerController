@@ -20,6 +20,9 @@
     <string name="about_app">Über DVBViewer Controller</string>
     <string name="version">App Version:</string>
     <string name="common_all">Alle</string>
+    <string name="delete">Löschen</string>
+    <string name="none">Keine</string>
+    <string name="def">Standard</string>
     <!-- Channels -->
     <string name="channelList">Senderliste</string>
     <string name="refreshChannels">Sender syncronisieren</string>
@@ -41,6 +44,8 @@
     <string name="recordings">Aufnahmen</string>
     <string name="no_recordings">Keine Aufnahmen gefunden</string>
     <string name="busyDeleteRecordings">Aufnahmen werden gelöscht&#8230;</string>
+    <!-- Medias -->
+    <string name="medias">Medien</string>
     <!-- Timer -->
     <string name="timer">Timer</string>
     <string name="createTimer">Timer anlegen</string>
@@ -94,7 +99,7 @@
     <string name="WOL">Recording Service wecken</string>
     <!-- Status -->
     <string name="status">Status</string>
-    <string name="status_rs_version">Recording Service Version</string>
+    <string name="status_server_version">Server Version</string>
     <string name="status_current_recordings">Laufende Aufnahmen</string>
     <string name="status_current_clients">Verbundene Clients</string>
     <string name="status_current_rtsp_clients">Verbundene RTSP Clients</string>

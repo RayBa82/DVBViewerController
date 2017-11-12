@@ -27,11 +27,13 @@ import android.widget.AdapterView;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
-import org.dvbviewer.controller.data.DbConsts;
+import org.dvbviewer.controller.data.ProviderConsts;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
+import org.dvbviewer.controller.ui.fragments.EPGDetails;
 import org.dvbviewer.controller.ui.fragments.EpgPager;
 
 /**
@@ -39,7 +41,7 @@ import org.dvbviewer.controller.ui.fragments.EpgPager;
  *
  * @author RayBa
  */
-public class ChannelListActivity extends GroupDrawerActivity implements ChannelList.OnChannelSelectedListener, EpgPager.OnChannelScrolledListener, ChannelPager.OnGroupTypeChangedListener {
+public class ChannelListActivity extends GroupDrawerActivity implements ChannelList.OnChannelSelectedListener, EpgPager.OnChannelScrolledListener, ChannelPager.OnGroupTypeChangedListener, IEpgDetailsActivity.OnIEPGClickListener {
 
 	private 	ChannelPager 			mChannelPager;
 	private 	View 					container;
@@ -131,7 +133,7 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 		}
 		if (container != null && groupTypeChanged){
 			data.moveToFirst();
-			mEpgPager.refresh(data.getLong(data.getColumnIndex(DbConsts.GroupTbl._ID)), 0);
+			mEpgPager.refresh(data.getLong(data.getColumnIndex(ProviderConsts.GroupTbl._ID)), 0);
 		}
 		groupTypeChanged = false;
 	}
@@ -142,5 +144,14 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 		showFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
 		getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
 		groupIndex = 0;
+	}
+
+	@Override
+	public void onIEPGClick(IEPG iepg) {
+		EPGDetails details = new EPGDetails();
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(IEPG.class.getSimpleName(), iepg);
+		details.setArguments(bundle);
+		details.show(getSupportFragmentManager(), IEPG.class.getName());
 	}
 }

@@ -59,7 +59,9 @@ public class TimerlistActivity extends BaseSinglePaneActivity {
 	 */
 	@Override
 	protected Fragment onCreatePane() {
-		return new TimerList();
+		final TimerList timerList = new TimerList();
+		timerList.setArguments(intentToFragmentArguments(getIntent()));
+		return timerList;
 	}
 
 }
