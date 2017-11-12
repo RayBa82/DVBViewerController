@@ -8,7 +8,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "",
+        "mobilesdk_app_id": "1:123:android:123",
         "android_client_info": {
           "package_name": "org.dvbviewer.controller"
         }
@@ -16,12 +16,20 @@
       "oauth_client": [
         {
           "client_id": "",
-          "client_type": 0
+          "client_type": 1,
+          "android_info": {
+            "package_name": "",
+            "certificate_hash": ""
+          }
+        },
+        {
+          "client_id": "",
+          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": ""
+          "current_key": "DEBUG"
         }
       ],
       "services": {
@@ -33,7 +41,7 @@
           "other_platform_oauth_client": [
             {
               "client_id": "",
-              "client_type": 0
+              "client_type": 3
             }
           ]
         },

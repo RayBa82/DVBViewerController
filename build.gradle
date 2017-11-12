@@ -3,7 +3,7 @@ def majorVersion = 1
 def minorVersion = 3
 def patchVersion = 0
 def buildNumber = 6
-def buildVersionCode;
+def buildVersionCode
 def buildVersionName
 buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
 buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion} build ${buildNumber}"
@@ -11,10 +11,11 @@ buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion} build ${buil
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.google.gms:google-services:3.1.1'
     }
 }
 ext {
@@ -28,10 +29,8 @@ ext {
 }
 allprojects {
     repositories {
-        maven { url "http://dl.bintray.com/populov/maven" }
-        maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com" }
         jcenter()
-        mavenCentral()
+        google()
+        maven { url "https://jitpack.io" }
     }
 }
