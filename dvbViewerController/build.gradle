@@ -14,14 +14,18 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    signingConfigs {
+        release
+    }
     buildTypes {
         debug {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg'
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -47,17 +51,17 @@ android {
         compile 'com.google.android.gms:play-services-analytics:' + project.playServiceVersion
         compile 'com.google.firebase:firebase-crash:' + project.playServiceVersion
         compile 'com.google.firebase:firebase-core:' + project.playServiceVersion
-        compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.6.0'
-        compile 'com.google.code.gson:gson:2.7'
+        compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.8.1'
+        compile 'com.google.code.gson:gson:2.8.1'
         compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-        compile 'org.apache.commons:commons-lang3:3.4'
-        compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.0'
-        compile group: 'commons-io', name: 'commons-io', version: '2.4'
+        compile 'org.apache.commons:commons-lang3:3.5'
+        compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
+        compile group: 'commons-io', name: 'commons-io', version: '2.5'
         compile 'com.jakewharton:butterknife:8.8.1'
         annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
         testCompile 'junit:junit:4.12'
-        androidTestCompile 'commons-io:commons-io:2.4'
-        androidTestCompile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.6.0'
+        androidTestCompile 'commons-io:commons-io:2.5'
+        androidTestCompile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.8.1'
         androidTestCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.6.0'
         androidTestCompile('com.android.support.test:runner:0.5') {
             // Necessary if your app targets Marshmallow (since the test runner
@@ -82,6 +86,23 @@ android {
 
 }
 
+Properties props = new Properties()
+def propFile = file('../keystore/signing.properties')
+if (propFile.canRead()){
+    props.load(new FileInputStream(propFile))
 
+    if (props!=null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
+            props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
+
+        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+    } else {
+        android.buildTypes.release.signingConfig = null
+    }
+}else {
+    android.buildTypes.release.signingConfig = null
+}
 
 apply plugin: 'com.google.gms.google-services'

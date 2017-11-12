@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts;
+import org.dvbviewer.controller.data.ProviderConsts;
 import org.dvbviewer.controller.entities.MediaFile;
 
 import butterknife.BindView;
@@ -39,7 +39,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
     @Override
     public void onBindViewHolder(MediaViewHolder holder, int position) {
         mCursor.moveToPosition(position);
-        final String name = mCursor.getString(mCursor.getColumnIndex(DbConsts.MediaTbl.NAME));
+        final String name = mCursor.getString(mCursor.getColumnIndex(ProviderConsts.MediaTbl.NAME));
         holder.name.setText(name);
         holder.itemView.setTag(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -47,9 +47,9 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
             public void onClick(View v) {
                 Integer position = (Integer) v.getTag();
                 mCursor.moveToPosition(position);
-                final String name = mCursor.getString(mCursor.getColumnIndex(DbConsts.MediaTbl.NAME));
-                final long id = mCursor.getLong(mCursor.getColumnIndex(DbConsts.MediaTbl._ID));
-                final long dirId = mCursor.getLong(mCursor.getColumnIndex(DbConsts.MediaTbl.DIR_ID));
+                final String name = mCursor.getString(mCursor.getColumnIndex(ProviderConsts.MediaTbl.NAME));
+                final long id = mCursor.getLong(mCursor.getColumnIndex(ProviderConsts.MediaTbl._ID));
+                final long dirId = mCursor.getLong(mCursor.getColumnIndex(ProviderConsts.MediaTbl.DIR_ID));
                 final MediaFile file = new MediaFile();
                 file.setName(name);
                 file.setId(id);

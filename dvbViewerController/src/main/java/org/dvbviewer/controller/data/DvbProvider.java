@@ -24,11 +24,11 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import org.dvbviewer.controller.data.DbConsts.ChannelTbl;
-import org.dvbviewer.controller.data.DbConsts.EpgTbl;
-import org.dvbviewer.controller.data.DbConsts.FavTbl;
-import org.dvbviewer.controller.data.DbConsts.GroupTbl;
-import org.dvbviewer.controller.data.DbConsts.NowTbl;
+import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl;
+import org.dvbviewer.controller.data.ProviderConsts.EpgTbl;
+import org.dvbviewer.controller.data.ProviderConsts.FavTbl;
+import org.dvbviewer.controller.data.ProviderConsts.GroupTbl;
+import org.dvbviewer.controller.data.ProviderConsts.NowTbl;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -69,14 +69,14 @@ public class DvbProvider extends ContentProvider {
 	 */
 	private static UriMatcher buildUriMatcher() {
 		final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-		final String authority = DbConsts.CONTENT_AUTHORITY;
+		final String authority = ProviderConsts.CONTENT_AUTHORITY;
 		matcher.addURI(authority, ChannelTbl.TABLE_NAME, CHANNELS);
 		matcher.addURI(authority, ChannelTbl.NOW_PLAYING, NOW_PLAYING_CHANNELS);
 		matcher.addURI(authority, ChannelTbl.NOW_PLAYING_FAVS, NOW_PLAYING_FAVS);
 		matcher.addURI(authority, FavTbl.TABLE_NAME, FAVOURITES);
 		matcher.addURI(authority, EpgTbl.TABLE_NAME, EPG);
 		matcher.addURI(authority, GroupTbl.TABLE_NAME, GROUPS);
-		matcher.addURI(authority, DbConsts.MediaTbl.TABLE_NAME, MEDIAS);
+		matcher.addURI(authority, ProviderConsts.MediaTbl.TABLE_NAME, MEDIAS);
 		return matcher;
 	}
 
@@ -135,7 +135,7 @@ public class DvbProvider extends ContentProvider {
 				break;
 			case MEDIAS:
 				qb = new SQLiteQueryBuilder();
-				qb.setTables(DbConsts.MediaTbl.TABLE_NAME);
+				qb.setTables(ProviderConsts.MediaTbl.TABLE_NAME);
 				break;
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);

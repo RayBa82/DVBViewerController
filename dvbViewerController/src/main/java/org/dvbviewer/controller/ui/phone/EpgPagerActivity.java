@@ -22,7 +22,7 @@ import android.widget.AdapterView;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
-import org.dvbviewer.controller.data.DbConsts;
+import org.dvbviewer.controller.data.ProviderConsts;
 import org.dvbviewer.controller.ui.base.BaseActivity;
 import org.dvbviewer.controller.ui.fragments.EpgPager;
 
@@ -63,7 +63,7 @@ public class EpgPagerActivity extends GroupDrawerActivity {
 		final Cursor c = mDrawerAdapter.getCursor();
 		if (mEpgPager != null && c != null && c.getCount() >= position){
 			mDrawerAdapter.getCursor().moveToPosition(position);
-			long groupId = c.getLong(c.getColumnIndex(DbConsts.GroupTbl._ID));
+			long groupId = c.getLong(c.getColumnIndex(ProviderConsts.GroupTbl._ID));
 			mEpgPager.refresh(groupId, 0);
 		}
 	}

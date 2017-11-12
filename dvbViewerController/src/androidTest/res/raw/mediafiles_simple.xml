@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<videodirs>
+    <dir dirid="2" path="D:\Dateien von Griga\Eigene Videos\" />
+    <dir dirid="3" path="D:\Dateien von Griga\Eigene Videos\3D\" />
+    <dir dirid="4" path="D:\Dateien von Griga\Eigene Videos\Aufnahmen\" />
+    <dir dirid="5" path="D:\Dateien von Griga\Eigene Videos\DVBViewer Pro\" />
+    <dir dirid="6" path="D:\Dateien von Griga\Eigene Videos\Samples\" />
+    <dir dirid="7" path="D:\Dateien von Griga\Eigene Videos\Samples\3D\" />
+    <dir dirid="8" path="D:\Dateien von Griga\Eigene Videos\Samples\AAC TS\" />
+    <dir dirid="9" path="D:\Dateien von Griga\Eigene Videos\Samples\AES3 Audio\" />
+    <dir dirid="10" path="D:\Dateien von Griga\Eigene Videos\Samples\ATSC\" />
+    <dir dirid="11" path="D:\Dateien von Griga\Eigene Videos\Samples\AVI\" />
+    <dir dirid="13" path="D:\Dateien von Griga\Eigene Videos\Samples\CharCoding\" />
+    <dir dirid="15" path="D:\Dateien von Griga\Eigene Videos\Samples\DVB Subtitles\" />
+    <dir dirid="20" path="D:\Dateien von Griga\Eigene Videos\Samples\DVB-T\" />
+    <dir dirid="21" path="D:\Dateien von Griga\Eigene Videos\Samples\EAC3\" />
+    <dir dirid="22" path="D:\Dateien von Griga\Eigene Videos\Samples\EPG\" />
+    <dir dirid="23" path="D:\Dateien von Griga\Eigene Videos\Samples\ETC\" />
+    <dir dirid="24" path="D:\Dateien von Griga\Eigene Videos\Samples\FLV\" />
+    <dir dirid="25" path="D:\Dateien von Griga\Eigene Videos\Samples\H264\" />
+    <dir dirid="26" path="D:\Dateien von Griga\Eigene Videos\Samples\HEVC\" />
+    <dir dirid="27" path="D:\Dateien von Griga\Eigene Videos\Samples\Hispadvb\" />
+    <dir dirid="28" path="D:\Dateien von Griga\Eigene Videos\Samples\Hongkong\" />
+    <dir dirid="29" path="D:\Dateien von Griga\Eigene Videos\Samples\ISDB\" />
+    <dir dirid="30" path="D:\Dateien von Griga\Eigene Videos\Samples\M2TS\" />
+    <dir dirid="33" path="D:\Dateien von Griga\Eigene Videos\Samples\M2TS\BD_TEST\BDMV\STREAM\" />
+    <dir dirid="36"
+        path="D:\Dateien von Griga\Eigene Videos\Samples\M2TS\JESSE_JAMES_B5\BDMV\STREAM\" />
+    <dir dirid="37" path="D:\Dateien von Griga\Eigene Videos\Samples\M2TS\joining_parts\" />
+    <dir dirid="40"
+        path="D:\Dateien von Griga\Eigene Videos\Samples\M2TS\LIFE_ON_EARTH_DISC_1\BDMV\STREAM\" />
+    <dir dirid="41" path="D:\Dateien von Griga\Eigene Videos\Samples\MKV\" />
+    <dir dirid="42" path="D:\Dateien von Griga\Eigene Videos\Samples\MP4 MOV\" />
+    <dir dirid="43" path="D:\Dateien von Griga\Eigene Videos\Samples\PCR_Discontinuity\" />
+    <dir dirid="45" path="D:\Dateien von Griga\Eigene Videos\Samples\SI &amp; Logical Channel\" />
+    <dir dirid="46" path="D:\Dateien von Griga\Eigene Videos\Samples\Slicies\" />
+    <dir dirid="47" path="D:\Dateien von Griga\Eigene Videos\Samples\Teletext\" />
+    <dir dirid="48" path="D:\Dateien von Griga\Eigene Videos\Samples\Topfield\" />
+    <dir dirid="49" path="D:\Dateien von Griga\Eigene Videos\Samples\WMV\" />
+    <dir dirid="50" path="D:\Dateien von Griga\Eigene Videos\SAT2IP Viewer recordings\" />
+</videodirs>

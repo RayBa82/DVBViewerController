@@ -43,8 +43,8 @@ import android.widget.AdapterView;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts.GroupTbl;
 import org.dvbviewer.controller.data.DbHelper;
+import org.dvbviewer.controller.data.ProviderConsts.GroupTbl;
 import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
