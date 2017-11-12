@@ -16,7 +16,6 @@
 package org.dvbviewer.controller;
 
 import android.app.Application;
-import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -57,9 +56,12 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 		if(BuildConfig.DEBUG){
-			FirebaseCrash.setCrashCollectionEnabled(false);
+			try {
+				FirebaseCrash.setCrashCollectionEnabled(false);
+			}catch (IllegalStateException e) {
+				Log.w(App.class.getSimpleName(), "Error intializing Firebase, might be invalid 'google-services.json' file", e);
+			}
 		}
 		DVBViewerPreferences prefs = new DVBViewerPreferences(this);
 		Config.IS_FIRST_START = prefs.getBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, true);

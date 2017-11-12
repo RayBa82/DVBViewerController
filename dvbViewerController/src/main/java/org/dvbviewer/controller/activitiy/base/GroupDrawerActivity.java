@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import org.dvbviewer.controller.activitiy.DrawerActivity;
-import org.dvbviewer.controller.data.DbConsts;
+import org.dvbviewer.controller.data.ProviderConsts;
 import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.ui.fragments.ChannelEpg;
@@ -55,9 +55,9 @@ public abstract class GroupDrawerActivity extends DrawerActivity implements OnIt
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		showFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
-		String selection = showFavs ? DbConsts.GroupTbl.TYPE + " = " + ChannelGroup.TYPE_FAV : DbConsts.GroupTbl.TYPE + " = " + ChannelGroup.TYPE_CHAN;
-		String orderBy = DbConsts.GroupTbl._ID;
-		return new CursorLoader(this, DbConsts.GroupTbl.CONTENT_URI, null, selection, null, orderBy);
+		String selection = showFavs ? ProviderConsts.GroupTbl.TYPE + " = " + ChannelGroup.TYPE_FAV : ProviderConsts.GroupTbl.TYPE + " = " + ChannelGroup.TYPE_CHAN;
+		String orderBy = ProviderConsts.GroupTbl._ID;
+		return new CursorLoader(this, ProviderConsts.GroupTbl.CONTENT_URI, null, selection, null, orderBy);
 	}
 
 	@Override

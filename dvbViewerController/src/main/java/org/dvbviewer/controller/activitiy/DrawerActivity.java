@@ -12,7 +12,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts;
+import org.dvbviewer.controller.data.ProviderConsts;
 import org.dvbviewer.controller.ui.base.BaseActivity;
 
 public abstract class DrawerActivity extends BaseActivity implements OnItemClickListener {
@@ -46,7 +46,7 @@ public abstract class DrawerActivity extends BaseActivity implements OnItemClick
 		mDrawerLayout.addDrawerListener(mDrawerToggle);
 		setDisplayHomeAsUpEnabled(true);
 
-		mDrawerAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item_group, null, new String[]{DbConsts.GroupTbl.NAME}, new int[]{android.R.id.text1}, 0);
+		mDrawerAdapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_item_group, null, new String[]{ProviderConsts.GroupTbl.NAME}, new int[]{android.R.id.text1}, 0);
 		mDrawerList.setAdapter(mDrawerAdapter);
 	}
 

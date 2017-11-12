@@ -3,7 +3,6 @@
 /local.properties
 *.iml
 .idea
-.DS_Store
 **/build/
 
 # Eclipse project files
@@ -31,5 +30,11 @@ Thumbs.db
 .DS_Store
 
 
-dvbViewerController/manifest-merger-release-report.txt
+manifest-merger-release-report.txt
+
+#any google service files, except the debug configuration
 google-services.json
+!**/debug/google-services.json
+
+#any signing properties
+signing.properties

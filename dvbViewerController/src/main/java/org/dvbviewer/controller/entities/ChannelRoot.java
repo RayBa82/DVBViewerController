@@ -18,7 +18,7 @@ package org.dvbviewer.controller.entities;
 import android.content.ContentValues;
 import android.text.TextUtils;
 
-import org.dvbviewer.controller.data.DbConsts.RootTbl;
+import org.dvbviewer.controller.data.ProviderConsts.RootTbl;
 
 import java.util.ArrayList;
 import java.util.List;

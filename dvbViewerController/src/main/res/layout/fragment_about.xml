@@ -24,12 +24,14 @@
                 android:id="@+id/versionTextLabel"
                 style="@style/commonSubTitle"
                 android:layout_width="fill_parent"
+                android:layout_gravity="center_vertical"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:text="@string/version" />
 
             <TextView
                 android:id="@+id/versionTextView"
+                android:layout_gravity="center_vertical"
                 style="@style/commonSubTitle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -42,6 +44,7 @@
 
             <TextView
                 style="@style/commonSubTitle"
+                android:layout_gravity="center_vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
@@ -49,9 +52,12 @@
 
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/paypalButton"
+                style="@style/ImageButtonStyle"
+                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:padding="8dp"
+                android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_paypal" />
         </TableRow>
     </TableLayout>

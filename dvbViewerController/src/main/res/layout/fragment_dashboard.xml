@@ -141,38 +141,6 @@
 
     </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/home_btn_medias"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        app:cardUseCompatPadding="true"
-        app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
-
-        <RelativeLayout
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/img_medias"
-                style="@style/DashboardButton"
-                android:layout_centerInParent="true"
-                app:srcCompat="@drawable/dash_video_library_48dp" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/img_medias"
-                android:layout_centerHorizontal="true"
-                android:text="@string/medias" />
-
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
         android:id="@+id/home_btn_tasks"

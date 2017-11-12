@@ -30,8 +30,8 @@ import android.view.MenuItem;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbConsts;
 import org.dvbviewer.controller.data.DbHelper;
+import org.dvbviewer.controller.data.ProviderConsts;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.MediaFile;
 import org.dvbviewer.controller.io.ServerRequest;
@@ -144,13 +144,13 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 
 				return loader;
 			case MEDIA_LOADER_ID:
-				StringBuilder selection = new StringBuilder(DbConsts.MediaTbl.PARENT);
+				StringBuilder selection = new StringBuilder(ProviderConsts.MediaTbl.PARENT);
 				if (parentId > 0) {
 					selection.append(" = " + parentId);
 				} else {
 					selection.append(" is null");
 				}
-				return new CursorLoader(getContext().getApplicationContext(), DbConsts.MediaTbl.CONTENT_URI, null, selection.toString(), null, null);
+				return new CursorLoader(getContext().getApplicationContext(), ProviderConsts.MediaTbl.CONTENT_URI, null, selection.toString(), null, null);
 			default:
 				return null;
 		}

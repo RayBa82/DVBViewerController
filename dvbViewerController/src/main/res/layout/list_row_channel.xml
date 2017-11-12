@@ -71,9 +71,9 @@
 
         <ProgressBar
             android:id="@+id/progress"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="2dp"
             android:layout_alignLeft="@+id/position"
             android:layout_below="@+id/epgTime"
             android:indeterminate="false" />
