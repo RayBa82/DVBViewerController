@@ -49,8 +49,7 @@ public class Dashboard extends Fragment implements OnClickListener{
         root.findViewById(R.id.home_btn_settings).setOnClickListener(this);
         root.findViewById(R.id.home_btn_tasks).setOnClickListener(this);
         root.findViewById(R.id.home_btn_status).setOnClickListener(this);
-//		root.findViewById(R.id.home_btn_medias).setOnClickListener(this);
-//		root.findViewById(R.id.home_btn_medias).setVisibility(View.GONE);
+		root.findViewById(R.id.home_btn_medias).setOnClickListener(this);
 		return root;
 	}
 

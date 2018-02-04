@@ -43,6 +43,7 @@ import org.dvbviewer.controller.ui.fragments.ChannelPager;
 import org.dvbviewer.controller.ui.fragments.Dashboard;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
 import org.dvbviewer.controller.ui.fragments.EPGDetails;
+import org.dvbviewer.controller.ui.fragments.MediaFragment;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.StatusList;
@@ -53,6 +54,7 @@ import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
 import org.dvbviewer.controller.ui.phone.AboutActivity;
 import org.dvbviewer.controller.ui.phone.ChannelListActivity;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
+import org.dvbviewer.controller.ui.phone.MedialistActivity;
 import org.dvbviewer.controller.ui.phone.PreferencesActivity;
 import org.dvbviewer.controller.ui.phone.RecordinglistActivity;
 import org.dvbviewer.controller.ui.phone.RemoteActivity;
@@ -245,18 +247,18 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 					startActivity(new Intent(this, StatusActivity.class));
 				}
 				break;
-//			case R.id.home_btn_medias:
-//				if (multiContainer != null) {
-//					enableDrawer = false;
-//					final MediaFragment mediaFragment = new MediaFragment();
-//					onBackPressedListener = mediaFragment;
-//					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-//					tran.replace(multiContainer.getId(), mediaFragment);
-//					tran.commit();
-//				} else {
-//					startActivity(new Intent(this, MedialistActivity.class));
-//				}
-//				break;
+			case R.id.home_btn_medias:
+				if (multiContainer != null) {
+					enableDrawer = false;
+					final MediaFragment mediaFragment = new MediaFragment();
+					onBackPressedListener = mediaFragment;
+					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					tran.replace(multiContainer.getId(), mediaFragment);
+					tran.commit();
+				} else {
+					startActivity(new Intent(this, MedialistActivity.class));
+				}
+				break;
 
 			default:
 				break;
