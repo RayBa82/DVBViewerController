@@ -96,7 +96,7 @@
     <string name="Hibernate">Hibernate</string>
     <string name="Standby">Standby</string>
     <string name="Shutdown">Shutdown</string>
-    <string name="WOL">Recording Service wecken</string>
+    <string name="WOL">Server wecken</string>
     <!-- Status -->
     <string name="status">Status</string>
     <string name="status_server_version">Server Version</string>
@@ -129,19 +129,19 @@
     <string name="preferences">Einstellungen</string>
     <string name="pref_seperator_connection">Verbindungseinstellungen</string>
     <string name="pref_seperator_channel">Kanal und Favoritenliste</string>
-    <string name="pref_seperator_rs_con">Recording Service Einstellungen</string>
-    <string name="pref_item_rs_conn">Recording Service</string>
-    <string name="pref_item_rs_conn_summary">Verbindungseinstellungen für den Recordingservice</string>
-    <string name="pref_item_rs_url">Recording Service URL</string>
-    <string name="pref_item_rs_url_summary">URL für den Recording Service</string>
-    <string name="pref_item_rs_port">Recording Service Port</string>
-    <string name="pref_item_rs_port_summary">Port für den Recording Service</string>
+    <string name="pref_seperator_rs_con">Server Einstellungen</string>
+    <string name="pref_item_rs_conn">Server Verbindung</string>
+    <string name="pref_item_rs_conn_summary">Verbindungseinstellungen für den Server</string>
+    <string name="pref_item_rs_url">Server URL</string>
+    <string name="pref_item_rs_url_summary">URL für den Server</string>
+    <string name="pref_item_rs_port">Server Port</string>
+    <string name="pref_item_rs_port_summary">Port für den Server</string>
     <string name="pref_item_username">Benutzername</string>
     <string name="pref_item_username_summary">Benutzername, falls benötigt</string>
     <string name="pref_item_password">Passwort</string>
     <string name="pref_item_password_summary">Passwort, falls benötigt</string>
     <string name="pref_item_rs_wol_on_start">Sende WOL beim App start</string>
-    <string name="pref_item_rs_wol_on_start_summary">Versucht den Recording Service beim App start zu wecken</string>
+    <string name="pref_item_rs_wol_on_start_summary">Versucht den Server beim App start zu wecken</string>
     <string name="pref_item_channel_show_current_program">Zeige laufendes Programm</string>
     <string name="pref_item_channel_show_current_program_summary">Das laufende Programm wird in der Senderliste angezeigt</string>
     <string name="pref_item_channel_show_current_program_wifi">Nur bei Wlan</string>
@@ -158,7 +158,7 @@
     <string name="support_this_app">Die App unterstützen</string>
     <string name="quick_stream_hint_title">Sender streamen</string>
     <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
-    <string name="version_unsupported_text">Ihre Recording Service Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
+    <string name="version_unsupported_text">Ihre Server Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
     <string name="version_unsupported_title">Version nicht mehr unterstützt</string>
     <string name="recording_folder">Aufnahmeordner</string>
     <!-- Remote -->

@@ -76,7 +76,7 @@ public class App extends Application {
 		ServerConsts.REC_SERVICE_USER_NAME = prefs.getString(DVBViewerPreferences.KEY_RS_USERNAME, "");
 		ServerConsts.REC_SERVICE_PASSWORD = prefs.getString(DVBViewerPreferences.KEY_RS_PASSWORD, "");
 		ServerConsts.REC_SERVICE_MAC_ADDRESS = prefs.getString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS);
-		ServerConsts.REC_SERVICE_WOL_PORT = prefs.getInt(DVBViewerPreferences.KEY_RS_WOL_PORT, 9);
+		ServerConsts.REC_SERVICE_WOL_PORT = 9;
 
 		/**
 		 * Thread to send a wake on lan request
