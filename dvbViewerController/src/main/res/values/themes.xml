@@ -4,6 +4,7 @@
 
     <style name="Theme.DVB" parent="@style/Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="actionModeBackground">@color/recording</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="colorControlNormal">@color/colorControlNormal</item>
@@ -16,6 +17,7 @@
 
     <style name="Theme.DVB.NoActionBar" parent="Theme.DVB">
         <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
 </resources>

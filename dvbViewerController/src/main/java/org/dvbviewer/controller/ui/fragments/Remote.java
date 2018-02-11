@@ -42,7 +42,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.DefaultHttpException;
+import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.ui.base.AsyncLoader;

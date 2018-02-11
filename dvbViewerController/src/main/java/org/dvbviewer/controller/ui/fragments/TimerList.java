@@ -45,8 +45,8 @@ import com.nostra13.universalimageloader.utils.IoUtils;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Timer;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
+import org.dvbviewer.controller.io.exception.AuthenticationException;
+import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.TimerHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
@@ -299,15 +299,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 	}
 
     private void timerSavedAction() {
-        getView().post(new Runnable() {
-            @Override
-            public void run() {
-                Snackbar snackbar = Snackbar
-                        .make(getView(), R.string.timer_saved, Snackbar.LENGTH_LONG);
-                snackbar.show();
-                refresh();
-            }
-        });
+		sendMessage(R.string.timer_saved);
     }
 
     /* (non-Javadoc)

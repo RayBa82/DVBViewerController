@@ -28,10 +28,8 @@ public class ServerConsts {
 	public static final String	URL_TIMER_LIST					= "/api/timerlist.html?utf8=2";
 	public static final String	URL_MEDIA_LIST					= "/api/mediafiles.html?thumbs=1";
 	public static final String	URL_TIMER_DELETE				= "/api/timerdelete.html?id=";
-	public static final String	URL_EXECUTE_TASK				= "/tasks.html?aktion=tasks&task=";
 	public static final String  URL_SEND_COMMAND                = "/api/dvbcommand.html?target={0}&cmd=-x{1}";
 	public static final String	URL_SWITCH_COMMAND				= "/api/dvbcommand.html?target={0}&cmd=-c{1}";
-	public static final String	URL_DELETE_RECORDING			= "/api/recdelete.html?delfile=1&recid={0}";
 	public static final String	URL_FLASHSTREAM					= "/flashstream/stream";
 	public static final String	URL_M3U8						= "/master.m3u8";
 	public static final String	URL_TARGETS					    = "/api/dvbcommand.html";

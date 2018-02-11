@@ -39,7 +39,6 @@
     <!-- Recordings -->
     <string name="recordings">Registrazioni</string>
     <string name="no_recordings">Nessuna registrazione trovata</string>
-    <string name="busyDeleteRecordings">Cancellazione Registrazione&#8230;</string>
     <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Timer</string>
@@ -71,27 +70,6 @@
     <!-- Tasks -->
     <string name="tasks">Tasks</string>
     <string name="task_execute_security_question">Eseguire \"{0}\"?</string>
-    <string name="EPGStart">Avvia Scansione EPG</string>
-    <string name="EPGStop">Ferma Scansione EPG</string>
-    <string name="AutoTimer">Timer Automatico</string>
-    <string name="RefreshDB">Aggiorna DB Registrazioni</string>
-    <string name="CleanupDB">Azzera DB Registrazioni</string>
-    <string name="RebuildRecordedHistory">Rigenera Cronologia Registrazioni</string>
-    <string name="ClearRecordingHistory">Azzera Cronologia Registrazioni</string>
-    <string name="ClearRecordingStats">Azzera Stat. Registrazione</string>
-    <string name="UpdateMediaLibrary">Aggiorna libreria multimediale</string>
-    <string name="CleanupPhotoDB">Azzera libreria foto</string>
-    <string name="CleanupVideoDB">Azzera DB libreria video</string>
-    <string name="RebuildVideoDB">Rigenera libreria video</string>
-    <string name="RebuildAudioDB">Rigenera libreria audio</string>
-    <string name="RebuildPhotoDB">Rigenera libreria foto</string>
-    <string name="ClearAudioStats">Azzera statistiche audio</string>
-    <string name="ClearVideoStats">Azzera libreria video</string>
-    <string name="ClearPhotoStats">Azzera libreria foto</string>
-    <string name="Hibernate">Iberna</string>
-    <string name="Standby">Standby</string>
-    <string name="Shutdown">Spegni</string>
-    <string name="WOL">Sveglia il Recording Service</string>
     <!-- Status -->
     <string name="status">Stato</string>
     <string name="status_current_recordings">Registrazioni Avviate</string>

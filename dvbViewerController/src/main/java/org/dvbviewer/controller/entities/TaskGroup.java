@@ -17,50 +17,33 @@ package org.dvbviewer.controller.entities;
 
 
 import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-/**
- * The Class Task.
- *
- * @author RayBa
- * @date 01.07.2012
- */
-@Root(name = "task")
-public class Task {
+import java.util.List;
 
-    @Attribute(name = "type")
-    private String type;
+@Root(name = "group")
+public class TaskGroup {
 
-	@Element
-	private String name;
-	
-    @Element
-	private String action;
+    @Attribute(name = "name")
+    private String name;
 
+    @ElementList(inline = true)
+    private List<Task> tasks;
 
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setName(String name) {
+        this.name = name;
     }
 
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getAction() {
-		return action;
-	}
-	
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public List<Task> getTasks() {
+        return tasks;
+    }
 
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 }

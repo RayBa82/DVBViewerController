@@ -39,7 +39,6 @@
     <!-- Recordings -->
     <string name="recordings">Lista nagrań</string>
     <string name="no_recordings">Brak nagrań</string>
-    <string name="busyDeleteRecordings">Usuń nagranie&#8230;</string>
     <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Programator</string>
@@ -71,27 +70,6 @@
     <!-- Tasks -->
     <string name="tasks">Zadania</string>
     <string name="task_execute_security_question">Wykonaj \"{0}\"?</string>
-    <string name="EPGStart">Rozpocznij skanowanie EPG</string>
-    <string name="EPGStop">Zatrzymaj skanowanie EPG</string>
-    <string name="AutoTimer">Automatyczny programator</string>
-    <string name="RefreshDB">Odśwież bazę nagrań</string>
-    <string name="CleanupDB">Oczyść bazę nagrań</string>
-    <string name="RebuildRecordedHistory">Przebuduj historię nagrań</string>
-    <string name="ClearRecordingHistory">Wyczyść historię nagrań</string>
-    <string name="ClearRecordingStats">Wyczyść statystyki nagrań</string>
-    <string name="UpdateMediaLibrary">Aktualizuj bibliotekę mediów</string>
-    <string name="CleanupPhotoDB">Odśwież bibliotekę zdjęć</string>
-    <string name="CleanupVideoDB">Odśwież bibliotekę filmów</string>
-    <string name="RebuildVideoDB">Przebuduj bibliotekę filmów</string>
-    <string name="RebuildAudioDB">Przebuduj bibliotekę muzyki</string>
-    <string name="RebuildPhotoDB">Przebuduj bibliotekę zdjęć</string>
-    <string name="ClearAudioStats">Wyczyść statystyki biblioteki muzyki</string>
-    <string name="ClearVideoStats">Wyczyść statystyki biblioteki filmów</string>
-    <string name="ClearPhotoStats">Wyczyść statystyki biblioteki zdjęć</string>
-    <string name="Hibernate">Hibernacja</string>
-    <string name="Standby">Uśpienie</string>
-    <string name="Shutdown">Wyłącz komputer</string>
-    <string name="WOL">Obudź Usługę nagrywania</string>
     <!-- Status -->
     <string name="status">Status</string>
     <string name="status_current_recordings">Trwające nagrania</string>

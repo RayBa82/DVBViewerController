@@ -20,7 +20,7 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
-import org.dvbviewer.controller.ui.fragments.TaskList;
+import org.dvbviewer.controller.ui.fragments.TaskListFragment;
 
 /**
  * The Class TaskActivity.
@@ -59,7 +59,7 @@ public class TaskActivity extends BaseSinglePaneActivity {
 	 */
 	@Override
 	protected Fragment onCreatePane() {
-		return new TaskList();
+		return new TaskListFragment();
 	}
 
 }

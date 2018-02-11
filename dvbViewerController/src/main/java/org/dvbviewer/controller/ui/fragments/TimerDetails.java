@@ -54,6 +54,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -326,7 +328,6 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
                     if (getDialog() != null && getDialog().isShowing()) {
                         dismiss();
                     }
-                    HTTPUtil.checkResponse(response);
                     if (mOntimeredEditedListener != null) {
                         mOntimeredEditedListener.timerEdited(true);
                     }
@@ -341,43 +342,13 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	public static String buildTimerUrl(Timer timer) {
 		try {
 			final boolean create = timer.getId() < 0l;
-			final String title = timer.getTitle();
-			final Date startDate = DateUtils.addMinutes(timer.getStart(), timer.getPre() * -1);
-			final Date stopDate = DateUtils.addMinutes(timer.getEnd(), timer.getPost());
-			final String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(startDate));
-			final String start = String.valueOf(DateUtils.getMinutesOfDay(startDate));
-			final String stop = String.valueOf(DateUtils.getMinutesOfDay(stopDate));
-			final String endAction = String.valueOf(timer.getTimerAction());
-			final String pre = String.valueOf(timer.getPre());
-			final String post  = String.valueOf(timer.getPost());
-
 			final StringBuilder stringBuilder = new StringBuilder(ServerConsts.REC_SERVICE_URL);
 			stringBuilder.append(create ? ServerConsts.URL_TIMER_CREATE : ServerConsts.URL_TIMER_EDIT);
 			final HTTPUtil.UrlBuilder builder;
 			builder = HTTPUtil.getUrlBuilder(stringBuilder.toString());
-			builder.addQueryParameter("ch", String.valueOf(timer.getChannelId()));
-			builder.addQueryParameter("dor", days);
-			builder.addQueryParameter("encoding", "255");
-			builder.addQueryParameter("enable", timer.isFlagSet(Timer.FLAG_DISABLED) ? "0" : "1");
-			builder.addQueryParameter("start", start);
-			builder.addQueryParameter("stop", stop);
-			builder.addQueryParameter("title", title);
-			builder.addQueryParameter("endact", endAction);
-            builder.addQueryParameter("pre", pre);
-            builder.addQueryParameter("post", post);
-            addIfNotEmpty("pdc", timer.getPdc(), builder);
-            addIfNotEmpty("epgevent", timer.getEventId(), builder);
-            addIfPositive("audio", timer.getAllAudio(), builder);
-            addIfPositive("subs", timer.getDvbSubs(), builder);
-            addIfPositive("ttx", timer.getTeletext(), builder);
-            addIfPositive("eit", timer.getEitEPG(), builder);
-            final int epgMonitoring = timer.getMonitorPDC() - 1;
-            if(epgMonitoring >= 0){
-                builder.addQueryParameter("monitorpdc", "1");
-                builder.addQueryParameter("monforrec", String.valueOf(epgMonitoring));
-            }
-			if (timer.getId() >= 0) {
-				builder.addQueryParameter("id", String.valueOf(timer.getId()));
+			final Map<String, String> params = getTimerParameters(timer);
+			for(Map.Entry<String, String> entry : params.entrySet()) {
+				builder.addQueryParameter(entry.getKey(), entry.getValue());
 			}
 			return builder.build().toString();
 		} catch (UrlBuilderException e) {
@@ -386,18 +357,55 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		return null;
 	}
 
-    private static HTTPUtil.UrlBuilder addIfPositive(String name, int value,  HTTPUtil.UrlBuilder builder){
+	public static Map<String, String> getTimerParameters(Timer timer) {
+		final Map<String, String> params = new HashMap<>();
+		final String title = timer.getTitle();
+		final Date startDate = DateUtils.addMinutes(timer.getStart(), timer.getPre() * -1);
+		final Date stopDate = DateUtils.addMinutes(timer.getEnd(), timer.getPost());
+		final String days = String.valueOf(DateUtils.getDaysSinceDelphiNull(startDate));
+		final String start = String.valueOf(DateUtils.getMinutesOfDay(startDate));
+		final String stop = String.valueOf(DateUtils.getMinutesOfDay(stopDate));
+		final String endAction = String.valueOf(timer.getTimerAction());
+		final String pre = String.valueOf(timer.getPre());
+		final String post  = String.valueOf(timer.getPost());
+
+		params.put("ch", String.valueOf(timer.getChannelId()));
+		params.put("dor", days);
+		params.put("encoding", "255");
+		params.put("enable", timer.isFlagSet(Timer.FLAG_DISABLED) ? "0" : "1");
+		params.put("start", start);
+		params.put("stop", stop);
+		params.put("title", title);
+		params.put("endact", endAction);
+		params.put("pre", pre);
+		params.put("post", post);
+		addIfNotEmpty("pdc", timer.getPdc(), params);
+		addIfNotEmpty("epgevent", timer.getEventId(), params);
+		addIfPositive("audio", timer.getAllAudio(), params);
+		addIfPositive("subs", timer.getDvbSubs(), params);
+		addIfPositive("ttx", timer.getTeletext(), params);
+		addIfPositive("eit", timer.getEitEPG(), params);
+		final int epgMonitoring = timer.getMonitorPDC() - 1;
+		if(epgMonitoring >= 0){
+			params.put("monitorpdc", "1");
+			params.put("monforrec", String.valueOf(epgMonitoring));
+		}
+		if (timer.getId() >= 0) {
+			params.put("id", String.valueOf(timer.getId()));
+		}
+		return params;
+	}
+
+    private static void addIfPositive(String name, int value,  Map<String, String> params){
         if(value > 0){
-            builder.addQueryParameter(name, String.valueOf(value));
+			params.put(name, String.valueOf(value));
         }
-        return builder;
     }
 
-    private static HTTPUtil.UrlBuilder addIfNotEmpty(String name, String value,  HTTPUtil.UrlBuilder builder){
+    private static void addIfNotEmpty(String name, String value,  Map<String, String> params){
         if(StringUtils.isNotBlank(value)){
-            builder.addQueryParameter(name, value);
+			params.put(name, value);
         }
-        return builder;
     }
 
 	@NonNull

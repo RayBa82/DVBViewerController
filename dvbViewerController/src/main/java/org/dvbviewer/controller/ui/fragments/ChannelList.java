@@ -70,6 +70,10 @@ import org.dvbviewer.controller.utils.UIUtils;
 import java.text.MessageFormat;
 import java.util.Date;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * The Class ChannelList.
  *
@@ -227,7 +231,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 showStreamConfig(c);
                 return true;
             case R.id.menuTimer:
-            showTimerDialog(c);
+                showTimerDialog(c);
             return true;
             case R.id.menuSwitch:
                 switchChannel(c);
@@ -284,10 +288,18 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void recordChannel(Cursor c) {
         Timer timer = cursorToTimer(c);
-        String request = TimerDetails.buildTimerUrl(timer);
-        RecordingServiceGet rsGet = new RecordingServiceGet(request);
-        Thread executionThread = new Thread(rsGet);
-        executionThread.start();
+        Call call = getDmsInterface().addTimer(TimerDetails.getTimerParameters(timer));
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                sendMessage(R.string.timer_saved);
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                sendMessage(R.string.error_common);
+            }
+        });
     }
 
     private void showTimerDialog(Cursor c) {
