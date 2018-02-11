@@ -22,7 +22,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -55,12 +54,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.IoUtils;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Recording;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.RecordingHandler;
@@ -82,6 +78,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -90,18 +90,19 @@ import java.util.List;
  * @author RayBa
  * @date 07.04.2013
  */
-public class RecordingList extends BaseListFragment implements AsyncCallback, LoaderCallbacks<List<Recording>>, OnClickListener, ActionMode.Callback, OnCheckedChangeListener, View.OnClickListener, AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
+public class RecordingList extends BaseListFragment implements LoaderCallbacks<List<Recording>>, OnClickListener, ActionMode.Callback, OnCheckedChangeListener, View.OnClickListener, AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
 
 	public static final String ACTION_MODE        = "action_mode";
 	public static final String CHECKED_ITEM_COUNT = "checked_item_count";
 
 	private RecordingAdapter    mAdapter;
-	private RecordingDeleter    deleter;
 	private ProgressDialog      progressDialog;
 	private ActionMode          mode;
 	private int                 selectedPosition;
 	private boolean             actionMode;
 	private IEpgDetailsActivity.OnIEPGClickListener clickListener;
+	private List<Recording> recordings;
+
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -221,8 +222,7 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				}
 				return true;
 			case R.id.menuDelete:
-				List<Recording> recordings = Collections.singletonList(mAdapter.getItem(selectedPosition));
-				deleter = new RecordingDeleter(recordings, this);
+				recordings = Collections.singletonList(mAdapter.getItem(selectedPosition));
 				AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 				builder.setMessage(getResources().getString(R.string.confirmDelete)).setPositiveButton(getResources().getString(R.string.yes), this).setNegativeButton(getResources().getString(R.string.no), this).show();
 				return true;
@@ -434,13 +434,12 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 				if (checkedPositions != null && checkedPositions.size() > 0) {
 
 					int size = checkedPositions.size();
-					List<Recording> recordings = new ArrayList<Recording>();
+					recordings = new ArrayList<>();
 					for (int i = 0; i < size; i++) {
 						if (checkedPositions.valueAt(i)) {
 							recordings.add(mAdapter.getItem(checkedPositions.keyAt(i)));
 						}
 					}
-					deleter = new RecordingDeleter(recordings, this);
 					/**
 					 * Alertdialog to confirm the delete of Recordings
 					 */
@@ -531,82 +530,6 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 		setListShown(false);
 	}
 
-	/**
-	 * The Class RecordingDeleter.
-	 *
-	 * @author RayBa
-	 * @date 07.04.2013
-	 */
-	public static class RecordingDeleter extends AsyncTask<Recording, Void, Boolean> {
-
-		AsyncCallback callback;
-		List<Recording> recordings;
-
-		/**
-		 * Instantiates a new recording deleter.
-		 *
-		 * @param callback the callback
-		 * @author RayBa
-		 * @date 07.04.2013
-		 */
-		public RecordingDeleter(List<Recording> recordings, AsyncCallback callback) {
-			this.recordings = recordings;
-			this.callback = callback;
-		}
-
-		/* (non-Javadoc)
-		 * @see android.os.AsyncTask#onPreExecute()
-		 */
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			callback.onAsyncActionStart();
-		}
-
-		public void execute() {
-			if (CollectionUtils.isNotEmpty(recordings)) {
-				Recording[] array = new Recording[recordings.size()];
-				execute(recordings.toArray(array));
-			}
-		}
-
-		/* (non-Javadoc)
-		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-		 */
-		@Override
-		protected void onPostExecute(Boolean result) {
-			super.onPostExecute(result);
-			if (result) {
-				callback.onAsyncActionStop();
-			}
-
-		}
-
-		/* (non-Javadoc)
-		 * @see android.os.AsyncTask#doInBackground(Params[])
-		 */
-		@Override
-		protected Boolean doInBackground(Recording... params) {
-			int count = params.length;
-			if (count <= 0) {
-				return false;
-			}
-			for (int i = 0; i < count; i++) {
-				try {
-					final String path = MessageFormat.format(ServerConsts.URL_DELETE_RECORDING, params[i].getId());
-					ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + path);
-				} catch (AuthenticationException e) {
-					e.printStackTrace();
-				} catch (DefaultHttpException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			return true;
-		}
-
-	}
 
 	/* (non-Javadoc)
 	 * @see android.content.DialogInterface.OnClickListener#onClick(android.content.DialogInterface, int)
@@ -615,8 +538,29 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 	public void onClick(DialogInterface dialog, int which) {
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:
-				if(deleter != null) {
-					deleter.execute();
+			    final int size = recordings.size();
+                int i = 0;
+                for(final Recording recording : recordings) {
+                    i++;
+                    final boolean last = i == recordings.size();
+                    Call <ResponseBody>call = getDmsInterface().deleteRecording(recording.getId(), 1);
+                    call.enqueue(new Callback<ResponseBody>() {
+						@Override
+						public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+							if(size == 1) {
+								sendMessage(getString(R.string.recording_deleted, recording.getTitle()));
+                                refresh();
+                            }else if (last){
+                                sendMessage(getString(R.string.recordings_deleted, size));
+                                refresh();
+                            }
+						}
+
+						@Override
+						public void onFailure(Call<ResponseBody> call, Throwable t) {
+							sendMessage(R.string.error_common);
+						}
+					});
 				}
 				if(mode != null) {
 					mode.finish();
@@ -673,28 +617,6 @@ public class RecordingList extends BaseListFragment implements AsyncCallback, Lo
 			default:
 				break;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback#onAsyncActionStart()
-	 */
-	@Override
-	public void onAsyncActionStart() {
-		progressDialog = new ProgressDialog(getContext());
-		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		progressDialog.setMessage(getResources().getString(R.string.busyDeleteRecordings));
-		progressDialog.setIndeterminate(true);
-		progressDialog.setCancelable(false);
-		progressDialog.show();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback#onAsyncActionStop()
-	 */
-	@Override
-	public void onAsyncActionStop() {
-		progressDialog.dismiss();
-		refresh();
 	}
 
 

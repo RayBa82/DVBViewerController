@@ -47,7 +47,7 @@ import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.StatusList;
 import org.dvbviewer.controller.ui.fragments.StreamConfig;
-import org.dvbviewer.controller.ui.fragments.TaskList;
+import org.dvbviewer.controller.ui.fragments.TaskListFragment;
 import org.dvbviewer.controller.ui.fragments.TimerList;
 import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
 import org.dvbviewer.controller.ui.phone.AboutActivity;
@@ -227,7 +227,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 				if (multiContainer != null) {
 					enableDrawer = false;
 					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-					tran.replace(multiContainer.getId(), new TaskList());
+					tran.replace(multiContainer.getId(), new TaskListFragment());
 					tran.commit();
 					setTitle(R.string.tasks);
 				} else {

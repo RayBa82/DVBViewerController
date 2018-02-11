@@ -43,7 +43,8 @@
     <!-- Recordings -->
     <string name="recordings">Recording list</string>
     <string name="no_recordings">No recordings found</string>
-    <string name="busyDeleteRecordings">Deleting recording&#8230;</string>
+    <string name="recording_deleted">Deleted recording %1$s</string>
+    <string name="recordings_deleted">Deleted %1$d recordings</string>
     <!-- Medias -->
     <string name="medias">Medias</string>
     <!-- Timer -->
@@ -76,26 +77,7 @@
     <!-- Tasks -->
     <string name="tasks">Tasks</string>
     <string name="task_execute_security_question">Execute \"{0}\"?</string>
-    <string name="EPGStart">Start EPG Scan</string>
-    <string name="EPGStop">Stop EPG Scan</string>
-    <string name="AutoTimer">Auto Timer</string>
-    <string name="RefreshDB">Refresh Recording DB</string>
-    <string name="CleanupDB">Cleanup Recording DB</string>
-    <string name="RebuildRecordedHistory">Rebuild Recording History</string>
-    <string name="ClearRecordingHistory">Clear Recording History</string>
-    <string name="ClearRecordingStats">Clear Recording Stats</string>
-    <string name="UpdateMediaLibrary">Update Media library DB</string>
-    <string name="CleanupPhotoDB">Cleanup Photo library DB</string>
-    <string name="CleanupVideoDB">Cleanup Video library DB</string>
-    <string name="RebuildVideoDB">Rebuild Video library DB</string>
-    <string name="RebuildAudioDB">Rebuild Audio library DB</string>
-    <string name="RebuildPhotoDB">Rebuild Photo library DB</string>
-    <string name="ClearAudioStats">Clear Audio Library Stats</string>
-    <string name="ClearVideoStats">Clear Video Library Stats</string>
-    <string name="ClearPhotoStats">Clear Photo Library Stats</string>
-    <string name="Hibernate">Hibernate</string>
-    <string name="Standby">Standby</string>
-    <string name="Shutdown">Shutdown</string>
+    <string name="task_executed">Task \"{0}\" successfully executed</string>
     <string name="WOL">Send WOL to server</string>
     <!-- Status -->
     <string name="status">Status</string>

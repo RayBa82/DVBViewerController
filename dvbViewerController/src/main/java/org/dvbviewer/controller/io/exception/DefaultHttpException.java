@@ -1,11 +1,8 @@
-package org.dvbviewer.controller.io;
+package org.dvbviewer.controller.io.exception;
 
-/**
- * Created by rbaun on 22.11.15.
- */
-public class DefaultHttpException extends Exception {
+import java.io.IOException;
 
-    private Throwable throwable;
+public class DefaultHttpException extends IOException {
 
     public DefaultHttpException(String url, Throwable cause) {
         super(cause.getMessage()
@@ -15,10 +12,6 @@ public class DefaultHttpException extends Exception {
                 + System.getProperty("line.separator")
                 + System.getProperty("line.separator")
                 + url);
-        throwable = cause;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
-    }
 }

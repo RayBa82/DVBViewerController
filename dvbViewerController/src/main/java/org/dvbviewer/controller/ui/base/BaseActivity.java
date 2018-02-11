@@ -16,22 +16,29 @@
 
 package org.dvbviewer.controller.ui.base;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.App;
 import org.dvbviewer.controller.BuildConfig;
 import org.dvbviewer.controller.R;
@@ -90,11 +97,40 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+				new IntentFilter(BaseFragment.MESSAGE_EVENT));
 		if (!TextUtils.isEmpty(Config.CURRENT_RS_PROFILE) && getSupportActionBar() != null) {
 			getSupportActionBar().setTitle(getTitle());
 			getSupportActionBar().setSubtitle(Config.CURRENT_RS_PROFILE);
 		}
 	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+	}
+
+	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// Get extra data included in the Intent
+			String message = intent.getStringExtra(BaseFragment.MESSAGE_STRING);
+			if(StringUtils.isBlank(message)) {
+			   final int messageId = intent.getIntExtra(BaseFragment.MESSAGE_ID, -1);
+			   if(messageId > -1) {
+			       message = getString(messageId);
+               }
+            }
+			Log.d("receiver", "Got message: " + message);
+			View view = getWindow().getDecorView().findViewById(android.R.id.content);
+			Snackbar snackbar = Snackbar
+					.make(view, message, Snackbar.LENGTH_LONG);
+            View snackBarView = snackbar.getView();
+            snackBarView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+            snackbar.show();
+		}
+	};
 
 	/**
 	 * Takes a given intent and either starts a new activity to handle it (the
