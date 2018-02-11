@@ -39,7 +39,6 @@
     <!-- Recordings -->
     <string name="recordings">Felvételek</string>
     <string name="no_recordings">Nem találtam felvételt</string>
-    <string name="busyDeleteRecordings">Felvételeket törlöm&#8230;</string>
     <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Timer</string>
@@ -71,27 +70,6 @@
     <!-- Tasks -->
     <string name="tasks">Feladatok</string>
     <string name="task_execute_security_question">Feladat \"{0}\" elvégzése?</string>
-    <string name="EPGStart">EPG Scan inditása</string>
-    <string name="EPGStop">EPG Scan megállítása</string>
-    <string name="AutoTimer">AutoTimer</string>
-    <string name="RefreshDB">Felvétel AB frissitése</string>
-    <string name="CleanupDB">Felvétel AB rendbe tétele</string>
-    <string name="RebuildRecordedHistory">Felvételtörténet felújitása</string>
-    <string name="ClearRecordingHistory">Felvételtörténet végérvényes törlése</string>
-    <string name="ClearRecordingStats">Felvételstatisztika törlése</string>
-    <string name="UpdateMediaLibrary">Mediagyüjtemény ABk felújitása</string>
-    <string name="CleanupPhotoDB">Képgyüjtemény AB rendbe tétele</string>
-    <string name="CleanupVideoDB">Videogyüjtemény AB rendbe tétele</string>
-    <string name="RebuildVideoDB">Videogyüjtemény AB felújitása</string>
-    <string name="RebuildAudioDB">Hanggyüjtemény AB felújitása</string>
-    <string name="RebuildPhotoDB">Képgyüjtemény AB felújitása</string>
-    <string name="ClearAudioStats">Hanggyüjtemény statistika törlése</string>
-    <string name="ClearVideoStats">Videogyüjtemény statisztika törlése</string>
-    <string name="ClearPhotoStats">Kégyüjtemény statisztika törlése</string>
-    <string name="Hibernate">Alvás</string>
-    <string name="Standby">Készenlét</string>
-    <string name="Shutdown">Leállítás</string>
-    <string name="WOL">Recordin Service felkeltése</string>
     <!-- Status -->
     <string name="status">Státusz</string>
     <string name="status_current_recordings">Folyó felvételek</string>
