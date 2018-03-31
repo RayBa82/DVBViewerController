@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/default_padding_small"
+    android:paddingLeft="@dimen/default_padding_small"
+    android:paddingRight="@dimen/default_padding_small"
+    android:paddingTop="@dimen/default_padding_small"
+    tools:context="org.dvbviewer.controller.ui.activity.VideoActivity">
+
+    <TextView
+        android:id="@+id/sample_app_title"
+        android:text="ExoPlayer 2 Example App:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:textColor="#000000"
+        android:gravity="center_horizontal"/>
+
+    <TextView
+        android:id="@+id/resolution_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Resolution"
+        android:textSize="40px"
+        android:background="#FFFFFF"
+        android:textColor="#000000"
+        android:layout_below="@+id/sample_app_title"
+        android:gravity="center_horizontal"/>
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player_view"
+        android:focusable="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/resolution_textView"
+        android:layout_marginTop="10dp" />
+
+
+
+</RelativeLayout>

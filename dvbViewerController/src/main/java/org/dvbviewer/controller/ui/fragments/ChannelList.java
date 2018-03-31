@@ -249,7 +249,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void streamDirect(final Cursor c) {
         try {
             Channel chan = cursorToChannel(c);
-            final Intent videoIntent = StreamConfig.getDirectUrl(chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            final Intent videoIntent = StreamConfig.getDirectUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
             getActivity().startActivity(videoIntent);
             prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply();
             AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());

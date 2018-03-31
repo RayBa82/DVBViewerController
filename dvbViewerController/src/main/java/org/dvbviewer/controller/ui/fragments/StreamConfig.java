@@ -55,6 +55,7 @@ import org.dvbviewer.controller.entities.Preset;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler;
+import org.dvbviewer.controller.ui.activity.VideoActivity;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseDialogFragment;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
@@ -304,7 +305,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         Intent videoIntent;
         final Preset preset = (Preset) qualitySpinner.getSelectedItem();
         if (mStreamType == StreamType.DIRECT) {
-            videoIntent = getDirectUrl(mFileId, mTitle, fileType);
+            videoIntent = getDirectUrl(getContext(), mFileId, mTitle, fileType);
         } else {
             final int encodingSpeed = encodingSpeedSpinner.getSelectedItemPosition();
             int hours = TextUtils.isEmpty(startHours.getText()) ? 0 : NumberUtils.toInt(startHours.getText().toString());
@@ -398,7 +399,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
         boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
         if (direct) {
-            return getDirectUrl(id, title, fileType);
+            return getDirectUrl(context, id, title, fileType);
         } else {
             return getTranscodedUrl(context, id, title, StreamUtils.getDefaultPreset(prefs), fileType, 0);
         }
@@ -440,7 +441,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         return videoIntent;
     }
 
-    public static Intent getDirectUrl(long id, String title, FileType fileType) {
+    public static Intent getDirectUrl(Context context, long id, String title, FileType fileType) {
         final HttpUrl.Builder builder = URLUtil.buildProtectedRSUrl(ServerConsts.REC_SERVICE_URL);
         builder.addPathSegment("upnp");
         builder.addPathSegment(fileType.directPath);
@@ -448,8 +449,8 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         addStreamIdParam(builder);
         final String videoUrl = builder.build().toString();
         Log.d(Tag, "playing video: " + videoUrl);
-        Intent videoIntent = new Intent(Intent.ACTION_VIEW);
-        videoIntent.setDataAndType(Uri.parse(videoUrl), "video/mpeg");
+        Intent videoIntent = new Intent(context, VideoActivity.class);
+        videoIntent.putExtra(VideoActivity.EXTRA_VIDEO_URL, videoUrl);
         addTitle(videoIntent, title);
         return videoIntent;
     }

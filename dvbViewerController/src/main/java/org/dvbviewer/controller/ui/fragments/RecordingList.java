@@ -235,7 +235,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 
 	private void streamDirect(IEPG recording) {
 		try {
-			final Intent videoIntent = StreamConfig.getDirectUrl(recording.getId(), recording.getTitle(), FileType.RECORDING);
+			final Intent videoIntent = StreamConfig.getDirectUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 			getActivity().startActivity(videoIntent);
 			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 		} catch (ActivityNotFoundException e) {
