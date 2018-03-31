@@ -26,6 +26,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.HttpUrl;
+
 /**
  * The Class URLUtil.
  *
@@ -66,7 +68,7 @@ public class URLUtil {
         }
     }
 
-    public static String buildProtectedRSUrl(String url) {
+    public static HttpUrl.Builder buildProtectedRSUrl(String url) {
         StringBuilder result = new StringBuilder();
         try {
             String prefUrl = guessUrl(url);
@@ -82,10 +84,11 @@ public class URLUtil {
                 result.append(":").append(baseUrl.getPort());
             }
             result.append(path);
+            return HttpUrl.parse(result.toString()).newBuilder();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        return result.toString();
+        return null;
     }
 
 

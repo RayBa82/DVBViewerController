@@ -30,8 +30,8 @@ public class ServerConsts {
 	public static final String	URL_TIMER_DELETE				= "/api/timerdelete.html?id=";
 	public static final String  URL_SEND_COMMAND                = "/api/dvbcommand.html?target={0}&cmd=-x{1}";
 	public static final String	URL_SWITCH_COMMAND				= "/api/dvbcommand.html?target={0}&cmd=-c{1}";
-	public static final String	URL_FLASHSTREAM					= "/flashstream/stream";
-	public static final String	URL_M3U8						= "/master.m3u8";
+	public static final String	URL_FLASHSTREAM					= "flashstream/stream";
+	public static final String	URL_M3U8						= "master.m3u8";
 	public static final String	URL_TARGETS					    = "/api/dvbcommand.html";
 	public static final String 	URL_FFMPEGPREFS					= "/api/getconfigfile.html?file=config%5Cffmpegprefs.ini";
 	public static final String 	URL_IPHONE_FFMPEGPREFS			= "/api/getconfigfile.html?file=config%5Ciphoneprefs.ini";
