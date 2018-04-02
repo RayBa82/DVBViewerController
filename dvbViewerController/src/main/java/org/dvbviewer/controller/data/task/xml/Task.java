@@ -13,10 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.entities.xml.media;
+package org.dvbviewer.controller.data.task.xml;
 
 
 import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 /**
@@ -25,29 +26,41 @@ import org.simpleframework.xml.Root;
  * @author RayBa
  * @date 01.07.2012
  */
-@Root(name = "dir")
-public class Dir {
+@Root(name = "task")
+public class Task {
 
-	@Attribute(name = "path")
-	private String path;
+    @Attribute(name = "type")
+    private String type;
 
-	@Attribute(name = "dirid")
-	private long dirid;
+	@Element
+	private String name;
+	
+    @Element
+	private String action;
 
-	public String getPath() {
-		return path;
-	}
 
-    public void setPath(String path) {
-        this.path = path;
+    public String getType() {
+        return type;
     }
 
-	public long getDirid() {
-		return dirid;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+	public String getName() {
+		return name;
 	}
 	
-	public void setDirid(long dirid) {
-		this.dirid = dirid;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
+	public String getAction() {
+		return action;
+	}
+	
+	public void setAction(String action) {
+		this.action = action;
+	}
+
 }

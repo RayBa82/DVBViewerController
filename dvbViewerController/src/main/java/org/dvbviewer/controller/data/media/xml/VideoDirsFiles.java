@@ -1,4 +1,4 @@
-package org.dvbviewer.controller.entities.xml.media;
+package org.dvbviewer.controller.data.media.xml;
 
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;

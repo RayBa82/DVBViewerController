@@ -32,9 +32,9 @@ import android.widget.Spinner;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
+import org.dvbviewer.controller.data.media.MediaFile;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.IEPG;
-import org.dvbviewer.controller.entities.MediaFile;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.fragments.ChannelList;

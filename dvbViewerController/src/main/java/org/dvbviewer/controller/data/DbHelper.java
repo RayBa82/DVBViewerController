@@ -29,9 +29,7 @@ import org.dvbviewer.controller.data.ProviderConsts.RootTbl;
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.ChannelGroup;
 import org.dvbviewer.controller.entities.ChannelRoot;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.EpgEntry;
-import org.dvbviewer.controller.entities.MediaFile;
 
 import java.util.List;
 
@@ -151,44 +149,6 @@ public class DbHelper extends SQLiteOpenHelper {
 			mContext.getContentResolver().notifyChange(GroupTbl.CONTENT_URI, null);
 		}
 		return rootElements;
-	}
-
-	/**
-	 * Save epg entries.
-	 *
-	 * @param rootElements
-	 *            the rootElements
-	 */
-	public List<MediaFile> saveMediaFiles(List<MediaFile> rootElements) {
-		if (rootElements == null || rootElements.size() <= 0) {
-			return rootElements;
-		}
-		SQLiteDatabase db = getWritableDatabase();
-		try {
-			db.execSQL("DELETE FROM " + MediaTbl.TABLE_NAME);
-			db.beginTransaction();
-
-			for (MediaFile channelRoot : rootElements) {
-				saveMediaFile(db, channelRoot);
-			}
-			db.setTransactionSuccessful();
-			DVBViewerPreferences preferences = new DVBViewerPreferences(mContext);
-			preferences.getPrefs()
-					.edit()
-					.putBoolean(DVBViewerPreferences.KEY_MEDIAS_SYNCED, true)
-					.commit();
-		} catch (Exception e) {
-			Log.e(this.getClass().getSimpleName(), "Error saving mediaFiles", e);
-		} finally {
-			db.endTransaction();
-			db.close();
-			mContext.getContentResolver().notifyChange(MediaTbl.CONTENT_URI, null);
-		}
-		return rootElements;
-	}
-
-	private void saveMediaFile(SQLiteDatabase db, MediaFile mediaFile) {
-		long parentId = db.insert(MediaTbl.TABLE_NAME, null, mediaFile.toContentValues());
 	}
 
 	/**

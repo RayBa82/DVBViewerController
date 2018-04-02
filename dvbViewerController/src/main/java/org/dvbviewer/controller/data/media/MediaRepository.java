@@ -1,15 +1,14 @@
-package org.dvbviewer.controller.data.repository;
+package org.dvbviewer.controller.data.media;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dvbviewer.controller.entities.MediaFile;
+import org.dvbviewer.controller.data.media.xml.Dir;
+import org.dvbviewer.controller.data.media.xml.File;
+import org.dvbviewer.controller.data.media.xml.VideoDirsFiles;
 import org.dvbviewer.controller.entities.NaturalOrderComparator;
-import org.dvbviewer.controller.entities.xml.media.Dir;
-import org.dvbviewer.controller.entities.xml.media.File;
-import org.dvbviewer.controller.entities.xml.media.VideoDirsFiles;
 import org.dvbviewer.controller.io.api.APIClient;
 import org.dvbviewer.controller.io.api.DMSInterface;
 

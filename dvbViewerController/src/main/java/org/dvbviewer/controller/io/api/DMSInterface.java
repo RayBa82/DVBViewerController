@@ -1,7 +1,7 @@
 package org.dvbviewer.controller.io.api;
 
-import org.dvbviewer.controller.entities.xml.media.VideoDirsFiles;
-import org.dvbviewer.controller.entities.xml.task.TaskList;
+import org.dvbviewer.controller.data.media.xml.VideoDirsFiles;
+import org.dvbviewer.controller.data.task.xml.TaskList;
 
 import java.util.Map;
 

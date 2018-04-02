@@ -1,6 +1,6 @@
 package org.dvbviewer.controller.io.api;
 
-import org.dvbviewer.controller.entities.xml.media.VideoDirsFiles;
+import org.dvbviewer.controller.data.media.xml.VideoDirsFiles;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

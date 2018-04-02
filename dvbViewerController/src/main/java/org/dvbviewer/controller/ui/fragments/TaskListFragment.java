@@ -15,11 +15,12 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.xml.task.Task;
-import org.dvbviewer.controller.entities.xml.task.TaskGroup;
-import org.dvbviewer.controller.entities.xml.task.TaskList;
-import org.dvbviewer.controller.ui.base.AsyncLoader;
+import org.dvbviewer.controller.data.task.TaskViewModel;
+import org.dvbviewer.controller.data.task.xml.Task;
+import org.dvbviewer.controller.data.task.xml.TaskGroup;
+import org.dvbviewer.controller.data.task.xml.TaskList;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.CategoryAdapter;
@@ -46,10 +47,11 @@ import retrofit2.Response;
 /**
  * Used to display the list of DMS tasks
  */
-public class TaskListFragment extends BaseListFragment implements OnClickListener, LoaderManager.LoaderCallbacks<TaskList> {
+public class TaskListFragment extends BaseListFragment implements OnClickListener {
 
 	CategoryAdapter	sAdapter;
 	Task selectedTask;
+	TaskViewModel mViewModel;
 
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -67,7 +69,22 @@ public class TaskListFragment extends BaseListFragment implements OnClickListene
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		sAdapter = new CategoryAdapter(getContext());
-		getLoaderManager().initLoader(0, savedInstanceState, this);
+		mViewModel = ViewModelProviders.of(this).get(TaskViewModel.class);
+		final Observer<TaskList> mediaObserver = new Observer<TaskList>() {
+			@Override
+			public void onChanged(@Nullable final TaskList taskList) {
+				for(TaskGroup taskGroup : taskList.getGroups()) {
+					final TaskAdapter adapter = new TaskAdapter();
+					for(Task task : taskGroup.getTasks()) {
+						adapter.addItem(task);
+					}
+					sAdapter.addSection(taskGroup.getName(), adapter);
+				}
+				setListAdapter(sAdapter);
+				setListShown(true);
+			}
+		};
+		mViewModel.getTaskList().observe(this, mediaObserver);
 	}
 
 	/* (non-Javadoc)
@@ -90,42 +107,6 @@ public class TaskListFragment extends BaseListFragment implements OnClickListene
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		String question = MessageFormat.format(getResources().getString(R.string.task_execute_security_question), selectedTask.getName());
 		builder.setMessage(question).setPositiveButton("Yes", this).setTitle(R.string.dialog_confirmation_title).setNegativeButton("No", this).show();
-	}
-
-	@Override
-	public Loader<TaskList> onCreateLoader(int id, Bundle args) {
-		AsyncLoader<TaskList> loader = new AsyncLoader<TaskList>(getContext()) {
-
-			@Override
-			public TaskList loadInBackground() {
-				TaskList result = new TaskList();
-				try {
-                    result = getDmsInterface().getTaskList(0).execute().body();
-					for(TaskGroup taskGroup : result.getGroups()) {
-						final TaskAdapter adapter = new TaskAdapter();
-						for(Task task : taskGroup.getTasks()) {
-							adapter.addItem(task);
-						}
-						sAdapter.addSection(taskGroup.getName(), adapter);
-					}
-				} catch (Exception e) {
-					catchException(getClass().getSimpleName(), e);
-				}
-				return result;
-			}
-		};
-		return loader;
-	}
-
-
-	@Override
-	public void onLoadFinished(Loader<TaskList> loader, TaskList data) {
-		setListAdapter(sAdapter);
-	}
-
-	@Override
-	public void onLoaderReset(Loader<TaskList> loader) {
-
 	}
 
 	public class TaskAdapter extends ArrayListAdapter<Task> {

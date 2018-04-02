@@ -24,7 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.MediaFile;
+import org.dvbviewer.controller.data.media.MediaFile;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.base.BaseFragment;
 import org.dvbviewer.controller.ui.listener.OnBackPressedListener;

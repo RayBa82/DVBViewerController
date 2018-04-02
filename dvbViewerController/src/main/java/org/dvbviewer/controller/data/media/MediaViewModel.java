@@ -1,10 +1,7 @@
-package org.dvbviewer.controller.ui.fragments.medias;
+package org.dvbviewer.controller.data.media;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-
-import org.dvbviewer.controller.data.repository.MediaRepository;
-import org.dvbviewer.controller.entities.MediaFile;
 
 import java.util.List;
 

@@ -26,11 +26,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.data.media.MediaFile;
+import org.dvbviewer.controller.data.media.MediaViewModel;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.entities.MediaFile;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.base.RecyclerViewFragment;
-import org.dvbviewer.controller.ui.fragments.medias.MediaViewModel;
 
 import java.util.List;
 

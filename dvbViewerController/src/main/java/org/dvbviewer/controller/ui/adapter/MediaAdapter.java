@@ -17,7 +17,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.MediaFile;
+import org.dvbviewer.controller.data.media.MediaFile;
 import org.dvbviewer.controller.utils.ServerConsts;
 
 import java.util.List;

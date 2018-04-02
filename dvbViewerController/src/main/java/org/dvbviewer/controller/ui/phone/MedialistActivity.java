@@ -21,7 +21,7 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.MediaFile;
+import org.dvbviewer.controller.data.media.MediaFile;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.MediaList;
