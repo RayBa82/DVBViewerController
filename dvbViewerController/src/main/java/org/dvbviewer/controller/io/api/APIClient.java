@@ -1,5 +1,6 @@
-package org.dvbviewer.controller.io;
+package org.dvbviewer.controller.io.api;
 
+import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.utils.ServerConsts;
 
 import retrofit2.Retrofit;

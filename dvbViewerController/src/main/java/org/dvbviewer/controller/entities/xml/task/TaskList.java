@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.entities;
+package org.dvbviewer.controller.entities.xml.task;
 
 
 import org.simpleframework.xml.ElementList;

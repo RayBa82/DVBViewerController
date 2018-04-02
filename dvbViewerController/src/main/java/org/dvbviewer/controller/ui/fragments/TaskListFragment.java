@@ -28,9 +28,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.Task;
-import org.dvbviewer.controller.entities.TaskGroup;
-import org.dvbviewer.controller.entities.TaskList;
+import org.dvbviewer.controller.entities.xml.task.Task;
+import org.dvbviewer.controller.entities.xml.task.TaskGroup;
+import org.dvbviewer.controller.entities.xml.task.TaskList;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.utils.ArrayListAdapter;

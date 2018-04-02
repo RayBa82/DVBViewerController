@@ -51,6 +51,8 @@ android {
         compile 'com.google.android.gms:play-services-analytics:' + project.playServiceVersion
         compile 'com.google.firebase:firebase-crash:' + project.playServiceVersion
         compile 'com.google.firebase:firebase-core:' + project.playServiceVersion
+        implementation "android.arch.lifecycle:extensions:1.1.1"
+        annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
         compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.8.1'
         compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
         compile 'com.google.code.gson:gson:2.8.2'

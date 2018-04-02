@@ -25,9 +25,7 @@ import android.view.ViewGroup;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.MediaFile;
-import org.dvbviewer.controller.entities.VideoFile;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
-import org.dvbviewer.controller.ui.adapter.VideoAdapter;
 import org.dvbviewer.controller.ui.base.BaseFragment;
 import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
 
@@ -37,9 +35,9 @@ import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
  * @author RayBa
  * @date 07.04.2013
  */
-public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaClickListener, OnBackPressedListener, VideoAdapter.OnVideoClickListener{
+public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaClickListener, OnBackPressedListener {
 
-   private VideoAdapter.OnVideoClickListener videoClickListener;
+   private MediaAdapter.OnMediaClickListener videoClickListener;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
@@ -60,8 +58,8 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof VideoAdapter.OnVideoClickListener) {
-            videoClickListener = (VideoAdapter.OnVideoClickListener) context;
+        if(context instanceof MediaAdapter.OnMediaClickListener) {
+            videoClickListener = (MediaAdapter.OnMediaClickListener) context;
         }
     }
 
@@ -76,18 +74,28 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
 
     @Override
     public void onMediaClick(MediaFile mediaFile) {
-        if(mediaFile.getDirId() <= 0) {
+        if(mediaFile.getDirId() > 0) {
             final Bundle b = new Bundle();
-            b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getId());
+            b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getDirId());
             final MediaList mediaList = new MediaList();
             mediaList.setArguments(b);
             changeFragment(R.id.media_content, mediaList, mediaFile.getId());
-        }else {
-            final Bundle b = new Bundle();
-            b.putLong(VideoList.KEY_DIR_ID, mediaFile.getDirId());
-            final VideoList videoList = new VideoList();
-            videoList.setArguments(b);
-            changeFragment(R.id.media_content, videoList, mediaFile.getId());
+        } else if (videoClickListener != null) {
+            videoClickListener.onMediaClick(mediaFile);
+        }
+    }
+
+    @Override
+    public void onMediaStreamClick(MediaFile mediaFile) {
+        if(videoClickListener != null){
+            videoClickListener.onMediaStreamClick(mediaFile);
+        }
+    }
+
+    @Override
+    public void onMediaContextClick(MediaFile mediaFile) {
+        if(videoClickListener != null){
+            videoClickListener.onMediaContextClick(mediaFile);
         }
     }
 
@@ -105,27 +113,6 @@ public class MediaFragment extends BaseFragment implements MediaAdapter.OnMediaC
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void onVideoClick(VideoFile videoFile) {
-        if(videoClickListener != null){
-            videoClickListener.onVideoClick(videoFile);
-        }
-    }
-
-    @Override
-    public void onVideoStreamClick(VideoFile videoFile) {
-        if(videoClickListener != null){
-            videoClickListener.onVideoStreamClick(videoFile);
-        }
-    }
-
-    @Override
-    public void onVideoContextClick(VideoFile videoFile) {
-        if(videoClickListener != null){
-            videoClickListener.onVideoContextClick(videoFile);
-        }
     }
 
 }

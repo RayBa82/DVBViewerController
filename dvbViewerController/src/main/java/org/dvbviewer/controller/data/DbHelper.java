@@ -189,10 +189,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
 	private void saveMediaFile(SQLiteDatabase db, MediaFile mediaFile) {
 		long parentId = db.insert(MediaTbl.TABLE_NAME, null, mediaFile.toContentValues());
-		for (MediaFile child : mediaFile.getChildren()) {
-			child.setParent(parentId);
-			saveMediaFile(db, child);
-        }
 	}
 
 	/**

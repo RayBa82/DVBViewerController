@@ -1,6 +1,7 @@
-package org.dvbviewer.controller.io;
+package org.dvbviewer.controller.io.api;
 
-import org.dvbviewer.controller.entities.TaskList;
+import org.dvbviewer.controller.entities.xml.media.VideoDirsFiles;
+import org.dvbviewer.controller.entities.xml.task.TaskList;
 
 import java.util.Map;
 
@@ -15,9 +16,14 @@ public interface DMSInterface {
     String API = "api/";
 
     String TASK_API                 = API + "tasks.html";
+
     String REC_DEL_API              = API + "recdelete.html";
+
     String TIMER_ADD_API            = API + "timeradd.html";
+
     String TIMER_EDIT_API           = API + "timeredit.html";
+
+    String MEDIA_DIRS               = API + "mediafiles.html?content=3&recursive=0&thumbs=1";
 
     @GET(TASK_API)
     Call<TaskList> getTaskList(@Query("all") int all);
@@ -33,5 +39,8 @@ public interface DMSInterface {
 
     @GET(TIMER_EDIT_API)
     Call<ResponseBody> editTimer(@QueryMap Map<String, String> params);
+
+    @GET(MEDIA_DIRS)
+    Call<VideoDirsFiles> getMediaDir(@Query("dirid") long id);
 
 }

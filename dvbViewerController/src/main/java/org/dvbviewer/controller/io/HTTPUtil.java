@@ -77,7 +77,7 @@ public class HTTPUtil {
     };
 
 
-    static OkHttpClient getHttpClient() {
+    public static OkHttpClient getHttpClient() {
         if (httpClient == null) {
             final X509TrustManager trustManager = SSLUtil.getTrustAllTrustManager();
             final HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();

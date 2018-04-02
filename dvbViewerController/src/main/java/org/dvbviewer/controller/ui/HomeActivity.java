@@ -34,9 +34,9 @@ import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.IEPG;
-import org.dvbviewer.controller.entities.VideoFile;
+import org.dvbviewer.controller.entities.MediaFile;
 import org.dvbviewer.controller.io.UrlBuilderException;
-import org.dvbviewer.controller.ui.adapter.VideoAdapter;
+import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
@@ -72,7 +72,7 @@ import java.util.List;
  *
  * @author RayBa
  */
-public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener, IEpgDetailsActivity.OnIEPGClickListener, VideoAdapter.OnVideoClickListener {
+public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener, IEpgDetailsActivity.OnIEPGClickListener, MediaAdapter.OnMediaClickListener {
 
     public static final String ENABLE_DRAWER = "ENABLE_DRAWER";
 	public static final String TITLE 		 = "title";
@@ -361,22 +361,23 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 		details.show(getSupportFragmentManager(), IEPG.class.getName());
 	}
 
+
 	@Override
-	public void onVideoClick(VideoFile videoFile) {
+	public void onMediaClick(MediaFile mediaFile) {
 		Bundle arguments = new Bundle();
-		arguments.putLong(StreamConfig.EXTRA_FILE_ID, videoFile.getId());
+		arguments.putLong(StreamConfig.EXTRA_FILE_ID, mediaFile.getId());
 		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
 		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-		arguments.putString(StreamConfig.EXTRA_TITLE, videoFile.getTitle());
+		arguments.putString(StreamConfig.EXTRA_TITLE, mediaFile.getName());
 		StreamConfig cfg = StreamConfig.newInstance();
 		cfg.setArguments(arguments);
 		cfg.show(getSupportFragmentManager(), StreamConfig.class.getName());
 	}
 
 	@Override
-	public void onVideoStreamClick(VideoFile videoFile) {
+	public void onMediaStreamClick(MediaFile mediaFile) {
 		try {
-			final Intent videoIntent = StreamConfig.buildQuickUrl(this, videoFile.getId(), videoFile.getName(), FileType.VIDEO);
+			final Intent videoIntent = StreamConfig.buildQuickUrl(this, mediaFile.getId(), mediaFile.getName(), FileType.VIDEO);
 			startActivity(videoIntent);
 			AnalyticsTracker.trackQuickStream(getApplication());
 		} catch (UrlBuilderException e) {
@@ -385,8 +386,14 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	}
 
 	@Override
-	public void onVideoContextClick(VideoFile videoFile) {
-
+	public void onMediaContextClick(MediaFile mediaFile) {
+		Bundle arguments = new Bundle();
+		arguments.putLong(StreamConfig.EXTRA_FILE_ID, mediaFile.getId());
+		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
+		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+		arguments.putString(StreamConfig.EXTRA_TITLE, mediaFile.getName());
+		StreamConfig cfg = StreamConfig.newInstance();
+		cfg.setArguments(arguments);
+		cfg.show(getSupportFragmentManager(), StreamConfig.class.getName());
 	}
-
 }

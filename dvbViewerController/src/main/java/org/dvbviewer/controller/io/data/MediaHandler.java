@@ -63,7 +63,6 @@ public class MediaHandler extends DefaultHandler {
 				MediaFile file = null;
 				for (String folder : Arrays.copyOfRange(pathArray, 1, pathArray.length)){
 					file = getMediaFileFromList(folder, currentFiles);
-					currentFiles = file.getChildren();
 				}
 				final String dirId = attributes.getValue("dirid");
 				file.setDirId(Long.valueOf(dirId));
