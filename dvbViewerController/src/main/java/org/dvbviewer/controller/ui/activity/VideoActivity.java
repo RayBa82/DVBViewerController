@@ -1,43 +1,49 @@
 package org.dvbviewer.controller.ui.activity;
 
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Surface;
-import android.widget.TextView;
+import android.view.View;
+import android.view.WindowManager;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.player.DMSExtractorsFactory;
 import org.dvbviewer.controller.player.DMSRenderersFactory;
+
+import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES;
+import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_DETECT_ACCESS_UNITS;
 
 
 /**
@@ -50,14 +56,16 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
     public static final String EXTRA_VIDEO_URL = TAG + "_EXTRA_VIDEO_URL";
     private PlayerView playerView;
     private SimpleExoPlayer player;
-    private TextView resolutionTextView;
     private ExtractorsFactory mExtractorsFactory;
+    private PowerManager.WakeLock screenLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-        resolutionTextView = findViewById(R.id.resolution_textView);
+
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        screenLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "screenLock");
 
 // 1. Create a default TrackSelector
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -65,7 +73,13 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
 // 2. Create a default LoadControl
-        LoadControl loadControl = new DefaultLoadControl();
+
+        DefaultAllocator allocator = new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE);
+        DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
+                .setBufferDurationsMs(15000, 50000, 250, 2000)
+                .setAllocator(allocator)
+                .setTargetBufferBytes(C.LENGTH_UNSET)
+                .createDefaultLoadControl();
 
 // 3. Create the player
         RenderersFactory renderersFactory = new DMSRenderersFactory(getBaseContext());
@@ -82,9 +96,15 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
         Uri videoUri =Uri.parse(getIntent().getStringExtra(EXTRA_VIDEO_URL));
 
 //Measures bandwidth during playback. Can be null if not required.
-        DefaultBandwidthMeter bandwidthMeterA = new DefaultBandwidthMeter();
+        final DefaultBandwidthMeter bandwidthMeterA = new DefaultBandwidthMeter();
 //Produces DataSource instances through which media data is loaded.
-        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "DMSClient"), bandwidthMeterA);
+        //DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "DMSClient"), bandwidthMeterA);
+
+        final OkHttpDataSourceFactory dataSourceFactory = new OkHttpDataSourceFactory(
+                HTTPUtil.getHttpClient(),
+                Util.getUserAgent(this, "DMSClient"),
+                bandwidthMeterA
+        );
 
         mExtractorsFactory = new DMSExtractorsFactory();
         final MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
@@ -95,37 +115,22 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
 // Prepare the player with the source.
         player.prepare(videoSource);
 
-        player.addListener(new ExoPlayer.EventListener() {
-
-            @Override
-            public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
-                Log.v(TAG, "Listener-onTimelineChanged...");
-            }
-
-            @Override
-            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-                Log.v(TAG, "Listener-onTracksChanged...");
-            }
-
-            @Override
-            public void onLoadingChanged(boolean isLoading) {
-                Log.v(TAG, "Listener-onLoadingChanged...isLoading:"+isLoading);
-            }
+        player.addListener(new Player.DefaultEventListener() {
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 Log.v(TAG, "Listener-onPlayerStateChanged..." + playbackState);
+                if (playWhenReady && playbackState == Player.STATE_READY) {
+                    // media actually playing
+                    screenLock.acquire();
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                } else if (screenLock.isHeld()){
+                    // player paused in any state
+                    screenLock.release();
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                }
             }
 
-            @Override
-            public void onRepeatModeChanged(int repeatMode) {
-                Log.v(TAG, "Listener-onRepeatModeChanged...");
-            }
-
-            @Override
-            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-                Log.v(TAG, "Listener-onShuffleModeEnabledChanged...");
-            }
 
             @Override
             public void onPlayerError(ExoPlaybackException error) {
@@ -133,23 +138,11 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
                 player.stop();
                 player.prepare(videoSource);
                 player.setPlayWhenReady(true);
+                if (screenLock.isHeld()){
+                    screenLock.release();
+                }
             }
 
-            @Override
-            public void onPositionDiscontinuity(int reason) {
-                Log.v(TAG, "Listener-onPositionDiscontinuity reason: " +reason);
-
-            }
-
-            @Override
-            public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-                Log.v(TAG, "Listener-onPlaybackParametersChanged...");
-            }
-
-            @Override
-            public void onSeekProcessed() {
-                Log.v(TAG, "Listener-onSeekProcessed...");
-            }
         });
 
         player.setPlayWhenReady(true); //run file/link when ready to play.
@@ -179,7 +172,6 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         Log.v(TAG, "onVideoSizeChanged ["  + " width: " + width + " height: " + height + "]");
-        resolutionTextView.setText("RES:(WxH):"+width+"X"+height +"\n           "+height+"p");
     }
 
     @Override
@@ -214,6 +206,9 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
     @Override
     protected void onPause() {
         super.onPause();
+        if (screenLock.isHeld()){
+            screenLock.release();
+        }
         Log.v(TAG, "onPause()...");
     }
 

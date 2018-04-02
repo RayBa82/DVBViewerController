@@ -51,7 +51,9 @@ android {
         compile 'com.google.android.gms:play-services-analytics:' + project.playServiceVersion
         compile 'com.google.firebase:firebase-crash:' + project.playServiceVersion
         compile 'com.google.firebase:firebase-core:' + project.playServiceVersion
-        implementation 'com.google.android.exoplayer:exoplayer:2.7.2'
+        implementation project(':exoplayer-library')
+        implementation project(':exoplayer-extension-okhttp')
+        implementation project(':exoplayer-extension-ffmpeg')
         compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.8.1'
         compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
         compile 'com.google.code.gson:gson:2.8.2'

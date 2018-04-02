@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.ext.ffmpeg.FfmpegAudioRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
@@ -88,11 +89,11 @@ public class DMSRenderersFactory extends DefaultRenderersFactory {
                 true, eventHandler, eventListener, audioCapabilities));
 
         // FFMpeg Audio Decoder
-        final boolean enableFfmpegAudioRenderer = false;
+        final boolean enableFfmpegAudioRenderer = true;
 
         if (enableFfmpegAudioRenderer) {
             Log.d(TAG, "Adding FfmpegAudioRenderer");
-            //out.add(new FfmpegAudioRenderer(eventHandler, eventListener, audioProcessors));
+            out.add(new FfmpegAudioRenderer(eventHandler, eventListener, audioProcessors));
         }
     }
 

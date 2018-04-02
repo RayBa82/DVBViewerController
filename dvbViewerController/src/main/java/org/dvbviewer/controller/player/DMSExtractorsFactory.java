@@ -14,6 +14,9 @@ import com.google.android.exoplayer2.extractor.ts.PsExtractor;
 import com.google.android.exoplayer2.extractor.ts.TsExtractor;
 import com.google.android.exoplayer2.extractor.wav.WavExtractor;
 
+import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES;
+import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_DETECT_ACCESS_UNITS;
+
 public class DMSExtractorsFactory implements ExtractorsFactory {
 
     @Override
@@ -26,7 +29,7 @@ public class DMSExtractorsFactory implements ExtractorsFactory {
         extractors[3] = new Mp3Extractor(0);
         extractors[4] = new AdtsExtractor();
         extractors[5] = new Ac3Extractor();
-        extractors[6] = new TsExtractor(0);
+        extractors[6] = new SeekTsExtractor(FLAG_DETECT_ACCESS_UNITS |FLAG_ALLOW_NON_IDR_KEYFRAMES);
         extractors[7] = new FlvExtractor();
         extractors[8] = new OggExtractor();
         extractors[9] = new PsExtractor();
