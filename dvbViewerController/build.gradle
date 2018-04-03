@@ -68,6 +68,7 @@ android {
         compile 'com.squareup.retrofit2:converter-gson:2.1.0'
         compile ('com.squareup.retrofit2:converter-simplexml:2.1.0'){
             exclude module: 'stax-api'
+            exclude module: 'stax'
             exclude module: 'xpp3'
         }
         testCompile 'junit:junit:4.12'
