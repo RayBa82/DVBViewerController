@@ -68,11 +68,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import okhttp3.HttpUrl;
-
-import static org.dvbviewer.controller.utils.StreamUtils.StreamParams.STREAM_ID;
 
 /**
  * DialogFragment to show the stream settings.
@@ -168,15 +165,15 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
 
         collapsable = v.findViewById(R.id.collapsable);
         collapsable.setVisibility(View.GONE);
-        qualitySpinner = (Spinner) v.findViewById(R.id.qualitySpinner);
+        qualitySpinner = v.findViewById(R.id.qualitySpinner);
         qualitySpinner.setOnItemSelectedListener(this);
 
-        encodingSpeedSpinner = (Spinner) v.findViewById(R.id.encodingSpeedSpinner);
+        encodingSpeedSpinner = v.findViewById(R.id.encodingSpeedSpinner);
         int encodingSpeed = StreamUtils.getEncodingSpeedIndex(getContext(), prefs);
         encodingSpeedSpinner.setSelection(encodingSpeed);
         encodingSpeedSpinner.setOnItemSelectedListener(this);
 
-        audioTrackSpinner = (Spinner) v.findViewById(R.id.audioSpinner);
+        audioTrackSpinner = v.findViewById(R.id.audioSpinner);
         audioTrackSpinner.setOnItemSelectedListener(this);
         final List<String> audioTracks = new LinkedList<>();
         audioTracks.add(getResources().getString(R.string.def));
@@ -188,7 +185,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         audioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         audioTrackSpinner.setAdapter(audioAdapter);
 
-        subTitleSpinner = (Spinner) v.findViewById(R.id.subTitleSpinner);
+        subTitleSpinner = v.findViewById(R.id.subTitleSpinner);
         subTitleSpinner.setOnItemSelectedListener(this);
         final List<String> subTitleTracks = new LinkedList<>();
         subTitleTracks.add(getResources().getString(R.string.none));
@@ -200,13 +197,13 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subTitleSpinner.setAdapter(subAdapter);
 
-        startButton = (Button) v.findViewById(R.id.startTranscodedButton);
+        startButton = v.findViewById(R.id.startTranscodedButton);
         startButton.setOnClickListener(this);
-        final Button startDirectStreamButton = (Button) v.findViewById(R.id.startDirectButton);
+        final Button startDirectStreamButton = v.findViewById(R.id.startDirectButton);
         startDirectStreamButton.setOnClickListener(this);
-        startHours = (EditText) v.findViewById(R.id.stream_hours);
-        startMinutes = (EditText) v.findViewById(R.id.stream_minutes);
-        startSeconds = (EditText) v.findViewById(R.id.stream_seconds);
+        startHours = v.findViewById(R.id.stream_hours);
+        startMinutes = v.findViewById(R.id.stream_minutes);
+        startSeconds = v.findViewById(R.id.stream_seconds);
         final View positionContainer = v.findViewById(R.id.streamPositionContainer);
 
         /**
@@ -414,7 +411,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         return getTranscodedUrl(context, id, title, StreamUtils.getDefaultPreset(prefs), fileType, 0);
     }
 
-    private static Intent getTranscodedUrl(Context context, final long id, String title, final Preset preset, final FileType fileType, final int start) throws UrlBuilderException {
+    private static Intent getTranscodedUrl(Context context, final long id, String title, final Preset preset, final FileType fileType, final int start) {
         final HttpUrl.Builder builder = URLUtil.buildProtectedRSUrl(ServerConsts.REC_SERVICE_URL);
         if (StreamConfig.M3U8_MIME_TYPE.equals(preset.getMimeType())) {
             builder.addPathSegment(ServerConsts.URL_M3U8);
@@ -431,7 +428,6 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         if (preset.getSubTitle() >= 0) {
             builder.addQueryParameter("subs", String.valueOf(preset.getSubTitle()));
         }
-        addStreamIdParam(builder);
         final Intent videoIntent = new Intent(Intent.ACTION_VIEW);
         final String url = builder.build().toString();
         Log.d(Tag, "playing video: " + url);
@@ -445,17 +441,12 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
         builder.addPathSegment("upnp");
         builder.addPathSegment(fileType.directPath);
         builder.addPathSegment(String.valueOf(id) + ".ts");
-        addStreamIdParam(builder);
         final String videoUrl = builder.build().toString();
         Log.d(Tag, "playing video: " + videoUrl);
         Intent videoIntent = new Intent(Intent.ACTION_VIEW);
         videoIntent.setDataAndType(Uri.parse(videoUrl), "video/mpeg");
         addTitle(videoIntent, title);
         return videoIntent;
-    }
-
-    private static void addStreamIdParam(HttpUrl.Builder videoUrl) {
-        videoUrl.addQueryParameter(STREAM_ID, UUID.randomUUID().toString());
     }
 
     @Override
