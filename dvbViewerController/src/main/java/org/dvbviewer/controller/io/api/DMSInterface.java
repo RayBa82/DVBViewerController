@@ -2,6 +2,7 @@ package org.dvbviewer.controller.io.api;
 
 import org.dvbviewer.controller.data.media.xml.VideoDirsFiles;
 import org.dvbviewer.controller.data.task.xml.TaskList;
+import org.dvbviewer.controller.data.version.xml.Version;
 
 import java.util.Map;
 
@@ -25,6 +26,8 @@ public interface DMSInterface {
 
     String MEDIA_DIRS               = API + "mediafiles.html?content=3&recursive=0&thumbs=1";
 
+    String VERSION               = API + "version.html";
+
     @GET(TASK_API)
     Call<TaskList> getTaskList(@Query("all") int all);
 
@@ -42,5 +45,8 @@ public interface DMSInterface {
 
     @GET(MEDIA_DIRS)
     Call<VideoDirsFiles> getMediaDir(@Query("dirid") long id);
+
+    @GET(VERSION)
+    Call<Version> getVersion();
 
 }

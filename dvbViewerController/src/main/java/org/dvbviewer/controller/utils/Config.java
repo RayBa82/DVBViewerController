@@ -71,6 +71,24 @@ public class Config {
     }
 
     /**
+     * Checks if is old rs version.
+     *
+     * @param version the version
+     * @return true, if is old rs version
+     * @author RayBa
+     * @date 18.08.2013
+     */
+    public static boolean isRSVersionSupported(String version, String minimumVersion) {
+        if (TextUtils.isEmpty(version)) {
+            return false;
+        }
+        String s1 = normalisedVersion(version);
+        String s2 = normalisedVersion(minimumVersion);
+        int cmp = s1.compareTo(s2);
+        return cmp >= 0;
+    }
+
+    /**
      * Normalised version.
      *
      * @param version the version
