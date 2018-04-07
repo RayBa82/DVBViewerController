@@ -22,7 +22,7 @@ import org.simpleframework.xml.Root;
 
 import java.util.List;
 
-@Root(name = "group")
+@Root(name = "group", strict = false)
 public class TaskGroup {
 
     @Attribute(name = "name")

@@ -9,7 +9,7 @@ import java.util.List;
  * Created by rbaun on 02.04.18.
  */
 
-@Root(name = "videodirsfiles")
+@Root(name = "videodirsfiles", strict = false)
 public class VideoDirsFiles {
 
     @ElementList(inline = true, required = false)

@@ -25,7 +25,7 @@ import org.simpleframework.xml.Root;
  * @author RayBa
  * @date 01.07.2012
  */
-@Root(name = "dir")
+@Root(name = "dir", strict = false)
 public class Dir {
 
 	@Attribute(name = "path")

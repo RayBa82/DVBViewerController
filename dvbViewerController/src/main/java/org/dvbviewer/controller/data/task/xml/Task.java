@@ -26,7 +26,7 @@ import org.simpleframework.xml.Root;
  * @author RayBa
  * @date 01.07.2012
  */
-@Root(name = "task")
+@Root(name = "task", strict = false)
 public class Task {
 
     @Attribute(name = "type")

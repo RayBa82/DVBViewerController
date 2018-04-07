@@ -26,7 +26,7 @@ import org.simpleframework.xml.Root;
  * @author RayBa
  * @date 01.07.2012
  */
-@Root(name = "file")
+@Root(name = "file", strict = false)
 public class File {
 
     @Attribute(name = "name")

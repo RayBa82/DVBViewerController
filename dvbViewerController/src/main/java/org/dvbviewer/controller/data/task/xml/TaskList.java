@@ -21,7 +21,7 @@ import org.simpleframework.xml.Root;
 
 import java.util.List;
 
-@Root(name = "tasklist")
+@Root(name = "tasklist", strict = false)
 public class TaskList {
 
     @ElementList(inline = true)
