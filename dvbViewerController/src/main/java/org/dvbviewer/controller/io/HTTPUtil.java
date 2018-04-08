@@ -17,11 +17,11 @@ package org.dvbviewer.controller.io;
 
 import android.support.annotation.NonNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.io.exception.AuthenticationException;
 import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.dvbviewer.controller.io.exception.FileLockedException;
 import org.dvbviewer.controller.io.exception.UnsuccessfullHttpException;
-import org.dvbviewer.controller.utils.ServerConsts;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +38,13 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_HOST;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PASSWORD;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PATH;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PORT;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PROTOCOL;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_USER_NAME;
+
 /**
  * Here is
  * <p/>
@@ -50,14 +57,37 @@ public class HTTPUtil {
     private static final Interceptor dmsInterceptor = new Interceptor() {
         @Override
         public Response intercept(@NonNull Chain chain) throws IOException {
-            final String credentials = Credentials.basic(ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
-            final Request.Builder builder = chain.request()
+            Request request = chain.request();
+            final HttpUrl requestUrl = request.url();
+            HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
+                    .scheme(REC_SERVICE_PROTOCOL)
+                    .host(REC_SERVICE_HOST);
+            if(StringUtils.isNotBlank(REC_SERVICE_PORT)) {
+                urlBuilder.port(Integer.valueOf(REC_SERVICE_PORT));
+            }
+            for(String path : REC_SERVICE_PATH) {
+                urlBuilder.addPathSegment(path);
+            }
+            if(requestUrl.pathSize() > 0) {
+                for(String path : requestUrl.pathSegments()) {
+                    urlBuilder.addPathSegment(path);
+
+                }
+            }
+            if(StringUtils.isNotBlank(requestUrl.query())){
+                urlBuilder.query(requestUrl.query());
+            }
+            final String modifieddUrl = urlBuilder.build().toString();
+            final String credentials = Credentials.basic(REC_SERVICE_USER_NAME, REC_SERVICE_PASSWORD);
+            final Request modifiedRequest = request
                     .newBuilder()
+                    .url(modifieddUrl)
                     .addHeader("Authorization", credentials)
-                    .addHeader("Connection", "close");
-            final Response response = chain.proceed(builder.build());
+                    .addHeader("Connection", "close")
+                    .build();
+
+            final Response response = chain.proceed(modifiedRequest);
             if (!response.isSuccessful()) {
-                final String url = chain.request().url().toString();
                 final IOException e;
                 switch (response.code()) {
                     case 401:
@@ -70,7 +100,7 @@ public class HTTPUtil {
                         e =  new UnsuccessfullHttpException(response.code());
                         break;
                 }
-                throw new DefaultHttpException(url, e);
+                throw new DefaultHttpException(modifieddUrl, e);
             }
             return response;
         }

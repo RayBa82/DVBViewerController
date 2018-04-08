@@ -1,31 +1,30 @@
 package org.dvbviewer.controller.data.version;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.IOException;
+import org.dvbviewer.controller.data.ApiResponse;
+import org.dvbviewer.controller.data.DmsViewModel;
 
 /**
  * Created by rbaun on 02.04.18.
  */
 
-public class VersionViewModel extends AndroidViewModel {
+public class VersionViewModel extends DmsViewModel {
 
     private static final String TAG = VersionViewModel.class.getName();
 
-    VersionRepository repository;
+    private VersionRepository vRepo;
+    private MutableLiveData<ApiResponse<Boolean>> supported;
 
-    MutableLiveData<Boolean> supported;
-
-    public VersionViewModel(Application application) {
+    VersionViewModel(Application application, VersionRepository repository) {
         super(application);
-        repository = new VersionRepository(application.getBaseContext());
+        this.vRepo = repository;
     }
 
-    public MutableLiveData<Boolean> isSupported(final int minVersion) {
+    public MutableLiveData<ApiResponse<Boolean>> isSupported(final int minVersion) {
         if(supported == null) {
             supported = new MutableLiveData<>();
             fetchSupported(minVersion);
@@ -34,20 +33,21 @@ public class VersionViewModel extends AndroidViewModel {
     }
 
     public void fetchSupported(final int minVersion) {
-        new AsyncTask<Void,Void,Boolean>() {
+        new AsyncTask<Void,Void,ApiResponse<Boolean>>() {
 
             @Override
-            protected Boolean doInBackground(Void... voids) {
+            protected ApiResponse<Boolean> doInBackground(Void... voids) {
                 try {
-                    return repository.isSupported(minVersion);
-                } catch (IOException e) {
-                    Log.e(TAG, "error loading Version", e);
+                    return ApiResponse.success(vRepo.isSupported(minVersion));
+                } catch (Exception e) {
+                    Log.e(TAG, "Error loading Data", e);
+                    final String message = getErrorMessage(e);
+                    return ApiResponse.error(message, null);
                 }
-                return null;
             }
 
             @Override
-            protected void onPostExecute(Boolean value) {
+            protected void onPostExecute(ApiResponse<Boolean> value) {
                 supported.setValue(value);
             }
         }.execute();

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import org.dvbviewer.controller.data.version.xml.Version;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.api.APIClient;
 import org.dvbviewer.controller.io.api.DMSInterface;
 
 import java.io.IOException;
@@ -15,13 +14,12 @@ import java.io.IOException;
 
 public class VersionRepository {
 
-    private DMSInterface dmsInterface;
-
     private final DVBViewerPreferences prefs;
+    private final DMSInterface dmsInterface;
 
-    public VersionRepository(Context context) {
+    public VersionRepository(Context context, DMSInterface dmsInterface) {
         prefs = new DVBViewerPreferences(context);
-        dmsInterface = APIClient.getClient().create(DMSInterface.class);
+        this.dmsInterface = dmsInterface;
     }
 
     public boolean isSupported(int minimiumVersion) throws IOException {

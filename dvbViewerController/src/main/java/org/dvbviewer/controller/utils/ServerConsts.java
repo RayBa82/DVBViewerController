@@ -1,5 +1,8 @@
 package org.dvbviewer.controller.utils;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * The Class ServerConsts.
  *
@@ -11,6 +14,7 @@ public class ServerConsts {
 	public static String	REC_SERVICE_PROTOCOL			= "http://";
 	public static String	REC_SERVICE_HOST				= "";
 	public static String	REC_SERVICE_PORT				= "8089";
+	public static List<String> REC_SERVICE_PATH				= new LinkedList<>();
 	public static String	REC_SERVICE_URL					= REC_SERVICE_PROTOCOL;
 	public static String	REC_SERVICE_USER_NAME			= "";
 	public static String	REC_SERVICE_MAC_ADDRESS			= "";

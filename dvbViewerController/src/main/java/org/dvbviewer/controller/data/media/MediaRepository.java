@@ -6,7 +6,6 @@ import org.dvbviewer.controller.data.media.xml.Dir;
 import org.dvbviewer.controller.data.media.xml.File;
 import org.dvbviewer.controller.data.media.xml.VideoDirsFiles;
 import org.dvbviewer.controller.entities.NaturalOrderComparator;
-import org.dvbviewer.controller.io.api.APIClient;
 import org.dvbviewer.controller.io.api.DMSInterface;
 
 import java.io.IOException;
@@ -20,16 +19,11 @@ import java.util.List;
 
 public class MediaRepository {
 
-    private static final String TAG = MediaRepository.class.getName();
+    private final DMSInterface dmsInterface;
+    private final NaturalOrderComparator comparator = new NaturalOrderComparator();
 
-    DMSInterface dmsInterface;
-
-    List<MediaFile> medias;
-
-    NaturalOrderComparator comparator = new NaturalOrderComparator();
-
-    public MediaRepository() {
-        dmsInterface = APIClient.getClient().create(DMSInterface.class);
+    public MediaRepository(DMSInterface dmsInterface) {
+        this.dmsInterface = dmsInterface;
     }
 
     public List<MediaFile> getMedias(long dirid) throws IOException {
@@ -63,6 +57,5 @@ public class MediaRepository {
             }
             return mediaFiles;
     }
-
 
 }

@@ -28,6 +28,14 @@ import java.util.regex.Pattern;
 
 import okhttp3.HttpUrl;
 
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_HOST;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PASSWORD;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PATH;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PORT;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PROTOCOL;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_URL;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_USER_NAME;
+
 /**
  * The Class URLUtil.
  *
@@ -45,27 +53,19 @@ public class URLUtil {
      * @param port the port
      */
     public static void setRecordingServicesAddress(String url, String port) {
-        try {
-            String prefUrl = guessUrl(url);
-            URL baseUrl = new URL(prefUrl);
-            ServerConsts.REC_SERVICE_PROTOCOL = baseUrl.getProtocol();
-            ServerConsts.REC_SERVICE_HOST = baseUrl.getHost();
-            ServerConsts.REC_SERVICE_PORT = port;
-            String path = baseUrl.getPath();
-            if (path.endsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            }
-            StringBuilder buf = new StringBuilder(ServerConsts.REC_SERVICE_PROTOCOL)
-                    .append("://")
-                    .append(ServerConsts.REC_SERVICE_HOST);
-            if (!TextUtils.isEmpty(ServerConsts.REC_SERVICE_PORT)) {
-                buf.append(":").append(ServerConsts.REC_SERVICE_PORT);
-            }
-            buf.append(path);
-            ServerConsts.REC_SERVICE_URL = buf.toString();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+        String prefUrl = guessUrl(url);
+        final HttpUrl baseUrl = HttpUrl.parse(prefUrl);
+        REC_SERVICE_PROTOCOL = baseUrl.scheme();
+        REC_SERVICE_HOST = baseUrl.host();
+        REC_SERVICE_PORT = port;
+        REC_SERVICE_PATH = baseUrl.pathSegments();
+        StringBuilder buf = new StringBuilder(REC_SERVICE_PROTOCOL)
+                .append("://")
+                .append(REC_SERVICE_HOST);
+        if (!TextUtils.isEmpty(REC_SERVICE_PORT)) {
+            buf.append(":").append(REC_SERVICE_PORT);
         }
+        REC_SERVICE_URL = buf.toString();
     }
 
     public static HttpUrl.Builder buildProtectedRSUrl(String url) {
@@ -75,8 +75,8 @@ public class URLUtil {
             URL baseUrl = new URL(prefUrl);
             String path = baseUrl.getPath();
             result.append(baseUrl.getProtocol()).append("://");
-            if ((!TextUtils.isEmpty(ServerConsts.REC_SERVICE_USER_NAME)) && (!TextUtils.isEmpty(ServerConsts.REC_SERVICE_PASSWORD))) {
-                result.append(ServerConsts.REC_SERVICE_USER_NAME).append(":").append(ServerConsts.REC_SERVICE_PASSWORD).append("@");
+            if ((!TextUtils.isEmpty(REC_SERVICE_USER_NAME)) && (!TextUtils.isEmpty(REC_SERVICE_PASSWORD))) {
+                result.append(REC_SERVICE_USER_NAME).append(":").append(REC_SERVICE_PASSWORD).append("@");
             }
             result.append(baseUrl.getHost());
             int port = baseUrl.getPort();

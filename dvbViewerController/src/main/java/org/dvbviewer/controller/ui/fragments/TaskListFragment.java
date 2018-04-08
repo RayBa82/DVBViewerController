@@ -29,6 +29,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.data.ApiResponse;
+import org.dvbviewer.controller.data.Status;
 import org.dvbviewer.controller.data.task.TaskViewModel;
 import org.dvbviewer.controller.data.task.xml.Task;
 import org.dvbviewer.controller.data.task.xml.TaskGroup;
@@ -70,17 +72,21 @@ public class TaskListFragment extends BaseListFragment implements OnClickListene
 		super.onActivityCreated(savedInstanceState);
 		sAdapter = new CategoryAdapter(getContext());
 		mViewModel = ViewModelProviders.of(this).get(TaskViewModel.class);
-		final Observer<TaskList> mediaObserver = new Observer<TaskList>() {
+		final Observer<ApiResponse<TaskList>> mediaObserver = new Observer<ApiResponse<TaskList>>() {
 			@Override
-			public void onChanged(@Nullable final TaskList taskList) {
-				for(TaskGroup taskGroup : taskList.getGroups()) {
-					final TaskAdapter adapter = new TaskAdapter();
-					for(Task task : taskGroup.getTasks()) {
-						adapter.addItem(task);
+			public void onChanged(@Nullable final ApiResponse<TaskList> response) {
+				if(response.status == Status.SUCCESS) {
+					for(TaskGroup taskGroup : response.data.getGroups()) {
+						final TaskAdapter adapter = new TaskAdapter();
+						for(Task task : taskGroup.getTasks()) {
+							adapter.addItem(task);
+						}
+						sAdapter.addSection(taskGroup.getName(), adapter);
 					}
-					sAdapter.addSection(taskGroup.getName(), adapter);
+					setListAdapter(sAdapter);
+				} else {
+					sendMessage(response.message);
 				}
-				setListAdapter(sAdapter);
 				setListShown(true);
 			}
 		};

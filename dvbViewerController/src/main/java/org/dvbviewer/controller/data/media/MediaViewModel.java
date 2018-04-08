@@ -1,8 +1,12 @@
 package org.dvbviewer.controller.data.media;
 
+import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import org.dvbviewer.controller.data.ApiResponse;
+import org.dvbviewer.controller.data.DmsViewModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,17 +15,19 @@ import java.util.List;
  * Created by rbaun on 02.04.18.
  */
 
-public class MediaViewModel extends ViewModel {
+public class MediaViewModel extends DmsViewModel {
 
-    MediaRepository repository;
+    private static final String TAG = MediaViewModel.class.getName();
 
-    private MutableLiveData<List<MediaFile>> data;
+    private final MediaRepository mRepository;
+    private MutableLiveData<ApiResponse<List<MediaFile>>> data;
 
-    public MediaViewModel() {
-        repository = new MediaRepository();
+    MediaViewModel(Application application, MediaRepository repository) {
+        super(application);
+        mRepository = repository;
     }
 
-    public MutableLiveData<List<MediaFile>> getMedias(final long dirid) {
+    public MutableLiveData<ApiResponse<List<MediaFile>>> getMedias(final long dirid) {
         if(data == null) {
             data = new MutableLiveData<>();
             fetchMedias(dirid);
@@ -30,21 +36,22 @@ public class MediaViewModel extends ViewModel {
     }
 
     public void fetchMedias(final long dirid) {
-        new AsyncTask<Void,Void,List<MediaFile>>() {
+        new AsyncTask<Void,Void,ApiResponse<List<MediaFile>>>() {
 
             @Override
-            protected List<MediaFile> doInBackground(Void... voids) {
+            protected ApiResponse<List<MediaFile>> doInBackground(Void... voids) {
                 try {
-                    return repository.getMedias(dirid);
+                    return ApiResponse.success(mRepository.getMedias(dirid));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Error loading Data", e);
+                    final String message = getErrorMessage(e);
+                    return ApiResponse.error(message, null);
                 }
-                return null;
             }
 
             @Override
-            protected void onPostExecute(List<MediaFile> mediaFiles) {
-                data.setValue(mediaFiles);
+            protected void onPostExecute(ApiResponse<List<MediaFile>> response) {
+                data.setValue(response);
             }
         }.execute();
     }
