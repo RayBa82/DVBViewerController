@@ -1,6 +1,5 @@
 package org.dvbviewer.controller.io.api;
 
-import org.dvbviewer.controller.data.version.xml.VersionParser;
 import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.utils.ServerConsts;
 
@@ -18,7 +17,6 @@ public class APIClient {
         }
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(new VersionParser())
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .client(HTTPUtil.getHttpClient())
                 .build();
