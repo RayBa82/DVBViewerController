@@ -21,6 +21,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.Menu;
@@ -169,11 +170,13 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	 */
 	@Override
 	public void onDashboarButtonClick(View v) {
+		FragmentManager fm = getSupportFragmentManager();
+		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 		switch (v.getId()) {
 			case R.id.home_btn_remote:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new Remote());
 					tran.commit();
 					setTitle(R.string.remote);
@@ -184,7 +187,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_channels:
 				if (multiContainer != null) {
 					enableDrawer = true;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					chans = new ChannelPager();
 					chans.setHasOptionsMenu(true);
 					Bundle bundle = new Bundle();
@@ -200,7 +203,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_timers:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new TimerList());
 					tran.commit();
 				} else {
@@ -211,7 +214,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_recordings:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new RecordingList());
 					tran.commit();
 					setTitle(R.string.recordings);
@@ -225,7 +228,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_tasks:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new TaskListFragment());
 					tran.commit();
 					setTitle(R.string.tasks);
@@ -236,7 +239,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_status:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new StatusList());
 					tran.commit();
 					setTitle(R.string.status);
@@ -251,7 +254,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 					b.putLong(MediaList.KEY_PARENT_ID, 1);
 					final MediaList mediaList = new MediaList();
 					mediaList.setArguments(b);
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), mediaList);
 					tran.commit();
 				} else {

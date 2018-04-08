@@ -25,15 +25,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.media.MediaFile;
 import org.dvbviewer.controller.data.media.MediaViewModel;
 import org.dvbviewer.controller.data.version.VersionViewModel;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.base.RecyclerViewFragment;
-import org.dvbviewer.controller.utils.Config;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -42,7 +42,8 @@ import java.util.List;
 public class MediaList extends RecyclerViewFragment {
 
 	public static final String KEY_PARENT_ID 	= MediaList.class.getSimpleName() + "KEY_PARENT_ID";
-	public static final String MINIMUM_VERSION = "2.0.4.16";
+	public static final String MINIMUM_VERSION = "2.0.5.0";
+	public static final int MINIMUM_IVER = 33555472;
 
 	private MediaAdapter mAdapter;
 	private long parentId = 0l;
@@ -59,11 +60,8 @@ public class MediaList extends RecyclerViewFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		AppCompatActivity activity = (AppCompatActivity) getActivity();
-		activity.setTitle(R.string.details);
 		setHasOptionsMenu(true);
 		mAdapter = new MediaAdapter(getContext(), mediaClickListener);
-		DVBViewerPreferences preferences = new DVBViewerPreferences(getContext());
 		if(getArguments() != null) {
 			parentId = getArguments().getLong(KEY_PARENT_ID, 1);
 		}else {
@@ -77,6 +75,8 @@ public class MediaList extends RecyclerViewFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
+		activity.setTitle(R.string.medias);
 		recyclerView.setAdapter(mAdapter);
 		setListShown(false);
 		versionViewModel = ViewModelProviders.of(this).get(VersionViewModel.class);
@@ -88,25 +88,27 @@ public class MediaList extends RecyclerViewFragment {
 				setListShown(true);
 			}
 		};
-		isFeatureSupported = parentId != 1l;
+		boolean checkVersion = parentId == 1l;
 		mediaViewModel = ViewModelProviders.of(this).get(MediaViewModel.class);
-		final Observer<String> versionObserver = new Observer<String>() {
+		final Observer<Boolean> versionObserver = new Observer<Boolean>() {
 			@Override
-			public void onChanged(@Nullable final String version) {
-				if(Config.isRSVersionSupported(version, MINIMUM_VERSION)) {
+			public void onChanged(@Nullable final Boolean version) {
+				if(BooleanUtils.isTrue(version)) {
 					isFeatureSupported = true;
 					mediaViewModel.getMedias(parentId).observe(MediaList.this, mediaObserver);
 				}else {
+					final String res = getString(R.string.version_unsupported_text);
+					sendMessage(MessageFormat.format(res, MINIMUM_VERSION));
 					setListShown(true);
 				}
 			}
 		};
-		if(isFeatureSupported) {
+		if(checkVersion) {
 			setListShown(false);
-			mediaViewModel.getMedias(parentId).observe(MediaList.this, mediaObserver);
+			versionViewModel.isSupported(MINIMUM_IVER).observe(this, versionObserver);
 		} else {
 			setListShown(false);
-			versionViewModel.getVersion().observe(this, versionObserver);
+			mediaViewModel.getMedias(parentId).observe(MediaList.this, mediaObserver);
 		}
 	}
 
@@ -132,7 +134,7 @@ public class MediaList extends RecyclerViewFragment {
 		if(isFeatureSupported) {
 			mediaViewModel.fetchMedias(parentId);
 		} else {
-			versionViewModel.getVersion();
+			versionViewModel.fetchSupported(MINIMUM_IVER);
 		}
         return true;
     }
