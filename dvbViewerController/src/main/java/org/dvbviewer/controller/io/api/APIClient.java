@@ -12,9 +12,6 @@ public class APIClient {
 
     public static Retrofit getClient() {
         String baseUrl = ServerConsts.REC_SERVICE_URL;
-        if(!baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.concat("/");
-        }
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(SimpleXmlConverterFactory.create())

@@ -14,19 +14,19 @@ import retrofit2.http.QueryMap;
 
 public interface DMSInterface {
 
-    String API = "api/";
+    String API = "/api";
 
-    String TASK_API                 = API + "tasks.html";
+    String TASK_API                 = API + "/tasks.html";
 
-    String REC_DEL_API              = API + "recdelete.html";
+    String REC_DEL_API              = API + "/recdelete.html";
 
-    String TIMER_ADD_API            = API + "timeradd.html";
+    String TIMER_ADD_API            = API + "/timeradd.html";
 
-    String TIMER_EDIT_API           = API + "timeredit.html";
+    String TIMER_EDIT_API           = API + "/timeredit.html";
 
-    String MEDIA_DIRS               = API + "mediafiles.html?content=3&recursive=0&thumbs=1";
+    String MEDIA_DIRS               = API + "/mediafiles.html?content=3&recursive=0&thumbs=1";
 
-    String VERSION               = API + "version.html";
+    String VERSION               = API + "/version.html";
 
     @GET(TASK_API)
     Call<TaskList> getTaskList(@Query("all") int all);
