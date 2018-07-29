@@ -55,10 +55,12 @@ public class URLUtil {
         if(StringUtils.isNotBlank(url)) {
             String prefUrl = guessUrl(url);
             final HttpUrl baseUrl = HttpUrl.parse(prefUrl);
-            REC_SERVICE_PROTOCOL = baseUrl.scheme();
-            REC_SERVICE_HOST = baseUrl.host();
-            REC_SERVICE_PORT = port;
-            REC_SERVICE_PATH = baseUrl.pathSegments();
+            if(baseUrl != null) {
+                REC_SERVICE_PROTOCOL = baseUrl.scheme();
+                REC_SERVICE_HOST = baseUrl.host();
+                REC_SERVICE_PORT = port;
+                REC_SERVICE_PATH = baseUrl.pathSegments();
+            }
         }
     }
 
@@ -108,7 +110,7 @@ public class URLUtil {
     /**
      * Cleans up (if possible) user-entered web addresses
      */
-    public static String guessUrl(String inUrl) throws NullPointerException {
+    private static String guessUrl(String inUrl) throws NullPointerException {
 
         String retVal = StringUtils.EMPTY;
         WebAddress webAddress;

@@ -1,8 +1,10 @@
 package org.dvbviewer.controller.io.okhttp3;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.io.exception.AuthenticationException;
 import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.dvbviewer.controller.io.exception.FileLockedException;
+import org.dvbviewer.controller.io.exception.NoHostException;
 import org.dvbviewer.controller.io.exception.UnsuccessfullHttpException;
 import org.dvbviewer.controller.utils.URLUtil;
 
@@ -14,6 +16,7 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_HOST;
 import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PASSWORD;
 import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_USER_NAME;
 
@@ -25,6 +28,9 @@ public class DMSInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
+        if(StringUtils.isBlank(REC_SERVICE_HOST)) {
+            throw new NoHostException();
+        }
         Request request = chain.request();
         final HttpUrl requestUrl = request.url();
         final HttpUrl modifiedUrl = URLUtil.replaceUrl(requestUrl)
