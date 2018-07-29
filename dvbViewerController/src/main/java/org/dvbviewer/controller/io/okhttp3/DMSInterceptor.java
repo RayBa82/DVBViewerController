@@ -34,7 +34,7 @@ public class DMSInterceptor implements Interceptor {
                 .newBuilder()
                 .url(modifiedUrl)
                 .addHeader(HEADER_AUTHORIZATION, credentials)
-                .addHeader(HEADER_CONNECTION, "close")
+                .addHeader(HEADER_CONNECTION, "keep-alive")
                 .build();
 
         final Response response = chain.proceed(modifiedRequest);
