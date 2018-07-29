@@ -49,11 +49,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.utils.IoUtils;
+import com.squareup.picasso.Picasso;
 
+import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Recording;
@@ -61,7 +59,6 @@ import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.RecordingHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
-import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
@@ -73,7 +70,6 @@ import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -154,7 +150,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 				} catch (Exception e) {
 					catchException(getClass().getSimpleName(), e);
 				}finally {
-					IoUtils.closeSilently(is);
+					IOUtils.closeQuietly(is);
 				}
 				return result;
 			}
@@ -293,9 +289,6 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 	 */
 	public class RecordingAdapter extends ArrayListAdapter<Recording> {
 
-		private final ImageLoader imageLoader;
-		private final DisplayImageOptions options;
-
 		/**
 		 * The Constructor.
 		 *
@@ -306,15 +299,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 		 */
 		public RecordingAdapter(Context context) {
 			super();
-			imageLoader = ImageLoader.getInstance();
 			final Drawable placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
-			options = new DisplayImageOptions.Builder()
-					.cacheInMemory(true)
-					.cacheOnDisk(true)
-					.showImageForEmptyUri(placeHolder) // resource or drawable
-					.showImageOnFail(placeHolder) // r
-					.displayer(new FadeInBitmapDisplayer(500, true, true, false))
-					.build();
 		}
 
 		/*
@@ -357,7 +342,13 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 					holder.thumbNailContainer.setVisibility(View.GONE);
 				}else{
 					holder.thumbNailContainer.setVisibility(View.VISIBLE);
-					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail, options);
+                    holder.thumbNail.setImageDrawable(null);
+                    Picasso.get()
+                            .load(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail())
+                            .placeholder(R.drawable.ic_play_white_40dp)
+                            .fit()
+                            .centerInside()
+                            .into(holder.thumbNail);
 				}
 				holder.thumbNailContainer.setTag(position);
 				holder.date.setText(DateUtils.formatDateTime(getContext(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));

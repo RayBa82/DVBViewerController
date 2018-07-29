@@ -12,9 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.squareup.picasso.Picasso;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.media.MediaFile;
@@ -37,20 +35,9 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
     protected List<MediaFile> mCursor;
     private OnMediaClickListener listener;
 
-    private final ImageLoader imageLoader;
-    private final DisplayImageOptions options;
-
     public MediaAdapter(Context context, OnMediaClickListener listener) {
         this.listener = listener;
-        imageLoader = ImageLoader.getInstance();
         final Drawable placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
-        options = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .showImageForEmptyUri(placeHolder) // resource or drawable
-                .showImageOnFail(placeHolder) // r
-                .displayer(new FadeInBitmapDisplayer(500, true, true, false))
-                .build();
     }
 
     @Override
@@ -100,7 +87,12 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
         });
         if(!isDir) {
             holder.thumbNail.setImageDrawable(null);
-            imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + "/" +file.getThumb(), holder.thumbNail, options);
+            Picasso.get()
+                    .load(ServerConsts.REC_SERVICE_URL + "/" +file.getThumb())
+                    .placeholder(R.drawable.ic_play_white_40dp)
+                    .fit()
+                    .centerCrop()
+                    .into(holder.thumbNail);
         }
     }
 
