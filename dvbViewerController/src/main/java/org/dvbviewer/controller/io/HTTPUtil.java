@@ -17,33 +17,19 @@ package org.dvbviewer.controller.io;
 
 import android.support.annotation.NonNull;
 
-import org.apache.commons.lang3.StringUtils;
-import org.dvbviewer.controller.io.exception.AuthenticationException;
-import org.dvbviewer.controller.io.exception.DefaultHttpException;
-import org.dvbviewer.controller.io.exception.FileLockedException;
-import org.dvbviewer.controller.io.exception.UnsuccessfullHttpException;
+import org.dvbviewer.controller.io.okhttp3.DMSInterceptor;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Callback;
-import okhttp3.Credentials;
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
-
-import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_HOST;
-import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PASSWORD;
-import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PATH;
-import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PORT;
-import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PROTOCOL;
-import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_USER_NAME;
 
 /**
  * Here is
@@ -54,62 +40,10 @@ public class HTTPUtil {
 
     private static OkHttpClient httpClient;
 
-    private static final Interceptor dmsInterceptor = new Interceptor() {
-        @Override
-        public Response intercept(@NonNull Chain chain) throws IOException {
-            Request request = chain.request();
-            final HttpUrl requestUrl = request.url();
-            HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
-                    .scheme(REC_SERVICE_PROTOCOL)
-                    .host(REC_SERVICE_HOST);
-            if(StringUtils.isNotBlank(REC_SERVICE_PORT)) {
-                urlBuilder.port(Integer.valueOf(REC_SERVICE_PORT));
-            }
-            for(String path : REC_SERVICE_PATH) {
-                urlBuilder.addPathSegment(path);
-            }
-            if(requestUrl.pathSize() > 0) {
-                for(String path : requestUrl.pathSegments()) {
-                    urlBuilder.addPathSegment(path);
-
-                }
-            }
-            if(StringUtils.isNotBlank(requestUrl.query())){
-                urlBuilder.query(requestUrl.query());
-            }
-            final String modifieddUrl = urlBuilder.build().toString();
-            final String credentials = Credentials.basic(REC_SERVICE_USER_NAME, REC_SERVICE_PASSWORD);
-            final Request modifiedRequest = request
-                    .newBuilder()
-                    .url(modifieddUrl)
-                    .addHeader("Authorization", credentials)
-                    .addHeader("Connection", "close")
-                    .build();
-
-            final Response response = chain.proceed(modifiedRequest);
-            if (!response.isSuccessful()) {
-                final IOException e;
-                switch (response.code()) {
-                    case 401:
-                        e = new AuthenticationException();
-                        break;
-                    case 423:
-                        e =  new FileLockedException();
-                        break;
-                    default:
-                        e =  new UnsuccessfullHttpException(response.code());
-                        break;
-                }
-                throw new DefaultHttpException(modifieddUrl, e);
-            }
-            return response;
-        }
-    };
-
-
     public static OkHttpClient getHttpClient() {
         if (httpClient == null) {
             final X509TrustManager trustManager = SSLUtil.getTrustAllTrustManager();
+            final DMSInterceptor dmsInterceptor = new DMSInterceptor();
             final HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             httpClient = new OkHttpClient.Builder()
@@ -117,8 +51,8 @@ public class HTTPUtil {
                     .hostnameVerifier(new SSLUtil.VerifyAllHostnameVerifiyer())
                     .connectTimeout(5000, TimeUnit.MILLISECONDS)
                     .readTimeout(5000, TimeUnit.MILLISECONDS)
-                    .addInterceptor(loggingInterceptor)
                     .addInterceptor(dmsInterceptor)
+                    .addInterceptor(loggingInterceptor)
                     .build();
         }
         return httpClient;

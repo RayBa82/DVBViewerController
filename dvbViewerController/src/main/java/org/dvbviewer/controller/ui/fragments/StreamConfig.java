@@ -412,7 +412,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
     }
 
     private static Intent getTranscodedUrl(Context context, final long id, String title, final Preset preset, final FileType fileType, final int start) {
-        final HttpUrl.Builder builder = URLUtil.buildProtectedRSUrl(ServerConsts.REC_SERVICE_URL);
+        final HttpUrl.Builder builder = URLUtil.buildProtectedRSUrl();
         if (StreamConfig.M3U8_MIME_TYPE.equals(preset.getMimeType())) {
             builder.addPathSegment(ServerConsts.URL_M3U8);
         } else {
@@ -437,7 +437,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
     }
 
     public static Intent getDirectUrl(long id, String title, FileType fileType) {
-        final HttpUrl.Builder builder = URLUtil.buildProtectedRSUrl(ServerConsts.REC_SERVICE_URL);
+        final HttpUrl.Builder builder = URLUtil.buildProtectedRSUrl();
         builder.addPathSegment("upnp");
         builder.addPathSegment(fileType.directPath);
         builder.addPathSegment(String.valueOf(id) + ".ts");

@@ -38,8 +38,8 @@ public class ConnectionPreferenceFragment extends PreferenceFragmentCompat imple
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
-            case DVBViewerPreferences.KEY_RS_URL:
-                ServerConsts.REC_SERVICE_URL = sharedPreferences.getString(key, "http://");
+            case DVBViewerPreferences.KEY_DMS_URL:
+                ServerConsts.DMS_URL = sharedPreferences.getString(key, null);
                 break;
             case DVBViewerPreferences.KEY_RS_PORT:
                 ServerConsts.REC_SERVICE_PORT = sharedPreferences.getString(key, "");
@@ -51,7 +51,7 @@ public class ConnectionPreferenceFragment extends PreferenceFragmentCompat imple
                 ServerConsts.REC_SERVICE_PASSWORD = sharedPreferences.getString(key, "");
                 break;
         }
-        URLUtil.setRecordingServicesAddress(ServerConsts.REC_SERVICE_URL, ServerConsts.REC_SERVICE_PORT);
+        URLUtil.setRecordingServicesAddress(ServerConsts.DMS_URL, ServerConsts.REC_SERVICE_PORT);
     }
 
     public void sendConnectionChanged() {

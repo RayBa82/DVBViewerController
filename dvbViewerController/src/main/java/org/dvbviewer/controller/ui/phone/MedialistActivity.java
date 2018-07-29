@@ -74,7 +74,7 @@ public class MedialistActivity extends BaseSinglePaneActivity implements MediaAd
 	public void onMediaClick(MediaFile mediaFile) {
 		if(mediaFile.getDirId() > 0) {
 			final Bundle b = new Bundle();
-			b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getId());
+			b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getDirId());
 			final MediaList mediaList = new MediaList();
 			mediaList.setArguments(b);
 			changeFragment(R.id.root_container, mediaList);

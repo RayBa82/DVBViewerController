@@ -70,7 +70,7 @@ public class App extends Application {
 		/**
 		 * Read Recordingservice Preferences
 		 */
-		String serviceUrl = prefs.getString(DVBViewerPreferences.KEY_RS_URL, "http://");
+		String serviceUrl = prefs.getString(DVBViewerPreferences.KEY_DMS_URL);
 		String prefPort = prefs.getString(DVBViewerPreferences.KEY_RS_PORT, "8089");
 		URLUtil.setRecordingServicesAddress(serviceUrl, prefPort);
 		ServerConsts.REC_SERVICE_USER_NAME = prefs.getString(DVBViewerPreferences.KEY_RS_USERNAME, "");
