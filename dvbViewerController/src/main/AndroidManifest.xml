@@ -16,6 +16,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        tools:replace="android:name"
         android:theme="@style/Theme.DVB"
         android:windowSoftInputMode="adjustPan|adjustResize">
         <meta-data
@@ -77,7 +78,7 @@
 
         <provider
             android:name=".data.DvbProvider"
-            android:authorities="org.dvbviewer.controller.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="false" />
 
         <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
