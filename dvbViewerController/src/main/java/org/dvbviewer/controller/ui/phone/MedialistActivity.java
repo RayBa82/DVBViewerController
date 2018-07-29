@@ -22,10 +22,12 @@ import android.view.MenuItem;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.media.MediaFile;
+import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.MediaList;
 import org.dvbviewer.controller.ui.fragments.StreamConfig;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.FileType;
 
 /**
@@ -92,7 +94,13 @@ public class MedialistActivity extends BaseSinglePaneActivity implements MediaAd
 
 	@Override
 	public void onMediaStreamClick(MediaFile mediaFile) {
-
+		try {
+			final Intent videoIntent = StreamConfig.buildQuickUrl(this, mediaFile.getId(), mediaFile.getName(), FileType.VIDEO);
+			startActivity(videoIntent);
+			AnalyticsTracker.trackMediaStream(getApplication());
+		} catch (UrlBuilderException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
