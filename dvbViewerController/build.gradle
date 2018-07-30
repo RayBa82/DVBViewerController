@@ -31,7 +31,7 @@ android {
             debuggable false
             minifyEnabled true
             useProguard true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg', '../proguard-gson.cfg', '../proguard-simplexml.cfg'
             signingConfig signingConfigs.release
         }
     }

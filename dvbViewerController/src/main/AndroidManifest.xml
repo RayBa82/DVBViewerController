@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         tools:replace="android:name"
         android:theme="@style/Theme.DVB"
-        android:windowSoftInputMode="adjustPan|adjustResize">
+        android:windowSoftInputMode="adjustPan|adjustResize"
+        android:fullBackupContent="@xml/backup_descriptor">
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/analytics_global_config" />
@@ -59,7 +60,12 @@
             android:label="@string/preferences" />
         <activity
             android:name=".ui.phone.ConnectionPreferencesActivity"
-            android:label="@string/preferences" />
+            android:label="@string/preferences">
+            <intent-filter>
+                <action android:name="org.dvbviewer.controller.DMSConnectionPreferences" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.phone.EpgPagerActivity"
             android:label="@string/channelEPG"
@@ -72,7 +78,7 @@
             android:label="@string/streamConfig" />
         <activity
             android:name=".ui.phone.IEpgDetailsActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity android:name=".ui.phone.AboutActivity" />
         <activity android:name=".ui.phone.MedialistActivity" />
 
