@@ -51,7 +51,7 @@ import static org.dvbviewer.controller.data.Status.SUCCESS;
 public class MediaList extends RecyclerViewFragment {
 
 	public static final String KEY_PARENT_ID 	= MediaList.class.getSimpleName() + "KEY_PARENT_ID";
-	private static final String MINIMUM_VERSION = "2.0.5.0";
+	private static final String MINIMUM_VERSION = "2.1.0.0";
 	private static final int MINIMUM_IVER = 33555472;
 
 	private MediaAdapter mAdapter;
