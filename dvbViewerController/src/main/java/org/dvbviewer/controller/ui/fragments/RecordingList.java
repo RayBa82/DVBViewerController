@@ -289,6 +289,8 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 	 */
 	public class RecordingAdapter extends ArrayListAdapter<Recording> {
 
+		final Drawable placeHolder;
+
 		/**
 		 * The Constructor.
 		 *
@@ -299,7 +301,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 		 */
 		public RecordingAdapter(Context context) {
 			super();
-			final Drawable placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
+			placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
 		}
 
 		/*
@@ -345,7 +347,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
                     holder.thumbNail.setImageDrawable(null);
                     Picasso.get()
                             .load(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail())
-                            .placeholder(R.drawable.ic_play_white_40dp)
+                            .placeholder(placeHolder)
                             .fit()
                             .centerInside()
                             .into(holder.thumbNail);

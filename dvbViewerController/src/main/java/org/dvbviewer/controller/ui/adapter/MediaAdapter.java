@@ -34,10 +34,11 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
 
     protected List<MediaFile> mCursor;
     private OnMediaClickListener listener;
+    private final Drawable placeHolder;
 
     public MediaAdapter(Context context, OnMediaClickListener listener) {
         this.listener = listener;
-        final Drawable placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
+        placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHol
             holder.thumbNail.setImageDrawable(null);
             Picasso.get()
                     .load(ServerConsts.REC_SERVICE_URL + "/" +file.getThumb())
-                    .placeholder(R.drawable.ic_play_white_40dp)
+                    .placeholder(placeHolder)
                     .fit()
                     .centerCrop()
                     .into(holder.thumbNail);
