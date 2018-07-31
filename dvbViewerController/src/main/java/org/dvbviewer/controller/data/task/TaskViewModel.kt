@@ -31,6 +31,9 @@ class TaskViewModel(application: Application) : DmsViewModel(application) {
 
 
     private fun fetchTaskList() {
+        if(data == null) {
+            return
+        }
         launch(UI) {
             var mediaList = TaskList()
             try {

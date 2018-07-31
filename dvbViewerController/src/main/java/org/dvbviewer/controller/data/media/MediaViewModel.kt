@@ -27,6 +27,9 @@ class MediaViewModel internal constructor(application: Application, private val 
     }
 
     fun fetchMedias(dirid: Long) {
+        if(data == null) {
+            return
+        }
         launch(UI) {
             var mediaList = listOf<MediaFile>()
             try {

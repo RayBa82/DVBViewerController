@@ -16,17 +16,20 @@ import org.dvbviewer.controller.data.DmsViewModel
 
 class VersionViewModel internal constructor(application: Application, private val vRepo: VersionRepository) : DmsViewModel(application) {
 
-    private var supported: MutableLiveData<ApiResponse<Boolean>>? = null
+    private var data: MutableLiveData<ApiResponse<Boolean>>? = null
 
     fun isSupported(minVersion: Int): MutableLiveData<ApiResponse<Boolean>> {
-        if (supported == null) {
-            supported = MutableLiveData()
+        if (data == null) {
+            data = MutableLiveData()
             fetchSupported(minVersion)
         }
-        return supported as MutableLiveData<ApiResponse<Boolean>>
+        return data as MutableLiveData<ApiResponse<Boolean>>
     }
 
     fun fetchSupported(minVersion: Int) {
+        if(data == null) {
+            return
+        }
         launch(UI) {
             var apiResponse = ApiResponse.error("", false)
             try {
@@ -38,7 +41,7 @@ class VersionViewModel internal constructor(application: Application, private va
                 val message = getErrorMessage(e)
                 apiResponse = ApiResponse.error(message, false)
             }
-            supported?.value = apiResponse
+            data?.value = apiResponse
         }
     }
 
