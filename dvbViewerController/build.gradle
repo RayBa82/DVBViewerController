@@ -81,7 +81,6 @@ android {
         implementation ('com.squareup.retrofit2:retrofit:2.4.0') {
             exclude module: 'okhttp'
         }
-        implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
         implementation ('com.squareup.retrofit2:converter-simplexml:2.4.0'){
             exclude module: 'stax-api'
             exclude module: 'stax'
