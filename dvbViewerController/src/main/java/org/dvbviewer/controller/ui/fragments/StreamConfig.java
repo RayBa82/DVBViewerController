@@ -315,7 +315,7 @@ public class StreamConfig extends BaseDialogFragment implements OnClickListener,
      *
      * @throws UrlBuilderException
      */
-    private void startVideoIntent(FileType fileType) throws UrlBuilderException {
+    private void startVideoIntent(FileType fileType) {
         Intent videoIntent;
         videoIntent = getVideoIntent(fileType);
         startActivity(videoIntent);
