@@ -22,13 +22,13 @@ import android.view.MenuItem;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.media.MediaFile;
-import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.MediaList;
 import org.dvbviewer.controller.ui.fragments.StreamConfig;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.FileType;
+import org.dvbviewer.controller.utils.StreamUtils;
 
 /**
  * The Class TimerlistActivity.
@@ -82,10 +82,10 @@ public class MedialistActivity extends BaseSinglePaneActivity implements MediaAd
 			changeFragment(R.id.root_container, mediaList);
 		}else {
 			Bundle arguments = new Bundle();
-			arguments.putLong(StreamConfig.EXTRA_FILE_ID, mediaFile.getId());
-			arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
-			arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-			arguments.putString(StreamConfig.EXTRA_TITLE, mediaFile.getName());
+			arguments.putLong(StreamConfig.Companion.getEXTRA_FILE_ID(), mediaFile.getId());
+			arguments.putParcelable(StreamConfig.Companion.getEXTRA_FILE_TYPE(), FileType.VIDEO);
+			arguments.putInt(StreamConfig.Companion.getEXTRA_DIALOG_TITLE_RES(), R.string.streamConfig);
+			arguments.putString(StreamConfig.Companion.getEXTRA_TITLE(), mediaFile.getName());
 			Intent streamConfig = new Intent(this, StreamConfigActivity.class);
 			streamConfig.putExtras(arguments);
 			startActivity(streamConfig);
@@ -94,13 +94,9 @@ public class MedialistActivity extends BaseSinglePaneActivity implements MediaAd
 
 	@Override
 	public void onMediaStreamClick(MediaFile mediaFile) {
-		try {
-			final Intent videoIntent = StreamConfig.buildQuickUrl(this, mediaFile.getId(), mediaFile.getName(), FileType.VIDEO);
-			startActivity(videoIntent);
-			AnalyticsTracker.trackMediaStream(getApplication());
-		} catch (UrlBuilderException e) {
-			e.printStackTrace();
-		}
+		final Intent videoIntent = StreamUtils.buildQuickUrl(this, mediaFile.getId(), mediaFile.getName(), FileType.VIDEO);
+		startActivity(videoIntent);
+		AnalyticsTracker.trackMediaStream(getApplication());
 	}
 
 	@Override

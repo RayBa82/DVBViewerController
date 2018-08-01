@@ -56,7 +56,6 @@ import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Recording;
 import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.RecordingHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
@@ -67,6 +66,7 @@ import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.io.InputStream;
@@ -207,7 +207,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 			case R.id.menuStreamConfig:
 				if (UIUtils.isTablet(getContext())) {
 					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
-					StreamConfig cfg = StreamConfig.newInstance();
+					StreamConfig cfg = StreamConfig.Companion.newInstance();
 					cfg.setArguments(arguments);
 					cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
 				} else {
@@ -231,7 +231,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 
 	private void streamDirect(IEPG recording) {
 		try {
-			final Intent videoIntent = StreamConfig.getDirectUrl(recording.getId(), recording.getTitle(), FileType.RECORDING);
+			final Intent videoIntent = StreamUtils.getDirectUrl(recording.getId(), recording.getTitle(), FileType.RECORDING);
 			getActivity().startActivity(videoIntent);
 			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 		} catch (ActivityNotFoundException e) {
@@ -243,14 +243,12 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 
 	private void streamTranscoded(IEPG recording) {
 		try {
-			final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+			final Intent videoIntent = StreamUtils.getTranscodedUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 			getActivity().startActivity(videoIntent);
 			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 		} catch (ActivityNotFoundException e) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 			builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
-			e.printStackTrace();
-		} catch (UrlBuilderException e) {
 			e.printStackTrace();
 		}
 	}
@@ -258,10 +256,10 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 	@NonNull
 	private Bundle getIntentExtras(IEPG recording) {
 		Bundle arguments = new Bundle();
-		arguments.putLong(StreamConfig.EXTRA_FILE_ID, recording.getId());
-		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.RECORDING);
-		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-		arguments.putString(StreamConfig.EXTRA_TITLE, recording.getTitle());
+		arguments.putLong(StreamConfig.Companion.getEXTRA_FILE_ID(), recording.getId());
+		arguments.putParcelable(StreamConfig.Companion.getEXTRA_FILE_TYPE(), FileType.RECORDING);
+		arguments.putInt(StreamConfig.Companion.getEXTRA_DIALOG_TITLE_RES(), R.string.streamConfig);
+		arguments.putString(StreamConfig.Companion.getEXTRA_TITLE(), recording.getTitle());
 		return arguments;
 	}
 
@@ -595,14 +593,12 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 				try {
 					selectedPosition = (Integer) v.getTag();
 					final IEPG recording = mAdapter.getItem(selectedPosition);
-					final Intent videoIntent = StreamConfig.buildQuickUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+					final Intent videoIntent = StreamUtils.buildQuickUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 					getActivity().startActivity(videoIntent);
 					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 				} catch (ActivityNotFoundException e) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 					builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
-					e.printStackTrace();
-				} catch (UrlBuilderException e) {
 					e.printStackTrace();
 				}
 				break;

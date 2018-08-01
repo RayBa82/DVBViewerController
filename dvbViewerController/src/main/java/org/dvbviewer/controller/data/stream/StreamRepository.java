@@ -25,12 +25,12 @@ public class StreamRepository {
         this.dmsInterface = dmsInterface;
     }
 
-    public static final String 	IPHONE_PREFS		= "config\\iphoneprefs.ini";
-    public static final String 	FFMPEGPREFS			= "config\\ffmpegprefs.ini";
+    private static final String 	IPHONE_PREFS		= "config\\iphoneprefs.ini";
+    private static final String 	FFMPEGPREFS			= "config\\ffmpegprefs.ini";
 
     public FFMpegPresetList getFFMpegPresets(Context context) {
         final FFMPEGPrefsHandler prefsHandler = new FFMPEGPrefsHandler();
-        FFMpegPresetList result = getPrefs(context, IPHONE_PREFS,
+        final FFMpegPresetList result = getPrefs(context, IPHONE_PREFS,
                 prefsHandler,
                 R.raw.iphoneprefs);
         final FFMpegPresetList ffMpegPrefs = getPrefs(context, FFMPEGPREFS,

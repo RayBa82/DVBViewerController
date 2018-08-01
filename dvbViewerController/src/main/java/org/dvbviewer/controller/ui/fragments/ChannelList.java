@@ -55,7 +55,6 @@ import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
-import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
@@ -64,6 +63,7 @@ import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.text.MessageFormat;
@@ -248,7 +248,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void streamDirect(final Cursor c) {
         try {
             Channel chan = cursorToChannel(c);
-            final Intent videoIntent = StreamConfig.getDirectUrl(chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            final Intent videoIntent = StreamUtils.getDirectUrl(chan.getChannelID(), chan.getName(), FileType.CHANNEL);
             getActivity().startActivity(videoIntent);
             prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply();
             AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
@@ -262,15 +262,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void streamTranscoded(final Cursor c) {
         try {
             Channel chan = cursorToChannel(c);
-            final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            final Intent videoIntent = StreamUtils.getTranscodedUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
             getActivity().startActivity(videoIntent);
             prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply();
             AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
         } catch (ActivityNotFoundException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
-            e.printStackTrace();
-        } catch (UrlBuilderException e) {
             e.printStackTrace();
         }
     }
@@ -320,7 +318,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         Channel chan = cursorToChannel(cursor);
         if (UIUtils.isTablet(getContext())) {
             Bundle arguments = getIntentExtras(chan);
-            StreamConfig cfg = StreamConfig.newInstance();
+            StreamConfig cfg = StreamConfig.Companion.newInstance();
             cfg.setArguments(arguments);
             cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
         } else {
@@ -334,10 +332,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @NonNull
     private Bundle getIntentExtras(Channel chan) {
         Bundle arguments = new Bundle();
-        arguments.putLong(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
-        arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.CHANNEL);
-        arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-        arguments.putString(StreamConfig.EXTRA_TITLE, chan.getName());
+        arguments.putLong(StreamConfig.Companion.getEXTRA_FILE_ID(), chan.getChannelID());
+        arguments.putParcelable(StreamConfig.Companion.getEXTRA_FILE_TYPE(), FileType.CHANNEL);
+        arguments.putInt(StreamConfig.Companion.getEXTRA_DIALOG_TITLE_RES(), R.string.streamConfig);
+        arguments.putString(StreamConfig.Companion.getEXTRA_TITLE(), chan.getName());
         return arguments;
     }
 
@@ -553,14 +551,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Cursor c = mAdapter.getCursor();
                     c.moveToPosition(mChannelIndex);
                     Channel chan = cursorToChannel(c);
-                    try {
 
-                        final Intent videoIntent = StreamConfig.buildQuickUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
-                        getActivity().startActivity(videoIntent);
-                        AnalyticsTracker.trackQuickStream(getActivity().getApplication());
-                    } catch (UrlBuilderException e) {
-                        e.printStackTrace();
-                    }
+                    final Intent videoIntent = StreamUtils.buildQuickUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+                    getActivity().startActivity(videoIntent);
+                    AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                 } catch (ActivityNotFoundException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();

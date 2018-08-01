@@ -3,8 +3,8 @@ package org.dvbviewer.controller.io.data;
 import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.entities.FFMpegPresetList;
 import org.dvbviewer.controller.entities.Preset;
-import org.dvbviewer.controller.ui.fragments.StreamConfig;
 import org.dvbviewer.controller.utils.INIParser;
+import org.dvbviewer.controller.utils.StreamUtils;
 
 import java.util.Iterator;
 
@@ -25,7 +25,7 @@ public class FFMPEGPrefsHandler {
                 preset.setTitle(sectionName);
                 final String mimeType = iniParser.getString(sectionName, "MimeType");
                 if (StringUtils.isEmpty(mimeType)) {
-                    preset.setMimeType(StreamConfig.M3U8_MIME_TYPE);
+                    preset.setMimeType(StreamUtils.M3U8_MIME_TYPE);
                 } else {
                     preset.setMimeType(mimeType);
                 }
