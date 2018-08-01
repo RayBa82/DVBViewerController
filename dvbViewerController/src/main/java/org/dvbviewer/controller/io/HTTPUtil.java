@@ -15,9 +15,9 @@
  */
 package org.dvbviewer.controller.io;
 
-import android.util.Log;
+import android.support.annotation.NonNull;
 
-import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.io.okhttp3.DMSInterceptor;
 
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
@@ -25,11 +25,11 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Callback;
-import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Here is
@@ -40,15 +40,19 @@ public class HTTPUtil {
 
     private static OkHttpClient httpClient;
 
-
-    private static OkHttpClient getHttpClient() {
+    public static OkHttpClient getHttpClient() {
         if (httpClient == null) {
             final X509TrustManager trustManager = SSLUtil.getTrustAllTrustManager();
+            final DMSInterceptor dmsInterceptor = new DMSInterceptor();
+            final HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             httpClient = new OkHttpClient.Builder()
                     .sslSocketFactory(SSLUtil.getSSLServerSocketFactory(trustManager), trustManager)
                     .hostnameVerifier(new SSLUtil.VerifyAllHostnameVerifiyer())
                     .connectTimeout(5000, TimeUnit.MILLISECONDS)
                     .readTimeout(5000, TimeUnit.MILLISECONDS)
+                    .addInterceptor(dmsInterceptor)
+                    .addInterceptor(loggingInterceptor)
                     .build();
         }
         return httpClient;
@@ -59,8 +63,8 @@ public class HTTPUtil {
     }
 
     public static UrlBuilder getUrlBuilder(String url) throws UrlBuilderException {
-        final  HttpUrl httpUrl = HttpUrl.parse(url);
-        if (httpUrl == null){
+        final HttpUrl httpUrl = HttpUrl.parse(url);
+        if (httpUrl == null) {
             throw new UrlBuilderException(url);
         }
         return new UrlBuilder(httpUrl.toString());
@@ -71,55 +75,34 @@ public class HTTPUtil {
         return response.body().byteStream();
     }
 
-    public static void executeGet(String url, String username, String password) throws Exception {
+    static void executeGet(String url, String username, String password) throws Exception {
         getResponse(url, username, password);
     }
 
+    @NonNull
     private static Response getResponse(String url, String username, String password) throws Exception {
-        final String credential = Credentials.basic(username, password);
-        Log.d("DVBViewerServerRequest", url);
-        Request request = getBuilder(url, credential).build();
+        Request request = getBuilder(url).build();
         Response result;
-        try {
-            result = getHttpClient().newCall(request).execute();
-            checkResponse(result);
-        }catch (Exception e){
-            throw new DefaultHttpException(ServerConsts.REC_SERVICE_URL, e);
-        }
+        result = getHttpClient().newCall(request).execute();
         return result;
     }
 
-    public static void getAsyncResponse(String url, String username, String password, Callback callback) {
-        final String credential = Credentials.basic(username, password);
-        Log.d("DVBViewerServerRequest", url);
+    static void getAsyncResponse(String url, String username, String password, Callback callback) {
         try {
-            Request request = getBuilder(url, credential).build();
+            Request request = getBuilder(url).build();
             getHttpClient().newCall(request).enqueue(callback);
-        }catch (UrlBuilderException e){
+        } catch (UrlBuilderException e) {
             e.printStackTrace();
         }
     }
 
-    private static Request.Builder getBuilder(String url, String credentials) throws UrlBuilderException {
+    private static Request.Builder getBuilder(String url) throws UrlBuilderException {
         UrlBuilder urlBuilder = new UrlBuilder(url);
         return new Request.Builder()
-                .url(urlBuilder.toString())
-                .header("Authorization", credentials)
-                .header("Connection", "close");
+                .url(urlBuilder.toString());
     }
 
-    public static void checkResponse(Response response) throws AuthenticationException, UnsuccessfullHttpException {
-        if (response != null && !response.isSuccessful()) {
-            switch (response.code()) {
-                case 401:
-                    throw new AuthenticationException();
-                default:
-                    throw new UnsuccessfullHttpException(response.code());
-            }
-        }
-    }
-
-    public static class UrlBuilder{
+    public static class UrlBuilder {
 
         private HttpUrl.Builder builder;
 
@@ -131,12 +114,12 @@ public class HTTPUtil {
             builder = httpUrl.newBuilder();
         }
 
-        public UrlBuilder addQueryParameter(String name, String value){
+        public UrlBuilder addQueryParameter(String name, String value) {
             builder.addQueryParameter(name, value);
             return this;
         }
 
-        public HttpUrl build(){
+        public HttpUrl build() {
             return builder.build();
         }
 

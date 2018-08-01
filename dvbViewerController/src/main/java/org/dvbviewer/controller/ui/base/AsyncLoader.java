@@ -19,7 +19,7 @@ package org.dvbviewer.controller.ui.base;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.nostra13.universalimageloader.utils.IoUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.Closeable;
 
@@ -116,7 +116,7 @@ public abstract class AsyncLoader<D> extends AsyncTaskLoader<D> {
 	private void closeData(D data) {
 		if (data != null && data instanceof Closeable){
             Closeable c = (Closeable) data;
-            IoUtils.closeSilently(c);
+            IOUtils.closeQuietly(c);
         }
 	}
 

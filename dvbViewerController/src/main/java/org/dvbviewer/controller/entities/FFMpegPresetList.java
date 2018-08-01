@@ -19,7 +19,7 @@ package org.dvbviewer.controller.entities;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FfMpegPrefs {
+public class FFMpegPresetList {
 
     private String version;
     private List<Preset> presets = new LinkedList<>();

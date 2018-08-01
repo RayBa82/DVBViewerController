@@ -25,18 +25,15 @@ import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.imageloader.AuthImageDownloader;
+import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.URLUtil;
-
 
 
 /**
@@ -70,13 +67,13 @@ public class App extends Application {
 		/**
 		 * Read Recordingservice Preferences
 		 */
-		String serviceUrl = prefs.getString(DVBViewerPreferences.KEY_RS_URL, "http://");
+		String serviceUrl = prefs.getString(DVBViewerPreferences.KEY_DMS_URL);
 		String prefPort = prefs.getString(DVBViewerPreferences.KEY_RS_PORT, "8089");
 		URLUtil.setRecordingServicesAddress(serviceUrl, prefPort);
 		ServerConsts.REC_SERVICE_USER_NAME = prefs.getString(DVBViewerPreferences.KEY_RS_USERNAME, "");
 		ServerConsts.REC_SERVICE_PASSWORD = prefs.getString(DVBViewerPreferences.KEY_RS_PASSWORD, "");
 		ServerConsts.REC_SERVICE_MAC_ADDRESS = prefs.getString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS);
-		ServerConsts.REC_SERVICE_WOL_PORT = prefs.getInt(DVBViewerPreferences.KEY_RS_WOL_PORT, 9);
+		ServerConsts.REC_SERVICE_WOL_PORT = 9;
 
 		/**
 		 * Thread to send a wake on lan request
@@ -97,17 +94,10 @@ public class App extends Application {
 
 		installPlayServiceSecurityUpdates();
 
-		DisplayImageOptions options = new DisplayImageOptions.Builder()
-		.cacheInMemory(true)
-		.cacheOnDisk(true)
-		.displayer(new FadeInBitmapDisplayer(500, true, true, false))
-		.build();
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-		.imageDownloader(new AuthImageDownloader(getApplicationContext()))
-		.defaultDisplayImageOptions(options)
-		.build();
-
-		ImageLoader.getInstance().init(config);
+		Picasso.Builder picassoBuilder = new Picasso.Builder(getApplicationContext());
+        OkHttp3Downloader downloader = new OkHttp3Downloader(HTTPUtil.getHttpClient());
+		Picasso picasso = picassoBuilder.downloader(downloader).build();
+        Picasso.setSingletonInstance(picasso);
 
 		ExceptionReporter myHandler =
 				new ExceptionReporter(getTracker(),

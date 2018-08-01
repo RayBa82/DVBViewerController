@@ -16,6 +16,11 @@
 -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="android:background">@color/recording</item>
+        <item name="actionModeBackground">@color/recording</item>
+    </style>
+
     <style name="DashboardButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>

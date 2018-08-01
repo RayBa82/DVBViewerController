@@ -43,7 +43,6 @@
     <!-- Recordings -->
     <string name="recordings">Aufnahmen</string>
     <string name="no_recordings">Keine Aufnahmen gefunden</string>
-    <string name="busyDeleteRecordings">Aufnahmen werden gelöscht&#8230;</string>
     <!-- Medias -->
     <string name="medias">Medien</string>
     <!-- Timer -->
@@ -76,27 +75,6 @@
     <!-- Tasks -->
     <string name="tasks">Aufgaben</string>
     <string name="task_execute_security_question">Aufgabe \"{0}\" ausführen?</string>
-    <string name="EPGStart">Start EPG Scan</string>
-    <string name="EPGStop">Stop EPG Scan</string>
-    <string name="AutoTimer">AutoTimer</string>
-    <string name="RefreshDB">Auffrischen Aufnahme DB</string>
-    <string name="CleanupDB">Aufräumen Aufnahme DB</string>
-    <string name="RebuildRecordedHistory">Aufnahmehistorie wieder aufbauen</string>
-    <string name="ClearRecordingHistory">Aufnahmehistorie endgültig löschen</string>
-    <string name="ClearRecordingStats">Lösche Aufnahmenstatistik</string>
-    <string name="UpdateMediaLibrary">Update alle Mediasammlung DBs</string>
-    <string name="CleanupPhotoDB">Bildersammlung DB aufräumen</string>
-    <string name="CleanupVideoDB">Videosammlung DB aufräumen</string>
-    <string name="RebuildVideoDB">Videosammlung DB neu aufbauen</string>
-    <string name="RebuildAudioDB">Audiosammlung DB neu aufbauen</string>
-    <string name="RebuildPhotoDB">Bildersammlung DB neu aufbauen</string>
-    <string name="ClearAudioStats">Lösche Audiosammlung Statistik</string>
-    <string name="ClearVideoStats">Lösche Videosammlung Statistik</string>
-    <string name="ClearPhotoStats">Lösche Bildersammlung Statistik</string>
-    <string name="Hibernate">Hibernate</string>
-    <string name="Standby">Standby</string>
-    <string name="Shutdown">Shutdown</string>
-    <string name="WOL">Server wecken</string>
     <!-- Status -->
     <string name="status">Status</string>
     <string name="status_server_version">Server Version</string>

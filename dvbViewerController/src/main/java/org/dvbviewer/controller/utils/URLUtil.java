@@ -15,16 +15,25 @@
  */
 package org.dvbviewer.controller.utils;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.HttpUrl;
+
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_HOST;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PASSWORD;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PATH;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PORT;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_PROTOCOL;
+import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_USER_NAME;
 
 /**
  * The Class URLUtil.
@@ -43,49 +52,58 @@ public class URLUtil {
      * @param port the port
      */
     public static void setRecordingServicesAddress(String url, String port) {
-        try {
+        if(StringUtils.isNotBlank(url)) {
             String prefUrl = guessUrl(url);
-            URL baseUrl = new URL(prefUrl);
-            ServerConsts.REC_SERVICE_PROTOCOL = baseUrl.getProtocol();
-            ServerConsts.REC_SERVICE_HOST = baseUrl.getHost();
-            ServerConsts.REC_SERVICE_PORT = port;
-            String path = baseUrl.getPath();
-            if (path.endsWith("/")) {
-                path = path.substring(0, path.length() - 1);
+            final HttpUrl baseUrl = HttpUrl.parse(prefUrl);
+            if(baseUrl != null) {
+                REC_SERVICE_PROTOCOL = baseUrl.scheme();
+                REC_SERVICE_HOST = baseUrl.host();
+                REC_SERVICE_PORT = port;
+                REC_SERVICE_PATH = baseUrl.pathSegments();
             }
-            StringBuilder buf = new StringBuilder(ServerConsts.REC_SERVICE_PROTOCOL)
-                    .append("://")
-                    .append(ServerConsts.REC_SERVICE_HOST);
-            if (!TextUtils.isEmpty(ServerConsts.REC_SERVICE_PORT)) {
-                buf.append(":").append(ServerConsts.REC_SERVICE_PORT);
-            }
-            buf.append(path);
-            ServerConsts.REC_SERVICE_URL = buf.toString();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         }
     }
 
-    public static String buildProtectedRSUrl(String url) {
-        StringBuilder result = new StringBuilder();
-        try {
-            String prefUrl = guessUrl(url);
-            URL baseUrl = new URL(prefUrl);
-            String path = baseUrl.getPath();
-            result.append(baseUrl.getProtocol()).append("://");
-            if ((!TextUtils.isEmpty(ServerConsts.REC_SERVICE_USER_NAME)) && (!TextUtils.isEmpty(ServerConsts.REC_SERVICE_PASSWORD))) {
-                result.append(ServerConsts.REC_SERVICE_USER_NAME).append(":").append(ServerConsts.REC_SERVICE_PASSWORD).append("@");
-            }
-            result.append(baseUrl.getHost());
-            int port = baseUrl.getPort();
-            if (port > 0) {
-                result.append(":").append(baseUrl.getPort());
-            }
-            result.append(path);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+    public static HttpUrl.Builder buildProtectedRSUrl() {
+        HttpUrl.Builder builder = replaceUrl(HttpUrl.parse(ServerConsts.REC_SERVICE_URL));
+        if (StringUtils.isNotBlank(REC_SERVICE_USER_NAME) && StringUtils.isNotBlank(REC_SERVICE_PASSWORD)) {
+            builder.encodedUsername(encodeValue(REC_SERVICE_USER_NAME));
+            builder.encodedPassword(encodeValue(REC_SERVICE_PASSWORD));
         }
-        return result.toString();
+        return builder;
+    }
+
+    private static String encodeValue(final String value) {
+        final String charset = "UTF-8";
+        try {
+            return URLEncoder.encode(value, charset);
+        } catch (UnsupportedEncodingException e) {
+            final String msg = "Error encoding String '{0}' to '{1}'";
+            Log.e(LOGTAG, MessageFormat.format(msg, value, charset), e);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    public static HttpUrl.Builder replaceUrl(HttpUrl requestUrl) {
+        HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
+                .scheme(REC_SERVICE_PROTOCOL)
+                .host(REC_SERVICE_HOST);
+        if(StringUtils.isNotBlank(REC_SERVICE_PORT)) {
+            urlBuilder.port(Integer.valueOf(REC_SERVICE_PORT));
+        }
+        for(String path : REC_SERVICE_PATH) {
+            urlBuilder.addPathSegment(path);
+        }
+        if(requestUrl.pathSize() > 0) {
+            for(String path : requestUrl.pathSegments()) {
+                urlBuilder.addPathSegment(path);
+
+            }
+        }
+        if(StringUtils.isNotBlank(requestUrl.query())){
+            urlBuilder.query(requestUrl.query());
+        }
+        return urlBuilder;
     }
 
 

@@ -18,6 +18,8 @@ package org.dvbviewer.controller.data;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import org.dvbviewer.controller.BuildConfig;
+
 /**
  * The Class ProviderConsts.
  *
@@ -27,7 +29,7 @@ import android.provider.BaseColumns;
 public class ProviderConsts {
 
 	/** The Constant CONTENT_AUTHORITY. */
-	public static final String	CONTENT_AUTHORITY	= "org.dvbviewer.controller.provider";
+	public static final String	CONTENT_AUTHORITY	= BuildConfig.APPLICATION_ID + ".provider";
 
 	/** The Constant BASE_CONTENT_URI. */
 	public static final Uri	BASE_CONTENT_URI	= Uri.parse("content://" + CONTENT_AUTHORITY);

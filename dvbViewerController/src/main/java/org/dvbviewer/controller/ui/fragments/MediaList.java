@@ -15,49 +15,53 @@
  */
 package org.dvbviewer.controller.ui.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.nostra13.universalimageloader.utils.IoUtils;
-
+import org.apache.commons.lang3.BooleanUtils;
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.data.DbHelper;
-import org.dvbviewer.controller.data.ProviderConsts;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.entities.MediaFile;
-import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.io.data.MediaHandler;
+import org.dvbviewer.controller.data.ApiResponse;
+import org.dvbviewer.controller.data.media.MediaFile;
+import org.dvbviewer.controller.data.media.MediaRepository;
+import org.dvbviewer.controller.data.media.MediaViewModel;
+import org.dvbviewer.controller.data.media.MediaViewModelFactory;
+import org.dvbviewer.controller.data.version.VersionRepository;
+import org.dvbviewer.controller.data.version.VersionViewModel;
+import org.dvbviewer.controller.data.version.VersionViewModelFactory;
+import org.dvbviewer.controller.io.api.APIClient;
+import org.dvbviewer.controller.io.api.DMSInterface;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
-import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.RecyclerViewFragment;
-import org.dvbviewer.controller.utils.ServerConsts;
 
-import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.List;
+
+import static org.dvbviewer.controller.data.Status.SUCCESS;
 
 /**
  * Fragment for EPG details or Timer details.
  */
-public class MediaList extends RecyclerViewFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MediaList extends RecyclerViewFragment {
 
 	public static final String KEY_PARENT_ID 	= MediaList.class.getSimpleName() + "KEY_PARENT_ID";
-
-	private final int SYNC_LOADER_ID 	= 0;
-	private final int MEDIA_LOADER_ID 	= 1;
+	private static final String MINIMUM_VERSION = "2.1.0.0";
+	private static final int MINIMUM_IVER = 33555472;
 
 	private MediaAdapter mAdapter;
-	private long parentId = 0l;
+	private long parentId = 0L;
 	private MediaAdapter.OnMediaClickListener mediaClickListener;
-	private boolean mediasSynced = false;
+
+	private VersionViewModel versionViewModel;
+	private MediaViewModel mediaViewModel;
+	private boolean isFeatureSupported;
+	private DMSInterface dmsInterface;
 
 
 	/* (non-Javadoc)
@@ -66,15 +70,14 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		AppCompatActivity activity = (AppCompatActivity) getActivity();
-		activity.setTitle(R.string.details);
 		setHasOptionsMenu(true);
-		mAdapter = new MediaAdapter(mediaClickListener);
-		DVBViewerPreferences preferences = new DVBViewerPreferences(getContext());
-		mediasSynced = preferences.getBoolean(DVBViewerPreferences.KEY_MEDIAS_SYNCED, false);
+		mAdapter = new MediaAdapter(getContext(), mediaClickListener);
 		if(getArguments() != null) {
-			parentId = getArguments().getLong(KEY_PARENT_ID, 0);
+			parentId = getArguments().getLong(KEY_PARENT_ID, 1);
+		}else {
+			parentId = 1;
 		}
+		dmsInterface = APIClient.getClient().create(DMSInterface.class);
 	}
 
 	/* (non-Javadoc)
@@ -83,13 +86,31 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
+		activity.setTitle(R.string.medias);
 		recyclerView.setAdapter(mAdapter);
-		if(!mediasSynced) {
-			getLoaderManager().initLoader(SYNC_LOADER_ID, savedInstanceState, this);
-		}else {
-			getLoaderManager().initLoader(MEDIA_LOADER_ID, savedInstanceState, this);
-		}
 		setListShown(false);
+		boolean checkVersion = parentId == 1l;
+		initViewModels();
+		final Observer<ApiResponse<List<MediaFile>>> mediaObserver = new Observer<ApiResponse<List<MediaFile>>>() {
+			@Override
+			public void onChanged(@Nullable final ApiResponse<List<MediaFile>> response) {
+				onMediaChanged(response);
+			}
+		};
+		final Observer<ApiResponse<Boolean>> versionObserver = new Observer<ApiResponse<Boolean>>() {
+			@Override
+			public void onChanged(@Nullable final ApiResponse<Boolean> response) {
+				onVersionChange(response, mediaObserver);
+			}
+		};
+		if(checkVersion) {
+			setListShown(false);
+			versionViewModel.isSupported(MINIMUM_IVER).observe(this, versionObserver);
+		} else {
+			setListShown(false);
+			mediaViewModel.getMedias(parentId).observe(MediaList.this, mediaObserver);
+		}
 	}
 
 	@Override
@@ -97,8 +118,7 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 		super.onAttach(activity);
 		if(getParentFragment() != null && getParentFragment() instanceof MediaAdapter.OnMediaClickListener) {
 			mediaClickListener = (MediaAdapter.OnMediaClickListener) getParentFragment();
-		}
-		if (activity instanceof MediaAdapter.OnMediaClickListener) {
+		} else if (activity instanceof MediaAdapter.OnMediaClickListener) {
 			mediaClickListener = (MediaAdapter.OnMediaClickListener) activity;
 		}
 	}
@@ -111,70 +131,50 @@ public class MediaList extends RecyclerViewFragment implements LoaderManager.Loa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        setListShown(false);
-        parentId = 0l;
-        getLoaderManager().restartLoader(SYNC_LOADER_ID, null, this);
+		setListShown(false);
+		if(isFeatureSupported) {
+			mediaViewModel.fetchMedias(parentId);
+		} else {
+			versionViewModel.fetchSupported(MINIMUM_IVER);
+		}
         return true;
     }
 
-    @Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		switch (id) {
-			case SYNC_LOADER_ID:
-				AsyncLoader<Cursor> loader = new AsyncLoader<Cursor>(getContext()) {
-
-					@Override
-					public Cursor loadInBackground() {
-						final List<MediaFile> result;
-						InputStream xml = null;
-						try {
-							xml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_MEDIA_LIST);
-							final MediaHandler handler = new MediaHandler();
-							result = handler.parse(xml);
-							DbHelper helper = new DbHelper(getContext());
-							helper.saveMediaFiles(result);
-						} catch (Exception e) {
-							catchException(getClass().getSimpleName(), e);
-						} finally {
-							IoUtils.closeSilently(xml);
-						}
-						return new MatrixCursor(new String[0]);
-					}
-				};
-
-				return loader;
-			case MEDIA_LOADER_ID:
-				StringBuilder selection = new StringBuilder(ProviderConsts.MediaTbl.PARENT);
-				if (parentId > 0) {
-					selection.append(" = " + parentId);
-				} else {
-					selection.append(" is null");
-				}
-				return new CursorLoader(getContext().getApplicationContext(), ProviderConsts.MediaTbl.CONTENT_URI, null, selection.toString(), null, null);
-			default:
-				return null;
-		}
+	private void initViewModels() {
+		final VersionRepository repo = new VersionRepository(getContext(), dmsInterface);
+		final VersionViewModelFactory vFac = new VersionViewModelFactory(getActivity().getApplication(), repo);
+		versionViewModel = ViewModelProviders.of(this, vFac)
+				.get(VersionViewModel.class);
+		final MediaRepository mediaRepo = new MediaRepository(dmsInterface);
+		final MediaViewModelFactory mediaFac = new MediaViewModelFactory(getActivity().getApplication(), mediaRepo);
+		mediaViewModel = ViewModelProviders.of(this, mediaFac)
+				.get(MediaViewModel.class);
 	}
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		switch (loader.getId()){
-			case SYNC_LOADER_ID:
-				getLoaderManager().restartLoader(MEDIA_LOADER_ID, getArguments(), this);
-				break;
-			case MEDIA_LOADER_ID:
-				mAdapter.setCursor(data);
-				mAdapter.notifyDataSetChanged();
+	private void onMediaChanged(@Nullable ApiResponse<List<MediaFile>> response) {
+		if(response.status == SUCCESS) {
+			mAdapter.setCursor(response.data);
+			mAdapter.notifyDataSetChanged();
+		}else {
+			sendMessage(response.message);
+		}
+		setListShown(true);
+	}
+
+	private void onVersionChange(@Nullable ApiResponse<Boolean> response, Observer<ApiResponse<List<MediaFile>>> mediaObserver) {
+		if(response.status == SUCCESS) {
+			if(BooleanUtils.isTrue(response.data)) {
+				isFeatureSupported = true;
+				mediaViewModel.getMedias(parentId).observe(MediaList.this, mediaObserver);
+			} else {
+				final String res = getString(R.string.version_unsupported_text);
+				sendMessage(MessageFormat.format(res, MINIMUM_VERSION));
 				setListShown(true);
-				break;
-			default:
+			}
+		}else {
+			sendMessage(response.message);
+			setListShown(true);
 		}
-
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader) {
-
 	}
 
 }

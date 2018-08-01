@@ -41,7 +41,6 @@
     <!-- Recordings -->
     <string name="recordings">Seznam nahrávek</string>
     <string name="no_recordings">Žádné nahrávky nenalezeny</string>
-    <string name="busyDeleteRecordings">Odstranění nahrávky&#8230;</string>
     <!-- Medias -->
     <!-- Timer -->
     <string name="timer">Časovač</string>
@@ -73,27 +72,6 @@
     <!-- Tasks -->
     <string name="tasks">Úkoly</string>
     <string name="task_execute_security_question">Provést \"{0}\"?</string>
-    <string name="EPGStart">Spustit aktualizaci EPG</string>
-    <string name="EPGStop">Ukončit aktualizaci EPG</string>
-    <string name="AutoTimer">Automatický časovač</string>
-    <string name="RefreshDB">Obnovit databázi nahrávání</string>
-    <string name="CleanupDB">Vyčistit databázi nahrávání</string>
-    <string name="RebuildRecordedHistory">Znovu sestavit historii nahrávání</string>
-    <string name="ClearRecordingHistory">Vymazat historii nahrávání</string>
-    <string name="ClearRecordingStats">Vymazat statistiky nahrávání</string>
-    <string name="UpdateMediaLibrary">Aktualizovat knihovnu médií</string>
-    <string name="CleanupPhotoDB">Vyčistit knihovnu fotografií</string>
-    <string name="CleanupVideoDB">Vyčistit knihovnu videa</string>
-    <string name="RebuildVideoDB">Obnovit knihovnu videí</string>
-    <string name="RebuildAudioDB">Obnovit knihovnu audia</string>
-    <string name="RebuildPhotoDB">Obnovit knihovnu fotografií</string>
-    <string name="ClearAudioStats">Vymazat statistiky audia</string>
-    <string name="ClearVideoStats">Vymazat statistiky videa</string>
-    <string name="ClearPhotoStats">Vymazat statistiky fotografií</string>
-    <string name="Hibernate">Uspat</string>
-    <string name="Standby">Standby režim</string>
-    <string name="Shutdown">Ukončit</string>
-    <string name="WOL">Probudit nahrávací službu</string>
     <!-- Status -->
     <string name="status">Aktuální stav</string>
     <string name="status_current_recordings">Spuštěná nahrávání</string>

@@ -20,6 +20,12 @@ import java.util.Arrays;
  */
 public class StreamUtils {
 
+    public static class StreamParams{
+
+        public static final String STREAM_ID = "streamid";
+
+    }
+
     private static final String	Tag				        = StreamUtils.class.getSimpleName();
     private static final Gson gson					    = new Gson();
     public static final String	DEFAULT_ENCODING_SPEED	= "ultrafast";

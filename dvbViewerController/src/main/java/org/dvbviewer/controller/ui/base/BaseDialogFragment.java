@@ -22,8 +22,8 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
+import org.dvbviewer.controller.io.exception.AuthenticationException;
+import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.xml.sax.SAXException;
 
 /**

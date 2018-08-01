@@ -4,8 +4,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.nostra13.universalimageloader.utils.IoUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.io.data.TargetHandler;
 import org.dvbviewer.controller.io.data.VersionHandler;
 import org.dvbviewer.controller.utils.ServerConsts;
@@ -43,19 +43,9 @@ public class RecordingService {
             Log.e(TAG, "Error getting version from rs", e);
         }
         finally {
-            IoUtils.closeSilently(is);
+            IOUtils.closeQuietly(is);
         }
         return version;
-    }
-
-    public static String getFfmpegPrefs() {
-        String versionXml = null;
-        try {
-            versionXml = ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FFMPEGPREFS);
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting version from rs", e);
-        }
-        return versionXml;
     }
 
     public static String getDVBViewerTargets() {
@@ -73,7 +63,7 @@ public class RecordingService {
         } catch (Exception e) {
             Log.e(TAG, "Error getting DVBViewer Targets", e);
         }finally {
-            IoUtils.closeSilently(xml);
+            IOUtils.closeQuietly(xml);
         }
         return jsonClients;
     }

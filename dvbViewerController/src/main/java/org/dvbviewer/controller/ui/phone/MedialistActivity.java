@@ -21,14 +21,13 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.MediaFile;
-import org.dvbviewer.controller.entities.VideoFile;
+import org.dvbviewer.controller.data.media.MediaFile;
+import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
-import org.dvbviewer.controller.ui.adapter.VideoAdapter;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.MediaList;
 import org.dvbviewer.controller.ui.fragments.StreamConfig;
-import org.dvbviewer.controller.ui.fragments.VideoList;
+import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.FileType;
 
 /**
@@ -37,7 +36,7 @@ import org.dvbviewer.controller.utils.FileType;
  * @author RayBa
  * @date 07.04.2013
  */
-public class MedialistActivity extends BaseSinglePaneActivity implements MediaAdapter.OnMediaClickListener, VideoAdapter.OnVideoClickListener{
+public class MedialistActivity extends BaseSinglePaneActivity implements MediaAdapter.OnMediaClickListener{
 	
 	/* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
@@ -75,40 +74,37 @@ public class MedialistActivity extends BaseSinglePaneActivity implements MediaAd
 
 	@Override
 	public void onMediaClick(MediaFile mediaFile) {
-		if(mediaFile.getDirId() <= 0) {
+		if(mediaFile.getDirId() > 0) {
 			final Bundle b = new Bundle();
-			b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getId());
+			b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getDirId());
 			final MediaList mediaList = new MediaList();
 			mediaList.setArguments(b);
 			changeFragment(R.id.root_container, mediaList);
 		}else {
-			final Bundle b = new Bundle();
-			b.putLong(VideoList.KEY_DIR_ID, mediaFile.getDirId());
-			final VideoList videoList = new VideoList();
-			videoList.setArguments(b);
-			changeFragment(R.id.root_container, videoList);
+			Bundle arguments = new Bundle();
+			arguments.putLong(StreamConfig.EXTRA_FILE_ID, mediaFile.getId());
+			arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
+			arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
+			arguments.putString(StreamConfig.EXTRA_TITLE, mediaFile.getName());
+			Intent streamConfig = new Intent(this, StreamConfigActivity.class);
+			streamConfig.putExtras(arguments);
+			startActivity(streamConfig);
 		}
 	}
 
 	@Override
-	public void onVideoClick(VideoFile videoFile) {
-		Bundle arguments = new Bundle();
-		arguments.putLong(StreamConfig.EXTRA_FILE_ID, videoFile.getId());
-		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
-		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-		arguments.putString(StreamConfig.EXTRA_TITLE, videoFile.getTitle());
-		Intent streamConfig = new Intent(this, StreamConfigActivity.class);
-		streamConfig.putExtras(arguments);
-		startActivity(streamConfig);
+	public void onMediaStreamClick(MediaFile mediaFile) {
+		try {
+			final Intent videoIntent = StreamConfig.buildQuickUrl(this, mediaFile.getId(), mediaFile.getName(), FileType.VIDEO);
+			startActivity(videoIntent);
+			AnalyticsTracker.trackMediaStream(getApplication());
+		} catch (UrlBuilderException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void onVideoStreamClick(VideoFile videoFile) {
-
-	}
-
-	@Override
-	public void onVideoContextClick(VideoFile videoFile) {
+	public void onMediaContextClick(MediaFile mediaFile) {
 
 	}
 

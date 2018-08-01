@@ -45,7 +45,7 @@ import android.widget.TextView;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.targets.ViewTarget;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.ProviderConsts;
@@ -55,7 +55,6 @@ import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
-import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
@@ -69,6 +68,10 @@ import org.dvbviewer.controller.utils.UIUtils;
 
 import java.text.MessageFormat;
 import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * The Class ChannelList.
@@ -227,7 +230,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                 showStreamConfig(c);
                 return true;
             case R.id.menuTimer:
-            showTimerDialog(c);
+                showTimerDialog(c);
             return true;
             case R.id.menuSwitch:
                 switchChannel(c);
@@ -284,10 +287,18 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
 
     private void recordChannel(Cursor c) {
         Timer timer = cursorToTimer(c);
-        String request = TimerDetails.buildTimerUrl(timer);
-        RecordingServiceGet rsGet = new RecordingServiceGet(request);
-        Thread executionThread = new Thread(rsGet);
-        executionThread.start();
+        Call call = getDmsInterface().addTimer(TimerDetails.getTimerParameters(timer));
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                sendMessage(R.string.timer_saved);
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                sendMessage(R.string.error_common);
+            }
+        });
     }
 
     private void showTimerDialog(Cursor c) {
@@ -354,7 +365,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     public class ChannelAdapter extends CursorAdapter {
 
-        final ImageLoader imageChacher;
 
         /**
          * Instantiates a new channel adapter.
@@ -364,7 +374,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         public ChannelAdapter(Context context) {
             super(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
             mContext = context;
-            imageChacher = ImageLoader.getInstance();
         }
 
         /*
@@ -377,7 +386,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         @Override
         public void bindView(View view, Context context, Cursor c) {
             ViewHolder holder = (ViewHolder) view.getTag();
-            imageChacher.cancelDisplayTask(holder.icon);
             holder.contextMenu.setTag(AdapterView.INVALID_POSITION);
             holder.iconContainer.setTag(AdapterView.INVALID_POSITION);
             holder.icon.setImageBitmap(null);
@@ -411,7 +419,11 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             holder.v.setChecked(getListView().isItemChecked(c.getPosition()));
 
             if (!TextUtils.isEmpty(logoUrl)) {
-                imageChacher.displayImage(ServerConsts.REC_SERVICE_URL + "/" + logoUrl, holder.icon);
+                Picasso.get()
+                        .load(ServerConsts.REC_SERVICE_URL + "/" + logoUrl)
+                        .fit()
+                        .centerInside()
+                        .into(holder.icon);
             } else {
                 holder.icon.setImageBitmap(null);
             }
@@ -430,13 +442,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             ViewHolder holder = new ViewHolder();
             holder.v = (CheckableLinearLayout) view;
             holder.iconContainer = view.findViewById(R.id.iconContainer);
-            holder.icon = (ImageView) view.findViewById(R.id.icon);
-            holder.position = (TextView) view.findViewById(R.id.position);
-            holder.channelName = (TextView) view.findViewById(R.id.title);
-            holder.epgTime = (TextView) view.findViewById(R.id.epgTime);
-            holder.progress = (ProgressBar) view.findViewById(R.id.progress);
-            holder.epgTitle = (TextView) view.findViewById(R.id.epgTitle);
-            holder.contextMenu = (ImageView) view.findViewById(R.id.contextMenu);
+            holder.icon = view.findViewById(R.id.icon);
+            holder.position = view.findViewById(R.id.position);
+            holder.channelName = view.findViewById(R.id.title);
+            holder.epgTime = view.findViewById(R.id.epgTime);
+            holder.progress = view.findViewById(R.id.progress);
+            holder.epgTitle = view.findViewById(R.id.epgTitle);
+            holder.contextMenu = view.findViewById(R.id.contextMenu);
             holder.contextMenu.setOnClickListener(ChannelList.this);
             holder.iconContainer.setOnClickListener(ChannelList.this);
             view.setTag(holder);

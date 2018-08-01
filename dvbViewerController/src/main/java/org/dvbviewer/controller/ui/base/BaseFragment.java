@@ -16,23 +16,59 @@
 package org.dvbviewer.controller.ui.base;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.io.AuthenticationException;
-import org.dvbviewer.controller.io.DefaultHttpException;
+import org.dvbviewer.controller.io.api.APIClient;
+import org.dvbviewer.controller.io.api.DMSInterface;
+import org.dvbviewer.controller.io.exception.AuthenticationException;
+import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.xml.sax.SAXException;
 
 /**
  * @author RayBa82 on 24.01.2016
- *
- * Base class for Fragments
+ *         <p>
+ *         Base class for Fragments
  */
 public class BaseFragment extends Fragment {
+
+    protected String TAG = this.getClass().getName();
+    public static final String MESSAGE_EVENT = "MESSAGE_EVENT";
+    public static final String CONNECTION_EVENT = "CONNECTION_EVENT";
+    public static final String MESSAGE_STRING = "MESSAGE_STRING";
+    public static final String MESSAGE_ID = "MESSAGE_ID";
+
+    private DMSInterface dmsInterface;
+
+    public DMSInterface getDmsInterface() {
+        if (dmsInterface == null) {
+            initializeDMSInterface();
+        }
+        return dmsInterface;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mConnectionReceiver,
+                new IntentFilter(BaseFragment.MESSAGE_EVENT));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mConnectionReceiver);
+    }
 
     /**
      * Generic method to catch an Exception.
@@ -40,61 +76,93 @@ public class BaseFragment extends Fragment {
      * This method is safe to be called from non UI threads.
      *
      * @param tag for logging
-     * @param e the Excetpion to catch
+     * @param e   the Excetpion to catch
      */
     protected void catchException(String tag, Exception e) {
-        Log.e(tag, "Error loading ListData", e);
-        if (e instanceof AuthenticationException) {
-            showToast(getContext(), getStringSafely(R.string.error_invalid_credentials));
-        } else if (e instanceof DefaultHttpException) {
-            showToast(getContext(), e.getMessage());
-        } else if (e instanceof SAXException) {
-            showToast(getContext(), getStringSafely(R.string.error_parsing_xml));
-        } else {
-            showToast(getContext(), getStringSafely(R.string.error_common) + "\n\n" + (e.getMessage() != null ? e.getMessage() : e.getClass().getName()));
+        if(getContext() == null) {
+            return;
         }
+        Log.e(tag, "Error loading ListData", e);
+        final String message;
+        if (e instanceof AuthenticationException) {
+            message = getString(R.string.error_invalid_credentials);
+        } else if (e instanceof DefaultHttpException) {
+            message = e.getMessage();
+        } else if (e instanceof SAXException) {
+            message = getString(R.string.error_parsing_xml);
+        } else {
+            message = getStringSafely(R.string.error_common)
+                    + "\n\n"
+                    + (e.getMessage() != null ? e.getMessage() : e.getClass().getName());
+        }
+        showToast(getContext(), message);
     }
 
-	/**
-	 * Possibility to show a Toastmessage from non UI threads.
+    /**
+     * Possibility to show a Toastmessage from non UI threads.
      *
      * @param context the context to show the toast
-	 * @param message the message to display
-	 */
-	protected void showToast(final Context context, final String message) {
-		if (context != null && !isDetached()) {
-			Runnable errorRunnable = new Runnable() {
+     * @param message the message to display
+     */
+    protected void showToast(final Context context, final String message) {
+        if (context != null && !isDetached()) {
+            Runnable errorRunnable = new Runnable() {
 
-				@Override
-				public void run() {
-					if (!TextUtils.isEmpty(message)) {
-						Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-					}
-				}
-			};
-			getActivity().runOnUiThread(errorRunnable);
-		}
-	}
+                @Override
+                public void run() {
+                    if (!TextUtils.isEmpty(message)) {
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                    }
+                }
+            };
+            getActivity().runOnUiThread(errorRunnable);
+        }
+    }
 
     /**
      * Possibility for sublasses to provide a LayouRessource
      * before constructor is called.
      *
      * @param resId the resource id
-     *
      * @return the String for the resource id
      */
-    protected String getStringSafely(int resId){
-		String result = "";
-		if (!isDetached() && isVisible() && isAdded()) {
-			try {
-				result = getString(resId);
-			} catch (Exception e) {
-				// Dirty Exception Handling, because this keeps and keeps crashing...
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
+    protected String getStringSafely(int resId) {
+        String result = "";
+        if (!isDetached() && isVisible() && isAdded()) {
+            try {
+                result = getString(resId);
+            } catch (Exception e) {
+                // Dirty Exception Handling, because this keeps and keeps crashing...
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public void sendMessage(String message) {
+        Log.d(TAG, "Broadcasting message");
+        Intent intent = new Intent(MESSAGE_EVENT);
+        intent.putExtra(MESSAGE_STRING, message);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+    }
+
+    public void sendMessage(int id) {
+        Log.d(TAG, "Broadcasting message");
+        Intent intent = new Intent(MESSAGE_EVENT);
+        intent.putExtra(MESSAGE_ID, id);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+    }
+
+    protected void initializeDMSInterface() {
+        dmsInterface = APIClient.getClient().create(DMSInterface.class);
+    }
+
+    private BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Got connection changed message");
+            initializeDMSInterface();
+        }
+    };
 
 }

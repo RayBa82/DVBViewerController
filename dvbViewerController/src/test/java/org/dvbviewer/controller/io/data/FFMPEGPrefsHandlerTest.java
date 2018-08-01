@@ -1,7 +1,7 @@
 package org.dvbviewer.controller.io.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dvbviewer.controller.entities.FfMpegPrefs;
+import org.dvbviewer.controller.entities.FFMpegPresetList;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -16,7 +16,7 @@ public class FFMPEGPrefsHandlerTest {
 
     @Test
     public void testNullString() {
-        FfMpegPrefs result = null;
+        FFMpegPresetList result = null;
         try {
             result = handler.parse(null);
         } catch (Exception e) {
@@ -28,7 +28,7 @@ public class FFMPEGPrefsHandlerTest {
 
     @Test
     public void testEmptyString() {
-        FfMpegPrefs result = null;
+        FFMpegPresetList result = null;
         try {
             result = handler.parse(StringUtils.EMPTY);
         } catch (Exception e) {
