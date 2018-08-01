@@ -3,6 +3,7 @@ package org.dvbviewer.controller.io.api;
 import org.dvbviewer.controller.data.media.xml.VideoDirsFiles;
 import org.dvbviewer.controller.data.task.xml.TaskList;
 import org.dvbviewer.controller.data.version.xml.Version;
+import org.dvbviewer.controller.entities.FFMpegPresetList;
 
 import java.util.Map;
 
@@ -26,7 +27,10 @@ public interface DMSInterface {
 
     String MEDIA_DIRS               = API + "/mediafiles.html?content=3&recursive=0&thumbs=1";
 
-    String VERSION               = API + "/version.html";
+    String VERSION                  = API + "/version.html";
+
+    String CONFIG_FILE              = API + "/api/getconfigfile.html";
+
 
     @GET(TASK_API)
     Call<TaskList> getTaskList(@Query("all") int all);
@@ -48,5 +52,8 @@ public interface DMSInterface {
 
     @GET(VERSION)
     Call<Version> getVersion();
+
+    @GET(CONFIG_FILE)
+    Call<FFMpegPresetList> getConfigFile(@Query("file") String file);
 
 }

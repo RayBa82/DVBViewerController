@@ -1,5 +1,6 @@
 package org.dvbviewer.controller.io.api;
 
+import org.dvbviewer.controller.data.stream.retrofit.FFMpegConverterFactory;
 import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.utils.ServerConsts;
 
@@ -14,6 +15,7 @@ public class APIClient {
         String baseUrl = ServerConsts.REC_SERVICE_URL;
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
+                .addConverterFactory(FFMpegConverterFactory.create())
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .client(HTTPUtil.getHttpClient())
                 .build();
