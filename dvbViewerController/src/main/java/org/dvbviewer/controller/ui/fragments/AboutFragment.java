@@ -1,10 +1,13 @@
 package org.dvbviewer.controller.ui.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,7 +17,9 @@ import android.widget.TextView;
 
 import org.dvbviewer.controller.R;
 
-public class AboutFragment extends Fragment{
+public class AboutFragment extends Fragment {
+
+	private final String TAG = AboutFragment.class.getSimpleName();
 	
 	private TextView	versionTextView;
 	private ImageButton	payPalButton;
@@ -22,14 +27,17 @@ public class AboutFragment extends Fragment{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		String versionName = "";
 		try {
-			versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+			final Activity activity = getActivity();
+			if(activity != null) {
+				final String versionName = activity.getPackageManager()
+						.getPackageInfo(activity.getPackageName(), 0)
+						.versionName;
+				versionTextView.setText(versionName);
+			}
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(TAG, "Error getting version name", e);
 		}
-		versionTextView.setText(versionName);
 		payPalButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -41,10 +49,10 @@ public class AboutFragment extends Fragment{
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_about, container, false);
-		payPalButton = (ImageButton) v.findViewById(R.id.paypalButton);
-		versionTextView = (TextView) v.findViewById(R.id.versionTextView);
+		payPalButton = v.findViewById(R.id.paypalButton);
+		versionTextView = v.findViewById(R.id.versionTextView);
 		return v;
 	}
 
