@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 android {
@@ -79,6 +80,7 @@ android {
         implementation group: 'commons-io', name: 'commons-io', version: '2.5'
         implementation 'com.jakewharton:butterknife:9.0.0-SNAPSHOT'
         annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-SNAPSHOT'
+        kapt 'com.jakewharton:butterknife-compiler:9.0.0-SNAPSHOT'
         implementation ('com.squareup.retrofit2:retrofit:2.4.0') {
             exclude module: 'okhttp'
         }

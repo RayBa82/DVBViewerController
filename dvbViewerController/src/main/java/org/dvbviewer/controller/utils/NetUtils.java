@@ -28,11 +28,10 @@ import java.net.InetAddress;
  * The Class NetUtils.
  *
  * @author RayBa
- * @date 07.04.2013
  */
 public class NetUtils {
 
-    private static final int PORT = 9;
+    public static final String TAG = NetUtils.class.getSimpleName();
 
     /**
      * Try to extract a hardware MAC address from a given IP address or machine name using the
@@ -47,7 +46,6 @@ public class NetUtils {
      * @param ip the ip or a machine name
      * @return the MAC from the ARP cache
      * @author RayBa
-     * @date 07.04.2013
      */
     public static String getMacFromArpCache(String ip) {
         if (ip == null)
@@ -86,14 +84,12 @@ public class NetUtils {
     /**
      * Send wake on lan.
      *
-     * @param macAddress the MACaddress
-     * @param macAddress the mac address
+     * @param port the wol port
      * @author RayBa
-     * @date 07.04.2013
      */
-    public static void sendWakeOnLan(String macAddress, int port) {
-        Log.d(NetUtils.class.getSimpleName(), "sendWakeOnLan");
-        Log.d(NetUtils.class.getSimpleName(), "macAddress:" + macAddress);
+    public static void sendWakeOnLan(int port) {
+        final String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
+        Log.d(TAG, "sending WOL packet to " + macAddress);
         try {
             byte[] macBytes = getMacBytes(macAddress);
             byte[] bytes = new byte[6 + 16 * macBytes.length];
@@ -104,11 +100,13 @@ public class NetUtils {
                 System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
             }
             InetAddress address = InetAddress.getByName("255.255.255.255");
-            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, port);
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);
             socket.close();
+            Log.d(TAG, "succesfull send WOL packet to " + macAddress);
         } catch (Exception e) {
+            Log.e(TAG, "error sending WOL packet to " + macAddress, e);
             e.printStackTrace();
         }
     }
@@ -120,7 +118,6 @@ public class NetUtils {
      * @return the mac bytes
      * @throws IllegalArgumentException the illegal argument exception
      * @author RayBa
-     * @date 07.04.2013
      */
     private static byte[] getMacBytes(String macStr) throws IllegalArgumentException {
         byte[] bytes = new byte[6];

@@ -2,14 +2,14 @@
 def majorVersion = 1
 def minorVersion = 4
 def patchVersion = 0
-def buildNumber = 5
+def buildNumber = 6
 def buildVersionCode
 def buildVersionName
 buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
 buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion} build ${buildNumber}"
 
 buildscript {
-    ext.kotlin_version = '1.2.51'
+    ext.kotlin_version = '1.2.60'
     repositories {
         jcenter()
         google()

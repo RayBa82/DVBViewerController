@@ -18,7 +18,7 @@ class VersionViewModel internal constructor(application: Application, private va
 
     private var data: MutableLiveData<ApiResponse<Boolean>>? = null
 
-    fun isSupported(minVersion: Int): MutableLiveData<ApiResponse<Boolean>> {
+    fun isSupported(minVersion: String): MutableLiveData<ApiResponse<Boolean>> {
         if (data == null) {
             data = MutableLiveData()
             fetchSupported(minVersion)
@@ -26,7 +26,7 @@ class VersionViewModel internal constructor(application: Application, private va
         return data as MutableLiveData<ApiResponse<Boolean>>
     }
 
-    fun fetchSupported(minVersion: Int) {
+    fun fetchSupported(minVersion: String) {
         if(data == null) {
             return
         }

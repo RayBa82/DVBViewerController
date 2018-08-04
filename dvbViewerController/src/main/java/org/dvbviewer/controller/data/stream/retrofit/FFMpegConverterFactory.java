@@ -1,7 +1,8 @@
 package org.dvbviewer.controller.data.stream.retrofit;
 
+import com.google.gson.reflect.TypeToken;
+
 import org.dvbviewer.controller.entities.FFMpegPresetList;
-import org.simpleframework.xml.core.Persister;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -12,36 +13,42 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 
 /**
- * A {@linkplain Converter.Factory converter} which uses Simple Framework for XML.
+ * A {@linkplain Converter.Factory converter} for the ffmpegprefs.ini files.
  * <p>
- * This converter only applies for class types. Parameterized types (e.g., {@code List<Foo>}) are
- * not handled.
+ * This converter only applies for class FFMpegPresetList.
  *
  */
 public final class FFMpegConverterFactory extends Converter.Factory {
-    /** Create an instance using a default {@link Persister} instance for conversion. */
 
-
+    /** Create an instance conversion. */
     public static FFMpegConverterFactory create() {
         return new FFMpegConverterFactory();
     }
 
+    private final Type ffmpegType;
+
+    private FFMpegConverterFactory(){
+        TypeToken<?> typeToken = TypeToken.get(FFMpegPresetList.class);
+        ffmpegType = typeToken.getType();
+    }
+
 
     @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations,
+    public Converter<ResponseBody, FFMpegPresetList> responseBodyConverter(Type type, Annotation[] annotations,
                                                             Retrofit retrofit) {
-        if (!(type.getClass().equals(FFMpegPresetList.class.getClass()))) {
-            return null;
+        if (type.equals(ffmpegType)) {
+            return new FFMpegPresetResponseBodyConverter();
         }
-        return new FFMpegPresetResponseBodyConverter();
+        return null;
     }
 
     @Override
-    public Converter<?, RequestBody> requestBodyConverter(Type type,
+    public Converter<FFMpegPresetList, RequestBody> requestBodyConverter(Type type,
                                                           Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-        if (!(type.getClass().equals(FFMpegPresetList.class.getClass()))) {
-            return null;
+        if (type.equals(ffmpegType)) {
+            return new FFMpegRequestBodyConverter();
         }
-        return new FFMpegRequestBodyConverter<>(null);
+        return null;
     }
+
 }

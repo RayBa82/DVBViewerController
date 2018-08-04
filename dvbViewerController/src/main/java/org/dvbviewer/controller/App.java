@@ -16,7 +16,6 @@
 package org.dvbviewer.controller;
 
 import android.app.Application;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.analytics.ExceptionReporter;
@@ -64,9 +63,6 @@ public class App extends Application {
 		Config.IS_FIRST_START = prefs.getBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, true);
 		Config.CHANNELS_SYNCED = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, false);
 
-		/**
-		 * Read Recordingservice Preferences
-		 */
 		String serviceUrl = prefs.getString(DVBViewerPreferences.KEY_DMS_URL);
 		String prefPort = prefs.getString(DVBViewerPreferences.KEY_RS_PORT, "8089");
 		URLUtil.setRecordingServicesAddress(serviceUrl, prefPort);
@@ -75,19 +71,16 @@ public class App extends Application {
 		ServerConsts.REC_SERVICE_MAC_ADDRESS = prefs.getString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS);
 		ServerConsts.REC_SERVICE_WOL_PORT = 9;
 
-		/**
-		 * Thread to send a wake on lan request
-		 */
 		Runnable wakeOnLanRunnabel = new Runnable() {
 			
 			@Override
 			public void run() {
-				NetUtils.sendWakeOnLan(ServerConsts.REC_SERVICE_MAC_ADDRESS, ServerConsts.REC_SERVICE_WOL_PORT);
+				NetUtils.sendWakeOnLan(ServerConsts.REC_SERVICE_WOL_PORT);
 			}
 		};
 		
 		boolean sendWakeOnLan = prefs.getBoolean(DVBViewerPreferences.KEY_RS_WOL_ON_START, true);
-		if (sendWakeOnLan && !TextUtils.isEmpty(ServerConsts.REC_SERVICE_MAC_ADDRESS)) {
+		if (sendWakeOnLan) {
 			Thread wakeOnLanThread = new Thread(wakeOnLanRunnabel);
 			wakeOnLanThread.start();
 		}

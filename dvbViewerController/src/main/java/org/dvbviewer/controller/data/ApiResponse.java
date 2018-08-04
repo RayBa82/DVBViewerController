@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import static org.dvbviewer.controller.data.Status.ERROR;
 import static org.dvbviewer.controller.data.Status.LOADING;
+import static org.dvbviewer.controller.data.Status.NOT_SUPPORTED;
 import static org.dvbviewer.controller.data.Status.SUCCESS;
 
 public class ApiResponse<T>{
@@ -30,6 +31,10 @@ public class ApiResponse<T>{
 
     public static <T> ApiResponse<T> error(String msg, @Nullable T data) {
         return new ApiResponse<>(ERROR, data, msg);
+    }
+
+    public static <T> ApiResponse<T> notSupported(String msg) {
+        return new ApiResponse<>(NOT_SUPPORTED, null, msg);
     }
 
     public static <T> ApiResponse<T> loading(@Nullable T data) {

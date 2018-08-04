@@ -25,9 +25,10 @@ public class RecordingService {
 
     private static  final String TAG = RecordingService.class.getSimpleName();
 
-    private final static Pattern versionPattern    = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])");
+    private final static Pattern versionPattern    = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d.])");
 
     public static String getVersionString() {
+
         String version = null;
         InputStream is = null;
         try {
