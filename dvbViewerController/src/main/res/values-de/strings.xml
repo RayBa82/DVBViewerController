@@ -43,6 +43,8 @@
     <!-- Recordings -->
     <string name="recordings">Aufnahmen</string>
     <string name="no_recordings">Keine Aufnahmen gefunden</string>
+    <string name="recording_deleted">Aufnahme %1$s gelöscht</string>
+    <string name="recordings_deleted">%1$d Aufnahmen  gelöscht</string>
     <!-- Medias -->
     <string name="medias">Medien</string>
     <!-- Timer -->
@@ -75,6 +77,8 @@
     <!-- Tasks -->
     <string name="tasks">Aufgaben</string>
     <string name="task_execute_security_question">Aufgabe \"{0}\" ausführen?</string>
+    <string name="task_executed">Aufgabe \"{0}\" erfolgreich ausgeführt</string>
+    <string name="send_wol_packet">Sende WOL Paket</string>
     <!-- Status -->
     <string name="status">Status</string>
     <string name="status_server_version">Server Version</string>
