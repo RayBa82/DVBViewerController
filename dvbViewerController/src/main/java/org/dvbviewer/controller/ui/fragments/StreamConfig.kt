@@ -102,7 +102,7 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
     private var mFileType: FileType? = null
     private var mFileId: Long = -1
     private var prefs: SharedPreferences? = null
-    private var dmsInterface: DMSInterface? = null
+    private lateinit var dmsInterface: DMSInterface
 
 
     /* (non-Javadoc)

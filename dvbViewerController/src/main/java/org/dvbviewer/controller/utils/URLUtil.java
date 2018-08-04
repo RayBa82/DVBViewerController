@@ -42,7 +42,7 @@ import static org.dvbviewer.controller.utils.ServerConsts.REC_SERVICE_USER_NAME;
  */
 public class URLUtil {
 
-    private static final String LOGTAG = "URLUtil";
+    private static final String TAG = URLUtil.class.getSimpleName();
 
 
     /**
@@ -66,7 +66,7 @@ public class URLUtil {
 
     public static HttpUrl.Builder buildProtectedRSUrl() {
         HttpUrl.Builder builder = replaceUrl(HttpUrl.parse(ServerConsts.REC_SERVICE_URL));
-        if (StringUtils.isNotBlank(REC_SERVICE_USER_NAME) && StringUtils.isNotBlank(REC_SERVICE_PASSWORD)) {
+        if (builder != null && StringUtils.isNotBlank(REC_SERVICE_USER_NAME) && StringUtils.isNotBlank(REC_SERVICE_PASSWORD)) {
             builder.encodedUsername(encodeValue(REC_SERVICE_USER_NAME));
             builder.encodedPassword(encodeValue(REC_SERVICE_PASSWORD));
         }
@@ -79,31 +79,36 @@ public class URLUtil {
             return URLEncoder.encode(value, charset);
         } catch (UnsupportedEncodingException e) {
             final String msg = "Error encoding String '{0}' to '{1}'";
-            Log.e(LOGTAG, MessageFormat.format(msg, value, charset), e);
+            Log.e(TAG, MessageFormat.format(msg, value, charset), e);
         }
         return StringUtils.EMPTY;
     }
 
     public static HttpUrl.Builder replaceUrl(HttpUrl requestUrl) {
-        HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
-                .scheme(REC_SERVICE_PROTOCOL)
-                .host(REC_SERVICE_HOST);
-        if(StringUtils.isNotBlank(REC_SERVICE_PORT)) {
-            urlBuilder.port(Integer.valueOf(REC_SERVICE_PORT));
-        }
-        for(String path : REC_SERVICE_PATH) {
-            urlBuilder.addPathSegment(path);
-        }
-        if(requestUrl.pathSize() > 0) {
-            for(String path : requestUrl.pathSegments()) {
-                urlBuilder.addPathSegment(path);
-
+        try {
+            HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
+                    .scheme(REC_SERVICE_PROTOCOL)
+                    .host(REC_SERVICE_HOST);
+            if(StringUtils.isNotBlank(REC_SERVICE_PORT)) {
+                urlBuilder.port(Integer.valueOf(REC_SERVICE_PORT));
             }
+            for(String path : REC_SERVICE_PATH) {
+                urlBuilder.addPathSegment(path);
+            }
+            if(requestUrl.pathSize() > 0) {
+                for(String path : requestUrl.pathSegments()) {
+                    urlBuilder.addPathSegment(path);
+
+                }
+            }
+            if(StringUtils.isNotBlank(requestUrl.query())){
+                urlBuilder.query(requestUrl.query());
+            }
+            return urlBuilder;
+        }catch (Exception e) {
+            Log.e(TAG, "error building URL for Host " + REC_SERVICE_HOST, e);
+            return null;
         }
-        if(StringUtils.isNotBlank(requestUrl.query())){
-            urlBuilder.query(requestUrl.query());
-        }
-        return urlBuilder;
     }
 
 
@@ -138,7 +143,7 @@ public class URLUtil {
             webAddress = new WebAddress(inUrl);
         } catch (Exception e) {
             e.printStackTrace();
-            Log.v(LOGTAG, "smartUrlFilter: failed to parse url = " + inUrl);
+            Log.v(TAG, "smartUrlFilter: failed to parse url = " + inUrl);
             return retVal;
         }
 

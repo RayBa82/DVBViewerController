@@ -63,6 +63,8 @@ import org.dvbviewer.controller.ui.phone.TimerlistActivity;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.FileType;
+import org.dvbviewer.controller.utils.NetUtils;
+import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.StreamUtils;
 
 import java.util.List;
@@ -281,12 +283,22 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuAbout:
-			startActivity(new Intent(this, AboutActivity.class));
-			return true;
+			case R.id.menuAbout:
+				startActivity(new Intent(this, AboutActivity.class));
+				return true;
+			case R.id.menuWOL:
+				Runnable wakeOnLanRunnabel = new Runnable() {
 
-		default:
-			break;
+					@Override
+					public void run() {
+						NetUtils.sendWakeOnLan(ServerConsts.REC_SERVICE_WOL_PORT);
+					}
+				};
+				Thread wakeOnLanThread = new Thread(wakeOnLanRunnabel);
+				wakeOnLanThread.start();
+				return true;
+			default:
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}

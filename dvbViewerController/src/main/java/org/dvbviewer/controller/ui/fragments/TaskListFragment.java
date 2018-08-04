@@ -84,7 +84,9 @@ public class TaskListFragment extends BaseListFragment implements OnClickListene
 						sAdapter.addSection(taskGroup.getName(), adapter);
 					}
 					setListAdapter(sAdapter);
-				} else {
+				}else if(response.status == Status.NOT_SUPPORTED){
+					setEmptyText(response.message);
+				}else {
 					sendMessage(response.message);
 				}
 				setListShown(true);

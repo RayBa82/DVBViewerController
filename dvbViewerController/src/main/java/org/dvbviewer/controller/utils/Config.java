@@ -17,6 +17,8 @@ package org.dvbviewer.controller.utils;
 
 import android.text.TextUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.regex.Pattern;
 
 /**
@@ -78,8 +80,8 @@ public class Config {
      * @author RayBa
      * @date 18.08.2013
      */
-    public static boolean isRSVersionSupported(String version, String minimumVersion) {
-        if (TextUtils.isEmpty(version)) {
+    public static boolean isVersionSupported(String version, String minimumVersion) {
+        if (StringUtils.isBlank(version)) {
             return false;
         }
         String s1 = normalisedVersion(version);

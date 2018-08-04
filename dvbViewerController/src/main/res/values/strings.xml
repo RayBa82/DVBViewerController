@@ -78,6 +78,7 @@
     <string name="tasks">Tasks</string>
     <string name="task_execute_security_question">Execute \"{0}\"?</string>
     <string name="task_executed">Task \"{0}\" successfully executed</string>
+    <string name="send_wol_packet">Send WOL packet</string>
     <!-- Status -->
     <string name="status">Status</string>
     <string name="status_server_version">Server version</string>
@@ -147,4 +148,5 @@
     <string name="remote_numbers">Numbers</string>
     <string name="timer_saved">Timer saved</string>
     <string name="epg_monitoring">EPG monitoring</string>
+
 </resources>

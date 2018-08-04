@@ -34,7 +34,7 @@ class VersionViewModel internal constructor(application: Application, private va
             var apiResponse = ApiResponse.error("", false)
             try {
                 async(CommonPool) {
-                    apiResponse = ApiResponse.success(vRepo.isSupported(minVersion))
+                    apiResponse = ApiResponse.success(vRepo.isSupported("2.1.0.0"))
                 }.await()
             } catch (e: Exception) {
                 Log.e(TAG , "Error getting version", e)

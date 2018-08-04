@@ -167,8 +167,8 @@ public class MediaList extends RecyclerViewFragment {
 				isFeatureSupported = true;
 				mediaViewModel.getMedias(parentId).observe(MediaList.this, mediaObserver);
 			} else {
-				final String res = getString(R.string.version_unsupported_text);
-				sendMessage(MessageFormat.format(res, MINIMUM_VERSION));
+				final String text = MessageFormat.format(getString(R.string.version_unsupported_text), MINIMUM_VERSION);
+				infoText.setText(text);
 				setListShown(true);
 			}
 		}else {

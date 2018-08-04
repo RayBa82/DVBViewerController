@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.io.exception.AuthenticationException;
 import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.dvbviewer.controller.io.exception.FileLockedException;
+import org.dvbviewer.controller.io.exception.InvalidHostException;
 import org.dvbviewer.controller.io.exception.NoHostException;
 import org.dvbviewer.controller.io.exception.UnsuccessfullHttpException;
 import org.dvbviewer.controller.utils.URLUtil;
@@ -35,6 +36,9 @@ public class DMSInterceptor implements Interceptor {
         final HttpUrl requestUrl = request.url();
         final HttpUrl modifiedUrl = URLUtil.replaceUrl(requestUrl)
                 .build();
+        if(modifiedUrl == null) {
+            throw new InvalidHostException(REC_SERVICE_HOST);
+        }
         final String credentials = Credentials.basic(REC_SERVICE_USER_NAME, REC_SERVICE_PASSWORD);
         final Request modifiedRequest = request
                 .newBuilder()

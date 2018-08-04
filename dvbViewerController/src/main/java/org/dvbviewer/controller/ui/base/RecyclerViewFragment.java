@@ -1,6 +1,7 @@
 package org.dvbviewer.controller.ui.base;
 
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.R;
 
 import butterknife.BindView;
@@ -22,6 +24,9 @@ public class RecyclerViewFragment extends BaseFragment {
 
     @BindView(R.id.progressBar)
     protected ProgressBar progressBar;
+
+    @BindView(R.id.infoText)
+    protected AppCompatTextView infoText;
 
     private boolean mListShown = true;
 
@@ -59,6 +64,7 @@ public class RecyclerViewFragment extends BaseFragment {
             progressBar.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
         } else {
+            infoText.setText(StringUtils.EMPTY);
             if (animate) {
                 progressBar.startAnimation(AnimationUtils.loadAnimation(
                         getContext(), android.R.anim.fade_in));
