@@ -52,7 +52,6 @@ public class MediaList extends RecyclerViewFragment {
 
 	public static final String KEY_PARENT_ID 	= MediaList.class.getSimpleName() + "KEY_PARENT_ID";
 	private static final String MINIMUM_VERSION = "2.1.0.0";
-	private static final int MINIMUM_IVER = 33555472;
 
 	private MediaAdapter mAdapter;
 	private long parentId = 0L;
@@ -106,7 +105,7 @@ public class MediaList extends RecyclerViewFragment {
 		};
 		if(checkVersion) {
 			setListShown(false);
-			versionViewModel.isSupported(MINIMUM_IVER).observe(this, versionObserver);
+			versionViewModel.isSupported(MINIMUM_VERSION).observe(this, versionObserver);
 		} else {
 			setListShown(false);
 			mediaViewModel.getMedias(parentId).observe(MediaList.this, mediaObserver);
@@ -135,7 +134,7 @@ public class MediaList extends RecyclerViewFragment {
 		if(isFeatureSupported) {
 			mediaViewModel.fetchMedias(parentId);
 		} else {
-			versionViewModel.fetchSupported(MINIMUM_IVER);
+			versionViewModel.fetchSupported(MINIMUM_VERSION);
 		}
         return true;
     }
@@ -151,7 +150,7 @@ public class MediaList extends RecyclerViewFragment {
 				.get(MediaViewModel.class);
 	}
 
-	private void onMediaChanged(@Nullable ApiResponse<List<MediaFile>> response) {
+	private void onMediaChanged(ApiResponse<List<MediaFile>> response) {
 		if(response.status == SUCCESS) {
 			mAdapter.setCursor(response.data);
 			mAdapter.notifyDataSetChanged();
@@ -161,7 +160,7 @@ public class MediaList extends RecyclerViewFragment {
 		setListShown(true);
 	}
 
-	private void onVersionChange(@Nullable ApiResponse<Boolean> response, Observer<ApiResponse<List<MediaFile>>> mediaObserver) {
+	private void onVersionChange(ApiResponse<Boolean> response, Observer<ApiResponse<List<MediaFile>>> mediaObserver) {
 		if(response.status == SUCCESS) {
 			if(BooleanUtils.isTrue(response.data)) {
 				isFeatureSupported = true;
