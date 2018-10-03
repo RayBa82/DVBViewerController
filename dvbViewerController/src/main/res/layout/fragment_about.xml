@@ -3,9 +3,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="8dp" >
+    android:padding="8dp">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         style="@style/commonTitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -14,48 +14,63 @@
 
     <TableLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TableRow
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/versionTextLabel"
                 style="@style/commonSubTitle"
                 android:layout_width="fill_parent"
-                android:layout_gravity="center_vertical"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="8dp"
                 android:text="@string/version" />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/versionTextView"
-                android:layout_gravity="center_vertical"
                 style="@style/commonSubTitle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="8dp" />
         </TableRow>
 
         <TableRow
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
-            <TextView
-                style="@style/commonSubTitle"
-                android:layout_gravity="center_vertical"
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/privacyLabelTextView"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="8dp"
+                android:text="@string/privacy_policy" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/donationRow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <android.support.v7.widget.AppCompatTextView
+                style="@style/commonSubTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:padding="8dp"
                 android:text="@string/support_this_app" />
 
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/paypalButton"
                 style="@style/ImageButtonStyle"
-                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
                 android:padding="8dp"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_paypal" />

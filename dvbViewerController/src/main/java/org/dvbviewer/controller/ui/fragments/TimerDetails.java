@@ -200,15 +200,15 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_timer_details, container, false);
-		titleField = (TextView) v.findViewById(R.id.titleField);
-		dateField = (DateField) v.findViewById(R.id.dateField);
-		activeBox = (SwitchCompat) v.findViewById(R.id.activeBox);
-		startField = (DateField) v.findViewById(R.id.startField);
-		preField = (AppCompatEditText) v.findViewById(R.id.pre);
-		postField = (AppCompatEditText) v.findViewById(R.id.post);
-		postRecordSpinner = (Spinner) v.findViewById(R.id.postRecordingSpinner);
-        monitoringLabel = (TextView) v.findViewById(R.id.monitoringCaption);
-        monitoringSpinner = (Spinner) v.findViewById(R.id.monitoringgSpinner);
+		titleField = v.findViewById(R.id.titleField);
+		dateField = v.findViewById(R.id.dateField);
+		activeBox = v.findViewById(R.id.activeBox);
+		startField = v.findViewById(R.id.startField);
+		preField = v.findViewById(R.id.pre);
+		postField = v.findViewById(R.id.post);
+		postRecordSpinner = v.findViewById(R.id.postRecordingSpinner);
+        monitoringLabel = v.findViewById(R.id.monitoringCaption);
+        monitoringSpinner = v.findViewById(R.id.monitoringgSpinner);
 
 		startTimeSetListener = new OnTimeSetListener() {
 
@@ -231,10 +231,10 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			}
 		};
 
-		stopField = (DateField) v.findViewById(R.id.stopField);
-		Button cancelButton = (Button) v.findViewById(R.id.buttonCancel);
-		Button okButton = (Button) v.findViewById(R.id.buttonOk);
-		channelField = (TextView) v.findViewById(R.id.channelField);
+		stopField = v.findViewById(R.id.stopField);
+		Button cancelButton = v.findViewById(R.id.buttonCancel);
+		Button okButton = v.findViewById(R.id.buttonOk);
+		channelField = v.findViewById(R.id.channelField);
 
 		dateField.setOnClickListener(this);
 		startField.setOnClickListener(this);
@@ -291,8 +291,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			dismiss();
 			break;
 		case R.id.buttonOk:
-			timer.setStart(startField.getDate());
-			timer.setEnd(stopField.getDate());
+			calcStartEnd();
 			timer.setTitle(titleField.getText().toString());
 			timer.setTimerAction(postRecordSpinner.getSelectedItemPosition());
             timer.setMonitorPDC(monitoringSpinner.getSelectedItemPosition());
@@ -314,16 +313,33 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		}
 	}
 
-    @NonNull
+	private void calcStartEnd() {
+		final Calendar day = GregorianCalendar.getInstance();
+		final Calendar start = GregorianCalendar.getInstance();
+		final Calendar end = GregorianCalendar.getInstance();
+		day.setTime(dateField.getDate());
+		start.setTime(startField.getDate());
+		start.set(Calendar.DAY_OF_YEAR, day.get(Calendar.DAY_OF_YEAR));
+		end.setTime(stopField.getDate());
+		end.set(Calendar.DAY_OF_YEAR, day.get(Calendar.DAY_OF_YEAR));
+		if(end.before(start)) {
+            end.add(Calendar.DAY_OF_YEAR, 1);
+        }
+		start.set(Calendar.DAY_OF_YEAR, day.get(Calendar.DAY_OF_YEAR));
+		timer.setStart(start.getTime());
+		timer.setEnd(end.getTime());
+	}
+
+	@NonNull
     private Callback getCallback() {
         return new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+				catchException(e);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) {
                 try {
                     if (getDialog() != null && getDialog().isShowing()) {
                         dismiss();
