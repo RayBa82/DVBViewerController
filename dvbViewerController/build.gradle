@@ -16,6 +16,7 @@ android {
         versionCode rootProject.versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -80,6 +81,7 @@ android {
         implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
         implementation group: 'commons-io', name: 'commons-io', version: '2.5'
         implementation 'com.jakewharton:butterknife:9.0.0-SNAPSHOT'
+        implementation 'com.android.support:multidex:1.0.3'
         annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-SNAPSHOT'
         kapt 'com.jakewharton:butterknife-compiler:9.0.0-SNAPSHOT'
         implementation ('com.squareup.retrofit2:retrofit:2.4.0') {
