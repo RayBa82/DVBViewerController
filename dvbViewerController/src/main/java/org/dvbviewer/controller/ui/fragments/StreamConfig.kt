@@ -32,9 +32,8 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.fragment_stream_config.*
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
@@ -59,40 +58,6 @@ import java.util.*
  * DialogFragment to show the stream settings.
  */
 class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnClickListener, OnItemSelectedListener {
-
-    @BindView(R.id.collapsable)
-    lateinit var collapsable: View
-
-    @BindView(R.id.startDirectButton)
-    lateinit var startDirectStreamButton: Button
-
-    @BindView(R.id.startTranscodedButton)
-    lateinit var startButton: Button
-
-    @BindView(R.id.stream_hours)
-    lateinit var startHours: EditText
-
-    @BindView(R.id.stream_minutes)
-    lateinit var startMinutes: EditText
-
-    @BindView(R.id.stream_seconds)
-    lateinit var startSeconds: EditText
-
-    @BindView(R.id.qualitySpinner)
-    lateinit var qualitySpinner: Spinner
-
-    @BindView(R.id.encodingSpeedSpinner)
-    lateinit var encodingSpeedSpinner: Spinner
-
-    @BindView(R.id.audioSpinner)
-    lateinit var audioTrackSpinner: Spinner
-
-    @BindView(R.id.subTitleSpinner)
-    lateinit var subTitleSpinner: Spinner
-
-    @BindView(R.id.streamPositionContainer)
-    lateinit var positionContainer: View
-
 
     private var preTime: String? = null
     private var title = 0
@@ -149,14 +114,14 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
         val encodingSpeed = StreamUtils.getEncodingSpeedIndex(context!!, prefs!!)
         encodingSpeedSpinner.setSelection(encodingSpeed)
         encodingSpeedSpinner.onItemSelectedListener = this
-        audioTrackSpinner.onItemSelectedListener = this
+        audioSpinner.onItemSelectedListener = this
         val audioTracks = LinkedList<String>()
         audioTracks.add(resources.getString(R.string.def))
         audioTracks.add(resources.getString(R.string.common_all))
         audioTracks.addAll(Arrays.asList(*resources.getStringArray(R.array.tracks)))
         val audioAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, audioTracks.toTypedArray()) //selected item will look like a spinner set from XML
         audioAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        audioTrackSpinner.adapter = audioAdapter
+        audioSpinner.adapter = audioAdapter
         subTitleSpinner.onItemSelectedListener = this
         val subTitleTracks = LinkedList<String>()
         subTitleTracks.add(resources.getString(R.string.none))
@@ -165,13 +130,13 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
         val subAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, subTitleTracks.toTypedArray()) //selected item will look like a spinner set from XML
         subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         subTitleSpinner.adapter = subAdapter
-        startButton.setOnClickListener(this)
-        startDirectStreamButton.setOnClickListener(this)
+        startDirectButton.setOnClickListener(this)
+        startTranscodedButton.setOnClickListener(this)
         /**
          * Hide Position Row if streaming non seekable content
          */
         if (!seekable) {
-            positionContainer.visibility = View.GONE
+            streamPositionContainer.visibility = View.GONE
         }
         if (!TextUtils.isEmpty(preTime)) {
             startMinutes.setText(preTime)
@@ -212,7 +177,6 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_stream_config, container, false)
-        ButterKnife.bind(this, v)
         return v
     }
 
@@ -308,7 +272,7 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
                 val editor = prefs.edit()
                 editor.putBoolean("stream_external", false)
                 editor.apply()
-                onClick(startButton)
+                onClick(startTranscodedButton)
                 if (getDialog() != null) {
                     getDialog().dismiss()
                 } else {

@@ -87,7 +87,7 @@ public class MediaList extends RecyclerViewFragment {
 		super.onActivityCreated(savedInstanceState);
 		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		activity.setTitle(R.string.medias);
-		recyclerView.setAdapter(mAdapter);
+		getRecyclerView().setAdapter(mAdapter);
 		setListShown(false);
 		boolean checkVersion = parentId == 1l;
 		initViewModels();
@@ -167,7 +167,7 @@ public class MediaList extends RecyclerViewFragment {
 				mediaViewModel.getMedias(parentId).observe(MediaList.this, mediaObserver);
 			} else {
 				final String text = MessageFormat.format(getString(R.string.version_unsupported_text), MINIMUM_VERSION);
-				infoText.setText(text);
+				getInfoText().setText(text);
 				setListShown(true);
 			}
 		}else {
