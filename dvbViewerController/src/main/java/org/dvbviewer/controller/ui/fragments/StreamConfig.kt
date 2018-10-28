@@ -30,8 +30,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_stream_config.*
 import org.apache.commons.lang3.StringUtils
@@ -231,7 +232,7 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
      * @throws UrlBuilderException
      */
     private fun startVideoIntent(fileType: FileType?) {
-        val videoIntent: Intent = getVideoIntent(fileType)
+        val videoIntent: Intent = getVideoIntent(fileType) ?: return
         startActivity(videoIntent)
         if (dialog != null) {
             dialog.dismiss()
@@ -245,21 +246,20 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
      *
      * @return the video intent
      */
-    private fun getVideoIntent(fileType: FileType?): Intent {
-        val videoIntent: Intent
-        val preset = qualitySpinner.selectedItem as Preset
+    private fun getVideoIntent(fileType: FileType?): Intent? {
         if (mStreamType == StreamType.DIRECT) {
-            videoIntent = StreamUtils.getDirectUrl(mFileId, mTitle, fileType!!)
-        } else {
+            return StreamUtils.getDirectUrl(mFileId, mTitle, fileType!!)
+        } else if (qualitySpinner.selectedItemPosition >= 0){
+            val preset = qualitySpinner.selectedItem as Preset
             val encodingSpeed = encodingSpeedSpinner.selectedItemPosition
             val hours = if (TextUtils.isEmpty(startHours.text)) 0 else NumberUtils.toInt(startHours.text.toString())
             val minutes = if (TextUtils.isEmpty(startMinutes.text)) 0 else NumberUtils.toInt(startMinutes.text.toString())
             val seconds = if (TextUtils.isEmpty(startSeconds.text)) 0 else NumberUtils.toInt(startSeconds.text.toString())
             val start = 3600 * hours + 60 * minutes + seconds
             preset.encodingSpeed = encodingSpeed
-            videoIntent = StreamUtils.getTranscodedUrl(context, mFileId, mTitle, preset, fileType, start)
+            return StreamUtils.getTranscodedUrl(context, mFileId, mTitle, preset, fileType, start)
         }
-        return videoIntent
+        return null
     }
 
     /* (non-Javadoc)
