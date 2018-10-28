@@ -9,7 +9,7 @@ buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersio
 buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion} build ${buildNumber}"
 
 buildscript {
-    ext.kotlin_version = '1.2.61'
+    ext.kotlin_version = '1.2.71'
     repositories {
         jcenter()
         google()
@@ -36,7 +36,5 @@ allprojects {
         jcenter()
         google()
         mavenCentral()
-        maven { url "https://jitpack.io" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
 }
