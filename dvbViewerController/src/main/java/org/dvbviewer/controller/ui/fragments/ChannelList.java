@@ -194,7 +194,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         setSelection(mChannelIndex);
         getListView().setSelectionFromTop(mChannelIndex, (int) getResources().getDimension(R.dimen.list_preferred_item_height_small) * 3);
         setListShown(true);
-        getActivity().supportInvalidateOptionsMenu();
+        if(getActivity() != null) {
+            getActivity().invalidateOptionsMenu();
+        }
     }
 
     /*
@@ -206,10 +208,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
-        arg0.reset();
-        if (isVisible()) {
-            setListShown(true);
-        }
+
     }
 
 
