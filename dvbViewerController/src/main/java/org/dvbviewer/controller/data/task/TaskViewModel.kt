@@ -3,10 +3,8 @@ package org.dvbviewer.controller.data.task
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.android.Main
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.DmsViewModel
@@ -46,11 +44,11 @@ class TaskViewModel(application: Application) : DmsViewModel(application) {
         if(data == null) {
             return
         }
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
             var mediaList = TaskList()
             try {
                 var isSupported = false
-                async(CommonPool) {
+                async(Dispatchers.Default) {
                     isSupported = versionRepo.isSupported(MIN_VERSION)
                 }.await()
 
@@ -60,7 +58,7 @@ class TaskViewModel(application: Application) : DmsViewModel(application) {
                     return@launch
                 }
 
-                async(CommonPool) {
+                async(Dispatchers.Default) {
                     mediaList = taskRepo.taskList
                 }.await()
 

@@ -3,10 +3,8 @@ package org.dvbviewer.controller.data.stream
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.android.Main
 import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.DmsViewModel
 import org.dvbviewer.controller.entities.FFMpegPresetList
@@ -31,10 +29,10 @@ class StreamViewModel internal constructor(application: Application, private val
         if (data == null) {
             return
         }
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
             var prefs = FFMpegPresetList()
             try {
-                async(CommonPool) {
+                async(Dispatchers.Default) {
                     prefs = mRepository.getFFMpegPresets(getApplication())
                 }.await()
                 data?.value = ApiResponse.success(prefs)

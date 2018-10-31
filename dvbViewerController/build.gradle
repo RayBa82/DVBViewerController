@@ -94,7 +94,7 @@ android {
         implementation 'com.squareup.picasso:picasso:2.71828'
         implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
-        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.5"
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
 
         testImplementation 'junit:junit:4.12'
         androidTestImplementation 'commons-io:commons-io:2.5'

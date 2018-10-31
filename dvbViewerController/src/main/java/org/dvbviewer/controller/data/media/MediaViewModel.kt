@@ -3,10 +3,8 @@ package org.dvbviewer.controller.data.media
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.android.Main
 import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.DmsViewModel
 
@@ -30,10 +28,10 @@ class MediaViewModel internal constructor(application: Application, private val 
         if(data == null) {
             return
         }
-        launch(UI) {
+        GlobalScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
             var mediaList = listOf<MediaFile>()
             try {
-                async(CommonPool) {
+                async(Dispatchers.Default) {
                     mediaList = mRepository.getMedias(dirid)
                 }.await()
                 data?.value = ApiResponse.success(mediaList)
