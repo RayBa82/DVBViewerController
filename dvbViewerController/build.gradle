@@ -90,7 +90,7 @@ android {
             exclude module: 'xpp3'
         }
         implementation "android.arch.lifecycle:extensions:1.1.1"
-        annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+        kapt "android.arch.lifecycle:compiler:1.1.1"
         implementation 'com.squareup.picasso:picasso:2.71828'
         implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
@@ -145,9 +145,4 @@ if (propFile.canRead()){
 apply plugin: 'com.google.gms.google-services'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-}
-kotlin {
-    experimental {
-        coroutines "enable"
-    }
 }
