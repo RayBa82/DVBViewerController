@@ -43,8 +43,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.targets.ViewTarget;
 import com.squareup.picasso.Picasso;
 
 import org.dvbviewer.controller.R;
@@ -463,33 +461,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         mChannelIndex = position;
-        if (prefs.getBoolean(DVBViewerPreferences.KEY_SHOW_QUICK_STREAM_HINT, true)) {
-            prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_SHOW_QUICK_STREAM_HINT, false).commit();
-            showQuickstreamHint(position);
-        } else {
-            if (mCHannelSelectedListener != null) {
-                mCHannelSelectedListener.channelSelected(mGroupId, mGroupIndex, position);
-                getListView().setItemChecked(position, true);
-            }
+        if (mCHannelSelectedListener != null) {
+            mCHannelSelectedListener.channelSelected(mGroupId, mGroupIndex, position);
+            getListView().setItemChecked(position, true);
         }
-    }
-
-    private void showQuickstreamHint(int position) {
-        int firstPosition = getListView().getFirstVisiblePosition() - getListView().getHeaderViewsCount(); // This is the same as child #0
-        int wantedChild = position - firstPosition;
-        View listItem = getListView().getChildAt(wantedChild);
-        View icon = listItem.findViewById(R.id.icon);
-
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-        //can only dismiss by button click
-        co.hideOnClickOutside = false;
-        co.block = true;
-        co.centerText = true;
-        ViewTarget target = new ViewTarget(icon);
-        ShowcaseView showCase = ShowcaseView.insertShowcaseView(target, getActivity(),
-                getActivity().getString(R.string.quick_stream_hint_title), getActivity().getString(R.string.quick_stream_hint_text), co);
-        showCase.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.black_transparent));
-        showCase.show();
     }
 
     /* (non-Javadoc)

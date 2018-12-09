@@ -18,12 +18,9 @@ package org.dvbviewer.controller;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
-import com.google.android.gms.analytics.ExceptionReporter;
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.security.ProviderInstaller;
-import com.google.firebase.crash.FirebaseCrash;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -52,13 +49,6 @@ public class App extends MultiDexApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		if(BuildConfig.DEBUG){
-			try {
-				FirebaseCrash.setCrashCollectionEnabled(false);
-			}catch (IllegalStateException e) {
-				Log.w(App.class.getSimpleName(), "Error intializing Firebase, might be invalid 'google-services.json' file", e);
-			}
-		}
 		DVBViewerPreferences prefs = new DVBViewerPreferences(this);
 		Config.IS_FIRST_START = prefs.getBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, true);
 		Config.CHANNELS_SYNCED = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, false);
@@ -87,28 +77,10 @@ public class App extends MultiDexApplication {
 
 		installPlayServiceSecurityUpdates();
 
-		Picasso.Builder picassoBuilder = new Picasso.Builder(getApplicationContext());
-        OkHttp3Downloader downloader = new OkHttp3Downloader(HTTPUtil.getHttpClient());
-		Picasso picasso = picassoBuilder.downloader(downloader).build();
+		final Picasso.Builder picassoBuilder = new Picasso.Builder(getApplicationContext());
+		final OkHttp3Downloader downloader = new OkHttp3Downloader(HTTPUtil.getHttpClient());
+		final Picasso picasso = picassoBuilder.downloader(downloader).build();
         Picasso.setSingletonInstance(picasso);
-
-		ExceptionReporter myHandler =
-				new ExceptionReporter(getTracker(),
-						Thread.getDefaultUncaughtExceptionHandler(), this);
-
-		StandardExceptionParser exceptionParser =
-				new StandardExceptionParser(getApplicationContext(), null) {
-					@Override
-					public String getDescription(String threadName, Throwable t) {
-						return "{" + threadName + "} " + Log.getStackTraceString(t);
-					}
-				};
-
-		myHandler.setExceptionParser(exceptionParser);
-
-		// Make myHandler the new default uncaught exception handler.
-		Thread.setDefaultUncaughtExceptionHandler(myHandler);
-
 	}
 
 	/**
@@ -131,5 +103,5 @@ public class App extends MultiDexApplication {
         return tracker;
     }
 
-	
+
 }
