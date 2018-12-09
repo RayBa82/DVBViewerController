@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -11,6 +12,7 @@ import com.google.gson.Gson;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Preset;
+import org.dvbviewer.controller.ui.activity.VideoActivity;
 
 import java.util.Arrays;
 
@@ -62,7 +64,7 @@ public class StreamUtils {
         final SharedPreferences prefs = new DVBViewerPreferences(context).getStreamPrefs();
         boolean direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true);
         if (direct) {
-            return getDirectUrl(id, title, fileType);
+            return getDirectUrl(context, id, title, fileType);
         } else {
             return getTranscodedUrl(context, id, title, StreamUtils.getDefaultPreset(prefs), fileType, 0);
         }
@@ -103,15 +105,17 @@ public class StreamUtils {
         return videoIntent;
     }
 
-    public static Intent getDirectUrl(long id, String title, FileType fileType) {
+    public static Intent getDirectUrl(Context context, long id, String title, FileType fileType) {
         final HttpUrl.Builder builder = URLUtil.buildProtectedRSUrl();
         builder.addPathSegment("upnp");
         builder.addPathSegment(fileType.directPath);
         builder.addPathSegment(String.valueOf(id) + ".ts");
         final String videoUrl = builder.build().toString();
         Log.d(Tag, "playing video: " + videoUrl);
-        Intent videoIntent = new Intent(Intent.ACTION_VIEW);
+        Intent videoIntent = new Intent(context, VideoActivity.class);
         videoIntent.setDataAndType(Uri.parse(videoUrl), "video/mpeg");
+        final Bundle bundle = new Bundle();
+        videoIntent.putExtra(VideoActivity.EXTRA_VIDEO_URL, videoUrl);
         addTitle(videoIntent, title);
         return videoIntent;
     }

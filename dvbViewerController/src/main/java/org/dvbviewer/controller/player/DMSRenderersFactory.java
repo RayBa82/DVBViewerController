@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DMSRenderersFactory extends DefaultRenderersFactory {
 
@@ -85,7 +86,7 @@ public class DMSRenderersFactory extends DefaultRenderersFactory {
         // Native Audio Decoders
         Log.d(TAG, "Adding MediaCodecAudioRenderer");
         MediaCodecSelector mediaCodecSelector = buildMediaCodecSelector(enablePassthroughDecoder);
-        out.add(new MediaCodecAudioRenderer(mediaCodecSelector, drmSessionManager,
+        out.add(new MediaCodecAudioRenderer(context, mediaCodecSelector, drmSessionManager,
                 true, eventHandler, eventListener, audioCapabilities));
 
         // FFMpeg Audio Decoder
@@ -105,9 +106,10 @@ public class DMSRenderersFactory extends DefaultRenderersFactory {
      */
     private MediaCodecSelector buildMediaCodecSelector(final boolean enablePassthroughDecoder) {
         return new MediaCodecSelector() {
+
             @Override
-            public MediaCodecInfo getDecoderInfo(String mimeType, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
-                return MediaCodecUtil.getDecoderInfo(mimeType, requiresSecureDecoder);
+            public List<MediaCodecInfo> getDecoderInfos(String mimeType, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
+                return MediaCodecUtil.getDecoderInfos(mimeType, requiresSecureDecoder);
             }
 
             @Override

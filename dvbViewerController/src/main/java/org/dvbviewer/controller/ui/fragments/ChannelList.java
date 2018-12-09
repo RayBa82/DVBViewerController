@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -245,7 +244,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void streamDirect(final Cursor c) {
         try {
             Channel chan = cursorToChannel(c);
-            final Intent videoIntent = StreamUtils.getDirectUrl(chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            final Intent videoIntent = StreamUtils.getDirectUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
             getActivity().startActivity(videoIntent);
             prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply();
             AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());

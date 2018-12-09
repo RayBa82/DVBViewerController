@@ -248,7 +248,7 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
      */
     private fun getVideoIntent(fileType: FileType?): Intent? {
         if (mStreamType == StreamType.DIRECT) {
-            return StreamUtils.getDirectUrl(mFileId, mTitle, fileType!!)
+            return StreamUtils.getDirectUrl(context, mFileId, mTitle, fileType!!)
         } else if (qualitySpinner.selectedItemPosition >= 0){
             val preset = qualitySpinner.selectedItem as Preset
             val encodingSpeed = encodingSpeedSpinner.selectedItemPosition
