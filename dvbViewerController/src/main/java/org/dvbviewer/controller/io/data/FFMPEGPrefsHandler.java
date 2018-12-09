@@ -1,5 +1,6 @@
 package org.dvbviewer.controller.io.data;
 
+
 import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.entities.FFMpegPresetList;
 import org.dvbviewer.controller.entities.Preset;
@@ -15,6 +16,9 @@ public class FFMPEGPrefsHandler {
 
     public FFMpegPresetList parse(String ffmpegprefs) throws Exception {
         FFMpegPresetList ffPrefs = new FFMpegPresetList();
+        if(StringUtils.isBlank(ffmpegprefs)) {
+            return ffPrefs;
+        }
         INIParser iniParser = new INIParser(ffmpegprefs);
         ffPrefs.setVersion(iniParser.getString("Version", "Version"));
         Iterator<String> sectionIterator = iniParser.getSections();

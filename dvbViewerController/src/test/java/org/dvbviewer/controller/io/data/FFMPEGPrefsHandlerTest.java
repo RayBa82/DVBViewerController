@@ -22,8 +22,8 @@ public class FFMPEGPrefsHandlerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertNotNull(result);
-        assertNotNull(result.getPresets());
+        assertNotNull("result is null", result);
+        assertNotNull("presets are null", result.getPresets());
     }
 
     @Test
