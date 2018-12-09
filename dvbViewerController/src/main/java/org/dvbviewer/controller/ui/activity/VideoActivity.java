@@ -10,8 +10,8 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -24,20 +24,17 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ts.TsExtractor;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.io.HTTPUtil;
-import org.dvbviewer.controller.player.DMSRenderersFactory;
 
+import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
 import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES;
 
 
@@ -49,9 +46,7 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
 
     private static final String TAG = VideoActivity.class.getSimpleName();
     public static final String EXTRA_VIDEO_URL = TAG + "_EXTRA_VIDEO_URL";
-    private PlayerView playerView;
     private SimpleExoPlayer player;
-    private DefaultExtractorsFactory mExtractorsFactory;
     private PowerManager.WakeLock screenLock;
 
     @Override
@@ -59,25 +54,21 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         screenLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "dvbviewer:screenLock");
 
 // 1. Create a default TrackSelector
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory();
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+        final TrackSelector trackSelector = new DefaultTrackSelector();
 
 // 2. Create a default LoadControl
-        DefaultAllocator allocator = new DefaultAllocator(true, C.DEFAULT_VIDEO_BUFFER_SIZE);
-        DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
+        final DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
                 .setBufferDurationsMs(15000, 50000, 250, 2000)
-                .setAllocator(allocator)
-                .setTargetBufferBytes(C.LENGTH_UNSET)
                 .createDefaultLoadControl();
 
 // 3. Create the player
-        RenderersFactory renderersFactory = new DMSRenderersFactory(getApplicationContext());
+        final RenderersFactory renderersFactory = new DefaultRenderersFactory(getApplicationContext(), EXTENSION_RENDERER_MODE_PREFER);
         player = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), renderersFactory, trackSelector, loadControl);
-        playerView = findViewById(R.id.player_view);
+        PlayerView playerView = findViewById(R.id.player_view);
 
 //Set media controller
         playerView.setUseController(true);
@@ -86,7 +77,7 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
 // Bind the player to the view.
         playerView.setPlayer(player);
 
-        Uri videoUri =Uri.parse(getIntent().getStringExtra(EXTRA_VIDEO_URL));
+        final Uri videoUri =Uri.parse(getIntent().getStringExtra(EXTRA_VIDEO_URL));
 
 //Measures bandwidth during playback. Can be null if not required.
         final DefaultBandwidthMeter bandwidthMeterA = new DefaultBandwidthMeter();
@@ -99,9 +90,9 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
                 bandwidthMeterA
         );
  //|
-        mExtractorsFactory = new DefaultExtractorsFactory();
+        final DefaultExtractorsFactory mExtractorsFactory = new DefaultExtractorsFactory();
         mExtractorsFactory.setTsExtractorFlags(FLAG_ALLOW_NON_IDR_KEYFRAMES);
-        mExtractorsFactory.setTsExtractorMode(TsExtractor.MODE_SINGLE_PMT);
+        mExtractorsFactory.setTsExtractorMode(TsExtractor.MODE_MULTI_PMT);
         final MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                 .setExtractorsFactory(mExtractorsFactory)
                 .createMediaSource(videoUri);
