@@ -117,12 +117,6 @@ android {
         androidTestImplementation 'commons-io:commons-io:2.6'
         androidTestImplementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.0'
         androidTestImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.6.0'
-        androidTestImplementation('com.android.support.test:runner:0.5') {
-            // Necessary if your app targets Marshmallow (since the test runner
-            // hasn't moved to Marshmallow yet)
-            exclude group: 'com.android.support', module: 'support-annotations'
-        }
-
         androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     }
 
