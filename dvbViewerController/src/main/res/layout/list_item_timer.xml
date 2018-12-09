@@ -31,7 +31,7 @@
         android:layout_toLeftOf="@+id/contextMenu"
         android:layout_toRightOf="@+id/recIndicator"
         android:ellipsize="marquee"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <TextView
         android:id="@+id/title"
@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
-            android:maxLines="1" />
+            android:singleLine="true" />
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.ClickableRelativeLayout>
