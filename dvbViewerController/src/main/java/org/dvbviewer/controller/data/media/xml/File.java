@@ -16,9 +16,9 @@
 package org.dvbviewer.controller.data.media.xml;
 
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
+import com.tickaroo.tikxml.annotation.Attribute;
+import com.tickaroo.tikxml.annotation.PropertyElement;
+import com.tickaroo.tikxml.annotation.Xml;
 
 /**
  * The Class Task.
@@ -26,7 +26,7 @@ import org.simpleframework.xml.Root;
  * @author RayBa
  * @date 01.07.2012
  */
-@Root(name = "file", strict = false)
+@Xml(name = "file")
 public class File {
 
     @Attribute(name = "name")
@@ -47,7 +47,7 @@ public class File {
     @Attribute(name = "vres")
     private int vres;
 
-    @Element(name = "thumb", required = false)
+    @PropertyElement(name = "thumb")
     private String thumb;
 
     public String getName() {

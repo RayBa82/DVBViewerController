@@ -1,7 +1,7 @@
 package org.dvbviewer.controller.data.media.xml;
 
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
+import com.tickaroo.tikxml.annotation.Element;
+import com.tickaroo.tikxml.annotation.Xml;
 
 import java.util.List;
 
@@ -9,13 +9,13 @@ import java.util.List;
  * Created by rbaun on 02.04.18.
  */
 
-@Root(name = "videodirsfiles", strict = false)
+@Xml(name = "videodirsfiles")
 public class VideoDirsFiles {
 
-    @ElementList(inline = true, required = false)
+    @Element
     private List<Dir> dirs;
 
-    @ElementList(inline = true, required = false)
+    @Element
     private List<File> files;
 
     public List<Dir> getDirs() {

@@ -16,8 +16,8 @@
 package org.dvbviewer.controller.data.media.xml;
 
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Root;
+import com.tickaroo.tikxml.annotation.Attribute;
+import com.tickaroo.tikxml.annotation.Xml;
 
 /**
  * The Class Task.
@@ -25,7 +25,7 @@ import org.simpleframework.xml.Root;
  * @author RayBa
  * @date 01.07.2012
  */
-@Root(name = "dir", strict = false)
+@Xml(name = "dir")
 public class Dir {
 
 	@Attribute(name = "path")

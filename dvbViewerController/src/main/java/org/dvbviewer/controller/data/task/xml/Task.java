@@ -16,9 +16,9 @@
 package org.dvbviewer.controller.data.task.xml;
 
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
+import com.tickaroo.tikxml.annotation.Attribute;
+import com.tickaroo.tikxml.annotation.PropertyElement;
+import com.tickaroo.tikxml.annotation.Xml;
 
 /**
  * The Class Task.
@@ -26,16 +26,16 @@ import org.simpleframework.xml.Root;
  * @author RayBa
  * @date 01.07.2012
  */
-@Root(name = "task", strict = false)
+@Xml(name = "task")
 public class Task {
 
     @Attribute(name = "type")
     private String type;
 
-	@Element
+	@PropertyElement
 	private String name;
 	
-    @Element
+    @PropertyElement
 	private String action;
 
 

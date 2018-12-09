@@ -16,15 +16,15 @@
 package org.dvbviewer.controller.data.task.xml;
 
 
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
+import com.tickaroo.tikxml.annotation.Element;
+import com.tickaroo.tikxml.annotation.Xml;
 
 import java.util.List;
 
-@Root(name = "tasklist", strict = false)
+@Xml(name = "tasklist")
 public class TaskList {
 
-    @ElementList(inline = true)
+    @Element
     private List<TaskGroup> groups;
 
     public List<TaskGroup> getGroups() {

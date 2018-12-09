@@ -16,9 +16,9 @@
 package org.dvbviewer.controller.data.version.xml;
 
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Root;
-import org.simpleframework.xml.Text;
+import com.tickaroo.tikxml.annotation.Attribute;
+import com.tickaroo.tikxml.annotation.PropertyElement;
+import com.tickaroo.tikxml.annotation.Xml;
 
 
 /**
@@ -27,13 +27,13 @@ import org.simpleframework.xml.Text;
  * @author RayBa
  * @date 01.07.2012
  */
-@Root(name = "version")
+@Xml(name = "version")
 public class Version {
 
     @Attribute(name = "iver")
 	private int  internalVersion;
 
-    @Text
+    @PropertyElement
 	private String version;
 
     public int getInternalVersion() {
