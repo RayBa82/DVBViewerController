@@ -21,7 +21,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ts.TsExtractor;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -36,6 +35,7 @@ import org.dvbviewer.controller.io.HTTPUtil;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
 import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES;
+import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_DETECT_ACCESS_UNITS;
 
 
 /**
@@ -91,17 +91,13 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
         );
  //|
         final DefaultExtractorsFactory mExtractorsFactory = new DefaultExtractorsFactory();
-        mExtractorsFactory.setTsExtractorFlags(FLAG_ALLOW_NON_IDR_KEYFRAMES);
-        mExtractorsFactory.setTsExtractorMode(TsExtractor.MODE_MULTI_PMT);
+        mExtractorsFactory.setTsExtractorFlags(FLAG_DETECT_ACCESS_UNITS | FLAG_ALLOW_NON_IDR_KEYFRAMES);
         final MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                 .setExtractorsFactory(mExtractorsFactory)
                 .createMediaSource(videoUri);
 
 
-// Prepare the player with the source.
-        player.prepare(videoSource);
-
-        player.addListener(new Player.DefaultEventListener() {
+        player.addListener(new Player.EventListener() {
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -131,8 +127,10 @@ public class VideoActivity extends AppCompatActivity implements VideoRendererEve
 
         });
 
-        player.setPlayWhenReady(true); //run file/link when ready to play.
-        player.addVideoDebugListener(this); //for listening to resolution change and  outputing the resolution
+        // Prepare the player with the source.
+        player.prepare(videoSource);
+        player.setPlayWhenReady(true);
+
     }//End of onCreate
 
     @Override
