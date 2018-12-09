@@ -41,4 +41,8 @@ public class AnalyticsTracker {
         trackEvent(app, "Streaming", "Direct stream");
     }
 
+    public static void trackMediaStream(Application app){
+        trackEvent(app, "MediaStreaming", "Quickstream");
+    }
+
 }

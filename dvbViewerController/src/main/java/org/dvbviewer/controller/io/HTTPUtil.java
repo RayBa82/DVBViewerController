@@ -17,22 +17,15 @@ package org.dvbviewer.controller.io;
 
 import android.support.annotation.NonNull;
 
-import org.dvbviewer.controller.io.exception.AuthenticationException;
-import org.dvbviewer.controller.io.exception.DefaultHttpException;
-import org.dvbviewer.controller.io.exception.FileLockedException;
-import org.dvbviewer.controller.io.exception.UnsuccessfullHttpException;
-import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.io.okhttp3.DMSInterceptor;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Callback;
-import okhttp3.Credentials;
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -47,39 +40,10 @@ public class HTTPUtil {
 
     private static OkHttpClient httpClient;
 
-    private static final Interceptor dmsInterceptor = new Interceptor() {
-        @Override
-        public Response intercept(@NonNull Chain chain) throws IOException {
-            final String credentials = Credentials.basic(ServerConsts.REC_SERVICE_USER_NAME, ServerConsts.REC_SERVICE_PASSWORD);
-            final Request.Builder builder = chain.request()
-                    .newBuilder()
-                    .addHeader("Authorization", credentials)
-                    .addHeader("Connection", "close");
-            final Response response = chain.proceed(builder.build());
-            if (!response.isSuccessful()) {
-                final String url = chain.request().url().toString();
-                final IOException e;
-                switch (response.code()) {
-                    case 401:
-                        e = new AuthenticationException();
-                        break;
-                    case 423:
-                        e =  new FileLockedException();
-                        break;
-                    default:
-                        e =  new UnsuccessfullHttpException(response.code());
-                        break;
-                }
-                throw new DefaultHttpException(url, e);
-            }
-            return response;
-        }
-    };
-
-
     public static OkHttpClient getHttpClient() {
         if (httpClient == null) {
             final X509TrustManager trustManager = SSLUtil.getTrustAllTrustManager();
+            final DMSInterceptor dmsInterceptor = new DMSInterceptor();
             final HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             httpClient = new OkHttpClient.Builder()
@@ -87,8 +51,8 @@ public class HTTPUtil {
                     .hostnameVerifier(new SSLUtil.VerifyAllHostnameVerifiyer())
                     .connectTimeout(5000, TimeUnit.MILLISECONDS)
                     .readTimeout(5000, TimeUnit.MILLISECONDS)
-                    .addInterceptor(loggingInterceptor)
                     .addInterceptor(dmsInterceptor)
+                    .addInterceptor(loggingInterceptor)
                     .build();
         }
         return httpClient;

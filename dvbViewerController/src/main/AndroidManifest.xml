@@ -17,7 +17,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.DVB"
-        android:windowSoftInputMode="adjustPan|adjustResize">
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:windowSoftInputMode="adjustPan|adjustResize"
+
+        android:fullBackupContent="@xml/backup_descriptor">
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/analytics_global_config" />
@@ -58,7 +61,12 @@
             android:label="@string/preferences" />
         <activity
             android:name=".ui.phone.ConnectionPreferencesActivity"
-            android:label="@string/preferences" />
+            android:label="@string/preferences">
+            <intent-filter>
+                <action android:name="org.dvbviewer.controller.DMSConnectionPreferences" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.phone.EpgPagerActivity"
             android:label="@string/channelEPG"
@@ -71,7 +79,7 @@
             android:label="@string/streamConfig" />
         <activity
             android:name=".ui.phone.IEpgDetailsActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"/>
         <activity android:name=".ui.phone.AboutActivity" />
         <activity android:name=".ui.phone.MedialistActivity" />
         <activity android:name=".ui.activity.VideoActivity"
@@ -81,7 +89,7 @@
 
         <provider
             android:name=".data.DvbProvider"
-            android:authorities="org.dvbviewer.controller.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="false" />
 
         <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
@@ -97,17 +105,6 @@
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
             android:exported="false" />
-
-        <!-- Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
-             installation campaign reporting -->
-        <receiver
-            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
     </application>
 

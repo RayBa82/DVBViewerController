@@ -49,19 +49,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.utils.IoUtils;
+import com.squareup.picasso.Picasso;
 
+import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.entities.Recording;
 import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.io.data.RecordingHandler;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
-import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
@@ -70,10 +66,10 @@ import org.dvbviewer.controller.utils.ArrayListAdapter;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -154,7 +150,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 				} catch (Exception e) {
 					catchException(getClass().getSimpleName(), e);
 				}finally {
-					IoUtils.closeSilently(is);
+					IOUtils.closeQuietly(is);
 				}
 				return result;
 			}
@@ -211,7 +207,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 			case R.id.menuStreamConfig:
 				if (UIUtils.isTablet(getContext())) {
 					Bundle arguments = getIntentExtras(mAdapter.getItem(selectedPosition));
-					StreamConfig cfg = StreamConfig.newInstance();
+					StreamConfig cfg = StreamConfig.Companion.newInstance();
 					cfg.setArguments(arguments);
 					cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
 				} else {
@@ -235,7 +231,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 
 	private void streamDirect(IEPG recording) {
 		try {
-			final Intent videoIntent = StreamConfig.getDirectUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+			final Intent videoIntent = StreamUtils.getDirectUrl(recording.getId(), recording.getTitle(), FileType.RECORDING);
 			getActivity().startActivity(videoIntent);
 			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 		} catch (ActivityNotFoundException e) {
@@ -247,14 +243,12 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 
 	private void streamTranscoded(IEPG recording) {
 		try {
-			final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+			final Intent videoIntent = StreamUtils.getTranscodedUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 			getActivity().startActivity(videoIntent);
 			AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 		} catch (ActivityNotFoundException e) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 			builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
-			e.printStackTrace();
-		} catch (UrlBuilderException e) {
 			e.printStackTrace();
 		}
 	}
@@ -262,10 +256,10 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 	@NonNull
 	private Bundle getIntentExtras(IEPG recording) {
 		Bundle arguments = new Bundle();
-		arguments.putLong(StreamConfig.EXTRA_FILE_ID, recording.getId());
-		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.RECORDING);
-		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-		arguments.putString(StreamConfig.EXTRA_TITLE, recording.getTitle());
+		arguments.putLong(StreamConfig.Companion.getEXTRA_FILE_ID(), recording.getId());
+		arguments.putParcelable(StreamConfig.Companion.getEXTRA_FILE_TYPE(), FileType.RECORDING);
+		arguments.putInt(StreamConfig.Companion.getEXTRA_DIALOG_TITLE_RES(), R.string.streamConfig);
+		arguments.putString(StreamConfig.Companion.getEXTRA_TITLE(), recording.getTitle());
 		return arguments;
 	}
 
@@ -293,8 +287,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 	 */
 	public class RecordingAdapter extends ArrayListAdapter<Recording> {
 
-		private final ImageLoader imageLoader;
-		private final DisplayImageOptions options;
+		final Drawable placeHolder;
 
 		/**
 		 * The Constructor.
@@ -306,15 +299,7 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 		 */
 		public RecordingAdapter(Context context) {
 			super();
-			imageLoader = ImageLoader.getInstance();
-			final Drawable placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
-			options = new DisplayImageOptions.Builder()
-					.cacheInMemory(true)
-					.cacheOnDisk(true)
-					.showImageForEmptyUri(placeHolder) // resource or drawable
-					.showImageOnFail(placeHolder) // r
-					.displayer(new FadeInBitmapDisplayer(500, true, true, false))
-					.build();
+			placeHolder = AppCompatResources.getDrawable(context, R.drawable.ic_play_white_40dp);
 		}
 
 		/*
@@ -357,7 +342,13 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 					holder.thumbNailContainer.setVisibility(View.GONE);
 				}else{
 					holder.thumbNailContainer.setVisibility(View.VISIBLE);
-					imageLoader.displayImage(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail(), holder.thumbNail, options);
+                    holder.thumbNail.setImageDrawable(null);
+                    Picasso.get()
+                            .load(ServerConsts.REC_SERVICE_URL + ServerConsts.THUMBNAILS_VIDEO_URL + o.getThumbNail())
+                            .placeholder(placeHolder)
+                            .fit()
+                            .centerInside()
+                            .into(holder.thumbNail);
 				}
 				holder.thumbNailContainer.setTag(position);
 				holder.date.setText(DateUtils.formatDateTime(getContext(), o.getStart().getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH));
@@ -602,14 +593,12 @@ public class RecordingList extends BaseListFragment implements LoaderCallbacks<L
 				try {
 					selectedPosition = (Integer) v.getTag();
 					final IEPG recording = mAdapter.getItem(selectedPosition);
-					final Intent videoIntent = StreamConfig.buildQuickUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
+					final Intent videoIntent = StreamUtils.buildQuickUrl(getContext(), recording.getId(), recording.getTitle(), FileType.RECORDING);
 					getActivity().startActivity(videoIntent);
 					AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
 				} catch (ActivityNotFoundException e) {
 					AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 					builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
-					e.printStackTrace();
-				} catch (UrlBuilderException e) {
 					e.printStackTrace();
 				}
 				break;

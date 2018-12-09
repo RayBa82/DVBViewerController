@@ -3,55 +3,63 @@
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/selectable_background"
     android:layout_gravity="center_horizontal"
+    android:background="@drawable/selectable_background"
     android:clickable="true"
     android:foreground="?attr/selectableItemBackground"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
     app:cardUseCompatPadding="true">
 
-        <FrameLayout
-            android:id="@+id/thumbNailContainer"
-            android:layout_width="80dp"
-            android:layout_margin="4dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/selectable_background"
-            android:clickable="true"
-            android:padding="1dp">
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="4dp"
+        android:adjustViewBounds="true"
+        app:srcCompat="@drawable/ic_folder_white_24dp" />
 
-            <ImageView
-                android:id="@+id/thumbNail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="0dp"
-                android:layout_gravity="center_vertical"
-                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-                android:duplicateParentState="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:padding="0dp"
-                android:scaleType="centerInside" />
-        </FrameLayout>
+    <FrameLayout
+        android:id="@+id/thumbNailContainer"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="4dp"
+        android:background="@drawable/selectable_background"
+        android:clickable="true"
+        android:padding="1dp">
 
-        <TextView
-            android:layout_margin="4dp"
-            android:id="@+id/name"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <ImageView
+            android:id="@+id/thumbNail"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            />
+            android:layout_margin="0dp"
+            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+            android:duplicateParentState="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="0dp"
+            android:scaleType="centerInside" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="4dp"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <LinearLayout
         android:id="@id/widget_frame"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="top"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/contextMenu"
@@ -66,4 +74,4 @@
 
     </LinearLayout>
 
-    </org.dvbviewer.controller.ui.widget.CheckableLinearLayout>
+</org.dvbviewer.controller.ui.widget.CheckableLinearLayout>

@@ -21,6 +21,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.Menu;
@@ -32,25 +33,23 @@ import android.widget.Spinner;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
+import org.dvbviewer.controller.data.media.MediaFile;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.IEPG;
-import org.dvbviewer.controller.entities.VideoFile;
-import org.dvbviewer.controller.io.UrlBuilderException;
-import org.dvbviewer.controller.ui.adapter.VideoAdapter;
+import org.dvbviewer.controller.ui.adapter.MediaAdapter;
 import org.dvbviewer.controller.ui.fragments.ChannelList;
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener;
 import org.dvbviewer.controller.ui.fragments.ChannelPager;
 import org.dvbviewer.controller.ui.fragments.Dashboard;
 import org.dvbviewer.controller.ui.fragments.Dashboard.OnDashboardButtonClickListener;
 import org.dvbviewer.controller.ui.fragments.EPGDetails;
-import org.dvbviewer.controller.ui.fragments.MediaFragment;
+import org.dvbviewer.controller.ui.fragments.MediaList;
 import org.dvbviewer.controller.ui.fragments.RecordingList;
 import org.dvbviewer.controller.ui.fragments.Remote;
 import org.dvbviewer.controller.ui.fragments.StatusList;
 import org.dvbviewer.controller.ui.fragments.StreamConfig;
 import org.dvbviewer.controller.ui.fragments.TaskListFragment;
 import org.dvbviewer.controller.ui.fragments.TimerList;
-import org.dvbviewer.controller.ui.listener.OnBackPressedListener;
 import org.dvbviewer.controller.ui.phone.AboutActivity;
 import org.dvbviewer.controller.ui.phone.ChannelListActivity;
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity;
@@ -64,6 +63,9 @@ import org.dvbviewer.controller.ui.phone.TimerlistActivity;
 import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.FileType;
+import org.dvbviewer.controller.utils.NetUtils;
+import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.StreamUtils;
 
 import java.util.List;
 
@@ -72,7 +74,7 @@ import java.util.List;
  *
  * @author RayBa
  */
-public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener, IEpgDetailsActivity.OnIEPGClickListener, VideoAdapter.OnVideoClickListener {
+public class HomeActivity extends GroupDrawerActivity implements OnClickListener, OnChannelSelectedListener, OnDashboardButtonClickListener, Remote.OnTargetsChangedListener, IEpgDetailsActivity.OnIEPGClickListener, MediaAdapter.OnMediaClickListener {
 
     public static final String ENABLE_DRAWER = "ENABLE_DRAWER";
 	public static final String TITLE 		 = "title";
@@ -82,7 +84,6 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	private DVBViewerPreferences 	prefs;
     private ChannelPager chans;
     private boolean enableDrawer;
-	private OnBackPressedListener onBackPressedListener;
 
     /* (non-Javadoc)
      * @see org.dvbviewer.controller.ui.base.BaseActivity#onCreate(android.os.Bundle)
@@ -171,12 +172,13 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	 */
 	@Override
 	public void onDashboarButtonClick(View v) {
-		onBackPressedListener = null;
+		FragmentManager fm = getSupportFragmentManager();
+		fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 		switch (v.getId()) {
 			case R.id.home_btn_remote:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new Remote());
 					tran.commit();
 					setTitle(R.string.remote);
@@ -187,7 +189,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_channels:
 				if (multiContainer != null) {
 					enableDrawer = true;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					chans = new ChannelPager();
 					chans.setHasOptionsMenu(true);
 					Bundle bundle = new Bundle();
@@ -203,7 +205,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_timers:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new TimerList());
 					tran.commit();
 				} else {
@@ -214,7 +216,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_recordings:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new RecordingList());
 					tran.commit();
 					setTitle(R.string.recordings);
@@ -228,7 +230,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_tasks:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new TaskListFragment());
 					tran.commit();
 					setTitle(R.string.tasks);
@@ -239,7 +241,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_status:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+					FragmentTransaction tran = fm.beginTransaction();
 					tran.replace(multiContainer.getId(), new StatusList());
 					tran.commit();
 					setTitle(R.string.status);
@@ -250,10 +252,12 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 			case R.id.home_btn_medias:
 				if (multiContainer != null) {
 					enableDrawer = false;
-					final MediaFragment mediaFragment = new MediaFragment();
-					onBackPressedListener = mediaFragment;
-					FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
-					tran.replace(multiContainer.getId(), mediaFragment);
+					final Bundle b = new Bundle();
+					b.putLong(MediaList.KEY_PARENT_ID, 1);
+					final MediaList mediaList = new MediaList();
+					mediaList.setArguments(b);
+					FragmentTransaction tran = fm.beginTransaction();
+					tran.replace(multiContainer.getId(), mediaList);
 					tran.commit();
 				} else {
 					startActivity(new Intent(this, MedialistActivity.class));
@@ -279,12 +283,22 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menuAbout:
-			startActivity(new Intent(this, AboutActivity.class));
-			return true;
+			case R.id.menuAbout:
+				startActivity(new Intent(this, AboutActivity.class));
+				return true;
+			case R.id.menuWOL:
+				Runnable wakeOnLanRunnabel = new Runnable() {
 
-		default:
-			break;
+					@Override
+					public void run() {
+						NetUtils.sendWakeOnLan(ServerConsts.REC_SERVICE_WOL_PORT);
+					}
+				};
+				Thread wakeOnLanThread = new Thread(wakeOnLanRunnabel);
+				wakeOnLanThread.start();
+				return true;
+			default:
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -341,18 +355,6 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
     }
 
 	@Override
-	public void onBackPressed() {
-		boolean result = false;
-		if(onBackPressedListener != null) {
-			result = onBackPressedListener.onBackPressed();
-		}
-		if(!result) {
-			super.onBackPressed();
-		}
-
-	}
-
-	@Override
 	public void onIEPGClick(IEPG iepg) {
 		EPGDetails details = new EPGDetails();
 		Bundle bundle = new Bundle();
@@ -362,31 +364,47 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	}
 
 	@Override
-	public void onVideoClick(VideoFile videoFile) {
+	public void onMediaClick(MediaFile mediaFile) {
+		if(mediaFile.getDirId() > 0) {
+
+			final MediaList mediaList = new MediaList();
+			final Bundle b = new Bundle();
+			b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getDirId());
+			mediaList.setArguments(b);
+			FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
+			tran.replace(multiContainer.getId(), mediaList);
+			tran.addToBackStack(MediaList.class.getName() + mediaFile.getId());
+			tran.commit();
+
+		} else {
+			Bundle arguments = new Bundle();
+			arguments.putLong(StreamConfig.Companion.getEXTRA_FILE_ID(), mediaFile.getId());
+			arguments.putParcelable(StreamConfig.Companion.getEXTRA_FILE_TYPE(), FileType.VIDEO);
+			arguments.putInt(StreamConfig.Companion.getEXTRA_DIALOG_TITLE_RES(), R.string.streamConfig);
+			arguments.putString(StreamConfig.Companion.getEXTRA_TITLE(), mediaFile.getName());
+			StreamConfig cfg = StreamConfig.Companion.newInstance();
+			cfg.setArguments(arguments);
+			cfg.show(getSupportFragmentManager(), StreamConfig.class.getName());
+		}
+
+	}
+
+	@Override
+	public void onMediaStreamClick(MediaFile mediaFile) {
+		final Intent videoIntent = StreamUtils.buildQuickUrl(this, mediaFile.getId(), mediaFile.getName(), FileType.VIDEO);
+		startActivity(videoIntent);
+		AnalyticsTracker.trackQuickStream(getApplication());
+	}
+
+	@Override
+	public void onMediaContextClick(MediaFile mediaFile) {
 		Bundle arguments = new Bundle();
-		arguments.putLong(StreamConfig.EXTRA_FILE_ID, videoFile.getId());
-		arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.VIDEO);
-		arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-		arguments.putString(StreamConfig.EXTRA_TITLE, videoFile.getTitle());
-		StreamConfig cfg = StreamConfig.newInstance();
+		arguments.putLong(StreamConfig.Companion.getEXTRA_FILE_ID(), mediaFile.getId());
+		arguments.putParcelable(StreamConfig.Companion.getEXTRA_FILE_TYPE(), FileType.VIDEO);
+		arguments.putInt(StreamConfig.Companion.getEXTRA_DIALOG_TITLE_RES(), R.string.streamConfig);
+		arguments.putString(StreamConfig.Companion.getEXTRA_TITLE(), mediaFile.getName());
+		StreamConfig cfg = StreamConfig.Companion.newInstance();
 		cfg.setArguments(arguments);
 		cfg.show(getSupportFragmentManager(), StreamConfig.class.getName());
 	}
-
-	@Override
-	public void onVideoStreamClick(VideoFile videoFile) {
-		try {
-			final Intent videoIntent = StreamConfig.buildQuickUrl(this, videoFile.getId(), videoFile.getName(), FileType.VIDEO);
-			startActivity(videoIntent);
-			AnalyticsTracker.trackQuickStream(getApplication());
-		} catch (UrlBuilderException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void onVideoContextClick(VideoFile videoFile) {
-
-	}
-
 }

@@ -38,9 +38,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.utils.IoUtils;
+import com.squareup.picasso.Picasso;
 
+import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
@@ -121,7 +121,6 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ImageLoader mImageCacher = ImageLoader.getInstance();
         fillFromBundle(getArguments());
         mAdapter = new ChannelEPGAdapter(getContext());
         setListAdapter(mAdapter);
@@ -129,9 +128,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         getListView().setOnItemClickListener(this);
         if(header != null && channel != null){
             channelLogo.setImageBitmap(null);
-            mImageCacher.cancelDisplayTask(channelLogo);
             String url = ServerConsts.REC_SERVICE_URL + "/" + logoUrl;
-            mImageCacher.displayImage(url, channelLogo);
+            Picasso.get()
+                    .load(url)
+                    .into(channelLogo);
             channelName.setText(channel);
             if (DateUtils.isToday(mDateInfo.getEpgDate())) {
                 dayIndicator.setText(R.string.today);
@@ -201,10 +201,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
 
                 } catch (Exception e) {
                     catchException(getClass().getSimpleName(), e);
-                    IoUtils.closeSilently(cursor);
+                    IOUtils.closeQuietly(cursor);
                 }
                 finally {
-                    IoUtils.closeSilently(is);
+                    IOUtils.closeQuietly(is);
                 }
                 return cursor;
             }
@@ -252,9 +252,9 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         View v = super.onCreateView(inflater, container, savedInstanceState);
         if (v != null){
             header = v.findViewById(R.id.epg_header);
-            channelLogo = (ImageView) v.findViewById(R.id.icon);
-            channelName = (TextView) v.findViewById(R.id.title);
-            dayIndicator = (TextView) v.findViewById(R.id.dayIndicator);
+            channelLogo = v.findViewById(R.id.icon);
+            channelName = v.findViewById(R.id.title);
+            dayIndicator = v.findViewById(R.id.dayIndicator);
         }
         return v;
     }
@@ -348,10 +348,10 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View view = LayoutInflater.from(context).inflate(R.layout.list_row_epg, parent, false);
             ViewHolder holder = new ViewHolder();
-            holder.startTime = (TextView) view.findViewById(R.id.startTime);
-            holder.title = (TextView) view.findViewById(R.id.title);
-            holder.description = (TextView) view.findViewById(R.id.description);
-            holder.contextMenu = (ImageView) view.findViewById(R.id.contextMenu);
+            holder.startTime = view.findViewById(R.id.startTime);
+            holder.title = view.findViewById(R.id.title);
+            holder.description = view.findViewById(R.id.description);
+            holder.contextMenu = view.findViewById(R.id.contextMenu);
             holder.contextMenu.setOnClickListener(ChannelEpg.this);
             view.setTag(holder);
             return view;

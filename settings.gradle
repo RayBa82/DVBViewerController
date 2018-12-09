@@ -1,4 +1,3 @@
-include ':showCaseView'
 include ':dvbViewerController'
 
 gradle.ext.exoplayerRoot = '../ExoPlayer'

@@ -29,9 +29,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.io.APIClient;
+import org.dvbviewer.controller.io.api.APIClient;
+import org.dvbviewer.controller.io.api.DMSInterface;
 import org.dvbviewer.controller.io.exception.AuthenticationException;
-import org.dvbviewer.controller.io.DMSInterface;
 import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.xml.sax.SAXException;
 
@@ -79,6 +79,9 @@ public class BaseFragment extends Fragment {
      * @param e   the Excetpion to catch
      */
     protected void catchException(String tag, Exception e) {
+        if(getContext() == null) {
+            return;
+        }
         Log.e(tag, "Error loading ListData", e);
         final String message;
         if (e instanceof AuthenticationException) {
@@ -88,7 +91,7 @@ public class BaseFragment extends Fragment {
         } else if (e instanceof SAXException) {
             message = getString(R.string.error_parsing_xml);
         } else {
-            message = getString(R.string.error_common)
+            message = getStringSafely(R.string.error_common)
                     + "\n\n"
                     + (e.getMessage() != null ? e.getMessage() : e.getClass().getName());
         }

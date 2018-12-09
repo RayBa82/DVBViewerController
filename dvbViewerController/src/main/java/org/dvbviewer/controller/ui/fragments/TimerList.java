@@ -22,7 +22,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
@@ -41,14 +40,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.utils.IoUtils;
-
+import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Timer;
-import org.dvbviewer.controller.io.exception.AuthenticationException;
-import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.data.TimerHandler;
+import org.dvbviewer.controller.io.exception.AuthenticationException;
+import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
@@ -130,7 +128,7 @@ public class TimerList extends BaseListFragment implements AsyncCallback, Loader
 				} catch (Exception e) {
 					catchException(getClass().getSimpleName(), e);
 				}finally {
-					IoUtils.closeSilently(xml);
+					IOUtils.closeQuietly(xml);
 				}
 				return result;
 			}

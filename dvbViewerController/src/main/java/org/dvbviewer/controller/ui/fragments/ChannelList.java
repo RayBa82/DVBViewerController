@@ -43,9 +43,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.targets.ViewTarget;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.ProviderConsts;
@@ -55,8 +53,6 @@ import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand;
-import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet;
-import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.base.BaseListFragment;
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity;
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity;
@@ -65,6 +61,7 @@ import org.dvbviewer.controller.utils.AnalyticsTracker;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.FileType;
 import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.utils.StreamUtils;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.text.MessageFormat;
@@ -195,7 +192,9 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         setSelection(mChannelIndex);
         getListView().setSelectionFromTop(mChannelIndex, (int) getResources().getDimension(R.dimen.list_preferred_item_height_small) * 3);
         setListShown(true);
-        getActivity().supportInvalidateOptionsMenu();
+        if(getActivity() != null) {
+            getActivity().invalidateOptionsMenu();
+        }
     }
 
     /*
@@ -207,10 +206,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
-        arg0.reset();
-        if (isVisible()) {
-            setListShown(true);
-        }
+
     }
 
 
@@ -249,7 +245,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void streamDirect(final Cursor c) {
         try {
             Channel chan = cursorToChannel(c);
-            final Intent videoIntent = StreamConfig.getDirectUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            final Intent videoIntent = StreamUtils.getDirectUrl(chan.getChannelID(), chan.getName(), FileType.CHANNEL);
             getActivity().startActivity(videoIntent);
             prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply();
             AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
@@ -263,15 +259,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     private void streamTranscoded(final Cursor c) {
         try {
             Channel chan = cursorToChannel(c);
-            final Intent videoIntent = StreamConfig.getTranscodedUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+            final Intent videoIntent = StreamUtils.getTranscodedUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
             getActivity().startActivity(videoIntent);
             prefs.getStreamPrefs().edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply();
             AnalyticsTracker.trackQuickRecordingStream(getActivity().getApplication());
         } catch (ActivityNotFoundException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();
-            e.printStackTrace();
-        } catch (UrlBuilderException e) {
             e.printStackTrace();
         }
     }
@@ -321,7 +315,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         Channel chan = cursorToChannel(cursor);
         if (UIUtils.isTablet(getContext())) {
             Bundle arguments = getIntentExtras(chan);
-            StreamConfig cfg = StreamConfig.newInstance();
+            StreamConfig cfg = StreamConfig.Companion.newInstance();
             cfg.setArguments(arguments);
             cfg.show(getActivity().getSupportFragmentManager(), StreamConfig.class.getName());
         } else {
@@ -335,10 +329,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @NonNull
     private Bundle getIntentExtras(Channel chan) {
         Bundle arguments = new Bundle();
-        arguments.putLong(StreamConfig.EXTRA_FILE_ID, chan.getChannelID());
-        arguments.putParcelable(StreamConfig.EXTRA_FILE_TYPE, FileType.CHANNEL);
-        arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig);
-        arguments.putString(StreamConfig.EXTRA_TITLE, chan.getName());
+        arguments.putLong(StreamConfig.Companion.getEXTRA_FILE_ID(), chan.getChannelID());
+        arguments.putParcelable(StreamConfig.Companion.getEXTRA_FILE_TYPE(), FileType.CHANNEL);
+        arguments.putInt(StreamConfig.Companion.getEXTRA_DIALOG_TITLE_RES(), R.string.streamConfig);
+        arguments.putString(StreamConfig.Companion.getEXTRA_TITLE(), chan.getName());
         return arguments;
     }
 
@@ -366,7 +360,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
      */
     public class ChannelAdapter extends CursorAdapter {
 
-        final ImageLoader imageChacher;
 
         /**
          * Instantiates a new channel adapter.
@@ -376,7 +369,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         public ChannelAdapter(Context context) {
             super(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
             mContext = context;
-            imageChacher = ImageLoader.getInstance();
         }
 
         /*
@@ -389,7 +381,6 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         @Override
         public void bindView(View view, Context context, Cursor c) {
             ViewHolder holder = (ViewHolder) view.getTag();
-            imageChacher.cancelDisplayTask(holder.icon);
             holder.contextMenu.setTag(AdapterView.INVALID_POSITION);
             holder.iconContainer.setTag(AdapterView.INVALID_POSITION);
             holder.icon.setImageBitmap(null);
@@ -423,7 +414,11 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             holder.v.setChecked(getListView().isItemChecked(c.getPosition()));
 
             if (!TextUtils.isEmpty(logoUrl)) {
-                imageChacher.displayImage(ServerConsts.REC_SERVICE_URL + "/" + logoUrl, holder.icon);
+                Picasso.get()
+                        .load(ServerConsts.REC_SERVICE_URL + "/" + logoUrl)
+                        .fit()
+                        .centerInside()
+                        .into(holder.icon);
             } else {
                 holder.icon.setImageBitmap(null);
             }
@@ -442,13 +437,13 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
             ViewHolder holder = new ViewHolder();
             holder.v = (CheckableLinearLayout) view;
             holder.iconContainer = view.findViewById(R.id.iconContainer);
-            holder.icon = (ImageView) view.findViewById(R.id.icon);
-            holder.position = (TextView) view.findViewById(R.id.position);
-            holder.channelName = (TextView) view.findViewById(R.id.title);
-            holder.epgTime = (TextView) view.findViewById(R.id.epgTime);
-            holder.progress = (ProgressBar) view.findViewById(R.id.progress);
-            holder.epgTitle = (TextView) view.findViewById(R.id.epgTitle);
-            holder.contextMenu = (ImageView) view.findViewById(R.id.contextMenu);
+            holder.icon = view.findViewById(R.id.icon);
+            holder.position = view.findViewById(R.id.position);
+            holder.channelName = view.findViewById(R.id.title);
+            holder.epgTime = view.findViewById(R.id.epgTime);
+            holder.progress = view.findViewById(R.id.progress);
+            holder.epgTitle = view.findViewById(R.id.epgTitle);
+            holder.contextMenu = view.findViewById(R.id.contextMenu);
             holder.contextMenu.setOnClickListener(ChannelList.this);
             holder.iconContainer.setOnClickListener(ChannelList.this);
             view.setTag(holder);
@@ -466,33 +461,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         mChannelIndex = position;
-        if (prefs.getBoolean(DVBViewerPreferences.KEY_SHOW_QUICK_STREAM_HINT, true)) {
-            prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_SHOW_QUICK_STREAM_HINT, false).commit();
-            showQuickstreamHint(position);
-        } else {
-            if (mCHannelSelectedListener != null) {
-                mCHannelSelectedListener.channelSelected(mGroupId, mGroupIndex, position);
-                getListView().setItemChecked(position, true);
-            }
+        if (mCHannelSelectedListener != null) {
+            mCHannelSelectedListener.channelSelected(mGroupId, mGroupIndex, position);
+            getListView().setItemChecked(position, true);
         }
-    }
-
-    private void showQuickstreamHint(int position) {
-        int firstPosition = getListView().getFirstVisiblePosition() - getListView().getHeaderViewsCount(); // This is the same as child #0
-        int wantedChild = position - firstPosition;
-        View listItem = getListView().getChildAt(wantedChild);
-        View icon = listItem.findViewById(R.id.icon);
-
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-        //can only dismiss by button click
-        co.hideOnClickOutside = false;
-        co.block = true;
-        co.centerText = true;
-        ViewTarget target = new ViewTarget(icon);
-        ShowcaseView showCase = ShowcaseView.insertShowcaseView(target, getActivity(),
-                getActivity().getString(R.string.quick_stream_hint_title), getActivity().getString(R.string.quick_stream_hint_text), co);
-        showCase.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.black_transparent));
-        showCase.show();
     }
 
     /* (non-Javadoc)
@@ -553,14 +525,10 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
                     Cursor c = mAdapter.getCursor();
                     c.moveToPosition(mChannelIndex);
                     Channel chan = cursorToChannel(c);
-                    try {
 
-                        final Intent videoIntent = StreamConfig.buildQuickUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
-                        getActivity().startActivity(videoIntent);
-                        AnalyticsTracker.trackQuickStream(getActivity().getApplication());
-                    } catch (UrlBuilderException e) {
-                        e.printStackTrace();
-                    }
+                    final Intent videoIntent = StreamUtils.buildQuickUrl(getContext(), chan.getChannelID(), chan.getName(), FileType.CHANNEL);
+                    getActivity().startActivity(videoIntent);
+                    AnalyticsTracker.trackQuickStream(getActivity().getApplication());
                 } catch (ActivityNotFoundException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setMessage(getResources().getString(R.string.noFlashPlayerFound)).setPositiveButton(getResources().getString(R.string.yes), null).setNegativeButton(getResources().getString(R.string.no), null).show();

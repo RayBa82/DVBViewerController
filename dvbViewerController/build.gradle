@@ -1,4 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -12,21 +16,40 @@ android {
         versionCode rootProject.versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
 
     signingConfigs {
         release
     }
+
     buildTypes {
         debug {
+            debuggable true
             minifyEnabled false
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg'
         }
+
         release {
+            debuggable false
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg'
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard.cfg', '../proguard-gson.cfg', '../proguard-simplexml.cfg'
             signingConfig signingConfigs.release
         }
+    }
+
+    flavorDimensions "tier"
+    productFlavors {
+
+        production {
+        }
+
+        beta {
+            applicationIdSuffix '.beta'
+        }
+
     }
 
     lintOptions {
@@ -42,50 +65,62 @@ android {
         unitTests.returnDefaultValues = true
     }
     dependencies {
-        compile project(':showCaseView')
-        compile 'com.android.support:appcompat-v7:' +project.compatVersion
-        compile 'com.android.support:design:'+ project.compatVersion
-        compile 'com.android.support:preference-v7:' + project.compatVersion
-        compile 'com.android.support:cardview-v7:' + project.compatVersion
-        compile 'com.android.support:gridlayout-v7:' + project.compatVersion
-        compile 'com.google.android.gms:play-services-analytics:' + project.playServiceVersion
-        compile 'com.google.firebase:firebase-crash:' + project.playServiceVersion
-        compile 'com.google.firebase:firebase-core:' + project.playServiceVersion
+        implementation 'com.android.support:appcompat-v7:' + project.compatVersion
+        implementation 'com.android.support:design:' + project.compatVersion
+        implementation 'com.android.support:preference-v7:' + project.compatVersion
+        implementation 'com.android.support:cardview-v7:' + project.compatVersion
+        implementation 'com.android.support:gridlayout-v7:' + project.compatVersion
+        implementation 'com.android.support:support-annotations:' + project.compatVersion
+        implementation 'com.google.android.gms:play-services-analytics:16.0.6'
+        implementation 'com.google.firebase:firebase-core:16.0.6'
+        implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.0'
+        implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+        implementation 'com.google.code.gson:gson:2.8.2'
+        implementation 'org.apache.commons:commons-lang3:3.7'
+        implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.2'
+        implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+        implementation group: 'com.android.support', name: 'multidex', version: '1.0.3'
+        implementation('com.squareup.retrofit2:retrofit:2.5.0') {
+            exclude module: 'okhttp'
+        }
+        implementation "android.arch.lifecycle:extensions:1.1.1"
+        kapt "android.arch.lifecycle:compiler:1.1.1"
+        implementation('com.squareup.picasso:picasso:2.71828') {
+            exclude group: 'com.android.support'
+            exclude module: ['exifinterface', 'support-annotations']
+        }
+        implementation 'com.crashlytics.sdk.android:crashlytics:2.9.7'
+
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
+
+        implementation group: 'com.tickaroo.tikxml', name: 'core', version: '0.8.13'
+        implementation group: 'com.tickaroo.tikxml', name: 'annotation', version: '0.8.13'
+        implementation 'com.tickaroo.tikxml:retrofit-converter:0.8.13'
+        kapt 'com.tickaroo.tikxml:processor:0.8.13'
+
         implementation project(':exoplayer-library')
         implementation project(':exoplayer-extension-okhttp')
         implementation project(':exoplayer-extension-ffmpeg')
-        compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.8.1'
-        compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
-        compile 'com.google.code.gson:gson:2.8.2'
-        compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-        compile 'org.apache.commons:commons-lang3:3.6'
-        compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
-        compile group: 'commons-io', name: 'commons-io', version: '2.5'
-        compile 'com.jakewharton:butterknife:8.8.1'
-        annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-        compile ('com.squareup.retrofit2:retrofit:2.1.0') {
-            exclude module: 'okhttp'
-        }
-        compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-        compile 'com.squareup.retrofit2:converter-simplexml:2.1.0'
-        testCompile 'junit:junit:4.12'
-        androidTestCompile 'commons-io:commons-io:2.5'
-        androidTestCompile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.8.1'
-        androidTestCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.6.0'
-        androidTestCompile('com.android.support.test:runner:0.5') {
+
+
+        testImplementation 'junit:junit:4.12'
+        androidTestImplementation 'commons-io:commons-io:2.6'
+        androidTestImplementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.0'
+        androidTestImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.6.0'
+        androidTestImplementation('com.android.support.test:runner:0.5') {
             // Necessary if your app targets Marshmallow (since the test runner
             // hasn't moved to Marshmallow yet)
             exclude group: 'com.android.support', module: 'support-annotations'
         }
 
         // Set this dependency to use JUnit 4 rules
-        androidTestCompile('com.android.support.test:rules:0.5') {
+        androidTestImplementation('com.android.support.test:rules:0.5') {
             // Necessary if your app targets Marshmallow (since the test runner
             // hasn't moved to Marshmallow yet)
             exclude group: 'com.android.support', module: 'support-annotations'
         }
         // Set this dependency to build and run Espresso tests
-        androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
+        androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
             exclude group: 'com.android.support', module: 'support-annotations'
             exclude group: 'com.android.support', module: 'support-v4'
             exclude group: 'com.android.support', module: 'design'
@@ -97,10 +132,10 @@ android {
 
 Properties props = new Properties()
 def propFile = file('../keystore/signing.properties')
-if (propFile.canRead()){
+if (propFile.canRead()) {
     props.load(new FileInputStream(propFile))
 
-    if (props!=null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
+    if (props != null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') &&
             props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
 
         android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
@@ -110,8 +145,11 @@ if (propFile.canRead()){
     } else {
         android.buildTypes.release.signingConfig = null
     }
-}else {
+} else {
     android.buildTypes.release.signingConfig = null
 }
 
 apply plugin: 'com.google.gms.google-services'
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}

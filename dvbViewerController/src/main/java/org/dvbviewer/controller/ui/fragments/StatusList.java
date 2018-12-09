@@ -27,8 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.utils.IoUtils;
-
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
@@ -143,7 +142,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             statusXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + url);
             result = handler.parse(statusXml);
         }finally {
-            IoUtils.closeSilently(statusXml);
+            IOUtils.closeQuietly(statusXml);
         }
         return result;
     }
@@ -231,10 +230,10 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_status, parent, false);
                 holder = new StatusHolder();
-                holder.title = (TextView) convertView.findViewById(R.id.title);
-                holder.statusText = (TextView) convertView.findViewById(R.id.statusText);
-                holder.size = (TextView) convertView.findViewById(R.id.size);
-                holder.free = (TextView) convertView.findViewById(R.id.free);
+                holder.title = convertView.findViewById(R.id.title);
+                holder.statusText = convertView.findViewById(R.id.statusText);
+                holder.size = convertView.findViewById(R.id.size);
+                holder.free = convertView.findViewById(R.id.free);
                 convertView.setTag(holder);
             } else {
                 holder = (StatusHolder) convertView.getTag();
@@ -283,10 +282,10 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             if (convertView == null || !(convertView.getTag() instanceof StatusHolder)) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_status, parent, false);
                 holder = new StatusHolder();
-                holder.title = (TextView) convertView.findViewById(R.id.title);
-                holder.statusText = (TextView) convertView.findViewById(R.id.statusText);
-                holder.size = (TextView) convertView.findViewById(R.id.size);
-                holder.free = (TextView) convertView.findViewById(R.id.free);
+                holder.title = convertView.findViewById(R.id.title);
+                holder.statusText = convertView.findViewById(R.id.statusText);
+                holder.size = convertView.findViewById(R.id.size);
+                holder.free = convertView.findViewById(R.id.free);
                 convertView.setTag(holder);
             } else {
                 holder = (StatusHolder) convertView.getTag();

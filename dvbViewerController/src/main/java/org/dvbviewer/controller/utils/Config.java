@@ -17,6 +17,8 @@ package org.dvbviewer.controller.utils;
 
 import android.text.TextUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.regex.Pattern;
 
 /**
@@ -66,6 +68,24 @@ public class Config {
         }
         String s1 = normalisedVersion(version);
         String s2 = normalisedVersion(SUPPORTED_RS_VERSION);
+        int cmp = s1.compareTo(s2);
+        return cmp >= 0;
+    }
+
+    /**
+     * Checks if is old rs version.
+     *
+     * @param version the version
+     * @return true, if is old rs version
+     * @author RayBa
+     * @date 18.08.2013
+     */
+    public static boolean isVersionSupported(String version, String minimumVersion) {
+        if (StringUtils.isBlank(version)) {
+            return false;
+        }
+        String s1 = normalisedVersion(version);
+        String s2 = normalisedVersion(minimumVersion);
         int cmp = s1.compareTo(s2);
         return cmp >= 0;
     }

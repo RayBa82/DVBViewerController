@@ -40,8 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import com.nostra13.universalimageloader.utils.IoUtils;
-
+import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbHelper;
 import org.dvbviewer.controller.data.ProviderConsts.GroupTbl;
@@ -198,8 +197,8 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.pager, container, false);
 		mProgress = view.findViewById(android.R.id.progress);
-		mPager = (ViewPager) view.findViewById(R.id.pager);
-		mPagerIndicator = (PagerTitleStrip) view.findViewById(R.id.titles);
+		mPager = view.findViewById(R.id.pager);
+		mPagerIndicator = view.findViewById(R.id.titles);
 		mPagerIndicator.setVisibility(showGroups ? View.VISIBLE : View.GONE);
 		View c = view.findViewById(R.id.bottom_container);
 		if (c != null) {
@@ -530,8 +529,8 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			catchException(getClass().getSimpleName(), e);
 		} finally {
 			mDbHelper.close();
-			IoUtils.closeSilently(chanXml);
-			IoUtils.closeSilently(favXml);
+			IOUtils.closeQuietly(chanXml);
+			IOUtils.closeQuietly(favXml);
 		}
 	}
 
@@ -551,7 +550,7 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 		} catch (Exception e) {
 			catchException(getClass().getSimpleName(), e);
 		} finally {
-			IoUtils.closeSilently(is);
+			IOUtils.closeQuietly(is);
 			helper.close();
 		}
 	}

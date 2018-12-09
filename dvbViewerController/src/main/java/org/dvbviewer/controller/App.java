@@ -15,28 +15,21 @@
  */
 package org.dvbviewer.controller;
 
-import android.app.Application;
-import android.text.TextUtils;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
-import com.google.android.gms.analytics.ExceptionReporter;
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.security.ProviderInstaller;
-import com.google.firebase.crash.FirebaseCrash;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.imageloader.AuthImageDownloader;
+import org.dvbviewer.controller.io.HTTPUtil;
 import org.dvbviewer.controller.utils.Config;
 import org.dvbviewer.controller.utils.NetUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.URLUtil;
-
 
 
 /**
@@ -44,7 +37,7 @@ import org.dvbviewer.controller.utils.URLUtil;
  *
  * @author RayBa
  */
-public class App extends Application {
+public class App extends MultiDexApplication {
 
     private Tracker tracker;
 	public static final String TAG = "DVBViewerController";
@@ -56,21 +49,11 @@ public class App extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		if(BuildConfig.DEBUG){
-			try {
-				FirebaseCrash.setCrashCollectionEnabled(false);
-			}catch (IllegalStateException e) {
-				Log.w(App.class.getSimpleName(), "Error intializing Firebase, might be invalid 'google-services.json' file", e);
-			}
-		}
 		DVBViewerPreferences prefs = new DVBViewerPreferences(this);
 		Config.IS_FIRST_START = prefs.getBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, true);
 		Config.CHANNELS_SYNCED = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, false);
 
-		/**
-		 * Read Recordingservice Preferences
-		 */
-		String serviceUrl = prefs.getString(DVBViewerPreferences.KEY_RS_URL, "http://");
+		String serviceUrl = prefs.getString(DVBViewerPreferences.KEY_DMS_URL);
 		String prefPort = prefs.getString(DVBViewerPreferences.KEY_RS_PORT, "8089");
 		URLUtil.setRecordingServicesAddress(serviceUrl, prefPort);
 		ServerConsts.REC_SERVICE_USER_NAME = prefs.getString(DVBViewerPreferences.KEY_RS_USERNAME, "");
@@ -78,54 +61,26 @@ public class App extends Application {
 		ServerConsts.REC_SERVICE_MAC_ADDRESS = prefs.getString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS);
 		ServerConsts.REC_SERVICE_WOL_PORT = 9;
 
-		/**
-		 * Thread to send a wake on lan request
-		 */
 		Runnable wakeOnLanRunnabel = new Runnable() {
 			
 			@Override
 			public void run() {
-				NetUtils.sendWakeOnLan(ServerConsts.REC_SERVICE_MAC_ADDRESS, ServerConsts.REC_SERVICE_WOL_PORT);
+				NetUtils.sendWakeOnLan(ServerConsts.REC_SERVICE_WOL_PORT);
 			}
 		};
 		
 		boolean sendWakeOnLan = prefs.getBoolean(DVBViewerPreferences.KEY_RS_WOL_ON_START, true);
-		if (sendWakeOnLan && !TextUtils.isEmpty(ServerConsts.REC_SERVICE_MAC_ADDRESS)) {
+		if (sendWakeOnLan) {
 			Thread wakeOnLanThread = new Thread(wakeOnLanRunnabel);
 			wakeOnLanThread.start();
 		}
 
 		installPlayServiceSecurityUpdates();
 
-		DisplayImageOptions options = new DisplayImageOptions.Builder()
-		.cacheInMemory(true)
-		.cacheOnDisk(true)
-		.displayer(new FadeInBitmapDisplayer(500, true, true, false))
-		.build();
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-		.imageDownloader(new AuthImageDownloader(getApplicationContext()))
-		.defaultDisplayImageOptions(options)
-		.build();
-
-		ImageLoader.getInstance().init(config);
-
-		ExceptionReporter myHandler =
-				new ExceptionReporter(getTracker(),
-						Thread.getDefaultUncaughtExceptionHandler(), this);
-
-		StandardExceptionParser exceptionParser =
-				new StandardExceptionParser(getApplicationContext(), null) {
-					@Override
-					public String getDescription(String threadName, Throwable t) {
-						return "{" + threadName + "} " + Log.getStackTraceString(t);
-					}
-				};
-
-		myHandler.setExceptionParser(exceptionParser);
-
-		// Make myHandler the new default uncaught exception handler.
-		Thread.setDefaultUncaughtExceptionHandler(myHandler);
-
+		final Picasso.Builder picassoBuilder = new Picasso.Builder(getApplicationContext());
+		final OkHttp3Downloader downloader = new OkHttp3Downloader(HTTPUtil.getHttpClient());
+		final Picasso picasso = picassoBuilder.downloader(downloader).build();
+        Picasso.setSingletonInstance(picasso);
 	}
 
 	/**
@@ -148,5 +103,5 @@ public class App extends Application {
         return tracker;
     }
 
-	
+
 }
