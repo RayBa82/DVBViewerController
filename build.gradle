@@ -9,14 +9,15 @@ buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersio
 buildVersionName = "${majorVersion}.${minorVersion}.${patchVersion} build ${buildNumber}"
 
 buildscript {
-    ext.kotlin_version = '1.3.11'
+    ext.kotlin_version = '1.3.20'
     repositories {
-        jcenter()
         google()
+        jcenter()
+        maven { url "https://maven.google.com" }
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.1'
         classpath 'com.google.gms:google-services:4.2.0'
         classpath 'io.fabric.tools:gradle:1.25.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
