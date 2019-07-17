@@ -1,8 +1,9 @@
 package org.dvbviewer.controller.util;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
+
+import androidx.annotation.Nullable;
 
 import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.entities.ChannelRoot;

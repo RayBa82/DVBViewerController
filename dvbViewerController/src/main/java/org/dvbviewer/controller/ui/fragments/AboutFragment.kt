@@ -1,16 +1,15 @@
 package org.dvbviewer.controller.ui.fragments
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.text.util.LinkifyCompat
 import android.text.util.Linkify.TransformFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.util.LinkifyCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_about.*
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ApiResponse
@@ -23,7 +22,7 @@ import org.dvbviewer.controller.io.api.DMSInterface
 import java.util.regex.Pattern
 
 
-class AboutFragment : Fragment() {
+class AboutFragment : androidx.fragment.app.Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

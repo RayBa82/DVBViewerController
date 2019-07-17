@@ -20,14 +20,14 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/bottom_container"
         android:layout_alignParentTop="true">
 
-        <android.support.v4.view.PagerTitleStrip
+        <androidx.viewpager.widget.PagerTitleStrip
             android:id="@+id/titles"
             style="@style/commonSubTitle"
             android:layout_width="fill_parent"
@@ -36,7 +36,7 @@
             android:paddingTop="5dp"
             android:visibility="gone" />
 
-    </android.support.v4.view.ViewPager>
+    </androidx.viewpager.widget.ViewPager>
 
     <LinearLayout
         android:id="@+id/bottom_container"

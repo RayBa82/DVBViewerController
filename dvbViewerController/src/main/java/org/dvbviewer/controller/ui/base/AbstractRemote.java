@@ -16,9 +16,10 @@
 package org.dvbviewer.controller.ui.base;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.View.OnClickListener;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * The Class Remote.

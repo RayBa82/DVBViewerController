@@ -1,9 +1,10 @@
 package org.dvbviewer.controller.ui.widget;
 
 import android.content.Context;
-import android.support.v7.preference.EditTextPreference;
 import android.text.InputType;
 import android.util.AttributeSet;
+
+import androidx.preference.EditTextPreference;
 
 public class NumericEditTextPreference extends EditTextPreference implements  InputTypePref{
 

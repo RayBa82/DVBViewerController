@@ -16,7 +16,8 @@
 package org.dvbviewer.controller.ui.base;
 
 import android.content.Context;
-import android.support.v4.content.CursorLoader;
+
+import androidx.loader.content.CursorLoader;
 
 import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
 

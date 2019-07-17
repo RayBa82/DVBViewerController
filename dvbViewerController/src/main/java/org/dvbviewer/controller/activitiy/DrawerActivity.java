@@ -2,14 +2,15 @@ package org.dvbviewer.controller.activitiy;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.ProviderConsts;

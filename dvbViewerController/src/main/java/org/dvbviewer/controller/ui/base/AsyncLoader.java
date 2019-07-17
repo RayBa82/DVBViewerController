@@ -17,7 +17,8 @@
 package org.dvbviewer.controller.ui.base;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
+
+import androidx.loader.content.AsyncTaskLoader;
 
 import org.apache.commons.io.IOUtils;
 

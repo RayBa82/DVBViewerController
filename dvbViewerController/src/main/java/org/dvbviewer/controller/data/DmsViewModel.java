@@ -1,8 +1,9 @@
 package org.dvbviewer.controller.data;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.io.exception.AuthenticationException;

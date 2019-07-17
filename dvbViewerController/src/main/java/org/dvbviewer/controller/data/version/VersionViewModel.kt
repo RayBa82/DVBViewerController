@@ -1,8 +1,8 @@
 package org.dvbviewer.controller.data.version
 
 import android.app.Application
-import android.arch.lifecycle.MutableLiveData
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.android.Main
 import org.dvbviewer.controller.data.ApiResponse

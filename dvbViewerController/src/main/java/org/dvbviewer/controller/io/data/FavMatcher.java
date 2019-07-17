@@ -1,6 +1,6 @@
 package org.dvbviewer.controller.io.data;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import org.dvbviewer.controller.entities.Channel;
 import org.dvbviewer.controller.entities.ChannelGroup;

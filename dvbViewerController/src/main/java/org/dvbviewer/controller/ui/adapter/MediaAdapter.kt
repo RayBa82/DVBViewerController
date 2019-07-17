@@ -2,19 +2,17 @@ package org.dvbviewer.controller.ui.adapter
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v7.content.res.AppCompatResources
-import android.support.v7.widget.AppCompatImageButton
-import android.support.v7.widget.AppCompatImageView
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.list_item_video.view.*
-
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.media.MediaFile
 import org.dvbviewer.controller.utils.ServerConsts

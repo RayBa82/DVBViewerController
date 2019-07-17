@@ -7,19 +7,19 @@
 
     <include layout="@layout/app_bar" />
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_above="@+id/bottom_container"
         android:layout_height="fill_parent">
 
-        <android.support.v4.view.PagerTitleStrip
+        <androidx.viewpager.widget.PagerTitleStrip
             android:id="@+id/titles"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
 
-    </android.support.v4.view.ViewPager>
+    </androidx.viewpager.widget.ViewPager>
 
     <LinearLayout
         android:id="@+id/bottom_container"

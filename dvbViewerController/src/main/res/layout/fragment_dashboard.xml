@@ -1,4 +1,4 @@
-<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.gridlayout.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +9,7 @@
     app:rowOrderPreserved="true"
     app:useDefaultMargins="true">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/home_btn_remote"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -25,13 +25,13 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_remote"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_remote_48dp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_remote"
@@ -40,9 +40,9 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/home_btn_channels"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -58,13 +58,13 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_program"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_tv_48dp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_program"
@@ -73,9 +73,9 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/home_btn_timers"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -91,13 +91,13 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_timers"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_timer_48dp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_timers"
@@ -106,9 +106,9 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/home_btn_recordings"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -124,13 +124,13 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_recordings"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_recordings_48dp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_recordings"
@@ -139,9 +139,9 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/home_btn_medias"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -157,13 +157,13 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_media"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_video_library_48dp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_media"
@@ -172,9 +172,9 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/home_btn_tasks"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -190,13 +190,13 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_tasks"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_task_48dp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_tasks"
@@ -205,9 +205,9 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/home_btn_status"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -223,13 +223,13 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_status"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_info_48dp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_status"
@@ -238,9 +238,9 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/home_btn_settings"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -256,13 +256,13 @@
             android:layout_height="match_parent"
             android:gravity="center">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_preferences"
                 style="@style/DashboardButton"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/dash_settings_48dp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_preferences"
@@ -271,7 +271,7 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
-</android.support.v7.widget.GridLayout>
+</androidx.gridlayout.widget.GridLayout>

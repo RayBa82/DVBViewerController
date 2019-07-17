@@ -2,12 +2,13 @@ package org.dvbviewer.controller.activitiy.base;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import org.dvbviewer.controller.activitiy.DrawerActivity;
 import org.dvbviewer.controller.data.ProviderConsts;

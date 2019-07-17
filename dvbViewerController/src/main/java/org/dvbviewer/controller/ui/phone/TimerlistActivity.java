@@ -16,8 +16,9 @@
 package org.dvbviewer.controller.ui.phone;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.MenuItem;
+
+import androidx.fragment.app.Fragment;
 
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.TimerList;

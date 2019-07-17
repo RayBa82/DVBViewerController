@@ -16,8 +16,9 @@
 package org.dvbviewer.controller.ui.base;
 
 import android.database.Cursor;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 /**
  * The Class CursorPagerAdapter.

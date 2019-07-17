@@ -17,8 +17,9 @@ package org.dvbviewer.controller.io.data;
 
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
-import android.support.annotation.NonNull;
 import android.util.Xml;
+
+import androidx.annotation.NonNull;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;

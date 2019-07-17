@@ -17,9 +17,10 @@ package org.dvbviewer.controller.ui.base;
 
 
 import android.content.Context;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatDialogFragment;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.io.exception.AuthenticationException;

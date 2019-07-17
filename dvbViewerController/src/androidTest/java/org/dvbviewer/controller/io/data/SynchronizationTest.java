@@ -1,10 +1,11 @@
 package org.dvbviewer.controller.io.data;
 
 
-import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
+
+import androidx.annotation.Nullable;
 
 import org.apache.commons.io.IOUtils;
 import org.dvbviewer.controller.entities.Channel;

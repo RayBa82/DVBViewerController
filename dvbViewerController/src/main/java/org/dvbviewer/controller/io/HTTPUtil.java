@@ -15,7 +15,7 @@
  */
 package org.dvbviewer.controller.io;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.dvbviewer.controller.io.okhttp3.DMSInterceptor;
 

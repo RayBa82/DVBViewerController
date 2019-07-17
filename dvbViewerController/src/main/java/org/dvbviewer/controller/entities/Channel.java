@@ -16,8 +16,9 @@
 package org.dvbviewer.controller.entities;
 
 import android.content.ContentValues;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl;
 

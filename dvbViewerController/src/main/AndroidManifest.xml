@@ -20,8 +20,9 @@
         android:theme="@style/Theme.DVB"
         android:networkSecurityConfig="@xml/network_security_config"
         android:windowSoftInputMode="adjustPan|adjustResize"
-
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:fullBackupContent="@xml/backup_descriptor"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:targetApi="n">
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/analytics_global_config" />

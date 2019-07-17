@@ -17,8 +17,9 @@ package org.dvbviewer.controller.ui.phone;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.MenuItem;
+
+import androidx.fragment.app.Fragment;
 
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.media.MediaFile;
