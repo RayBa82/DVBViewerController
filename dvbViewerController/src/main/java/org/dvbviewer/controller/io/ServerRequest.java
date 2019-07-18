@@ -15,6 +15,9 @@
  */
 package org.dvbviewer.controller.io;
 
+import android.content.Context;
+import android.util.Log;
+
 import org.dvbviewer.controller.utils.ServerConsts;
 
 import java.io.InputStream;
@@ -114,8 +117,10 @@ public class ServerRequest {
 	 * @date 07.04.2013
 	 */
 	public static class DVBViewerCommand implements Runnable {
+		Context	context;
 		String	request;
-        public DVBViewerCommand(String request) {
+        public DVBViewerCommand(Context context, String request) {
+			this.context = context;
 			this.request = request;
 		}
 
@@ -129,7 +134,7 @@ public class ServerRequest {
 			try {
                 ServerRequest.executeRSGet(request);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.e("DVBViewerCommand", "error executing request " + request, e);
 			}
 		}
 

@@ -74,12 +74,12 @@ import java.util.List;
  */
 public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener {
 
-    public static final String KEY_CHANNEL_NAME = ChannelEpg.class.getName()+"KEY_CHANNEL_NAME";
-    public static final String KEY_CHANNEL_ID   = ChannelEpg.class.getName()+"KEY_CHANNEL_ID";
-    public static final String KEY_CHANNEL_LOGO = ChannelEpg.class.getName()+"KEY_CHANNEL_LOGO";
-    public static final String KEY_CHANNEL_POS  = ChannelEpg.class.getName()+"KEY_CHANNEL_POS";
-    public static final String KEY_FAV_POS      = ChannelEpg.class.getName()+"KEY_FAV_POS";
-    public static final String KEY_EPG_ID       = ChannelEpg.class.getName()+"KEY_EPG_ID";
+    static final String KEY_CHANNEL_NAME = ChannelEpg.class.getName()+"KEY_CHANNEL_NAME";
+    static final String KEY_CHANNEL_ID   = ChannelEpg.class.getName()+"KEY_CHANNEL_ID";
+    static final String KEY_CHANNEL_LOGO = ChannelEpg.class.getName()+"KEY_CHANNEL_LOGO";
+    static final String KEY_CHANNEL_POS  = ChannelEpg.class.getName()+"KEY_CHANNEL_POS";
+    static final String KEY_FAV_POS      = ChannelEpg.class.getName()+"KEY_FAV_POS";
+    static final String KEY_EPG_ID       = ChannelEpg.class.getName()+"KEY_EPG_ID";
     public static final String KEY_EPG_DAY      = ChannelEpg.class.getName()+"EPG_DAY";
     private ChannelEPGAdapter mAdapter;
     private IEpgDetailsActivity.OnIEPGClickListener clickListener;
@@ -460,9 +460,9 @@ public class ChannelEpg extends BaseListFragment implements LoaderCallbacks<Curs
                     return true;
                 case R.id.menuSwitch:
                     final DVBViewerPreferences prefs = new DVBViewerPreferences(getContext());
-                    String cid = ":" + String.valueOf(channelId);
+                    String cid = ":" + channelId;
                     String switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
-                    DVBViewerCommand command = new DVBViewerCommand(switchRequest);
+                    DVBViewerCommand command = new DVBViewerCommand(getContext(), switchRequest);
                     Thread exexuterTHread = new Thread(command);
                     exexuterTHread.start();
                     return true;

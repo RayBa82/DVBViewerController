@@ -1,8 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 def majorVersion = 1
-def minorVersion = 4
-def patchVersion = 3
-def buildNumber = 1
+def minorVersion = 5
+def patchVersion = 0
+def buildNumber = 0
 def buildVersionCode
 def buildVersionName
 buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
@@ -18,8 +18,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
-        classpath 'com.google.gms:google-services:4.2.0'
-        classpath 'io.fabric.tools:gradle:1.25.4'
+        classpath 'com.google.gms:google-services:4.3.0'
+        classpath 'io.fabric.tools:gradle:1.29.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }

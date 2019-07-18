@@ -275,7 +275,7 @@ public class ChannelList extends BaseListFragment implements LoaderCallbacks<Cur
         StringBuilder cid = new StringBuilder(":").append(chan.getChannelID());
         final String url = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND;
         String switchRequest = MessageFormat.format(url, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid);
-        DVBViewerCommand command = new DVBViewerCommand(switchRequest);
+        DVBViewerCommand command = new DVBViewerCommand(getContext(), switchRequest);
         Thread executerThread = new Thread(command);
         executerThread.start();
     }

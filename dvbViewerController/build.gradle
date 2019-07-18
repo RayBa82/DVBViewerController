@@ -75,14 +75,14 @@ android {
     useLibrary 'android.test.mock'
 
     dependencies {
-        implementation 'com.android.support:appcompat-v7:' + project.compatVersion
-        implementation 'com.android.support:design:' + project.compatVersion
-        implementation 'com.android.support:preference-v7:' + project.compatVersion
-        implementation 'com.android.support:cardview-v7:' + project.compatVersion
-        implementation 'com.android.support:gridlayout-v7:' + project.compatVersion
-        implementation 'com.android.support:support-annotations:' + project.compatVersion
-        implementation 'com.google.android.gms:play-services-analytics:16.0.8'
-        implementation 'com.google.firebase:firebase-core:16.0.9'
+        implementation 'androidx.appcompat:appcompat:1.0.2'
+        implementation 'com.google.android.material:material:1.1.0-alpha08'
+        implementation 'androidx.preference:preference:1.0.0'
+        implementation 'androidx.cardview:cardview:1.0.0'
+        implementation 'androidx.gridlayout:gridlayout:1.0.0'
+        implementation 'androidx.annotation:annotation:1.1.0'
+        implementation 'com.google.android.gms:play-services-analytics:17.0.0'
+        implementation 'com.google.firebase:firebase-core:17.0.1'
         implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.1'
         implementation 'com.squareup.okhttp3:logging-interceptor:3.14.1'
         implementation 'com.google.code.gson:gson:2.8.5'

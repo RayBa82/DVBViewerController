@@ -234,8 +234,8 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
     private fun startVideoIntent(fileType: FileType?) {
         val videoIntent: Intent = getVideoIntent(fileType) ?: return
         startActivity(videoIntent)
-        if (dialog != null) {
-            dialog.dismiss()
+        if (getDialog() != null) {
+            getDialog()?.dismiss()
         } else {
             activity!!.finish()
         }
@@ -274,9 +274,9 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
                 editor.apply()
                 onClick(startTranscodedButton)
                 if (getDialog() != null) {
-                    getDialog().dismiss()
+                    getDialog()?.dismiss()
                 } else {
-                    activity!!.finish()
+                    activity?.finish()
                 }
             }
 

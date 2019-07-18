@@ -246,7 +246,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
             return;
         }
         final String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, target, action);
-        ServerRequest.DVBViewerCommand httpCommand = new ServerRequest.DVBViewerCommand(request);
+        ServerRequest.DVBViewerCommand httpCommand = new ServerRequest.DVBViewerCommand(getContext(), request);
         Thread executionThread = new Thread(httpCommand);
         executionThread.start();
     }
