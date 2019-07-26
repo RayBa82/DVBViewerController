@@ -64,7 +64,7 @@ public class App extends MultiDexApplication {
 
 		boolean sendWakeOnLan = prefs.getBoolean(DVBViewerPreferences.KEY_RS_WOL_ON_START, true);
 		if (sendWakeOnLan) {
-			Runnable wakeOnLanRunnabel = () -> NetUtils.sendWakeOnLan(ServerConsts.REC_SERVICE_WOL_PORT);
+			Runnable wakeOnLanRunnabel = () -> NetUtils.sendWakeOnLan(prefs, ServerConsts.REC_SERVICE_WOL_PORT);
 			Thread wakeOnLanThread = new Thread(wakeOnLanRunnabel);
 			wakeOnLanThread.start();
 		}

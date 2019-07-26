@@ -292,7 +292,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 
 					@Override
 					public void run() {
-						NetUtils.sendWakeOnLan(ServerConsts.REC_SERVICE_WOL_PORT);
+						NetUtils.sendWakeOnLan(prefs, ServerConsts.REC_SERVICE_WOL_PORT);
 					}
 				};
 				Thread wakeOnLanThread = new Thread(wakeOnLanRunnabel);

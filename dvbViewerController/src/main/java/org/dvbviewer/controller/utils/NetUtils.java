@@ -17,6 +17,9 @@ package org.dvbviewer.controller.utils;
 
 import android.util.Log;
 
+import org.apache.commons.lang3.StringUtils;
+import org.dvbviewer.controller.entities.DVBViewerPreferences;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -87,8 +90,11 @@ public class NetUtils {
      * @param port the wol port
      * @author RayBa
      */
-    public static void sendWakeOnLan(int port) {
-        final String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
+    public static void sendWakeOnLan(DVBViewerPreferences prefs, int port) {
+        final String macAddress = prefs.getString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, StringUtils.EMPTY);
+        if(StringUtils.isBlank(macAddress)) {
+            return;
+        }
         Log.d(TAG, "sending WOL packet to " + macAddress);
         try {
             byte[] macBytes = getMacBytes(macAddress);
