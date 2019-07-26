@@ -42,6 +42,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.data.DbHelper;
 import org.dvbviewer.controller.data.ProviderConsts.GroupTbl;
@@ -514,17 +515,14 @@ public class ChannelPager extends BaseFragment implements LoaderCallbacks<Cursor
 			 */
 			String macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST);
 			ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress;
-
-
-			/**
-			 * Save the data in sharedpreferences
-			 */
-			Editor prefEditor = prefs.getPrefs().edit();
+			final Editor prefEditor = prefs.getPrefs().edit();
 			StatusList.getStatus(prefs, version);
-			prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
 			prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true);
 			prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-			prefEditor.commit();
+			if(StringUtils.isNotBlank(macAddress)) {
+				prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress);
+			}
+			prefEditor.apply();
 			Config.CHANNELS_SYNCED = true;
 		} catch (Exception e) {
 			catchException(getClass().getSimpleName(), e);
