@@ -6,6 +6,9 @@
         <item>"Αναμονή "</item>
         <item>Αδρανοποίηση</item>
     </string-array>
+    <string-array name="ffmpegPresets" translatable="false">
+        <item>πλασίμπο</item>
+    </string-array>
     <string-array name="epgMonitoring">
         <item>Κανένα</item>
         <item>Ωρα Έναρξης / Τέλος ενημέρωσης του EPG</item>

@@ -6,6 +6,9 @@
         <item>Standby</item>
         <item>Ruhemodus</item>
     </string-array>
+    <string-array name="ffmpegPresets" translatable="false">
+        <item>placebo</item>
+    </string-array>
     <string-array name="tracks">
         <item>Spur 1</item>
         <item>Spur 2</item>
