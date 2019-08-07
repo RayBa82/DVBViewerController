@@ -61,13 +61,13 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 	private void initFragments(Bundle savedInstanceState) {
 		if (savedInstanceState == null) {
 			mChannelPager = new ChannelPager();
-			mChannelPager.setArguments(BaseActivity.intentToFragmentArguments(getIntent()));
+			mChannelPager.setArguments(BaseActivity.Companion.intentToFragmentArguments(getIntent()));
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.left_content, mChannelPager, CHANNEL_PAGER_TAG)
 					.commit();
 			if (container != null){
 				mEpgPager = new EpgPager();
-				mEpgPager.setArguments(BaseActivity.intentToFragmentArguments(getIntent()));
+				mEpgPager.setArguments(BaseActivity.Companion.intentToFragmentArguments(getIntent()));
 				getSupportFragmentManager().beginTransaction()
 						.add(R.id.right_content, mEpgPager, EPG_PAGER_TAG)
 						.commit();
@@ -85,9 +85,9 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 		mChannelPager.updateIndex(groupIndex, channelIndex);
 		if (container == null){
 			Intent epgPagerIntent = new Intent(this, EpgPagerActivity.class);
-			epgPagerIntent.putExtra(ChannelPager.KEY_GROUP_ID, groupId);
-			epgPagerIntent.putExtra(ChannelPager.KEY_GROUP_INDEX, groupIndex);
-			epgPagerIntent.putExtra(ChannelList.KEY_CHANNEL_INDEX, channelIndex);
+			epgPagerIntent.putExtra(ChannelPager.Companion.getKEY_GROUP_ID(), groupId);
+			epgPagerIntent.putExtra(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
+			epgPagerIntent.putExtra(ChannelList.Companion.getKEY_CHANNEL_INDEX(), channelIndex);
 			startActivity(epgPagerIntent);
 		}else{
 			mEpgPager.setPosition(channelIndex);

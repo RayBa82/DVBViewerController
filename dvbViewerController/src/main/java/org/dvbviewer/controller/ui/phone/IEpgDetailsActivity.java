@@ -48,7 +48,7 @@ public class IEpgDetailsActivity extends BaseSinglePaneActivity {
 	 */
 	@Override
 	protected Fragment onCreatePane() {
-		Bundle bundle = intentToFragmentArguments(getIntent());
+		Bundle bundle = Companion.intentToFragmentArguments(getIntent());
 		EPGDetails details = new EPGDetails();
 		details.setArguments(bundle);
 		return details ;

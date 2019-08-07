@@ -48,7 +48,7 @@ public class EpgPagerActivity extends GroupDrawerActivity {
 	private void initFragments(Bundle savedInstanceState) {
 		if (savedInstanceState == null) {
 				mEpgPager = new EpgPager();
-				mEpgPager.setArguments(BaseActivity.intentToFragmentArguments(getIntent()));
+				mEpgPager.setArguments(BaseActivity.Companion.intentToFragmentArguments(getIntent()));
 				getSupportFragmentManager().beginTransaction()
 						.add(R.id.left_content, mEpgPager, EPG_PAGER_TAG)
 						.commit();

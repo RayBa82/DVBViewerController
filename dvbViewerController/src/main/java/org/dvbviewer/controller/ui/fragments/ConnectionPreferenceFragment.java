@@ -57,7 +57,7 @@ public class ConnectionPreferenceFragment extends PreferenceFragmentCompat imple
 
     public void sendConnectionChanged() {
         Log.d(TAG, "Broadcasting connection event");
-        Intent intent = new Intent(BaseFragment.CONNECTION_EVENT);
+        Intent intent = new Intent(BaseFragment.Companion.getCONNECTION_EVENT());
         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 

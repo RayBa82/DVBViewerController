@@ -13,51 +13,43 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.ui.base;
+package org.dvbviewer.controller.ui.base
 
-import android.content.Context;
+import android.content.Context
 
-import androidx.loader.content.CursorLoader;
+import androidx.loader.content.CursorLoader
 
-import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo;
+import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo
 
 /**
  * The Class EpgLoader.
  *
  * @author RayBa
  */
-public abstract class EpgLoader extends CursorLoader {
-	
-	private final 	EpgDateInfo mDateInfo;
-	private 		long 		mEpgDate;
+abstract class EpgLoader
+/**
+ * Instantiates a new epg loader.
+ *
+ * @param context the context
+ * @param dateInfo the date info
+ */
+(context: Context, private val mDateInfo: EpgDateInfo) : CursorLoader(context) {
+    private var mEpgDate: Long = 0
 
-	/**
-	 * Instantiates a new epg loader.
-	 *
-	 * @param context the context
-	 * @param dateInfo the date info
-	 */
-	public EpgLoader(Context context, EpgDateInfo dateInfo) {
-		super(context);
-		mDateInfo = dateInfo;
-	}
-	
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see android.support.v4.content.AsyncTaskLoader#onForceLoad()
 	 */
-	@Override
-	protected void onForceLoad() {
-		super.onForceLoad();
-		mEpgDate = mDateInfo.getEpgDate();
-	}
-	
-	/* (non-Javadoc)
+    override fun onForceLoad() {
+        super.onForceLoad()
+        mEpgDate = mDateInfo.epgDate
+    }
+
+    /* (non-Javadoc)
 	 * @see android.support.v4.content.Loader#takeContentChanged()
 	 */
-	@Override
-	public boolean takeContentChanged() {
+    override fun takeContentChanged(): Boolean {
 
-		return super.takeContentChanged() || mEpgDate != mDateInfo.getEpgDate();
-	}
+        return super.takeContentChanged() || mEpgDate != mDateInfo.epgDate
+    }
 
 }

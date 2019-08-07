@@ -46,9 +46,9 @@ public abstract class GroupDrawerActivity extends DrawerActivity implements OnIt
 		showFavs = prefs.getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
 		epgDate = savedInstanceState != null && savedInstanceState.containsKey(ChannelEpg.KEY_EPG_DAY) ? new Date(savedInstanceState.getLong(ChannelEpg.KEY_EPG_DAY)) : new Date();
 		if (savedInstanceState != null){
-			groupIndex = savedInstanceState.getInt(ChannelPager.KEY_GROUP_INDEX, 0);
+			groupIndex = savedInstanceState.getInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), 0);
 		}else{
-			groupIndex = getIntent().getIntExtra(ChannelPager.KEY_GROUP_INDEX, 0);
+			groupIndex = getIntent().getIntExtra(ChannelPager.Companion.getKEY_GROUP_INDEX(), 0);
 		}
 		getSupportLoaderManager().initLoader(0, savedInstanceState, this);
 	}
@@ -94,7 +94,7 @@ public abstract class GroupDrawerActivity extends DrawerActivity implements OnIt
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putLong(ChannelEpg.KEY_EPG_DAY, epgDate.getTime());
-		outState.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
+		outState.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
 		super.onSaveInstanceState(outState);
 	}
 

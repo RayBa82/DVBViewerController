@@ -45,7 +45,7 @@ public class StreamConfigActivity extends BaseSinglePaneActivity {
 	@Override
 	protected Fragment onCreatePane() {
 		final StreamConfig cfg = new StreamConfig();
-		cfg.setArguments(intentToFragmentArguments(getIntent()));
+		cfg.setArguments(Companion.intentToFragmentArguments(getIntent()));
 		return cfg;
 	}
 

@@ -90,14 +90,14 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 		setHasOptionsMenu(showOptionsMenu);
 		if (savedInstanceState == null) {
 			if (getArguments() != null){
-				mGroupId = getArguments().containsKey(ChannelPager.KEY_GROUP_ID) ? getArguments().getLong(ChannelPager.KEY_GROUP_ID, mGroupId) : mGroupId;
-				mGroupIndex = getArguments().containsKey(ChannelPager.KEY_GROUP_INDEX) ? getArguments().getInt(ChannelPager.KEY_GROUP_INDEX, mGroupIndex) : mGroupIndex;
-				chanIndex = getArguments().containsKey(ChannelList.KEY_CHANNEL_INDEX) ? getArguments().getInt(ChannelList.KEY_CHANNEL_INDEX, chanIndex) : chanIndex;
+				mGroupId = getArguments().containsKey(ChannelPager.Companion.getKEY_GROUP_ID()) ? getArguments().getLong(ChannelPager.Companion.getKEY_GROUP_ID(), mGroupId) : mGroupId;
+				mGroupIndex = getArguments().containsKey(ChannelPager.Companion.getKEY_GROUP_INDEX()) ? getArguments().getInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), mGroupIndex) : mGroupIndex;
+				chanIndex = getArguments().containsKey(ChannelList.Companion.getKEY_CHANNEL_INDEX()) ? getArguments().getInt(ChannelList.Companion.getKEY_CHANNEL_INDEX(), chanIndex) : chanIndex;
 			}
 		} else {
-			mGroupId = savedInstanceState.containsKey(ChannelPager.KEY_GROUP_ID) ? savedInstanceState.getLong(ChannelPager.KEY_GROUP_ID, mGroupId) : mGroupId;
-			mGroupIndex = savedInstanceState.containsKey(ChannelPager.KEY_GROUP_INDEX) ? savedInstanceState.getInt(ChannelPager.KEY_GROUP_INDEX, mGroupIndex) : mGroupIndex;
-			chanIndex = savedInstanceState.containsKey(ChannelList.KEY_CHANNEL_INDEX) ? savedInstanceState.getInt(ChannelList.KEY_CHANNEL_INDEX, chanIndex) : chanIndex;
+			mGroupId = savedInstanceState.containsKey(ChannelPager.Companion.getKEY_GROUP_ID()) ? savedInstanceState.getLong(ChannelPager.Companion.getKEY_GROUP_ID(), mGroupId) : mGroupId;
+			mGroupIndex = savedInstanceState.containsKey(ChannelPager.Companion.getKEY_GROUP_INDEX()) ? savedInstanceState.getInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), mGroupIndex) : mGroupIndex;
+			chanIndex = savedInstanceState.containsKey(ChannelList.Companion.getKEY_CHANNEL_INDEX()) ? savedInstanceState.getInt(ChannelList.Companion.getKEY_CHANNEL_INDEX(), chanIndex) : chanIndex;
 		}
 	}
 
@@ -149,8 +149,8 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putLong(ChannelPager.KEY_GROUP_ID, mGroupId);
-		outState.putInt(ChannelList.KEY_CHANNEL_INDEX, mPager.getCurrentItem());
+		outState.putLong(ChannelPager.Companion.getKEY_GROUP_ID(), mGroupId);
+		outState.putInt(ChannelList.Companion.getKEY_CHANNEL_INDEX(), mPager.getCurrentItem());
 	}
 
 	/*
@@ -284,7 +284,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 				return null;
 			}
 			getCursor().moveToPosition(position);
-			final Channel chan = ChannelList.cursorToChannel(getCursor());
+			final Channel chan = ChannelList.Companion.cursorToChannel(getCursor());
 			final Bundle bundle = new Bundle();
 			bundle.putString(ChannelEpg.KEY_CHANNEL_NAME, chan.getName());
 			bundle.putLong(ChannelEpg.KEY_EPG_ID, chan.getEpgID());
@@ -354,7 +354,7 @@ public class EpgPager extends Fragment implements LoaderCallbacks<Cursor>, Toolb
 	 */
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		mAdapter.swapCursor(null);
+		arg0.reset();
 	}
 
 	public void refresh(long groupId, int selectedPosition) {

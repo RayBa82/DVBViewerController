@@ -106,7 +106,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
                 chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
                 Bundle bundle = new Bundle();
-                bundle.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
+                bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
                 chans.setArguments(bundle);
 				tran.add(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
 				tran.commit();
@@ -194,7 +194,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 					chans = new ChannelPager();
 					chans.setHasOptionsMenu(true);
 					Bundle bundle = new Bundle();
-					bundle.putInt(ChannelPager.KEY_GROUP_INDEX, groupIndex);
+					bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
 					chans.setArguments(bundle);
 					tran.replace(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
 					tran.commit();
@@ -307,10 +307,10 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	@Override
 	public void channelSelected(long groupId, int groupIndex, int channelIndex) {
 		Intent channelListIntent = new Intent(this, ChannelListActivity.class);
-		channelListIntent.putExtra(ChannelPager.KEY_GROUP_ID, groupId);
-		channelListIntent.putExtra(ChannelPager.KEY_GROUP_INDEX, groupIndex);
-		channelListIntent.putExtra(ChannelList.KEY_CHANNEL_INDEX, channelIndex);
-		channelListIntent.putExtra(ChannelPager.KEY_HIDE_FAV_SWITCH, true);
+		channelListIntent.putExtra(ChannelPager.Companion.getKEY_GROUP_ID(), groupId);
+		channelListIntent.putExtra(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
+		channelListIntent.putExtra(ChannelList.Companion.getKEY_CHANNEL_INDEX(), channelIndex);
+		channelListIntent.putExtra(ChannelPager.Companion.getKEY_HIDE_FAV_SWITCH(), true);
 		startActivity(channelListIntent);
 
 	}
