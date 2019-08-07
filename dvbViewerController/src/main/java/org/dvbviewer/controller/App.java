@@ -15,9 +15,8 @@
  */
 package org.dvbviewer.controller;
 
+import android.app.Application;
 import android.util.Log;
-
-import androidx.multidex.MultiDexApplication;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -38,7 +37,7 @@ import org.dvbviewer.controller.utils.URLUtil;
  *
  * @author RayBa
  */
-public class App extends MultiDexApplication {
+public class App extends Application {
 
     private Tracker tracker;
 	public static final String TAG = "DVBViewerController";
