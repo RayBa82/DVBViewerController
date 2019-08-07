@@ -28,7 +28,7 @@ class AboutFragment : androidx.fragment.app.Fragment() {
         super.onActivityCreated(savedInstanceState)
         val versionName = activity?.packageManager?.getPackageInfo(activity?.packageName, 0)?.versionName
         versionTextView.text = versionName
-        val dmsInterface = APIClient.getClient().create(DMSInterface::class.java)
+        val dmsInterface = APIClient.client.create(DMSInterface::class.java)
         val repo = VersionRepository(context!!, dmsInterface)
         val vFac = VersionViewModelFactory(activity!!.application, repo)
         val versionViewModel = ViewModelProviders.of(this, vFac)

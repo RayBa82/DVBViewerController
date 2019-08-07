@@ -23,7 +23,7 @@ class TaskViewModel(application: Application) : DmsViewModel(application) {
     private val versionRepo: VersionRepository
 
     init {
-        val dmsInterface = APIClient.getClient().create(DMSInterface::class.java)
+        val dmsInterface = APIClient.client.create(DMSInterface::class.java)
         taskRepo = TaskRepository(dmsInterface)
         versionRepo = VersionRepository(application, dmsInterface)
     }

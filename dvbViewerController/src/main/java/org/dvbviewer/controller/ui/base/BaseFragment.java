@@ -155,7 +155,7 @@ public class BaseFragment extends Fragment {
     }
 
     protected void initializeDMSInterface() {
-        dmsInterface = APIClient.getClient().create(DMSInterface.class);
+        dmsInterface = APIClient.INSTANCE.getClient().create(DMSInterface.class);
     }
 
     private BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {

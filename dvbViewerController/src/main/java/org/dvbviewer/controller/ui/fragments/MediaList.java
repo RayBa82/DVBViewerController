@@ -77,7 +77,7 @@ public class MediaList extends RecyclerViewFragment {
 		}else {
 			parentId = 1;
 		}
-		dmsInterface = APIClient.getClient().create(DMSInterface.class);
+		dmsInterface = APIClient.INSTANCE.getClient().create(DMSInterface.class);
 	}
 
 	/* (non-Javadoc)
