@@ -7,14 +7,8 @@ pipeline {
     stages {
         stage('Prepare') {
             steps {
-                configFileProvider(
-                        [configFile(fileId: 'e7c9e865-af44-4cd7-83f1-21c92df8ac4c', variable: 'GSERVICE_JSON')]) {
-                    sh 'mkdir -p dvbViewerController/src/release && cp $GSERVICE_JSON dvbViewerController/src/release/google-services.json'
-                }
-                configFileProvider(
-                        [configFile(fileId: '79bae1f2-b479-4945-b208-4faced22f141', variable: 'SIGNING_PROPS')]) {
-                    sh 'cp $SIGNING_PROPS keystore/signing.properties'
-                }
+                sh 'mkdir -p dvbViewerController/src/release && cp /var/signing/google-services.json dvbViewerController/src/release/google-services.json'
+                sh 'cp /var/signing/signing.properties keystore/signing.properties'
             }
         }
         stage('Compile') {
@@ -23,10 +17,19 @@ pipeline {
                 sh './gradlew dvbViewerController:compileProductionReleaseSources'
             }
         }
+        stage('Unit test') {
+            steps {
+                // Compile and run the unit tests for the app and its dependencies
+                sh './gradlew dvbViewerController:testProductionReleaseUnitTest'
+
+                // Analyse the test results and update the build result as appropriate
+                junit '**/TEST-*.xml'
+            }
+        }
         stage('Build APK') {
             steps {
                 // Finish building and packaging the APK
-                sh './gradlew assembleProductionRelease'
+                sh './gradlew dvbViewerController:assembleProductionRelease'
 
                 // Archive the APKs so that they can be downloaded from Jenkins
                 archiveArtifacts '**/*.apk'
