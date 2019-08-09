@@ -2,7 +2,7 @@
 def majorVersion = 1
 def minorVersion = 5
 def patchVersion = 0
-def buildNumber = 1
+def buildNumber = 2
 def buildVersionCode
 def buildVersionName
 buildVersionCode = majorVersion * 10000000 + minorVersion * 100000 + patchVersion * 100 + buildNumber
@@ -37,16 +37,5 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
-    }
-}
-
-subprojects {
-    project.configurations.all {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'com.android.support'
-                    && !details.requested.name.contains('multidex') ) {
-                details.useVersion project.compatVersion
-            }
-        }
     }
 }
