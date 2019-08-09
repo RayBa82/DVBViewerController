@@ -8,7 +8,7 @@ stages {
   stage('Compile') {
   steps {
   // Compile the app and its dependencies
-  sh './gradlew dvbViewerController:compileReleaseSources'
+  sh './gradlew dvbViewerController:compileProductionReleaseSources'
 }
 }
 stage('Unit test') {
