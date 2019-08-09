@@ -5,15 +5,8 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
-        stage('Compile') {
+        stage('Prepare') {
             steps {
-                // Compile the app and its dependencies
-                sh './gradlew dvbViewerController:compileProductionDebugSources'
-            }
-        }
-        stage('Build APK') {
-            steps {
-
                 configFileProvider(
                         [configFile(fileId: 'e7c9e865-af44-4cd7-83f1-21c92df8ac4c', variable: 'GSERVICE_JSON')]) {
                     sh 'mkdir -p dvbViewerController/src/release && cp $GSERVICE_JSON dvbViewerController/src/release/google-services.json'
@@ -22,8 +15,18 @@ pipeline {
                         [configFile(fileId: '79bae1f2-b479-4945-b208-4faced22f141', variable: 'SIGNING_PROPS')]) {
                     sh 'cp $SIGNING_PROPS keystore/signing.properties'
                 }
+            }
+        }
+        stage('Compile') {
+            steps {
+                // Compile the app and its dependencies
+                sh './gradlew dvbViewerController:compileProductionReleaseSources'
+            }
+        }
+        stage('Build APK') {
+            steps {
                 // Finish building and packaging the APK
-                sh './gradlew assembleRelease'
+                sh './gradlew assembleProductionRelease'
 
                 // Archive the APKs so that they can be downloaded from Jenkins
                 archiveArtifacts '**/*.apk'
