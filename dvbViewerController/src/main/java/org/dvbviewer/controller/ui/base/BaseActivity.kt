@@ -220,18 +220,16 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     override fun setTitle(title: CharSequence) {
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar?
         if (toolbar != null) {
             setSupportActionBarTitle(title)
             toolbar.title = title
-        } else {
-            setSupportActionBarTitle(title)
         }
     }
 
 
     override fun setTitle(titleId: Int) {
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar?
         if (toolbar != null) {
             toolbar.setTitle(titleId)
         } else {
@@ -240,7 +238,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun setSubTitle(title: CharSequence) {
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar?
         if (toolbar != null) {
             setSupportActionBarSubtitleTitle(R.string.app_name)
             toolbar.title = title
@@ -251,7 +249,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
 
     fun setSubTitle(titleId: Int) {
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar?
         if (toolbar != null) {
             setSupportActionBarSubtitleTitle(R.string.app_name)
             toolbar.setTitle(titleId)
