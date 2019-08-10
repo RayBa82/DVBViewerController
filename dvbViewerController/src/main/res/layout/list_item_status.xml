@@ -3,53 +3,56 @@
     android:id="@+id/checkable"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingRight="?android:attr/scrollbarSize" >
+    android:orientation="vertical"
+    android:paddingRight="?android:attr/scrollbarSize">
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="6dip"
+        android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="6dip"
+        android:layout_marginEnd="6dip"
         android:layout_marginRight="6dip"
-        android:layout_marginTop="6dip" >
+        android:layout_marginBottom="6dip">
 
         <TextView
             android:id="@+id/title"
             style="@style/commonTitle"
-            android:text="Test"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
-            android:maxLines="2"/>
+            android:maxLines="2"
+            android:text="Test" />
 
         <TextView
             android:id="@+id/statusText"
-            android:text="Test"
             style="@style/commonSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_centerHorizontal="true"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:text="Test" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Test"
             android:gravity="center_horizontal"
             android:singleLine="true"
+            android:text="Test"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -58,10 +61,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Test"
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:maxLines="2"
+            android:text="Test"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorSecondary" />
     </LinearLayout>
