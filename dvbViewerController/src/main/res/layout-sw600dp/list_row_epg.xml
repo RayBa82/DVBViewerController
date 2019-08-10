@@ -28,7 +28,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:gravity="end|center"
-            android:text="Test" />
+            android:text="Test"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/title"
@@ -41,7 +42,8 @@
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:maxLines="2"
-            android:text="Test" />
+            android:text="Test"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/description"
@@ -53,7 +55,8 @@
             android:layout_alignLeft="@+id/title"
             android:ellipsize="end"
             android:maxLines="4"
-            android:text="Test" />
+            android:text="Test"
+            tools:ignore="HardcodedText" />
     </RelativeLayout>
 
     <LinearLayout

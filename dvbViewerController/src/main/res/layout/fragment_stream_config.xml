@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollview"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -10,12 +11,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/list_preferred_item_height_small"
             android:orientation="vertical"
-            android:paddingRight="?android:attr/scrollbarSize">
+            android:paddingEnd="?android:attr/scrollbarSize"
+            android:paddingRight="?android:attr/scrollbarSize"
+            tools:ignore="RtlSymmetry">
 
             <TextView
                 android:id="@+id/directStreamTitle"
@@ -23,11 +26,13 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center_vertical"
+                android:paddingStart="20dp"
                 android:paddingLeft="20dp"
                 android:singleLine="true"
                 android:text="@string/streamDirect"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/primary_text_holo_dark" />
+                android:textColor="@color/primary_text_holo_dark"
+                tools:ignore="RtlSymmetry" />
 
             <View
                 android:layout_width="fill_parent"
@@ -44,26 +49,28 @@
             android:layout_margin="15dp"
             android:text="@string/streamStart" />
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
             android:id="@+id/collapsable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/list_preferred_item_height_small"
                 android:orientation="vertical"
-                android:paddingRight="?android:attr/scrollbarSize">
+                android:paddingEnd="?android:attr/scrollbarSize"
+                android:paddingRight="?android:attr/scrollbarSize"
+                tools:ignore="RtlSymmetry">
 
                 <TextView
                     android:id="@+id/transcodeStreamTitle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
+                    android:paddingStart="20dp"
                     android:paddingLeft="20dp"
                     android:singleLine="true"
                     android:text="@string/streamTranscoded"
@@ -92,7 +99,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_weight="1"
-                        android:text="@string/quality"></TextView>
+                        android:text="@string/quality" />
 
                     <Spinner
                         android:id="@+id/qualitySpinner"
@@ -227,7 +234,7 @@
                 android:id="@+id/startTranscodedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:layout_margin="15dp"
                 android:text="@string/streamStart" />
         </LinearLayout>
