@@ -33,6 +33,7 @@ pipeline {
 
                 // Archive the APKs so that they can be downloaded from Jenkins
                 archiveArtifacts '**/*.apk'
+                archiveArtifacts '**/mapping.txt'
             }
         }
         stage('Static analysis') {
