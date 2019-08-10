@@ -39,7 +39,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="||"></Button>
+                            android:text="@string/pause" />
 
                         <Button
                             android:id="@+id/ButtonStepBack"
@@ -47,7 +47,7 @@
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
                             android:longClickable="true"
-                            android:text="&lt;&lt;&lt;"></Button>
+                            android:text="@string/stepBack" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -62,7 +62,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:longClickable="true"
-                            android:text="MoveUp"></Button>
+                            android:text="@string/moveup" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -77,7 +77,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Stop"></Button>
+                            android:text="@string/stop" />
 
                         <Button
                             android:id="@+id/ButtonStepForward"
@@ -85,7 +85,7 @@
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
                             android:longClickable="true"
-                            android:text=">>>"></Button>
+                            android:text="@string/stepForward" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -110,7 +110,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:longClickable="true"
-                            android:text="MoveLeft"></Button>
+                            android:text="@string/moveleft" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -125,7 +125,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:keepScreenOn="true"
-                            android:text="OK"></Button>
+                            android:text="@string/ok" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -140,7 +140,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:longClickable="true"
-                            android:text="MoveRight"></Button>
+                            android:text="@string/moveright" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -163,14 +163,14 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Back"></Button>
+                            android:text="@string/back" />
 
                         <Button
                             android:id="@+id/ButtonText"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Text"></Button>
+                            android:text="@string/videotext" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -185,7 +185,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:longClickable="true"
-                            android:text="MoveDown"></Button>
+                            android:text="@string/movedown" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -200,14 +200,14 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Menu"></Button>
+                            android:text="@string/menu" />
 
                         <Button
                             android:id="@+id/ButtonVideos"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Videos"></Button>
+                            android:text="@string/videos" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -223,28 +223,28 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="Red"></Button>
+                        android:text="@string/red" />
 
                     <Button
                         android:id="@+id/ButtonGreen"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="Green"></Button>
+                        android:text="@string/green" />
 
                     <Button
                         android:id="@+id/ButtonYellow"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="Yellow"></Button>
+                        android:text="@string/yellow" />
 
                     <Button
                         android:id="@+id/ButtonBlue"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="Blue"></Button>
+                        android:text="@string/blue" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
