@@ -37,7 +37,6 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
 import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
-import org.apache.commons.io.IOUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.entities.IEPG
 import org.dvbviewer.controller.entities.Recording
@@ -51,7 +50,6 @@ import org.dvbviewer.controller.utils.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.InputStream
 import java.util.*
 
 
@@ -107,19 +105,16 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
         return object : AsyncLoader<List<Recording>>(context!!) {
 
             override fun loadInBackground(): List<Recording>? {
-                var result: List<Recording>? = null
-                var `is`: InputStream? = null
                 try {
-                    `is` = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_RECORIDNGS)
-                    val hanler = RecordingHandler()
-                    result = hanler.parse(`is`)
-                    Collections.sort(result!!)
+                    val inputStream = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_RECORIDNGS)
+                    inputStream.use {
+                        val handler = RecordingHandler()
+                        return handler.parse(it)
+                    }
                 } catch (e: Exception) {
                     catchException(javaClass.simpleName, e)
-                } finally {
-                    IOUtils.closeQuietly(`is`)
                 }
-                return result
+                return Collections.emptyList()
             }
         }
     }

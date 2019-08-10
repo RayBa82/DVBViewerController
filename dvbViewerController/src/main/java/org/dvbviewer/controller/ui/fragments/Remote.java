@@ -18,7 +18,6 @@ package org.dvbviewer.controller.ui.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,11 +40,11 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.io.RecordingService;
 import org.dvbviewer.controller.io.ServerRequest;
-import org.dvbviewer.controller.io.exception.DefaultHttpException;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
 import org.dvbviewer.controller.utils.ServerConsts;
 import org.dvbviewer.controller.utils.UIUtils;
@@ -227,14 +226,19 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         loader.reset();
     }
 
-    private List<String> getDVBViewerClients() throws DefaultHttpException {
+    private List<String> getDVBViewerClients() {
         List<String> result = new LinkedList<>();
-        String jsonClients = RecordingService.getDVBViewerTargets();
-        if (!TextUtils.isEmpty(jsonClients)) {
+        String jsonClients = RecordingService.INSTANCE.getDvbViewerTargets();
+        if (StringUtils.isNotBlank(jsonClients)) {
             result = gson.fromJson(jsonClients, type);
             SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
             prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
-            prefEditor.commit();
+            prefEditor.apply();
+        } else {
+            final String prefValue = prefs.getPrefs().getString(DVBViewerPreferences.KEY_RS_CLIENTS, "");
+            if (StringUtils.isNotBlank(prefValue)) {
+                result = gson.fromJson(jsonClients, type);
+            }
         }
         return result;
     }

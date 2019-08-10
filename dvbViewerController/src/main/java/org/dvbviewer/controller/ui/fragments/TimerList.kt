@@ -33,7 +33,6 @@ import androidx.appcompat.view.ActionMode
 import androidx.appcompat.view.ActionMode.Callback
 import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
-import org.apache.commons.io.IOUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.entities.Timer
 import org.dvbviewer.controller.io.ServerRequest
@@ -49,7 +48,6 @@ import org.dvbviewer.controller.utils.ArrayListAdapter
 import org.dvbviewer.controller.utils.DateUtils
 import org.dvbviewer.controller.utils.ServerConsts
 import org.dvbviewer.controller.utils.UIUtils
-import java.io.InputStream
 import java.util.*
 
 
@@ -100,20 +98,17 @@ class TimerList : BaseListFragment(), AsyncCallback, LoaderCallbacks<List<Timer>
     override fun onCreateLoader(arg0: Int, arg1: Bundle?): Loader<List<Timer>> {
         return object : AsyncLoader<List<Timer>>(context!!) {
 
-            override fun loadInBackground(): List<Timer>? {
-                var result: List<Timer>? = null
-                var xml: InputStream? = null
+            override fun loadInBackground(): List<Timer> {
                 try {
-                    xml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_LIST)
-                    val hanler = TimerHandler()
-                    result = hanler.parse(xml)
-                    Collections.sort(result!!)
+                    val stream = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_LIST)
+                    stream.use {
+                        val handler = TimerHandler()
+                        return handler.parse(it)
+                    }
                 } catch (e: Exception) {
                     catchException(javaClass.simpleName, e)
-                } finally {
-                    IOUtils.closeQuietly(xml)
                 }
-                return result
+                return Collections.emptyList()
             }
         }
     }

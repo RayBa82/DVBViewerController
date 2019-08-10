@@ -1,0 +1,101 @@
+/*
+ * Copyright � 2013 dvbviewer-controller Project
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package org.dvbviewer.controller.io.data
+
+import android.sax.RootElement
+import android.util.Xml
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.math.NumberUtils
+import org.dvbviewer.controller.entities.Channel
+import org.dvbviewer.controller.entities.ChannelGroup
+import org.dvbviewer.controller.entities.ChannelRoot
+import org.xml.sax.ContentHandler
+import org.xml.sax.SAXException
+import org.xml.sax.helpers.DefaultHandler
+import java.io.IOException
+import java.io.InputStream
+
+/**
+ * The Class ChannelHandler.
+ *
+ * @author RayBa
+ */
+class ChannelHandler : DefaultHandler() {
+
+    private var rootElements = ArrayList<ChannelRoot>()
+    private lateinit var currentRoot: ChannelRoot
+    private lateinit var currentGroup: ChannelGroup
+    private lateinit var currentChannel: Channel
+    private var favPosition: Int = 0
+    private lateinit var favRootName: String
+
+    @Throws(SAXException::class, IOException::class)
+    fun parse(inputStream: InputStream, fav: Boolean): MutableList<ChannelRoot> {
+        Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler(fav))
+        return rootElements
+    }
+
+    private fun getContentHandler(fav: Boolean): ContentHandler {
+        favPosition = 1
+        val channels = RootElement("channels")
+        val rootElement = channels.getChild("root")
+        val groupElement = rootElement.getChild("group")
+        val channelElement = groupElement.getChild("channel")
+        val subChanElement = channelElement.getChild("subchannel")
+        val logoElement = channelElement.getChild("logo")
+
+        channels.setStartElementListener { rootElements = ArrayList() }
+
+        rootElement.setStartElementListener { attributes ->
+            currentRoot = ChannelRoot()
+            currentRoot.name = attributes.getValue("name")
+            favRootName = if (fav) currentRoot.name else StringUtils.EMPTY
+            rootElements.add(currentRoot)
+        }
+
+        groupElement.setStartElementListener { attributes ->
+            currentGroup = ChannelGroup()
+            currentGroup.name = attributes.getValue("name").replaceFirst(favRootName.toRegex(), StringUtils.EMPTY)
+            currentRoot.groups.add(currentGroup)
+            currentGroup.type = if (fav) ChannelGroup.TYPE_FAV else ChannelGroup.TYPE_CHAN
+        }
+
+        channelElement.setStartElementListener { attributes ->
+            currentChannel = Channel()
+            currentChannel.channelID = NumberUtils.toLong(attributes.getValue("ID"))
+            currentChannel.position = if (fav) favPosition else NumberUtils.toInt(attributes.getValue("nr"))
+            currentChannel.name = attributes.getValue("name")
+            currentChannel.epgID = NumberUtils.toLong(attributes.getValue("EPGID"))
+            currentGroup.channels?.add(currentChannel)
+            favPosition++
+        }
+
+        logoElement.setEndTextElementListener { body -> currentChannel.logoUrl = body }
+
+        subChanElement.setStartElementListener { attributes ->
+            val c = Channel()
+            c.channelID = NumberUtils.toLong(attributes.getValue("ID"))
+            c.position = currentChannel.position
+            c.name = attributes.getValue("name")
+            c.epgID = currentChannel.epgID
+            c.logoUrl = currentChannel.logoUrl
+            c.setFlag(Channel.FLAG_ADDITIONAL_AUDIO)
+            currentGroup.channels.add(c)
+        }
+        return channels.contentHandler
+    }
+
+}

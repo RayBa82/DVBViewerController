@@ -33,6 +33,7 @@ pipeline {
 
                 // Archive the APKs so that they can be downloaded from Jenkins
                 archiveArtifacts '**/*.apk'
+                archiveArtifacts '**/mapping.txt'
             }
         }
         stage('Static analysis') {
@@ -40,6 +41,16 @@ pipeline {
                 // Run Lint and analyse the results
                 sh './gradlew lintProductionRelease'
                 androidLint pattern: '**/lint-results-*.xml'
+            }
+        }
+        stage('Deploy') {
+            when {
+                // Only execute this stage when building from the `beta` branch
+                branch 'beta'
+            }
+            steps {
+                // Upload the APK to Google Play
+                androidApkUpload apkFilesPattern: '**/*.apk', deobfuscationFilesPattern: '**/mapping.txt', googleCredentialsId: 'DVBViewerController', trackName: 'beta'
             }
         }
     }
