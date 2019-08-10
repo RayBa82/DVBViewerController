@@ -5,6 +5,7 @@ import org.dvbviewer.controller.data.media.xml.VideoDirsFiles
 import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.data.version.xml.Version
 import org.dvbviewer.controller.entities.FFMpegPresetList
+import org.dvbviewer.controller.entities.Timer
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -25,11 +26,14 @@ interface DMSInterface {
     @GET(REC_DEL_API)
     fun deleteRecording(@Query("recid") id: Long, @Query("delfile") delete: Int): Call<ResponseBody>
 
+    @GET(TIMER_LIST)
+    fun getTimer(): Call<List<Timer>>
+
     @GET(TIMER_ADD_API)
     fun addTimer(@QueryMap params: Map<String, String>): Call<ResponseBody>
 
-    @GET(TIMER_EDIT_API)
-    fun editTimer(@QueryMap params: Map<String, String>): Call<ResponseBody>
+    @GET(TIMER_DELETE)
+    fun deleteTimer(@Query("id") id: String): Call<ResponseBody>
 
     @GET(MEDIA_DIRS)
     fun getMediaDir(@Query("dirid") id: Long): Call<VideoDirsFiles>
@@ -45,9 +49,11 @@ interface DMSInterface {
 
         const val REC_DEL_API = "$API/recdelete.html"
 
+        const val TIMER_LIST = "$API/timerlist.html?utf8=2"
+
         const val TIMER_ADD_API = "$API/timeradd.html"
 
-        const val TIMER_EDIT_API = "$API/timeredit.html"
+        const val TIMER_DELETE = "$API/timerdelete.html"
 
         const val MEDIA_DIRS = "$API/mediafiles.html?content=3&recursive=0&thumbs=1"
 

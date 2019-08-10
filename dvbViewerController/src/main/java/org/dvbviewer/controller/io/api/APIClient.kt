@@ -4,6 +4,7 @@ import com.tickaroo.tikxml.TikXml
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 
 import org.dvbviewer.controller.data.stream.retrofit.FFMpegConverterFactory
+import org.dvbviewer.controller.data.timer.retrofit.TimerConverterFactory
 import org.dvbviewer.controller.io.HTTPUtil
 import org.dvbviewer.controller.utils.ServerConsts
 
@@ -22,6 +23,7 @@ object APIClient {
             retrofit = Retrofit.Builder()
                     .baseUrl(baseUrl)
                     .addConverterFactory(FFMpegConverterFactory.create())
+                    .addConverterFactory(TimerConverterFactory.create())
                     .addConverterFactory(TikXmlConverterFactory.create(tikXml))
                     .client(HTTPUtil.getHttpClient())
                     .build()

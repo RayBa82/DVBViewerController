@@ -15,12 +15,10 @@
  */
 package org.dvbviewer.controller.ui.fragments
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
@@ -33,21 +31,21 @@ import androidx.appcompat.view.ActionMode
 import androidx.appcompat.view.ActionMode.Callback
 import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
+import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.version.TimerRepository
 import org.dvbviewer.controller.entities.Timer
-import org.dvbviewer.controller.io.ServerRequest
-import org.dvbviewer.controller.io.data.TimerHandler
-import org.dvbviewer.controller.io.exception.AuthenticationException
-import org.dvbviewer.controller.io.exception.DefaultHttpException
+import org.dvbviewer.controller.io.api.APIClient
+import org.dvbviewer.controller.io.api.DMSInterface
 import org.dvbviewer.controller.ui.base.AsyncLoader
-import org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
 import org.dvbviewer.controller.ui.widget.ClickableRelativeLayout
 import org.dvbviewer.controller.utils.ArrayListAdapter
 import org.dvbviewer.controller.utils.DateUtils
-import org.dvbviewer.controller.utils.ServerConsts
 import org.dvbviewer.controller.utils.UIUtils
+import retrofit2.Call
+import retrofit2.Response
 import java.util.*
 
 
@@ -57,11 +55,12 @@ import java.util.*
  * @author RayBa
  * @date 07.04.2013
  */
-class TimerList : BaseListFragment(), AsyncCallback, LoaderCallbacks<List<Timer>>, Callback, OnClickListener, TimerDetails.OnTimerEditedListener, AdapterView.OnItemLongClickListener {
+class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, OnClickListener, TimerDetails.OnTimerEditedListener, AdapterView.OnItemLongClickListener {
+
     private lateinit var mAdapter: TimerAdapter
     private var mode: ActionMode? = null
-    private lateinit var progressDialog: ProgressDialog
     private var actionMode: Boolean = false
+    private lateinit var repository: TimerRepository
 
     /* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -70,6 +69,9 @@ class TimerList : BaseListFragment(), AsyncCallback, LoaderCallbacks<List<Timer>
         super.onCreate(savedInstanceState)
         mAdapter = TimerAdapter(context)
         setHasOptionsMenu(true)
+        val dmsInterface = APIClient.client.create(DMSInterface::class.java)
+        repository = TimerRepository(dmsInterface)
+
     }
 
     /* (non-Javadoc)
@@ -100,11 +102,7 @@ class TimerList : BaseListFragment(), AsyncCallback, LoaderCallbacks<List<Timer>
 
             override fun loadInBackground(): List<Timer> {
                 try {
-                    val stream = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_LIST)
-                    stream.use {
-                        val handler = TimerHandler()
-                        return handler.parse(it)
-                    }
+                    return repository.getTimer()!!
                 } catch (e: Exception) {
                     catchException(javaClass.simpleName, e)
                 }
@@ -316,66 +314,6 @@ class TimerList : BaseListFragment(), AsyncCallback, LoaderCallbacks<List<Timer>
      * @author RayBa
      * @date 07.04.2013
      */
-    class TimerDeleter
-    /**
-     * Instantiates a new timer deleter.
-     *
-     * @param callback the callback
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    (internal var callback: AsyncCallback) : AsyncTask<Timer, Void, Boolean>() {
-
-        /* (non-Javadoc)
-		 * @see android.os.AsyncTask#onPreExecute()
-		 */
-        override fun onPreExecute() {
-            super.onPreExecute()
-            callback.onAsyncActionStart()
-        }
-
-        /* (non-Javadoc)
-		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-		 */
-        override fun onPostExecute(result: Boolean?) {
-            super.onPostExecute(result)
-            if (result!!) {
-                callback.onAsyncActionStop()
-            }
-
-        }
-
-        /* (non-Javadoc)
-		 * @see android.os.AsyncTask#doInBackground(Params[])
-		 */
-        override fun doInBackground(vararg params: Timer): Boolean? {
-            val count = params.size
-            if (count <= 0) {
-                return false
-            }
-            for (i in 0 until count) {
-                try {
-                    Thread.sleep(1000)
-                } catch (e1: InterruptedException) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace()
-                }
-
-                try {
-                    ServerRequest.getRSString(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_TIMER_DELETE + params[i].id)
-                } catch (e: AuthenticationException) {
-                    e.printStackTrace()
-                } catch (e: DefaultHttpException) {
-                    e.printStackTrace()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            }
-            return true
-        }
-
-    }
 
     /* (non-Javadoc)
 	 * @see com.actionbarsherlock.view.ActionMode.Callback#onDestroyActionMode(com.actionbarsherlock.view.ActionMode)
@@ -405,18 +343,27 @@ class TimerList : BaseListFragment(), AsyncCallback, LoaderCallbacks<List<Timer>
             DialogInterface.BUTTON_POSITIVE -> {
                 val checkedPositions = listView!!.checkedItemPositions
                 if (checkedPositions != null && checkedPositions.size() > 0) {
+                    setListShown(false)
                     val size = checkedPositions.size()
-                    val deleter = TimerDeleter(this@TimerList)
                     val timers = ArrayList<Timer>()
                     for (i in 0 until size) {
                         if (checkedPositions.valueAt(i)) {
                             timers.add(mAdapter.getItem(checkedPositions.keyAt(i)))
                         }
                     }
-                    val array = arrayOfNulls<Timer>(timers.size)
-                    deleter.execute(*timers.toTypedArray())
+                    repository.deleteTimer(timers).enqueue(object : retrofit2.Callback<ResponseBody> {
+                        override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                            refresh()
+                            sendMessage(R.string.timer_deleted)
+                        }
+
+                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                            setListShown(true)
+                            sendMessage(R.string.error_common)
+                        }
+                    })
                 }
-                mode!!.finish()
+                mode?.finish()
             }
 
             DialogInterface.BUTTON_NEGATIVE -> {
@@ -430,14 +377,14 @@ class TimerList : BaseListFragment(), AsyncCallback, LoaderCallbacks<List<Timer>
         if (actionMode == false) {
             actionMode = true
             val activty = activity as AppCompatActivity?
-            mode = activty!!.startSupportActionMode(this@TimerList)
+            mode = activty?.startSupportActionMode(this@TimerList)
         }
         updateActionModeTitle(count)
         return true
     }
 
     private fun updateActionModeTitle(count: Int) {
-        mode!!.title = count.toString() + " " + resources.getString(R.string.selected)
+        mode?.title = count.toString() + " " + resources.getString(R.string.selected)
     }
 
     /**
@@ -449,26 +396,6 @@ class TimerList : BaseListFragment(), AsyncCallback, LoaderCallbacks<List<Timer>
     private fun refresh() {
         loaderManager.restartLoader(0, arguments, this)
         setListShown(false)
-    }
-
-    /* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback#onAsyncActionStart()
-	 */
-    override fun onAsyncActionStart() {
-        progressDialog = ProgressDialog(context)
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        progressDialog.setMessage(resources.getString(R.string.busyDeleteTimer))
-        progressDialog.isIndeterminate = true
-        progressDialog.setCancelable(false)
-        progressDialog.show()
-    }
-
-    /* (non-Javadoc)
-	 * @see org.dvbviewer.controller.ui.base.BaseActivity.AsyncCallback#onAsyncActionStop()
-	 */
-    override fun onAsyncActionStop() {
-        progressDialog.dismiss()
-        refresh()
     }
 
     /* (non-Javadoc)

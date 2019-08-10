@@ -148,6 +148,7 @@
     <string name="remote_control">Control</string>
     <string name="remote_numbers">Numbers</string>
     <string name="timer_saved">Timer saved</string>
+    <string name="timer_deleted">Timer deleted</string>
     <string name="epg_monitoring">EPG monitoring</string>
     <string name="stepBack"><![CDATA[<<<]]></string>
     <string name="moveup">MoveUp</string>

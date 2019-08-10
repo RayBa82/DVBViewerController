@@ -27,6 +27,7 @@ import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 import java.io.IOException
 import java.io.InputStream
+import java.util.*
 
 /**
  * The Class ChannelHandler.
@@ -35,12 +36,12 @@ import java.io.InputStream
  */
 class ChannelHandler : DefaultHandler() {
 
-    private var rootElements = ArrayList<ChannelRoot>()
+    private lateinit var rootElements: LinkedList<ChannelRoot>
     private lateinit var currentRoot: ChannelRoot
     private lateinit var currentGroup: ChannelGroup
     private lateinit var currentChannel: Channel
-    private var favPosition: Int = 0
     private lateinit var favRootName: String
+    private var favPosition: Int = 0
 
     @Throws(SAXException::class, IOException::class)
     fun parse(inputStream: InputStream, fav: Boolean): MutableList<ChannelRoot> {
@@ -57,7 +58,7 @@ class ChannelHandler : DefaultHandler() {
         val subChanElement = channelElement.getChild("subchannel")
         val logoElement = channelElement.getChild("logo")
 
-        channels.setStartElementListener { rootElements = ArrayList() }
+        channels.setStartElementListener { rootElements = LinkedList() }
 
         rootElement.setStartElementListener { attributes ->
             currentRoot = ChannelRoot()
@@ -79,7 +80,7 @@ class ChannelHandler : DefaultHandler() {
             currentChannel.position = if (fav) favPosition else NumberUtils.toInt(attributes.getValue("nr"))
             currentChannel.name = attributes.getValue("name")
             currentChannel.epgID = NumberUtils.toLong(attributes.getValue("EPGID"))
-            currentGroup.channels?.add(currentChannel)
+            currentGroup.channels.add(currentChannel)
             favPosition++
         }
 
