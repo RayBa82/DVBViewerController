@@ -17,6 +17,7 @@ package org.dvbviewer.controller.io.data
 
 import android.sax.RootElement
 import android.util.Xml
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.entities.EpgEntry
 import org.dvbviewer.controller.utils.DateUtils
@@ -52,6 +53,11 @@ class EpgEntryHandler : DefaultHandler() {
 
             programmeElement.setStartElementListener { attributes ->
                 currentEPG = EpgEntry()
+                currentEPG.pdc = StringUtils.EMPTY
+                currentEPG.subTitle = StringUtils.EMPTY
+                currentEPG.eventId = StringUtils.EMPTY
+                currentEPG.channelLogo = StringUtils.EMPTY
+                currentEPG.description = StringUtils.EMPTY
                 currentEPG.epgID = NumberUtils.toLong(attributes.getValue("channel"))
                 currentEPG.start = DateUtils.stringToDate(attributes.getValue("start"), DateUtils.DATEFORMAT_RS_EPG)
                 currentEPG.end = DateUtils.stringToDate(attributes.getValue("stop"), DateUtils.DATEFORMAT_RS_EPG)
