@@ -33,6 +33,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.PagerTitleStrip
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
@@ -446,7 +447,7 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
             favXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS)
             if (favXml != null) {
                 val favs = channelHandler.parse(favXml, true)
-                if (favs != null && !favs.isEmpty()) {
+                if (CollectionUtils.isNotEmpty(favs)) {
                     chans.addAll(favs)
                 }
             }

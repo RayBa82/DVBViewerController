@@ -21,44 +21,44 @@ public class VersionExtractorTest {
 
     @Test
     public void extractVersion1() {
-        Matcher matcher = RecordingService.getVersionMatcher(version1);
+        Matcher matcher = RecordingService.INSTANCE.getVersionMatcher(version1);
         assertEquals(true, matcher.find());
-        assertEquals(expectedVersion, RecordingService.getVersionFromMatcher(matcher));
+        assertEquals(expectedVersion, RecordingService.INSTANCE.getVersionFromMatcher(matcher));
     }
 
     @Test
     public void extractVersion2() {
-        Matcher matcher = RecordingService.getVersionMatcher(version2);
+        Matcher matcher = RecordingService.INSTANCE.getVersionMatcher(version2);
         assertEquals(true, matcher.find());
-        assertEquals(expectedVersion, RecordingService.getVersionFromMatcher(matcher));
+        assertEquals(expectedVersion, RecordingService.INSTANCE.getVersionFromMatcher(matcher));
     }
 
     @Test
     public void extractVersion3() {
-        Matcher matcher = RecordingService.getVersionMatcher(version3);
+        Matcher matcher = RecordingService.INSTANCE.getVersionMatcher(version3);
         assertEquals(true, matcher.find());
-        assertEquals(expectedVersion, RecordingService.getVersionFromMatcher(matcher));
+        assertEquals(expectedVersion, RecordingService.INSTANCE.getVersionFromMatcher(matcher));
     }
 
     @Test
     public void extractVersion4() {
-        Matcher matcher = RecordingService.getVersionMatcher(version4);
+        Matcher matcher = RecordingService.INSTANCE.getVersionMatcher(version4);
         assertEquals(true, matcher.find());
-        assertEquals(expectedVersion, RecordingService.getVersionFromMatcher(matcher));
+        assertEquals(expectedVersion, RecordingService.INSTANCE.getVersionFromMatcher(matcher));
     }
 
     @Test
     public void extractVersion5() {
-        Matcher matcher = RecordingService.getVersionMatcher(version5);
+        Matcher matcher = RecordingService.INSTANCE.getVersionMatcher(version5);
         assertEquals(true, matcher.find());
-        assertEquals(expectedVersion, RecordingService.getVersionFromMatcher(matcher));
+        assertEquals(expectedVersion, RecordingService.INSTANCE.getVersionFromMatcher(matcher));
     }
 
     @Test
     public void extractVersion6() {
-        Matcher matcher = RecordingService.getVersionMatcher(version6);
+        Matcher matcher = RecordingService.INSTANCE.getVersionMatcher(version6);
         assertEquals(true, matcher.find());
-        assertNotEquals(expectedVersion, RecordingService.getVersionFromMatcher(matcher));
+        assertNotEquals(expectedVersion, RecordingService.INSTANCE.getVersionFromMatcher(matcher));
     }
 
 

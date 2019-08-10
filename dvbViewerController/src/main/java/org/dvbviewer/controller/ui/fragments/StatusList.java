@@ -29,6 +29,7 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
@@ -100,7 +101,7 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             public Status loadInBackground() {
                 Status result = new Status();
                 try {
-                    String version = RecordingService.getVersionString();
+                    String version = RecordingService.INSTANCE.getVersionString();
                     if (!Config.isRSVersionSupported(version)){
                         showToast(getContext(), MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION));
                         return result;
@@ -121,8 +122,8 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
         addVersionItem(result, version);
         SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
         prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version);
-        String jsonClients = RecordingService.getDVBViewerTargets();
-        if (jsonClients != null) {
+        String jsonClients = RecordingService.INSTANCE.getDvbViewerTargets();
+        if (StringUtils.isNotBlank(jsonClients)) {
             prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
         }
         Status oldStatus = requestStatusFromServer(ServerConsts.URL_STATUS, new Status1Handler());
@@ -132,12 +133,12 @@ public class StatusList extends BaseListFragment implements LoaderCallbacks<Stat
             prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.getEpgAfter());
             prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.getDefAfterRecord());
         }
-        prefEditor.commit();
+        prefEditor.apply();
         return result;
     }
 
     private static Status requestStatusFromServer(String url, StatusHandler handler) throws Exception {
-        Status result = null;
+        Status result;
         InputStream statusXml = null;
         try {
             statusXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + url);
