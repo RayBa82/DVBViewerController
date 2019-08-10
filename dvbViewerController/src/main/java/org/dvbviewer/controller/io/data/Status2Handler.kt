@@ -36,7 +36,7 @@ import java.util.*
  */
 class Status2Handler : DefaultHandler(), StatusHandler {
 
-    private var status: Status? = null
+    private val status: Status= Status()
     private var currentFolder: Folder? = null
 
     /**
@@ -49,7 +49,7 @@ class Status2Handler : DefaultHandler(), StatusHandler {
      * @date 01.07.2012
      */
     @Throws(SAXException::class, IOException::class)
-    override fun parse(stream: InputStream): Status? {
+    override fun parse(stream: InputStream): Status {
         val root = RootElement("status")
         val recordcount = root.getChild("reccount")
         val streamclientcount = root.getChild("streamclientcount")
@@ -67,99 +67,101 @@ class Status2Handler : DefaultHandler(), StatusHandler {
         val recfolders = root.getChild("recfolders")
         val folder = recfolders.getChild("folder")
 
-        root.setStartElementListener { status = Status() }
+        root.setStartElementListener {
+            status.items = ArrayList()
+        }
 
         recordcount.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_current_recordings
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
 
         streamclientcount.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_current_clients
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
 
         epgudate.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_epg_update_running
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
 
         rtspclientcount.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_current_rtsp_clients
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
 
         unicastclientcount.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_current_unicast_clients
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         nexttimer.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_next_timer
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         nextrec.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_next_Rec
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         lastuiaccess.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_last_ui_access
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         standbyblock.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_standby_blocked
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         tunercount.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_tunercount
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         streamtunercount.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_stream_tunercount
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         rectunercount.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_record_tunercount
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         recfiles.setEndTextElementListener { body ->
             val item = StatusItem()
             item.nameRessource = R.string.status_recfiles
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
 
-        recfolders.setStartElementListener { status!!.folders = ArrayList() }
+        recfolders.setStartElementListener { status.folders = ArrayList() }
         folder.setStartElementListener { attributes ->
             currentFolder = Folder()
             currentFolder!!.size = NumberUtils.toLong(attributes.getValue("size"))
             currentFolder!!.free = NumberUtils.toLong(attributes.getValue("free"))
         }
         folder.setEndTextElementListener { body -> currentFolder!!.path = body }
-        folder.setEndElementListener { status!!.folders.add(currentFolder) }
+        folder.setEndElementListener { status.folders.add(currentFolder) }
         Xml.parse(stream, Xml.Encoding.UTF_8, root.contentHandler)
         return status
 

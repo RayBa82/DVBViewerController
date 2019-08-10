@@ -150,7 +150,7 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
 
         return object : EpgLoader(context!!, mDateInfo!!) {
 
-            override fun loadInBackground(): Cursor? {
+            override fun loadInBackground(): Cursor {
                 val columnNames = arrayOf(EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END, EpgTbl.PDC, EpgTbl.EVENT_ID)
                 try {
                     val now = Date(mDateInfo!!.epgDate)

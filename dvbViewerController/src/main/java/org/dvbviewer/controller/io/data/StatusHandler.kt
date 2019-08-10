@@ -11,5 +11,5 @@ import java.io.InputStream
  */
 interface StatusHandler {
     @Throws(SAXException::class, IOException::class)
-    fun parse(stream: InputStream): Status?
+    fun parse(stream: InputStream): Status
 }

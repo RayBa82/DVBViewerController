@@ -35,19 +35,19 @@ import java.util.*
  */
 class Status1Handler : DefaultHandler(), StatusHandler {
 
-    internal var status: Status? = null
+    private val status: Status = Status()
 
     /**
      * Parses the.
      *
-     * @param is the is
+     * @param stream the is
      * @return the status©
      * @author RayBa
      * @throws SAXException
      * @date 01.07.2012
      */
     @Throws(SAXException::class, IOException::class)
-    override fun parse(stream: InputStream): Status? {
+    override fun parse(stream: InputStream): Status {
         val root = RootElement("status")
         val epgbefore = root.getChild("epgbefore")
         val epgafter = root.getChild("epgafter")
@@ -55,39 +55,38 @@ class Status1Handler : DefaultHandler(), StatusHandler {
         val defafterrecord = root.getChild("defafterrecord")
 
         root.setStartElementListener {
-            status = Status()
-            status!!.items = ArrayList()
+            status.items = ArrayList()
         }
 
 
         epgbefore.setEndTextElementListener { body ->
-            status!!.epgBefore = NumberUtils.toInt(body)
+            status.epgBefore = NumberUtils.toInt(body)
             val item = StatusItem()
             item.nameRessource = R.string.status_epg_before
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
 
         epgafter.setEndTextElementListener { body ->
-            status!!.epgAfter = Integer.parseInt(body)
+            status.epgAfter = Integer.parseInt(body)
             val item = StatusItem()
             item.nameRessource = R.string.status_epg_after
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         timezone.setEndTextElementListener { body ->
-            status!!.timeZone = NumberUtils.toInt(body)
+            status.timeZone = NumberUtils.toInt(body)
             val item = StatusItem()
             item.nameRessource = R.string.status_timezone
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         defafterrecord.setEndTextElementListener { body ->
-            status!!.defAfterRecord = NumberUtils.toInt(body)
+            status.defAfterRecord = NumberUtils.toInt(body)
             val item = StatusItem()
             item.nameRessource = R.string.status_def_after_record
             item.value = body
-            status!!.items.add(item)
+            status.items.add(item)
         }
         Xml.parse(stream, Xml.Encoding.UTF_8, root.contentHandler)
         return status
