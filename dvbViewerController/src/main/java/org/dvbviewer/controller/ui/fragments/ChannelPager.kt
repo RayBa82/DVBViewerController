@@ -392,16 +392,14 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
                 }
             LOAD_CHANNELS -> {
                 mGroupCursor = cursor
-                mAdapter!!.changeCursor(mGroupCursor!!)
-                mAdapter!!.notifyDataSetChanged()
-                mPager!!.setCurrentItem(mGroupIndex, false)
+                mAdapter?.changeCursor(mGroupCursor!!)
+                mAdapter?.notifyDataSetChanged()
+                mPager?.setCurrentItem(mGroupIndex, false)
                 // mPager.setPageTransformer(true, new DepthPageTransformer());
-                activity!!.supportInvalidateOptionsMenu()
+                activity?.invalidateOptionsMenu()
                 showProgress(false)
                 if (refreshGroupType) {
-                    if (mOnGroupTypeCHangedListener != null) {
-                        mOnGroupTypeCHangedListener!!.groupTypeChanged(if (showFavs) ChannelGroup.TYPE_FAV else ChannelGroup.TYPE_CHAN)
-                    }
+                    mOnGroupTypeCHangedListener?.groupTypeChanged(if (showFavs) ChannelGroup.TYPE_FAV else ChannelGroup.TYPE_CHAN)
                 }
                 refreshGroupType = false
             }
@@ -578,9 +576,9 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
         val KEY_GROUP_INDEX = ChannelPager::class.java.name + "KEY_GROUP_INDEX"
         val KEY_GROUP_ID = ChannelPager::class.java.name + "KEY_GROUP_ID"
         val KEY_HIDE_FAV_SWITCH = ChannelPager::class.java.name + "KEY_HIDE_FAV_SWITCH"
-        private val SYNCHRONIZE_CHANNELS = 0
-        private val LOAD_CHANNELS = 1
-        private val LOAD_CURRENT_PROGRAM = 2
+        private const val SYNCHRONIZE_CHANNELS = 0
+        private const val LOAD_CHANNELS = 1
+        private const val LOAD_CURRENT_PROGRAM = 2
     }
 
 }

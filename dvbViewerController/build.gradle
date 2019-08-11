@@ -98,15 +98,16 @@ android {
         implementation('com.squareup.retrofit2:retrofit:2.5.0') {
             exclude module: 'okhttp'
         }
-        implementation "android.arch.lifecycle:extensions:1.1.1"
-        kapt "android.arch.lifecycle:compiler:1.1.1"
+        implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha03"
+        implementation "androidx.lifecycle:lifecycle-extensions:2.2.0-alpha03"
+        annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.2.0-alpha03"
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
         implementation('com.squareup.picasso:picasso:2.71828') {
             exclude group: 'com.android.support'
             exclude module: ['exifinterface', 'support-annotations']
         }
         implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-
-        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
 
         implementation group: 'com.tickaroo.tikxml', name: 'core', version: '0.8.13'
         implementation group: 'com.tickaroo.tikxml', name: 'annotation', version: '0.8.13'

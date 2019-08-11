@@ -3,8 +3,11 @@ package org.dvbviewer.controller.data.version
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.*
-import kotlinx.coroutines.android.Main
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.DmsViewModel
 
@@ -28,7 +31,7 @@ class VersionViewModel internal constructor(application: Application, private va
         if(data == null) {
             return
         }
-        GlobalScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
+        viewModelScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
             var apiResponse = ApiResponse.error("", false)
             try {
                 async(Dispatchers.Default) {

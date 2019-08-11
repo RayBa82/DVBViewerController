@@ -82,14 +82,15 @@ open class BaseFragment : Fragment() {
             return
         }
         Log.e(tag, "Error loading ListData", e)
-        val message: String? = if (e is AuthenticationException) {
-            getString(R.string.error_invalid_credentials)
+        val message: String?
+        if (e is AuthenticationException) {
+            message = getString(R.string.error_invalid_credentials)
         } else if (e is DefaultHttpException) {
-            e.message
+            message = e.message
         } else if (e is SAXException) {
-            getString(R.string.error_parsing_xml)
+            message = getString(R.string.error_parsing_xml)
         } else {
-            (getStringSafely(R.string.error_common)
+            message = (getStringSafely(R.string.error_common)
                     + "\n\n"
                     + if (e.message != null) e.message else e.javaClass.name)
         }
@@ -154,6 +155,7 @@ open class BaseFragment : Fragment() {
 
     companion object {
         const val MESSAGE_EVENT = "MESSAGE_EVENT"
+        val CONNECTION_EVENT = "CONNECTION_EVENT"
         const val MESSAGE_STRING = "MESSAGE_STRING"
         const val MESSAGE_ID = "MESSAGE_ID"
     }
