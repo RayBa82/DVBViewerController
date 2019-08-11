@@ -4,6 +4,7 @@ import okhttp3.ResponseBody
 import org.dvbviewer.controller.data.media.xml.VideoDirsFiles
 import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.data.version.xml.Version
+import org.dvbviewer.controller.entities.ChannelRoot
 import org.dvbviewer.controller.entities.FFMpegPresetList
 import org.dvbviewer.controller.entities.Timer
 import retrofit2.Call
@@ -16,6 +17,8 @@ interface DMSInterface {
     @get:GET(VERSION)
     val version: Call<Version>
 
+    @GET(CHANNEL_LIST)
+    fun getChannelList(@Query("favonly") fav: Int): Call<List<ChannelRoot>>
 
     @GET(TASK_API)
     fun getTaskList(@Query("all") all: Int): Call<TaskList>
@@ -47,6 +50,8 @@ interface DMSInterface {
     companion object {
 
         const val API = "/api"
+
+        const val CHANNEL_LIST = "$API/getchannelsxml.html?logo=1&favonly=1"
 
         const val TASK_API = "$API/tasks.html"
 

@@ -17,7 +17,6 @@ package org.dvbviewer.controller.io.data
 
 import android.sax.RootElement
 import android.util.Xml
-import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.entities.Channel
 import org.dvbviewer.controller.entities.ChannelGroup
@@ -41,16 +40,15 @@ class ChannelHandler : DefaultHandler() {
     private lateinit var currentGroup: ChannelGroup
     private lateinit var currentChannel: Channel
     private lateinit var favRootName: String
-    private var favPosition: Int = 0
+    private var favPosition: Int = 1
 
     @Throws(SAXException::class, IOException::class)
-    fun parse(inputStream: InputStream, fav: Boolean): MutableList<ChannelRoot> {
-        Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler(fav))
+    fun parse(inputStream: InputStream): MutableList<ChannelRoot> {
+        Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler())
         return rootElements
     }
 
-    private fun getContentHandler(fav: Boolean): ContentHandler {
-        favPosition = 1
+    private fun getContentHandler(): ContentHandler {
         val channels = RootElement("channels")
         val rootElement = channels.getChild("root")
         val groupElement = rootElement.getChild("group")
@@ -63,21 +61,19 @@ class ChannelHandler : DefaultHandler() {
         rootElement.setStartElementListener { attributes ->
             currentRoot = ChannelRoot()
             currentRoot.name = attributes.getValue("name")
-            favRootName = if (fav) currentRoot.name else StringUtils.EMPTY
             rootElements.add(currentRoot)
         }
 
         groupElement.setStartElementListener { attributes ->
             currentGroup = ChannelGroup()
-            currentGroup.name = attributes.getValue("name").replaceFirst(favRootName.toRegex(), StringUtils.EMPTY)
+            currentGroup.name = attributes.getValue("name")
             currentRoot.groups.add(currentGroup)
-            currentGroup.type = if (fav) ChannelGroup.TYPE_FAV else ChannelGroup.TYPE_CHAN
         }
 
         channelElement.setStartElementListener { attributes ->
             currentChannel = Channel()
             currentChannel.channelID = NumberUtils.toLong(attributes.getValue("ID"))
-            currentChannel.position = if (fav) favPosition else NumberUtils.toInt(attributes.getValue("nr"))
+            currentChannel.position = favPosition
             currentChannel.name = attributes.getValue("name")
             currentChannel.epgID = NumberUtils.toLong(attributes.getValue("EPGID"))
             currentGroup.channels.add(currentChannel)

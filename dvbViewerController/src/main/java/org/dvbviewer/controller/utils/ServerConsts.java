@@ -28,8 +28,6 @@ public class ServerConsts {
 	public static final String	URL_STATUS						= "/api/status.html";
 	public static final String	URL_STATUS2						= "/api/status2.html";
 	public static final String	URL_EPG							= "/api/epg.html";
-	public static final String	URL_TIMER_CREATE				= "/api/timeradd.html";
-	public static final String	URL_TIMER_EDIT					= "/api/timeredit.html";
 	public static final String  URL_SEND_COMMAND                = "/api/dvbcommand.html?target={0}&cmd=-x{1}";
 	public static final String	URL_SWITCH_COMMAND				= "/api/dvbcommand.html?target={0}&cmd=-c{1}";
 	public static final String	URL_FLASHSTREAM					= "flashstream/stream";
