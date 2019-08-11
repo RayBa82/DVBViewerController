@@ -65,7 +65,7 @@ public class TimerDetailsActivity extends BaseSinglePaneActivity implements OnTi
 		if (timer != null) {
 			final Intent intent = new Intent();
 			intent.putExtra("timer", timer);
-			setResult(TimerDetails.RESULT_CHANGED, intent);
+			setResult(TimerDetails.Companion.getRESULT_CHANGED(), intent);
 		}
 		finish();
 	}

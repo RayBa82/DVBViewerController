@@ -42,6 +42,7 @@ import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts
 import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
+import org.dvbviewer.controller.data.version.TimerRepository
 import org.dvbviewer.controller.entities.Channel
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.Timer
@@ -71,6 +72,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
     private var mAdapter: ChannelAdapter? = null
     private var mCHannelSelectedListener: OnChannelSelectedListener? = null
     private var mChannelPagedOberserver: ChannelPagedObserver? = null
+    private lateinit var timerRepository: TimerRepository
 
     /*
      * (non-Javadoc)
@@ -82,6 +84,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
         prefs = DVBViewerPreferences(context!!)
         showFavs = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
         mAdapter = ChannelAdapter(context)
+        timerRepository = TimerRepository(getDmsInterface())
         getExtras(savedInstanceState)
         registerObserver()
     }
@@ -263,7 +266,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
 
     private fun recordChannel(c: Cursor) {
         val timer = cursorToTimer(c)
-        val call = getDmsInterface()!!.addTimer(TimerDetails.getTimerParameters(timer))
+        val call = timerRepository.saveTimer(timer)
         call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 sendMessage(R.string.timer_saved)

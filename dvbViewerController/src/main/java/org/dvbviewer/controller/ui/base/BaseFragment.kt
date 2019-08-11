@@ -42,9 +42,9 @@ import org.xml.sax.SAXException
  */
 open class BaseFragment : Fragment() {
 
-    protected var TAG = this.javaClass.name
+    protected val TAG = this.javaClass.name
 
-    private var dmsInterface: DMSInterface? = null
+    private lateinit var dmsInterface: DMSInterface
 
     private val mConnectionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -53,17 +53,15 @@ open class BaseFragment : Fragment() {
         }
     }
 
-    fun getDmsInterface(): DMSInterface? {
-        if (dmsInterface == null) {
-            initializeDMSInterface()
-        }
+    fun getDmsInterface(): DMSInterface {
         return dmsInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initializeDMSInterface()
         LocalBroadcastManager.getInstance(context!!).registerReceiver(mConnectionReceiver,
-                IntentFilter(BaseFragment.MESSAGE_EVENT))
+                IntentFilter(MESSAGE_EVENT))
     }
 
     override fun onDestroy() {
@@ -84,15 +82,14 @@ open class BaseFragment : Fragment() {
             return
         }
         Log.e(tag, "Error loading ListData", e)
-        val message: String?
-        if (e is AuthenticationException) {
-            message = getString(R.string.error_invalid_credentials)
+        val message: String? = if (e is AuthenticationException) {
+            getString(R.string.error_invalid_credentials)
         } else if (e is DefaultHttpException) {
-            message = e.message
+            e.message
         } else if (e is SAXException) {
-            message = getString(R.string.error_parsing_xml)
+            getString(R.string.error_parsing_xml)
         } else {
-            message = (getStringSafely(R.string.error_common)
+            (getStringSafely(R.string.error_common)
                     + "\n\n"
                     + if (e.message != null) e.message else e.javaClass.name)
         }
@@ -156,10 +153,9 @@ open class BaseFragment : Fragment() {
     }
 
     companion object {
-        val MESSAGE_EVENT = "MESSAGE_EVENT"
-        val CONNECTION_EVENT = "CONNECTION_EVENT"
-        val MESSAGE_STRING = "MESSAGE_STRING"
-        val MESSAGE_ID = "MESSAGE_ID"
+        const val MESSAGE_EVENT = "MESSAGE_EVENT"
+        const val MESSAGE_STRING = "MESSAGE_STRING"
+        const val MESSAGE_ID = "MESSAGE_ID"
     }
 
 }

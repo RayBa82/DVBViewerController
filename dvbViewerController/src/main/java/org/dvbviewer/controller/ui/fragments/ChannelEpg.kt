@@ -33,9 +33,11 @@ import androidx.cursoradapter.widget.CursorAdapter
 import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
 import com.squareup.picasso.Picasso
+import okhttp3.ResponseBody
 import org.apache.commons.collections4.CollectionUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
+import org.dvbviewer.controller.data.version.TimerRepository
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.EpgEntry
 import org.dvbviewer.controller.entities.IEPG
@@ -43,7 +45,6 @@ import org.dvbviewer.controller.entities.Timer
 import org.dvbviewer.controller.io.HTTPUtil
 import org.dvbviewer.controller.io.ServerRequest
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand
-import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet
 import org.dvbviewer.controller.io.UrlBuilderException
 import org.dvbviewer.controller.io.data.EpgEntryHandler
 import org.dvbviewer.controller.ui.base.BaseListFragment
@@ -53,6 +54,9 @@ import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
 import org.dvbviewer.controller.utils.DateUtils
 import org.dvbviewer.controller.utils.ServerConsts
 import org.dvbviewer.controller.utils.UIUtils
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.MessageFormat
 import java.util.*
 
@@ -77,6 +81,7 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
     private var mDateInfo: EpgDateInfo? = null
     private var lastRefresh: Date? = null
     private var header: View? = null
+    private lateinit var timerRepository: TimerRepository
 
     override val layoutRessource: Int
         get() = R.layout.fragment_channel_epg
@@ -92,6 +97,11 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
         if (context is IEpgDetailsActivity.OnIEPGClickListener) {
             clickListener = context
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        timerRepository = TimerRepository(getDmsInterface())
     }
 
     /* (non-Javadoc)
@@ -388,10 +398,15 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
         when (item.itemId) {
             R.id.menuRecord -> {
                 timer = cursorToTimer(c)
-                val url = TimerDetails.buildTimerUrl(timer)
-                val rsGet = RecordingServiceGet(url)
-                val executionThread = Thread(rsGet)
-                executionThread.start()
+                val call = timerRepository.saveTimer(timer)
+                call.enqueue(object: Callback<ResponseBody> {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        sendMessage(R.string.timer_saved)
+                    }
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        sendMessage(R.string.error_common)
+                    }
+                })
                 return true
             }
             R.id.menuTimer -> {
