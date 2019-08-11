@@ -44,23 +44,17 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.io.HTTPUtil;
-import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.io.UrlBuilderException;
 import org.dvbviewer.controller.ui.base.BaseDialogFragment;
 import org.dvbviewer.controller.ui.widget.DateField;
 import org.dvbviewer.controller.utils.DateUtils;
 import org.dvbviewer.controller.utils.ServerConsts;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 
 /**
@@ -158,7 +152,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			dateField.setDate(timer.getStart());
 			final Date start = create ? timer.getStart() : DateUtils.addMinutes(timer.getStart(), timer.getPre());
 			final Date stop = create ? timer.getEnd() : DateUtils.addMinutes(timer.getEnd(), timer.getPost() * -1);
-			activeBox.setChecked(!timer.isFlagSet(Timer.FLAG_DISABLED));
+			activeBox.setChecked(!timer.isFlagSet(Timer.Companion.getFLAG_DISABLED()));
 			startField.setTime(start);
 			stopField.setTime(stop);
 			preField.setText(String.valueOf(timer.getPre()));
@@ -287,7 +281,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			break;
 		case R.id.buttonCancel:
 			if (mOntimeredEditedListener != null) {
-				mOntimeredEditedListener.timerEdited(false);
+				mOntimeredEditedListener.timerEdited(null);
 			}
 			dismiss();
 			break;
@@ -299,13 +293,15 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 			timer.setPre(NumberUtils.toInt(preField.getText().toString()));
 			timer.setPost(NumberUtils.toInt(postField.getText().toString()));
 			if (activeBox.isChecked()){
-				timer.unsetFlag(Timer.FLAG_DISABLED);
+				timer.unsetFlag(Timer.Companion.getFLAG_DISABLED());
 			}else{
-				timer.setFlag(Timer.FLAG_DISABLED);
+				timer.setFlag(Timer.Companion.getFLAG_DISABLED());
 			}
 			String query = buildTimerUrl(timer);
-            Callback callback = getCallback();
-            ServerRequest.executeAsync(query, callback);
+			mOntimeredEditedListener.timerEdited(timer);
+			if (getDialog() != null && getDialog().isShowing()) {
+				dismiss();
+			}
 
 			break;
 
@@ -331,29 +327,6 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		timer.setEnd(end.getTime());
 	}
 
-	@NonNull
-    private Callback getCallback() {
-        return new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-				catchException(e);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) {
-                try {
-                    if (getDialog() != null && getDialog().isShowing()) {
-                        dismiss();
-                    }
-                    if (mOntimeredEditedListener != null) {
-                        mOntimeredEditedListener.timerEdited(true);
-                    }
-                } catch (Exception e) {
-                    catchException(e);
-                }
-            }
-        };
-    }
 
     @Nullable
 	public static String buildTimerUrl(Timer timer) {
@@ -389,7 +362,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		params.put("ch", String.valueOf(timer.getChannelId()));
 		params.put("dor", days);
 		params.put("encoding", "255");
-		params.put("enable", timer.isFlagSet(Timer.FLAG_DISABLED) ? "0" : "1");
+		params.put("enable", timer.isFlagSet(Timer.Companion.getFLAG_DISABLED()) ? "0" : "1");
 		params.put("start", start);
 		params.put("stop", stop);
 		params.put("title", title);
@@ -453,7 +426,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
         timer.setMonitorPDC(bundle.getInt(EXTRA_MONITOR_PDC, -1));
         timer.setRunningStatusSplit(bundle.getInt(EXTRA_STATUS_SPLIT, -1));
         if (!bundle.getBoolean(EXTRA_ACTIVE)) {
-            timer.setFlag(Timer.FLAG_DISABLED);
+            timer.setFlag(Timer.Companion.getFLAG_DISABLED());
         }
     }
 
@@ -478,7 +451,7 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
         bundle.putInt(EXTRA_EIT_EPG, timer.getEitEPG());
         bundle.putInt(EXTRA_MONITOR_PDC, timer.getMonitorPDC());
         bundle.putInt(EXTRA_STATUS_SPLIT, timer.getRunningStatusSplit());
-        bundle.putBoolean(TimerDetails.EXTRA_ACTIVE, !timer.isFlagSet(Timer.FLAG_DISABLED));
+        bundle.putBoolean(TimerDetails.EXTRA_ACTIVE, !timer.isFlagSet(Timer.Companion.getFLAG_DISABLED()));
     }
 
     /* (non-Javadoc)
@@ -505,9 +478,9 @@ public class TimerDetails extends BaseDialogFragment implements OnDateSetListene
 		/**
 		 * Timer edited.
 		 *
-		 * @param edited the edited
+		 * @param timer the Timer which has been edited
 		 */
-		void timerEdited(boolean edited);
+		void timerEdited(Timer timer);
 		
 	}
 

@@ -32,6 +32,9 @@ interface DMSInterface {
     @GET(TIMER_ADD_API)
     fun addTimer(@QueryMap params: Map<String, String>): Call<ResponseBody>
 
+    @GET(TIMER_EDIT)
+    fun editTimer(@QueryMap params: Map<String, String>): Call<ResponseBody>
+
     @GET(TIMER_DELETE)
     fun deleteTimer(@Query("id") id: String): Call<ResponseBody>
 
@@ -52,6 +55,8 @@ interface DMSInterface {
         const val TIMER_LIST = "$API/timerlist.html?utf8=2"
 
         const val TIMER_ADD_API = "$API/timeradd.html"
+
+        const val TIMER_EDIT = "$API/timeredit.html"
 
         const val TIMER_DELETE = "$API/timerdelete.html"
 

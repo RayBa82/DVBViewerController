@@ -129,9 +129,20 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
         }
     }
 
-    override fun timerEdited(edited: Boolean) {
-        if (edited) {
-            timerSavedAction()
+    override fun timerEdited(timer: Timer?) {
+        timer?.let {
+            setListShown(false)
+            repository.saveTimer(it).enqueue(object : retrofit2.Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    refresh()
+                    sendMessage(R.string.timer_saved)
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    setListShown(true)
+                    sendMessage(R.string.error_common)
+                }
+            })
         }
     }
 
@@ -192,9 +203,9 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
                 holder.title!!.text = o.title
                 holder.channelName!!.text = o.channelName
                 var date = DateUtils.getDateInLocalFormat(o.start)
-                if (DateUtils.isToday(o.start.time)) {
+                if (DateUtils.isToday(o.start!!.time)) {
                     date = resources.getString(R.string.today)
-                } else if (DateUtils.isTomorrow(o.start.time)) {
+                } else if (DateUtils.isTomorrow(o.start!!.time)) {
                     date = resources.getString(R.string.tomorrow)
                 }
                 holder.layout!!.isError = o.isFlagSet(Timer.FLAG_EXECUTABLE)
@@ -256,13 +267,10 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
 	 */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TimerDetails.TIMER_RESULT && resultCode == TimerDetails.RESULT_CHANGED) {
-            timerSavedAction()
+        if (resultCode == TimerDetails.RESULT_CHANGED) {
+            val timer: Timer? = data?.getSerializableExtra("timer") as Timer?
+            timerEdited(timer)
         }
-    }
-
-    private fun timerSavedAction() {
-        sendMessage(R.string.timer_saved)
     }
 
     /* (non-Javadoc)
