@@ -54,10 +54,7 @@ class EpgEntryHandler : DefaultHandler() {
             programmeElement.setStartElementListener { attributes ->
                 currentEPG = EpgEntry()
                 currentEPG.pdc = StringUtils.EMPTY
-                currentEPG.subTitle = StringUtils.EMPTY
                 currentEPG.eventId = StringUtils.EMPTY
-                currentEPG.channelLogo = StringUtils.EMPTY
-                currentEPG.description = StringUtils.EMPTY
                 currentEPG.epgID = NumberUtils.toLong(attributes.getValue("channel"))
                 currentEPG.start = DateUtils.stringToDate(attributes.getValue("start"), DateUtils.DATEFORMAT_RS_EPG)
                 currentEPG.end = DateUtils.stringToDate(attributes.getValue("stop"), DateUtils.DATEFORMAT_RS_EPG)

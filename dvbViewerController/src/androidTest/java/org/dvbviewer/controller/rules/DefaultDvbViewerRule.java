@@ -6,7 +6,6 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
-
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.test.R;
 import org.dvbviewer.controller.util.TestUtils;
@@ -19,11 +18,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.RecordedRequest;
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.HttpUrl;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 
 
 /**
@@ -76,18 +75,10 @@ public class DefaultDvbViewerRule<T extends Activity> extends ActivityTestRule {
                     Log.i(DefaultDvbViewerRule.class.getSimpleName(), "requestPath: " + request.getPath());
                     MockResponse response = new MockResponse();
 
-                    if (request.getPath().contains(ServerConsts.URL_EPG + GENERIC_CHANNEL_SUFFIX)) {
-                        response.setBody(defaultEpg);
-                    } else if (request.getPath().equalsIgnoreCase(ServerConsts.URL_STATUS)) {
+                    if (request.getPath().equalsIgnoreCase(ServerConsts.URL_STATUS)) {
                         response.setBody(status);
                     } else if (request.getPath().equalsIgnoreCase(ServerConsts.URL_VERSION)) {
                         response.setBody(version);
-                    } else if (request.getPath().equalsIgnoreCase(ServerConsts.URL_CHANNELS)) {
-                        response.setBody(channels);
-                    } else if (request.getPath().equalsIgnoreCase(ServerConsts.URL_FAVS)) {
-                        response.setBody(favourites);
-                    } else if (request.getPath().startsWith(ServerConsts.URL_EPG)) {
-                        response.setBody("");
                     } else if (request.getPath().equalsIgnoreCase(ServerConsts.URL_TARGETS)) {
                         response.setBody(targets);
                     }else if (request.getPath().equalsIgnoreCase(ServerConsts.URL_STATUS2)) {

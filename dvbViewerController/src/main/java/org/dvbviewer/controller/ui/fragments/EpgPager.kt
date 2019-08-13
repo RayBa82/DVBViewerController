@@ -327,8 +327,8 @@ class EpgPager : Fragment(), LoaderCallbacks<Cursor>, Toolbar.OnMenuItemClickLis
 
     private fun resetLoader() {
         mAdapter = PagerAdapter(childFragmentManager)
-        mPager!!.adapter = mAdapter
-        mAdapter!!.notifyDataSetChanged()
+        mPager?.adapter = mAdapter
+        mAdapter?.notifyDataSetChanged()
         loaderManager.destroyLoader(0)
         loaderManager.restartLoader(0, arguments, this)
     }

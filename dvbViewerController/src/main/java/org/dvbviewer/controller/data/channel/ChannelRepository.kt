@@ -1,82 +1,53 @@
-package org.dvbviewer.controller.data.version
+package org.dvbviewer.controller.data.channel
 
-import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
-import org.dvbviewer.controller.entities.Timer
+import org.dvbviewer.controller.data.DbHelper
+import org.dvbviewer.controller.data.ProviderConsts
+import org.dvbviewer.controller.entities.ChannelGroup
+import org.dvbviewer.controller.entities.ChannelRoot
 import org.dvbviewer.controller.io.api.DMSInterface
 import org.dvbviewer.controller.utils.DateUtils
-import retrofit2.Call
 import java.util.*
 
-class CHannelRepository(private val dmsInterface: DMSInterface) {
+class ChannelRepository(private val dmsInterface: DMSInterface, private val dbHelper: DbHelper) {
 
-    fun getTimer(): List<Timer>? {
-        return dmsInterface.getTimer().execute().body()
+    fun syncChannels() {
+        val allChans: LinkedList<ChannelRoot> = LinkedList()
+        val chans = dmsInterface.getChannelList().execute().body()
+        chans?.let { allChans.addAll(it) }
+        val favs = dmsInterface.getFavList().execute().body()
+        favs?.forEach {
+            val toReplace = it.name
+            it.groups.forEach { group ->
+                group.name = group.name.replace(toReplace, StringUtils.EMPTY)
+                group.type = ChannelGroup.TYPE_FAV
+            }
+        }
+        favs?.let { allChans.addAll(it) }
+        dbHelper.saveChannelRoots(allChans)
     }
 
-    fun deleteTimer(timerList: List<Timer>): Call<ResponseBody> {
-        return dmsInterface.deleteTimer(timerList.map { it.id }.joinToString(","))
+    fun saveEpg() {
+        val nowFloat = DateUtils.getFloatDate(Date())
+        val epgList = dmsInterface.getProgramm(nowFloat, nowFloat).execute().body()
+        dbHelper.saveNowPlaying(epgList)
     }
 
-    fun saveTimer(timer: Timer): Call<ResponseBody> {
-        val params = getTimerParameters(timer)
-        var call: Call<ResponseBody>
-        call = if(timer.id > 0) {
-            dmsInterface.editTimer(params)
-        }else {
-            dmsInterface.addTimer(params)
+    fun getGroups(fav: Boolean): MutableList<ChannelGroup> {
+        val groups: MutableList<ChannelGroup> = mutableListOf()
+        val db = dbHelper.readableDatabase
+        val selection = if (fav) ProviderConsts.GroupTbl.TYPE + " = " + ChannelGroup.TYPE_FAV else ProviderConsts.GroupTbl.TYPE + " = " + ChannelGroup.TYPE_CHAN
+        val orderBy = ProviderConsts.GroupTbl._ID
+        val cursor = db.query(ProviderConsts.GroupTbl.TABLE_NAME, null, selection, null, null, null, orderBy)
+        while (cursor.moveToNext()) {
+            val group = ChannelGroup()
+            group.id = cursor.getLong(cursor.getColumnIndex(ProviderConsts.GroupTbl._ID))
+            group.name = cursor.getString(cursor.getColumnIndex(ProviderConsts.GroupTbl.NAME))
+            groups.add(group)
         }
-        return call
-    }
-
-    fun getTimerParameters(timer: Timer): Map<String, String> {
-        val params = HashMap<String, String>()
-        val startDate = DateUtils.addMinutes(timer.start, timer.pre * -1)
-        val stopDate = DateUtils.addMinutes(timer.end, timer.post)
-        val days = DateUtils.getDaysSinceDelphiNull(startDate).toString()
-        val start = DateUtils.getMinutesOfDay(startDate).toString()
-        val stop = DateUtils.getMinutesOfDay(stopDate).toString()
-        val endAction = timer.timerAction.toString()
-        val pre = timer.pre.toString()
-        val post = timer.post.toString()
-
-        params["ch"] = timer.channelId.toString()
-        params["dor"] = days
-        params["encoding"] = "255"
-        params["enable"] = if (timer.isFlagSet(Timer.FLAG_DISABLED)) "0" else "1"
-        params["start"] = start
-        params["stop"] = stop
-        timer.title?.let { params.put("title", it) }
-        params["endact"] = endAction
-        params["pre"] = pre
-        params["post"] = post
-        addIfNotEmpty("pdc", timer.pdc, params)
-        addIfNotEmpty("epgevent", timer.eventId, params)
-        addIfPositive("audio", timer.allAudio, params)
-        addIfPositive("subs", timer.dvbSubs, params)
-        addIfPositive("ttx", timer.teletext, params)
-        addIfPositive("eit", timer.eitEPG, params)
-        val epgMonitoring = timer.monitorPDC - 1
-        if (epgMonitoring >= 0) {
-            params["monitorpdc"] = "1"
-            params["monforrec"] = epgMonitoring.toString()
-        }
-        if (timer.id > 0) {
-            params["id"] = timer.id.toString()
-        }
-        return params
-    }
-
-    private fun addIfPositive(name: String, value: Int, params: MutableMap<String, String>) {
-        if (value > 0) {
-            params[name] = value.toString()
-        }
-    }
-
-    private fun addIfNotEmpty(name: String, value: String?, params: MutableMap<String, String>) {
-        if (StringUtils.isNotBlank(value)) {
-            value?.let { params.put(name, it) }
-        }
+        cursor.close()
+        db.close()
+        return groups
     }
 
 }

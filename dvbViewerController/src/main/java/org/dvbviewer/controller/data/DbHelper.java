@@ -160,7 +160,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		if (epgEntries == null || epgEntries.size() <= 0) {
 			return;
 		}
-		SQLiteDatabase db = getWritableDatabase();
+		final SQLiteDatabase db = getWritableDatabase();
 		db.beginTransaction();
 		db.execSQL("DELETE FROM " + NowTbl.TABLE_NAME);
 		try {

@@ -17,8 +17,6 @@ package org.dvbviewer.controller.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.database.Cursor
-import android.database.MatrixCursor
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
@@ -26,31 +24,28 @@ import android.view.*
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.loader.app.LoaderManager.LoaderCallbacks
-import androidx.loader.content.CursorLoader
-import androidx.loader.content.Loader
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.PagerTitleStrip
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import org.apache.commons.collections4.CollectionUtils
-import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.DbHelper
-import org.dvbviewer.controller.data.ProviderConsts.GroupTbl
+import org.dvbviewer.controller.data.channel.ChannelGroupViewModel
+import org.dvbviewer.controller.data.channel.ChannelGroupViewModelFactory
+import org.dvbviewer.controller.data.channel.ChannelRepository
+import org.dvbviewer.controller.data.version.VersionRepository
 import org.dvbviewer.controller.entities.ChannelGroup
 import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.EpgEntry
-import org.dvbviewer.controller.io.RecordingService
-import org.dvbviewer.controller.io.ServerRequest
-import org.dvbviewer.controller.io.data.ChannelHandler
-import org.dvbviewer.controller.io.data.EpgEntryHandler
-import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseFragment
-import org.dvbviewer.controller.ui.base.CursorPagerAdapter
-import org.dvbviewer.controller.utils.*
-import java.io.InputStream
+import org.dvbviewer.controller.utils.Config
+import org.dvbviewer.controller.utils.NetUtils
+import org.dvbviewer.controller.utils.ServerConsts
+import org.dvbviewer.controller.utils.UIUtils
 import java.text.MessageFormat
 import java.util.*
 
@@ -60,7 +55,7 @@ import java.util.*
  *
  * @author RayBa82
  */
-class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListener {
+class ChannelPager : BaseFragment(), OnPageChangeListener {
     private var mGroupIndex = AdapterView.INVALID_POSITION
     private var index = HashMap<Int, Int>()
     private var showFavs: Boolean = false
@@ -71,14 +66,17 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
     private var refreshGroupType: Boolean = false
     private var hideFavSwitch = false
     private var mProgress: View? = null
-    private var mGroupCursor: Cursor? = null
     private var mPager: ViewPager? = null
     private var mNetworkInfo: NetworkInfo? = null
     private var mAdapter: ChannelPagerAdapter? = null
     private var mPagerIndicator: PagerTitleStrip? = null
-    private var prefs: DVBViewerPreferences? = null
+    private lateinit var prefs: DVBViewerPreferences
     private var mGroupCHangedListener: OnGroupChangedListener? = null
     private var mOnGroupTypeCHangedListener: OnGroupTypeChangedListener? = null
+    private lateinit var versionRepository: VersionRepository
+    private lateinit var channelRepository: ChannelRepository
+    private lateinit var mDbHelper: DbHelper
+    private lateinit var groupViewModel: ChannelGroupViewModel
 
     /*
 	 * (non-Javadoc)
@@ -104,10 +102,13 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        mAdapter = ChannelPagerAdapter(childFragmentManager, mGroupCursor)
+        prefs = DVBViewerPreferences(activity?.applicationContext)
+        mDbHelper = DbHelper(activity?.applicationContext)
+        versionRepository = VersionRepository(activity!!.applicationContext, getDmsInterface())
+        channelRepository = ChannelRepository(getDmsInterface(), mDbHelper)
+        mAdapter = ChannelPagerAdapter(childFragmentManager)
         val connManager = activity!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-        prefs = DVBViewerPreferences(context!!)
         showGroups = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_GROUPS, true)
         showExtraGroup = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_ALL_AS_GROUP, false)
         showFavs = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
@@ -133,6 +134,11 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
         }
     }
 
+    override fun onDestroy() {
+        mDbHelper.close()
+        super.onDestroy()
+    }
+
     /*
 	 * (non-Javadoc)
 	 *
@@ -145,20 +151,35 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
         mPager!!.pageMargin = UIUtils.dipToPixel(context!!, 25).toInt()
         mPager!!.addOnPageChangeListener(this)
 
-        var loaderId = LOAD_CHANNELS
         if (savedInstanceState == null) {
             /**
              * Prüfung ob das EPG in der Senderliste angezeigt werden soll.
              */
             if (!Config.CHANNELS_SYNCED) {
-                loaderId = SYNCHRONIZE_CHANNELS
             } else if (showNowPlaying && !showNowPlayingWifi || showNowPlaying && mNetworkInfo!!.isConnected) {
-                loaderId = LOAD_CURRENT_PROGRAM
             }
         }
         mPager!!.currentItem = mGroupIndex
-        loaderManager.initLoader(loaderId, savedInstanceState, this)
+        val groupObserver = Observer<List<ChannelGroup>> { response -> onGroupChanged(response!!) }
+        val channelGroupViewModelFactory = ChannelGroupViewModelFactory(prefs, channelRepository)
+        groupViewModel = ViewModelProvider(this, channelGroupViewModelFactory)
+                .get(ChannelGroupViewModel::class.java)
+        groupViewModel.getGroupList(showFavs).observe(this, groupObserver)
         showProgress(savedInstanceState == null)
+    }
+
+
+    fun onGroupChanged(groupList: List<ChannelGroup>) {
+        mAdapter?.groups = groupList
+        mAdapter?.notifyDataSetChanged()
+        mPager?.setCurrentItem(mGroupIndex, false)
+        // mPager.setPageTransformer(true, new DepthPageTransformer());
+        activity?.invalidateOptionsMenu()
+        showProgress(false)
+        if (refreshGroupType) {
+            mOnGroupTypeCHangedListener?.groupTypeChanged(if (showFavs) ChannelGroup.TYPE_FAV else ChannelGroup.TYPE_CHAN)
+        }
+        refreshGroupType = false
     }
 
     /*
@@ -213,22 +234,30 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
         when (itemId) {
 
             R.id.menuRefresh -> {
-                refresh(LOAD_CURRENT_PROGRAM)
+                groupViewModel.fetchEpg()
                 return true
             }
             R.id.menuSyncChannels -> {
-                refreshGroupType = true
-                refresh(SYNCHRONIZE_CHANNELS)
+                mPager?.adapter = null
+                mAdapter?.notifyDataSetChanged()
+                mAdapter = ChannelPagerAdapter(childFragmentManager)
+                mPager!!.adapter = mAdapter
+                mAdapter!!.notifyDataSetChanged()
+                persistChannelConfigConfig()
+                mGroupIndex = 0
+                groupViewModel.syncChannels(showFavs)
                 return true
             }
             R.id.menuChannelList, R.id.menuFavourties -> {
+                mPager?.adapter = null
+                mAdapter?.notifyDataSetChanged()
+                mAdapter = ChannelPagerAdapter(childFragmentManager)
+                mPager!!.adapter = mAdapter
+                mAdapter!!.notifyDataSetChanged()
                 showFavs = !showFavs
-                mGroupIndex = 0
                 persistChannelConfigConfig()
-                activity!!.setTitle(if (showFavs) R.string.favourites else R.string.channelList)
-                refreshGroupType = true
-                refresh(LOAD_CHANNELS)
-                activity!!.supportInvalidateOptionsMenu()
+                mGroupIndex = 0
+                groupViewModel.getGroupList(showFavs, true)
                 return true
             }
 
@@ -256,7 +285,9 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
      *
      * @param fm the fm
      */
-    (fm: FragmentManager, cursor: Cursor?) : CursorPagerAdapter(fm) {
+    (fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
+
+        var groups: List<ChannelGroup>? = null
 
         /*
 		 * (non-Javadoc)
@@ -264,8 +295,7 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
 		 * @see android.support.v4.app.FragmentPagerAdapter#getItem(int)
 		 */
         override fun getItem(position: Int): Fragment {
-            cursor?.moveToPosition(position)
-            val groupId = cursor?.getLong(cursor!!.getColumnIndex(GroupTbl._ID))
+            val groupId = groups?.get(position)?.id
             val args = Bundle()
             groupId?.let { args.putLong(KEY_GROUP_ID, it) }
             args.putInt(KEY_GROUP_INDEX, position)
@@ -279,8 +309,7 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
         }
 
         fun getGroupId(position: Int): Long {
-            cursor!!.moveToPosition(position)
-            return cursor!!.getLong(cursor!!.getColumnIndex(GroupTbl._ID))
+            return groups!![position].id
         }
 
 
@@ -290,12 +319,12 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
 				 * @see android.support.v4.view.PagerAdapter#getCount()
 				 */
         override fun getCount(): Int {
-            return if (cursor != null) {
+            return if (CollectionUtils.isNotEmpty(groups)) {
                 if (showGroups) {
                     if (showExtraGroup) {
-                        cursor!!.count + 1
+                        groups!!.size + 1
                     } else {
-                        cursor!!.count
+                        groups!!.size
                     }
                 } else {
                     1
@@ -306,14 +335,12 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
         override fun getPageTitle(position: Int): CharSequence? {
             var title = getString(R.string.common_all)
             if (showExtraGroup) {
-                cursor!!.moveToPosition(position - 1)
                 if (position > 0) {
-                    title = cursor!!.getString(cursor!!.getColumnIndex(GroupTbl.NAME))
+                    title = groups!![position].name
                     return title
                 }
             } else {
-                cursor!!.moveToPosition(position)
-                title = cursor!!.getString(cursor!!.getColumnIndex(GroupTbl.NAME))
+                title = groups!![position].name
 
             }
             return title
@@ -332,90 +359,6 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
         context!!.contentResolver.notifyChange(uri, null)
     }
 
-    /*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * android.support.v4.app.LoaderManager.LoaderCallbacks#onCreateLoader(int,
-	 * android.os.Bundle)
-	 */
-    override fun onCreateLoader(id: Int, arg1: Bundle?): Loader<Cursor> {
-        var loader: Loader<Cursor>
-        when (id) {
-            LOAD_CHANNELS -> {
-                val selection = if (showFavs) GroupTbl.TYPE + " = " + ChannelGroup.TYPE_FAV else GroupTbl.TYPE + " = " + ChannelGroup.TYPE_CHAN
-                val orderBy = GroupTbl._ID
-                return CursorLoader(context!!, GroupTbl.CONTENT_URI, null, selection, null, orderBy)
-            }
-            LOAD_CURRENT_PROGRAM -> loader = object : AsyncLoader<Cursor>(context!!) {
-
-                override fun loadInBackground(): Cursor? {
-                    loadEpg()
-                    return MatrixCursor(arrayOfNulls(1))
-                }
-
-            }
-            else -> {
-                loader = object : AsyncLoader<Cursor>(context!!) {
-
-                    override fun loadInBackground(): Cursor? {
-
-                        performRefresh()
-                        return MatrixCursor(arrayOfNulls(1))
-                    }
-
-                }
-            }
-        }
-
-        return loader
-    }
-
-    /*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * android.support.v4.app.LoaderManager.LoaderCallbacks#onLoadFinished(android
-	 * .support.v4.content.Loader, java.lang.Object)
-	 */
-    override fun onLoadFinished(loader: Loader<Cursor>, cursor: Cursor) {
-        when (loader.id) {
-            LOAD_CURRENT_PROGRAM -> refresh(LOAD_CHANNELS)
-            SYNCHRONIZE_CHANNELS ->
-                /**
-                 * Pr�fung ob das EPG in der Senderliste angezeigt werden soll.
-                 */
-                if (showNowPlaying && !showNowPlayingWifi || showNowPlaying && mNetworkInfo!!.isConnected) {
-                    refresh(LOAD_CURRENT_PROGRAM)
-                } else {
-                    refresh(LOAD_CHANNELS)
-                }
-            LOAD_CHANNELS -> {
-                mGroupCursor = cursor
-                mAdapter?.changeCursor(mGroupCursor!!)
-                mAdapter?.notifyDataSetChanged()
-                mPager?.setCurrentItem(mGroupIndex, false)
-                // mPager.setPageTransformer(true, new DepthPageTransformer());
-                activity?.invalidateOptionsMenu()
-                showProgress(false)
-                if (refreshGroupType) {
-                    mOnGroupTypeCHangedListener?.groupTypeChanged(if (showFavs) ChannelGroup.TYPE_FAV else ChannelGroup.TYPE_CHAN)
-                }
-                refreshGroupType = false
-            }
-
-            else -> showProgress(false)
-        }
-    }
-
-    /*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * android.support.v4.app.LoaderManager.LoaderCallbacks#onLoaderReset(android
-	 * .support.v4.content.Loader)
-	 */
-    override fun onLoaderReset(arg0: Loader<Cursor>) {}
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -424,33 +367,13 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
     }
 
     private fun performRefresh() {
-        val mDbHelper = DbHelper(context)
-        var chanXml: InputStream? = null
-        var favXml: InputStream? = null
         try {
-            val version = RecordingService.getVersionString()
-            if (!Config.isRSVersionSupported(version)) {
+
+            if (!versionRepository.isSupported("1.33.0.0")) {
                 showToast(context, MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION))
                 return
             }
-            /**
-             * Request the Channels
-             */
-            chanXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_CHANNELS)
-            val channelHandler = ChannelHandler()
-            val chans = channelHandler.parse(chanXml, false)
-            /**
-             * Request the Favourites
-             */
-            favXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_FAVS)
-            if (favXml != null) {
-                val favs = channelHandler.parse(favXml, true)
-                if (CollectionUtils.isNotEmpty(favs)) {
-                    chans.addAll(favs)
-                }
-            }
-            mDbHelper.saveChannelRoots(chans)
-
+            channelRepository.syncChannels()
 
             /**
              * Get the Mac Address for WOL
@@ -458,9 +381,7 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
             val macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST)
             ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress
             val prefEditor = prefs!!.prefs.edit()
-            StatusList.getStatus(prefs!!, version)
             prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true)
-            prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version)
             if (StringUtils.isNotBlank(macAddress)) {
                 prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress)
             }
@@ -468,31 +389,6 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
             Config.CHANNELS_SYNCED = true
         } catch (e: Exception) {
             catchException(javaClass.simpleName, e)
-        } finally {
-            mDbHelper.close()
-            IOUtils.closeQuietly(chanXml)
-            IOUtils.closeQuietly(favXml)
-        }
-    }
-
-    private fun loadEpg() {
-        val result: List<EpgEntry>
-        val helper = DbHelper(context)
-        var `is`: InputStream? = null
-        try {
-            val nowFloat = DateUtils.getFloatDate(Date())
-            val builder = ChannelEpg.buildBaseEpgUrl()
-                    .addQueryParameter("start", nowFloat)
-                    .addQueryParameter("end", nowFloat)
-            val handler = EpgEntryHandler()
-            `is` = ServerRequest.getInputStream(builder.build().toString())
-            result = handler.parse(`is`)
-            helper.saveNowPlaying(result)
-        } catch (e: Exception) {
-            catchException(javaClass.simpleName, e)
-        } finally {
-            IOUtils.closeQuietly(`is`)
-            helper.close()
         }
     }
 
@@ -501,16 +397,8 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
      *
      * @param id the id
      */
-    private fun refresh(id: Int) {
-        mGroupCursor = null
-        mPager!!.adapter = null
-        mAdapter!!.notifyDataSetChanged()
-        mAdapter = ChannelPagerAdapter(childFragmentManager, mGroupCursor)
-        mPager!!.adapter = mAdapter
-        mAdapter!!.notifyDataSetChanged()
-        loaderManager.destroyLoader(id)
-        loaderManager.restartLoader(id, arguments, this)
-        showProgress(true)
+    private fun refresh(fav: Boolean) {
+        groupViewModel.fetchEpg()
     }
 
     private fun showProgress(show: Boolean) {
@@ -576,9 +464,6 @@ class ChannelPager : BaseFragment(), LoaderCallbacks<Cursor>, OnPageChangeListen
         val KEY_GROUP_INDEX = ChannelPager::class.java.name + "KEY_GROUP_INDEX"
         val KEY_GROUP_ID = ChannelPager::class.java.name + "KEY_GROUP_ID"
         val KEY_HIDE_FAV_SWITCH = ChannelPager::class.java.name + "KEY_HIDE_FAV_SWITCH"
-        private const val SYNCHRONIZE_CHANNELS = 0
-        private const val LOAD_CHANNELS = 1
-        private const val LOAD_CURRENT_PROGRAM = 2
     }
 
 }

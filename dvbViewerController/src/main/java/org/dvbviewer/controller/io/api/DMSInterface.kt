@@ -5,6 +5,7 @@ import org.dvbviewer.controller.data.media.xml.VideoDirsFiles
 import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.data.version.xml.Version
 import org.dvbviewer.controller.entities.ChannelRoot
+import org.dvbviewer.controller.entities.EpgEntry
 import org.dvbviewer.controller.entities.FFMpegPresetList
 import org.dvbviewer.controller.entities.Timer
 import retrofit2.Call
@@ -18,7 +19,16 @@ interface DMSInterface {
     val version: Call<Version>
 
     @GET(CHANNEL_LIST)
-    fun getChannelList(@Query("favonly") fav: Int): Call<List<ChannelRoot>>
+    fun getChannelList(): Call<List<ChannelRoot>>
+
+    @GET(FAV_LIST)
+    fun getFavList(): Call<List<ChannelRoot>>
+
+    @GET(EPG)
+    fun getProgramm(@Query("start") start: String, @Query("end") stop: String): Call<List<EpgEntry>>
+
+    @GET(EPG)
+    fun getChannelProgramm(@Query("channel") epgId: String, @Query("start") start: String, @Query("end") stop: String): Call<List<EpgEntry>>
 
     @GET(TASK_API)
     fun getTaskList(@Query("all") all: Int): Call<TaskList>
@@ -51,9 +61,13 @@ interface DMSInterface {
 
         const val API = "/api"
 
-        const val CHANNEL_LIST = "$API/getchannelsxml.html?logo=1&favonly=1"
+        const val CHANNEL_LIST = "$API/getchannelsxml.html?logo=1"
+
+        const val FAV_LIST = "$API/getchannelsxml.html?logo=1&favonly=1"
 
         const val TASK_API = "$API/tasks.html"
+
+        const val EPG = "$API/epg.html?utf8=1&lvl=2"
 
         const val REC_DEL_API = "$API/recdelete.html"
 

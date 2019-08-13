@@ -17,13 +17,11 @@ package org.dvbviewer.controller
 
 import android.app.Application
 import android.util.Log
-
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.google.android.gms.security.ProviderInstaller
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
-
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.io.HTTPUtil
 import org.dvbviewer.controller.utils.Config
@@ -72,6 +70,7 @@ class App : Application() {
         val downloader = OkHttp3Downloader(HTTPUtil.getHttpClient())
         val picasso = picassoBuilder.downloader(downloader).build()
         Picasso.setSingletonInstance(picasso)
+
     }
 
     /**
@@ -97,7 +96,7 @@ class App : Application() {
     }
 
     companion object {
-        val TAG = "DVBViewerController"
+        const val TAG = "DVBViewerController"
     }
 
 

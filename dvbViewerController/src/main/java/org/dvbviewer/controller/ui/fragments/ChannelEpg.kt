@@ -34,7 +34,6 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
 import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
-import org.apache.commons.collections4.CollectionUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
 import org.dvbviewer.controller.data.version.TimerRepository
@@ -42,11 +41,7 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.EpgEntry
 import org.dvbviewer.controller.entities.IEPG
 import org.dvbviewer.controller.entities.Timer
-import org.dvbviewer.controller.io.HTTPUtil
-import org.dvbviewer.controller.io.ServerRequest
 import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand
-import org.dvbviewer.controller.io.UrlBuilderException
-import org.dvbviewer.controller.io.data.EpgEntryHandler
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.base.EpgLoader
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
@@ -167,22 +162,12 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
                     val nowFloat = DateUtils.getFloatDate(now)
                     val tommorrow = DateUtils.addDay(now)
                     val tommorrowFloat = DateUtils.getFloatDate(tommorrow)
-                    val builder = buildBaseEpgUrl()
-                            .addQueryParameter("channel", epgId.toString())
-                            .addQueryParameter("start", nowFloat.toString())
-                            .addQueryParameter("end", tommorrowFloat.toString())
-                    val handler = EpgEntryHandler()
-                    val stream = ServerRequest.getInputStream(builder.build().toString())
-                    stream.use {
-                        val result = handler.parse(it)
-                        if (CollectionUtils.isNotEmpty(result)) {
-                            val cursor = MatrixCursor(columnNames)
-                            for (entry in result) {
-                                cursor.addRow(arrayOf<Any>(entry.id, entry.epgID, entry.title, entry.subTitle, entry.description, entry.start.time, entry.end.time, entry.pdc, entry.eventId))
-                            }
-                            return cursor
-                        }
+                    val result = getDmsInterface().getChannelProgramm(epgId.toString(), nowFloat.toString(), tommorrowFloat.toString()).execute().body()
+                    val cursor = MatrixCursor(columnNames)
+                    result?.forEach {
+                        cursor.addRow(arrayOf<Any>(it.id, it.epgID, it.title, it.subTitle, it.description, it.start.time, it.end.time, it.pdc, it.eventId.toLong()))
                     }
+                    return cursor
                 } catch (e: Exception) {
                     catchException(javaClass.simpleName, e)
                 }
@@ -273,7 +258,7 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
      */
     private fun cursorToEpgEntry(c: Cursor): IEPG {
         val entry = EpgEntry()
-        entry.channel = channel
+        entry.channel = channel.toString()
         entry.description = c.getString(c.getColumnIndex(EpgTbl.DESC))
         entry.end = Date(c.getLong(c.getColumnIndex(EpgTbl.END)))
         entry.epgID = epgId
@@ -506,12 +491,6 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
         val KEY_EPG_ID = ChannelEpg::class.java.name + "KEY_EPG_ID"
         val KEY_EPG_DAY = ChannelEpg::class.java.name + "EPG_DAY"
 
-        @Throws(UrlBuilderException::class)
-        fun buildBaseEpgUrl(): HTTPUtil.UrlBuilder {
-            return HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EPG)
-                    .addQueryParameter("utf8", "1")
-                    .addQueryParameter("lvl", "2")
-        }
     }
 
 }

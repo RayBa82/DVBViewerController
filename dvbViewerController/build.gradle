@@ -27,6 +27,16 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+
+    sourceSets {
+        test {
+            resources.srcDirs += ['src/test/res']
+        }
+        androidTest {
+            resources.srcDirs += ['src/androidTest/res']
+        }
+    }
+
     signingConfigs {
         release
     }
@@ -72,10 +82,6 @@ android {
         exclude 'META-INF/LICENSE.txt'
     }
 
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
-
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
@@ -113,7 +119,7 @@ android {
         implementation group: 'com.tickaroo.tikxml', name: 'annotation', version: '0.8.13'
         implementation 'com.tickaroo.tikxml:retrofit-converter:0.8.13'
         kapt 'com.tickaroo.tikxml:processor:0.8.13'
-
+        implementation 'com.facebook.stetho:stetho:1.5.0'
 
 
         testImplementation 'junit:junit:4.12'
@@ -121,6 +127,9 @@ android {
         androidTestImplementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.1'
         androidTestImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '3.6.0'
         androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+        androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+        androidTestImplementation 'androidx.test:runner:1.2.0'
+        androidTestImplementation 'androidx.test:rules:1.2.0'
     }
 
 }
