@@ -20,15 +20,20 @@ import android.annotation.SuppressLint
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.io.exception.AuthenticationException
+import org.dvbviewer.controller.io.exception.DefaultHttpException
 import org.dvbviewer.controller.utils.UIUtils
+import org.xml.sax.SAXException
 
 /**
  * Class to mimic API of ListActivity for Fragments
@@ -50,7 +55,7 @@ open class BaseListFragment : BaseFragment() {
     private var mAdapter: ListAdapter? = null
     private var mList: ListView? = null
     private var mEmptyView: View? = null
-    private var mStandardEmptyView: TextView? = null
+    private var mStandardEmptyView: AppCompatTextView? = null
     private var mProgressContainer: View? = null
     private var mListContainer: View? = null
     private var mEmptyText: CharSequence? = null
@@ -195,10 +200,10 @@ open class BaseListFragment : BaseFragment() {
             val lframe = FrameLayout(context)
             lframe.id = INTERNAL_LIST_CONTAINER_ID
 
-            val tv = TextView(context)
+            val tv = AppCompatTextView(context)
             tv.id = INTERNAL_EMPTY_ID
             tv.gravity = Gravity.CENTER
-            tv.setTextAppearance(context, android.R.style.TextAppearance_Medium)
+            tv.setPadding(15, 0, 15, 0)
             lframe.addView(tv, FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
 
@@ -389,7 +394,7 @@ open class BaseListFragment : BaseFragment() {
         if (root is ListView) {
             mList = root
         } else {
-            mStandardEmptyView = root.findViewById<View>(INTERNAL_EMPTY_ID) as TextView
+            mStandardEmptyView = root.findViewById<View>(INTERNAL_EMPTY_ID) as AppCompatTextView
             if (mStandardEmptyView == null) {
                 mEmptyView = root.findViewById(android.R.id.empty)
             } else {
@@ -428,6 +433,34 @@ open class BaseListFragment : BaseFragment() {
             }
         }
         mHandler.post(mRequestFocus)
+    }
+
+    /**
+     * Generic method to catch an Exception.
+     * It shows a toast to inform the user.
+     * This method is safe to be called from non UI threads.
+     *
+     * @param tag for logging
+     * @param e   the Excetpion to catch
+     */
+    override fun catchException(tag: String, e: Exception?) {
+        if (context == null) {
+            return
+        }
+        Log.e(tag, "Error loading ListData", e)
+        val message: String?
+        if (e is AuthenticationException) {
+            message = getString(R.string.error_invalid_credentials)
+        } else if (e is DefaultHttpException) {
+            message = e.message
+        } else if (e is SAXException) {
+            message = getString(R.string.error_parsing_xml)
+        } else {
+            message = (getStringSafely(R.string.error_common)
+                    + "\n\n"
+                    + if (e?.message != null) e.message else e?.javaClass?.name)
+        }
+        message?.let { setEmptyText(it)}
     }
 
     companion object {

@@ -29,12 +29,11 @@
             android:layout_height="match_parent"
             android:drawSelectorOnTop="false" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:gravity="center" />
     </FrameLayout>
 
 </FrameLayout>
