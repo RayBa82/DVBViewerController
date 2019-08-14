@@ -17,12 +17,10 @@ package org.dvbviewer.controller.ui.fragments
 
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ApiResponse
@@ -33,20 +31,12 @@ import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.Status
 import org.dvbviewer.controller.entities.Status.Folder
 import org.dvbviewer.controller.entities.Status.StatusItem
-import org.dvbviewer.controller.io.RecordingService
-import org.dvbviewer.controller.io.ServerRequest
-import org.dvbviewer.controller.io.data.Status1Handler
-import org.dvbviewer.controller.io.data.Status2Handler
-import org.dvbviewer.controller.io.data.StatusHandler
 import org.dvbviewer.controller.ui.base.BaseListFragment
-import org.dvbviewer.controller.utils.*
+import org.dvbviewer.controller.utils.ArrayListAdapter
+import org.dvbviewer.controller.utils.CategoryAdapter
+import org.dvbviewer.controller.utils.DateUtils
+import org.dvbviewer.controller.utils.FileUtils
 
-/**
- * The Class StatusList.
- *
- * @author RayBa
- * @date 05.07.2012
- */
 class StatusList : BaseListFragment() {
 
     private lateinit var mAdapter: CategoryAdapter
@@ -160,20 +150,8 @@ class StatusList : BaseListFragment() {
 
     }
 
-    /**
-     * The Class StatusAdapter.
-     *
-     * @author RayBa
-     * @date 05.07.2012
-     */
     inner class StatusAdapter
-    /**
-     * Instantiates a new status adapter.
-     *
-     * @param context the context
-     * @author RayBa
-     * @date 05.07.2012
-     */
+
         : ArrayListAdapter<StatusItem>() {
 
         /*
@@ -219,62 +197,9 @@ class StatusList : BaseListFragment() {
 
     }
 
-    /**
-     * Refresh.
-     *
-     * @author RayBa
-     * @date 05.07.2012
-     */
     private fun refresh() {
         statusViewModel.getStatus(true)
         setListShown(false)
-    }
-
-    companion object {
-
-        @Throws(Exception::class)
-        fun getStatus(prefs: DVBViewerPreferences, version: String?): Status {
-            val result: Status = requestStatusFromServer(ServerConsts.URL_STATUS2, Status2Handler())
-            addVersionItem(result, version)
-            val prefEditor = prefs.prefs.edit()
-            prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version)
-            val jsonClients = RecordingService.getDvbViewerTargets()
-            if (StringUtils.isNotBlank(jsonClients)) {
-                prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients)
-            }
-            val oldStatus = requestStatusFromServer(ServerConsts.URL_STATUS, Status1Handler())
-            result!!.items.addAll(oldStatus.items)
-            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.epgBefore)
-            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.epgAfter)
-            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.defAfterRecord)
-            prefEditor.apply()
-            return result
-        }
-
-        @Throws(Exception::class)
-        private fun requestStatusFromServer(url: String, handler: StatusHandler): Status {
-            try {
-                val statusXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + url)
-                statusXml.use {
-                    return handler.parse(it)
-                }
-            } catch (e: java.lang.Exception) {
-                Log.e(javaClass.simpleName, "Error getting status", e)
-            }
-            return Status()
-        }
-
-        private fun addVersionItem(status: Status?, version: String?): Status {
-            var status = status
-            if (status == null) {
-                status = Status()
-            }
-            val versionItem = StatusItem()
-            versionItem.nameRessource = R.string.status_server_version
-            versionItem.value = version
-            status.items.add(0, versionItem)
-            return status
-        }
     }
 
 }

@@ -36,8 +36,12 @@ class VersionRepository(context: Context, private val dmsInterface: DMSInterface
     fun getVersion(): Version? {
         return dmsInterface.version.execute().body()
     }
-    fun getStatus(): Status? {
+    fun getStatus2(): Status? {
         return dmsInterface.getStatus2().execute().body()
+    }
+
+    fun getStatus(): Status? {
+        return dmsInterface.getStatus().execute().body()
     }
 
 }

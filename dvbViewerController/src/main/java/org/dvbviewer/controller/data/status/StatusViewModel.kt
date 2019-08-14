@@ -1,5 +1,6 @@
 package org.dvbviewer.controller.data.status
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,9 +32,13 @@ class StatusViewModel internal constructor(private val prefs: DVBViewerPreferenc
             var apiResponse: ApiResponse<Status> = ApiResponse.error(null, null)
             async(Dispatchers.Default) {
                 apiResponse = try {
-                    val status = repo.getStatus()
+                    val status = repo.getStatus2()
                     val version = repo.getVersion()
-                    addVersionItem(status, version)
+                    val editor = prefs.prefs.edit()
+                    addVersionItem(status, version, editor)
+                    val status1 = repo.getStatus()
+                    saveDefaultTimerValues(status1, editor)
+                    editor.apply()
                     ApiResponse.success(status)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error getting status", e)
@@ -45,7 +50,7 @@ class StatusViewModel internal constructor(private val prefs: DVBViewerPreferenc
         }
     }
 
-    private fun addVersionItem(status: Status?, version: Version?) {
+    private fun addVersionItem(status: Status?, version: Version?, editor: SharedPreferences.Editor) {
         if (status == null || version == null) {
             return
         }
@@ -53,9 +58,17 @@ class StatusViewModel internal constructor(private val prefs: DVBViewerPreferenc
         versionItem.nameRessource = R.string.status_server_version
         versionItem.value = version.version
         status.items.add(0, versionItem)
-        prefs.prefs.edit()
-                .putInt(DVBViewerPreferences.KEY_RS_IVER, version.internalVersion)
-                .apply()
+        editor.putInt(DVBViewerPreferences.KEY_RS_IVER, version.internalVersion)
+
+    }
+
+    private fun saveDefaultTimerValues(status: Status?, editor: SharedPreferences.Editor) {
+        if (status == null) {
+            return
+        }
+        editor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, status.epgBefore)
+        editor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, status.epgAfter)
+        editor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, status.defAfterRecord)
 
     }
 
