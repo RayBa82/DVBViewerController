@@ -44,33 +44,45 @@ class TaskViewModel(application: Application) : DmsViewModel(application) {
 
 
     private fun fetchTaskList() {
-        if(data == null) {
+        if (data == null) {
             return
         }
         viewModelScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
             var mediaList = TaskList()
-            try {
-                var isSupported = false
-                async(Dispatchers.Default) {
+            var isSupported = false
+            var exception: java.lang.Exception? = null
+            async(Dispatchers.Default) {
+                try {
                     isSupported = versionRepo.isSupported(MIN_VERSION)
-                }.await()
-
-                if(!isSupported) {
-                    val res = getApplication<Application>().resources
-                    data?.value = ApiResponse.notSupported(MessageFormat.format(res.getString(R.string.version_unsupported_text), MIN_VERSION))
-                    return@launch
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error checking support", e)
+                    exception = e
                 }
+            }.await()
+            if (exception != null) {
+                data?.value = ApiResponse.error(exception, mediaList)
+                return@launch
+            }
 
-                async(Dispatchers.Default) {
+            if (!isSupported) {
+                val res = getApplication<Application>().resources
+                data?.value = ApiResponse.notSupported(MessageFormat.format(res.getString(R.string.version_unsupported_text), MIN_VERSION))
+                return@launch
+            }
+
+            async(Dispatchers.Default) {
+                try {
                     mediaList = taskRepo.taskList
-                }.await()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error getting tasks", e)
+                    exception = e
+                }
+            }.await()
 
+            if (exception != null) {
+                data?.value = ApiResponse.error(exception, mediaList)
+            } else {
                 data?.value = ApiResponse.success(mediaList)
-
-            } catch (e: Exception) {
-                Log.e(TAG, "Error getting tasks", e)
-                val message = getErrorMessage(e)
-                data?.value = ApiResponse.error(message, null)
             }
 
         }

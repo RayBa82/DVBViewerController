@@ -1,12 +1,10 @@
 package org.dvbviewer.controller.data.version
 
 import android.content.Context
+import org.dvbviewer.controller.data.version.xml.Version
 import org.dvbviewer.controller.entities.DVBViewerPreferences
+import org.dvbviewer.controller.entities.Status
 import org.dvbviewer.controller.io.api.DMSInterface
-
-/**
- * Created by rbaun on 02.04.18.
- */
 
 class VersionRepository(context: Context, private val dmsInterface: DMSInterface) {
 
@@ -33,6 +31,13 @@ class VersionRepository(context: Context, private val dmsInterface: DMSInterface
         val int4 = Integer.valueOf(version[3])
         val versionNumber = int1 + int2 + int3 + int4
         return isSupported(versionNumber)
+    }
+
+    fun getVersion(): Version? {
+        return dmsInterface.version.execute().body()
+    }
+    fun getStatus(): Status? {
+        return dmsInterface.getStatus2().execute().body()
     }
 
 }

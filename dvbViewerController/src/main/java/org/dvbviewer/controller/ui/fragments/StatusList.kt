@@ -18,15 +18,17 @@ package org.dvbviewer.controller.ui.fragments
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
-import androidx.loader.app.LoaderManager.LoaderCallbacks
-import androidx.loader.content.Loader
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.ApiResponse
+import org.dvbviewer.controller.data.status.StatusViewModel
+import org.dvbviewer.controller.data.status.StatusViewModelFactory
+import org.dvbviewer.controller.data.version.VersionRepository
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.Status
 import org.dvbviewer.controller.entities.Status.Folder
@@ -36,10 +38,8 @@ import org.dvbviewer.controller.io.ServerRequest
 import org.dvbviewer.controller.io.data.Status1Handler
 import org.dvbviewer.controller.io.data.Status2Handler
 import org.dvbviewer.controller.io.data.StatusHandler
-import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.utils.*
-import java.text.MessageFormat
 
 /**
  * The Class StatusList.
@@ -47,10 +47,13 @@ import java.text.MessageFormat
  * @author RayBa
  * @date 05.07.2012
  */
-class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
+class StatusList : BaseListFragment() {
 
     private lateinit var mAdapter: CategoryAdapter
     private lateinit var mRes: Resources
+    private lateinit var versionRepository: VersionRepository
+    private lateinit var prefs: DVBViewerPreferences
+    private lateinit var statusViewModel: StatusViewModel
     private var mStatusAdapter: StatusAdapter? = null
 
     /* (non-Javadoc)
@@ -63,6 +66,8 @@ class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
         mStatusAdapter = StatusAdapter()
         mAdapter = CategoryAdapter(context)
         mRes = resources
+        prefs = DVBViewerPreferences(activity!!.applicationContext)
+        versionRepository = VersionRepository(activity!!.applicationContext, getDmsInterface())
     }
 
     /*
@@ -72,56 +77,41 @@ class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
      */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mRes = resources
-        val loader = loaderManager.initLoader(0, savedInstanceState, this)
-        setListShown(!(!isResumed || loader.isStarted))
+        val statusObserver = Observer<ApiResponse<Status>> { response -> onStatusLoaded(response!!) }
+        val statusViewModelFactory = StatusViewModelFactory(prefs, versionRepository)
+        statusViewModel = ViewModelProvider(this, statusViewModelFactory)
+                .get(StatusViewModel::class.java)
+        statusViewModel.getStatus().observe(this, statusObserver)
+        setListShown(isResumed)
     }
 
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onCreateLoader(int, android.os.Bundle)
-     */
-    override fun onCreateLoader(arg0: Int, arg1: Bundle?): Loader<Status> {
-        return object : AsyncLoader<Status>(context!!) {
-
-            override fun loadInBackground(): Status {
-                try {
-                    val version = RecordingService.getVersionString()
-                    if (!Config.isRSVersionSupported(version)) {
-                        showToast(context, MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION))
-                        return Status()
-                    }
-                    return getStatus(DVBViewerPreferences(context), version)
-                } catch (e: Exception) {
-                    catchException(javaClass.simpleName, e)
-                }
-
-                return Status()
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoadFinished(android.support.v4.content.Loader, java.lang.Object)
-     */
-    override fun onLoadFinished(loader: Loader<Status>, status: Status?) {
-        if (status != null) {
-            mStatusAdapter!!.items = status.items
+    private fun onStatusLoaded(apiResponse: ApiResponse<Status>) {
+        if (apiResponse.status == org.dvbviewer.controller.data.Status.SUCCESS) {
+            mStatusAdapter!!.items = apiResponse.data?.items
             val folderAdapter = FolderAdapter()
-            folderAdapter.items = status.folders
+            folderAdapter.items = apiResponse.data?.folders
             mAdapter.addSection(getString(R.string.status), mStatusAdapter)
             mAdapter.addSection(getString(R.string.recording_folder), folderAdapter)
             mAdapter.notifyDataSetChanged()
+        } else if (apiResponse.status == org.dvbviewer.controller.data.Status.ERROR) {
+            catchException(TAG, apiResponse.e)
         }
         listAdapter = mAdapter
         setListShown(true)
     }
 
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoaderReset(android.support.v4.content.Loader)
-     */
-    override fun onLoaderReset(arg0: Loader<Status>) {
-        if (isVisible) {
-            setListShown(true)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.status, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menuRefresh -> {
+                refresh()
+                true
+            }
+            else -> false
         }
     }
 
@@ -236,7 +226,7 @@ class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
      * @date 05.07.2012
      */
     private fun refresh() {
-        loaderManager.restartLoader(0, arguments, this)
+        statusViewModel.getStatus(true)
         setListShown(false)
     }
 

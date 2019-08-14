@@ -17,28 +17,32 @@ public class ApiResponse<T>{
     public final String message;
 
     @Nullable
+    public final Exception e;
+
+    @Nullable
     public final T data;
 
-    public ApiResponse(@NonNull Status status, @Nullable T data, @Nullable String message) {
+    public ApiResponse(@NonNull Status status, @Nullable T data, @Nullable String message, @Nullable Exception e) {
         this.status = status;
         this.data = data;
         this.message = message;
+        this.e = e;
     }
 
     public static <T> ApiResponse<T> success(@Nullable T data) {
-        return new ApiResponse<>(SUCCESS, data, null);
+        return new ApiResponse<>(SUCCESS, data, null, null);
     }
 
-    public static <T> ApiResponse<T> error(String msg, @Nullable T data) {
-        return new ApiResponse<>(ERROR, data, msg);
+    public static <T> ApiResponse<T> error(Exception e, @Nullable T data) {
+        return new ApiResponse<>(ERROR, data, null, e);
     }
 
     public static <T> ApiResponse<T> notSupported(String msg) {
-        return new ApiResponse<>(NOT_SUPPORTED, null, msg);
+        return new ApiResponse<>(NOT_SUPPORTED, null, msg, null);
     }
 
     public static <T> ApiResponse<T> loading(@Nullable T data) {
-        return new ApiResponse<>(LOADING, data, null);
+        return new ApiResponse<>(LOADING, data, null, null);
     }
 
     @Override

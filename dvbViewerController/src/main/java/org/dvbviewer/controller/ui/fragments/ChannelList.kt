@@ -68,10 +68,10 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
     private var mGroupIndex = -1
     private var mChannelIndex = -1
     private var showFavs: Boolean = false
-    private var prefs: DVBViewerPreferences? = null
-    private var mAdapter: ChannelAdapter? = null
     private var mCHannelSelectedListener: OnChannelSelectedListener? = null
-    private var mChannelPagedOberserver: ChannelPagedObserver? = null
+    private lateinit var prefs: DVBViewerPreferences
+    private lateinit var mAdapter: ChannelAdapter
+    private lateinit var mChannelPagedOberserver: ChannelPagedObserver
     private lateinit var timerRepository: TimerRepository
 
     /*
@@ -82,7 +82,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = DVBViewerPreferences(context!!)
-        showFavs = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
+        showFavs = prefs.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
         mAdapter = ChannelAdapter(context)
         timerRepository = TimerRepository(getDmsInterface())
         getExtras(savedInstanceState)
@@ -109,7 +109,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
         val handler = Handler()
         val contentUri = BASE_CONTENT_URI.buildUpon().appendPath(mGroupId.toString()).appendQueryParameter("index", mChannelIndex.toString()).build()
         mChannelPagedOberserver = ChannelPagedObserver(handler)
-        context!!.contentResolver.registerContentObserver(contentUri, true, mChannelPagedOberserver!!)
+        context?.contentResolver?.registerContentObserver(contentUri, true, mChannelPagedOberserver)
     }
 
     /*
@@ -229,7 +229,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             val chan = cursorToChannel(c)
             val videoIntent = StreamUtils.getDirectUrl(chan.channelID, chan.name, FileType.CHANNEL)
             activity!!.startActivity(videoIntent)
-            prefs!!.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply()
+            prefs.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply()
             AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)
@@ -244,7 +244,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             val chan = cursorToChannel(c)
             val videoIntent = StreamUtils.getTranscodedUrl(context, chan.channelID, chan.name, FileType.CHANNEL)
             activity!!.startActivity(videoIntent)
-            prefs!!.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply()
+            prefs.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply()
             AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)

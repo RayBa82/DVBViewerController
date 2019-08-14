@@ -32,16 +32,17 @@ class VersionViewModel internal constructor(application: Application, private va
             return
         }
         viewModelScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
-            var apiResponse = ApiResponse.error("", false)
-            try {
+            var apiResponse = ApiResponse.error(null, false)
+
                 async(Dispatchers.Default) {
-                    apiResponse = ApiResponse.success(vRepo.isSupported(minVersion))
+                    apiResponse = try {
+                        ApiResponse.success(vRepo.isSupported(minVersion))
+                    } catch (e: Exception) {
+                        Log.e(TAG , "Error getting version", e)
+                        ApiResponse.error(e, false)
+                    }
                 }.await()
-            } catch (e: Exception) {
-                Log.e(TAG , "Error getting version", e)
-                val message = getErrorMessage(e)
-                apiResponse = ApiResponse.error(message, false)
-            }
+
             data?.value = apiResponse
         }
     }

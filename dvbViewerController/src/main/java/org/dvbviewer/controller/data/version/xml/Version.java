@@ -17,7 +17,7 @@ package org.dvbviewer.controller.data.version.xml;
 
 
 import com.tickaroo.tikxml.annotation.Attribute;
-import com.tickaroo.tikxml.annotation.PropertyElement;
+import com.tickaroo.tikxml.annotation.TextContent;
 import com.tickaroo.tikxml.annotation.Xml;
 
 
@@ -33,7 +33,7 @@ public class Version {
     @Attribute(name = "iver")
 	private int  internalVersion;
 
-    @PropertyElement
+    @TextContent
 	private String version;
 
     public int getInternalVersion() {

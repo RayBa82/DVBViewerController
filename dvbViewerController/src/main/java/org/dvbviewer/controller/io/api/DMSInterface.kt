@@ -4,10 +4,7 @@ import okhttp3.ResponseBody
 import org.dvbviewer.controller.data.media.xml.VideoDirsFiles
 import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.data.version.xml.Version
-import org.dvbviewer.controller.entities.ChannelRoot
-import org.dvbviewer.controller.entities.EpgEntry
-import org.dvbviewer.controller.entities.FFMpegPresetList
-import org.dvbviewer.controller.entities.Timer
+import org.dvbviewer.controller.entities.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -51,6 +48,12 @@ interface DMSInterface {
     @GET(TIMER_DELETE)
     fun deleteTimer(@Query("id") id: String): Call<ResponseBody>
 
+    @GET(STATUS)
+    fun getStatus(): Call<Status>
+
+    @GET(STATUS2)
+    fun getStatus2(): Call<Status>
+
     @GET(MEDIA_DIRS)
     fun getMediaDir(@Query("dirid") id: Long): Call<VideoDirsFiles>
 
@@ -78,6 +81,10 @@ interface DMSInterface {
         const val TIMER_EDIT = "$API/timeredit.html"
 
         const val TIMER_DELETE = "$API/timerdelete.html"
+
+        const val STATUS = "$API/status.html"
+
+        const val STATUS2 = "$API/status2.html"
 
         const val MEDIA_DIRS = "$API/mediafiles.html?content=3&recursive=0&thumbs=1"
 

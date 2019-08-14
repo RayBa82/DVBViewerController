@@ -66,6 +66,10 @@ class Status2Handler : DefaultHandler(), StatusHandler {
         val epgudate = root.getChild("epgudate")
         val recfolders = root.getChild("recfolders")
         val folder = recfolders.getChild("folder")
+        val epgbefore = root.getChild("epgbefore")
+        val epgafter = root.getChild("epgafter")
+        val timezone = root.getChild("timezone")
+        val defafterrecord = root.getChild("defafterrecord")
 
         root.setStartElementListener {
             status.items = ArrayList()
@@ -162,6 +166,37 @@ class Status2Handler : DefaultHandler(), StatusHandler {
         }
         folder.setEndTextElementListener { body -> currentFolder!!.path = body }
         folder.setEndElementListener { status.folders.add(currentFolder) }
+
+        epgbefore.setEndTextElementListener { body ->
+            status.epgBefore = NumberUtils.toInt(body)
+            val item = StatusItem()
+            item.nameRessource = R.string.status_epg_before
+            item.value = body
+            status.items.add(item)
+        }
+
+        epgafter.setEndTextElementListener { body ->
+            status.epgAfter = Integer.parseInt(body)
+            val item = StatusItem()
+            item.nameRessource = R.string.status_epg_after
+            item.value = body
+            status.items.add(item)
+        }
+        timezone.setEndTextElementListener { body ->
+            status.timeZone = NumberUtils.toInt(body)
+            val item = StatusItem()
+            item.nameRessource = R.string.status_timezone
+            item.value = body
+            status.items.add(item)
+        }
+        defafterrecord.setEndTextElementListener { body ->
+            status.defAfterRecord = NumberUtils.toInt(body)
+            val item = StatusItem()
+            item.nameRessource = R.string.status_def_after_record
+            item.value = body
+            status.items.add(item)
+        }
+
         Xml.parse(stream, Xml.Encoding.UTF_8, root.contentHandler)
         return status
 

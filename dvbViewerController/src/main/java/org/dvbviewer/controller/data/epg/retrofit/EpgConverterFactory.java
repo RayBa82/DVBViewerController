@@ -26,18 +26,18 @@ public final class EpgConverterFactory extends Converter.Factory {
         return new EpgConverterFactory();
     }
 
-    private final Type type;
+    private final Type epgType;
 
     private EpgConverterFactory(){
         TypeToken<?> typeToken = TypeToken.getParameterized(List.class, EpgEntry.class);
-        type = typeToken.getType();
+        epgType = typeToken.getType();
     }
 
 
     @Override
     public Converter<ResponseBody, List<EpgEntry>> responseBodyConverter(Type type, Annotation[] annotations,
                                                                          Retrofit retrofit) {
-        if (type.equals(type)) {
+        if (type.equals(epgType)) {
             return new EpgPresetResponseBodyConverter();
         }
         return null;
@@ -46,7 +46,7 @@ public final class EpgConverterFactory extends Converter.Factory {
     @Override
     public Converter<List<EpgEntry>, RequestBody> requestBodyConverter(Type type,
                                                           Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-        if (type.equals(type)) {
+        if (type.equals(epgType)) {
             return new EpgRequestBodyConverter();
         }
         return null;

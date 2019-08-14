@@ -44,6 +44,7 @@ import org.dvbviewer.controller.ui.base.RecyclerViewFragment;
 import java.text.MessageFormat;
 import java.util.List;
 
+import static org.dvbviewer.controller.data.Status.ERROR;
 import static org.dvbviewer.controller.data.Status.SUCCESS;
 
 /**
@@ -155,8 +156,8 @@ public class MediaList extends RecyclerViewFragment {
 		if(response.status == SUCCESS) {
 			mAdapter.setCursor(response.data);
 			mAdapter.notifyDataSetChanged();
-		}else {
-			sendMessage(response.message);
+		}else if (response.status == ERROR){
+			catchException(MediaList.class.getSimpleName(), response.e);
 		}
 		setListShown(true);
 	}

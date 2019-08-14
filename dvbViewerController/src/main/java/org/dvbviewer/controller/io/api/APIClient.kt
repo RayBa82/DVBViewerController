@@ -4,6 +4,7 @@ import com.tickaroo.tikxml.TikXml
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import org.dvbviewer.controller.data.channel.retrofit.ChannelRootConverterFactory
 import org.dvbviewer.controller.data.epg.retrofit.EpgConverterFactory
+import org.dvbviewer.controller.data.status.retrofit.StatusConverterFactory
 
 import org.dvbviewer.controller.data.stream.retrofit.FFMpegConverterFactory
 import org.dvbviewer.controller.data.timer.retrofit.TimerConverterFactory
@@ -28,6 +29,7 @@ object APIClient {
                     .addConverterFactory(TimerConverterFactory.create())
                     .addConverterFactory(ChannelRootConverterFactory.create())
                     .addConverterFactory(EpgConverterFactory.create())
+                    .addConverterFactory(StatusConverterFactory.create())
                     .addConverterFactory(TikXmlConverterFactory.create(tikXml))
                     .client(HTTPUtil.getHttpClient())
                     .build()

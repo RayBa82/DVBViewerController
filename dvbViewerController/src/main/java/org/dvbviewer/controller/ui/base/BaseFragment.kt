@@ -77,7 +77,7 @@ open class BaseFragment : Fragment() {
      * @param tag for logging
      * @param e   the Excetpion to catch
      */
-    protected fun catchException(tag: String, e: Exception) {
+    protected fun catchException(tag: String, e: Exception?) {
         if (context == null) {
             return
         }
@@ -92,7 +92,7 @@ open class BaseFragment : Fragment() {
         } else {
             message = (getStringSafely(R.string.error_common)
                     + "\n\n"
-                    + if (e.message != null) e.message else e.javaClass.name)
+                    + if (e?.message != null) e.message else e?.javaClass?.name)
         }
         message?.let { showToast(context, it) }
     }

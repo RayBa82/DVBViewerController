@@ -33,17 +33,18 @@ class StreamViewModel internal constructor(application: Application, private val
             return
         }
         viewModelScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
-            var prefs = FFMpegPresetList()
-            try {
-                async(Dispatchers.Default) {
-                    prefs = mRepository.getFFMpegPresets(getApplication())
-                }.await()
-                data?.value = ApiResponse.success(prefs)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error getting mediafiles", e)
-                val message = getErrorMessage(e)
-                data?.value = ApiResponse.error(message, null)
-            }
+            var apiResponse: ApiResponse<FFMpegPresetList> = ApiResponse.error(null, null)
+            async(Dispatchers.Default) {
+                apiResponse = try {
+                    val prefs = mRepository.getFFMpegPresets(getApplication())
+                    ApiResponse.success(prefs)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error getting mediafiles", e)
+                    ApiResponse.error(e, null)
+                }
+            }.await()
+            data?.value = apiResponse
+
 
         }
     }
