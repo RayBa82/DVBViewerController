@@ -38,10 +38,9 @@ import androidx.loader.content.Loader
 import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.recording.RecordingRepository
 import org.dvbviewer.controller.entities.IEPG
 import org.dvbviewer.controller.entities.Recording
-import org.dvbviewer.controller.io.ServerRequest
-import org.dvbviewer.controller.io.data.RecordingHandler
 import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
@@ -67,7 +66,7 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
     private var actionMode: Boolean = false
     private var clickListener: IEpgDetailsActivity.OnIEPGClickListener? = null
     private var recordings: MutableList<Recording>? = null
-
+    private lateinit var recordingRepo: RecordingRepository
 
     /* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -77,6 +76,7 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
         mAdapter = RecordingAdapter(context)
         setHasOptionsMenu(true)
         retainInstance = true
+        recordingRepo = RecordingRepository(getDmsInterface())
     }
 
     /* (non-Javadoc)
@@ -106,11 +106,7 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
 
             override fun loadInBackground(): List<Recording>? {
                 try {
-                    val inputStream = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_RECORIDNGS)
-                    inputStream.use {
-                        val handler = RecordingHandler()
-                        return handler.parse(it)
-                    }
+                    return recordingRepo.getRecordingList()
                 } catch (e: Exception) {
                     catchException(javaClass.simpleName, e)
                 }
@@ -480,28 +476,17 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
     override fun onClick(dialog: DialogInterface, which: Int) {
         when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
-                val size = recordings!!.size
-                var i = 0
-                for (recording in recordings!!) {
-                    i++
-                    val last = i == recordings!!.size
-                    val call = getDmsInterface()!!.deleteRecording(recording.id, 1)
-                    call.enqueue(object : Callback<ResponseBody> {
-                        override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                            if (size == 1) {
-                                sendMessage(getString(R.string.recording_deleted, recording.title))
-                                refresh()
-                            } else if (last) {
-                                sendMessage(getString(R.string.recordings_deleted, size))
-                                refresh()
-                            }
-                        }
+                val call = recordingRepo.deleteRecording(recordings!!)
+                call.enqueue(object : Callback<ResponseBody> {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        sendMessage(getString(R.string.recording_deleted))
+                        refresh()
+                    }
 
-                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                            sendMessage(R.string.error_common)
-                        }
-                    })
-                }
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        sendMessage(R.string.error_common)
+                    }
+                })
                 if (mode != null) {
                     mode!!.finish()
                 }

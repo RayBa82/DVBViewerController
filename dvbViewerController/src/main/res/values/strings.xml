@@ -44,8 +44,7 @@
     <!-- Recordings -->
     <string name="recordings">Recording list</string>
     <string name="no_recordings">No recordings found</string>
-    <string name="recording_deleted">Deleted recording %1$s</string>
-    <string name="recordings_deleted">Deleted %1$d recordings</string>
+    <string name="recording_deleted">Deleted</string>
     <!-- Medias -->
     <string name="medias">Medias</string>
     <!-- Timer -->

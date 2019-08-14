@@ -18,6 +18,7 @@ package org.dvbviewer.controller.ui.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,19 +41,24 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.R;
+import org.dvbviewer.controller.data.remote.RemoteRepository;
+import org.dvbviewer.controller.entities.DVBTarget;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.io.RecordingService;
-import org.dvbviewer.controller.io.ServerRequest;
 import org.dvbviewer.controller.ui.base.AsyncLoader;
-import org.dvbviewer.controller.utils.ServerConsts;
+import org.dvbviewer.controller.ui.base.BaseFragment;
 import org.dvbviewer.controller.utils.UIUtils;
 
 import java.lang.reflect.Type;
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * The Class Remote.
@@ -60,7 +66,7 @@ import java.util.List;
  * @author RayBa
  * @date 07.04.2013
  */
-public class Remote extends Fragment implements LoaderCallbacks<List<String>>, RemoteControl.OnRemoteButtonClickListener {
+public class Remote extends BaseFragment implements LoaderCallbacks<List<DVBTarget>>, RemoteControl.OnRemoteButtonClickListener {
 
     private Toolbar mToolbar;
     private ArrayAdapter mSpinnerAdapter;
@@ -69,10 +75,11 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     private static final String KEY_SPINNER_POS = "spinnerPosition";
     private DVBViewerPreferences prefs;
     private final Gson gson = new Gson();
-    private final Type type = new TypeToken<List<String>>() {
+    private final Type type = new TypeToken<List<DVBTarget>>() {
     }.getType();
     private ViewPager mPager;
     private OnTargetsChangedListener onTargetsChangedListener;
+    private RemoteRepository repository;
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -81,6 +88,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        repository = new RemoteRepository(getDmsInterface());
     }
 
     /* (non-Javadoc)
@@ -187,12 +195,12 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
 
 
     @Override
-    public Loader<List<String>> onCreateLoader(int id, Bundle args) {
-        AsyncLoader<List<String>> loader = new AsyncLoader<List<String>>(getContext()) {
+    public Loader<List<DVBTarget>> onCreateLoader(int id, Bundle args) {
+        AsyncLoader<List<DVBTarget>> loader = new AsyncLoader<List<DVBTarget>>(getContext()) {
 
             @Override
-            public List<String> loadInBackground() {
-                List<String> result = null;
+            public List<DVBTarget> loadInBackground() {
+                List<DVBTarget> result = null;
                 try {
                     result = getDVBViewerClients();
                 } catch (Exception e) {
@@ -205,12 +213,16 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     }
 
     @Override
-    public void onLoadFinished(Loader<List<String>> loader, List<String> data) {
+    public void onLoadFinished(Loader<List<DVBTarget>> loader, List<DVBTarget> data) {
         if (onTargetsChangedListener != null) {
             onTargetsChangedListener.targetsChanged(getString(R.string.remote), data);
         } else if (data != null && !data.isEmpty()) {
             String[] arr = new String[data.size()];
-            mSpinnerAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, data.toArray(arr));
+            List<String> clients = new LinkedList<>();
+            for(DVBTarget target : data) {
+                clients.add(target.getName());
+            }
+            mSpinnerAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, clients.toArray(arr));
             mSpinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
             mClientSpinner.setAdapter(mSpinnerAdapter);
             String activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT);
@@ -222,22 +234,20 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
     }
 
     @Override
-    public void onLoaderReset(Loader<List<String>> loader) {
+    public void onLoaderReset(Loader<List<DVBTarget>> loader) {
         loader.reset();
     }
 
-    private List<String> getDVBViewerClients() {
-        List<String> result = new LinkedList<>();
-        String jsonClients = RecordingService.INSTANCE.getDvbViewerTargets();
-        if (StringUtils.isNotBlank(jsonClients)) {
-            result = gson.fromJson(jsonClients, type);
+    private List<DVBTarget> getDVBViewerClients() {
+        List<DVBTarget> result =  repository.getTargets();
+        if (CollectionUtils.isNotEmpty(result)) {
             SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
-            prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients);
+            prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, gson.toJson(result));
             prefEditor.apply();
         } else {
             final String prefValue = prefs.getPrefs().getString(DVBViewerPreferences.KEY_RS_CLIENTS, "");
             if (StringUtils.isNotBlank(prefValue)) {
-                result = gson.fromJson(jsonClients, type);
+                result = gson.fromJson(prefValue, type);
             }
         }
         return result;
@@ -249,10 +259,17 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
         if (target == null) {
             return;
         }
-        final String request = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SEND_COMMAND, target, action);
-        ServerRequest.DVBViewerCommand httpCommand = new ServerRequest.DVBViewerCommand(getContext(), request);
-        Thread executionThread = new Thread(httpCommand);
-        executionThread.start();
+        repository.sendCommand(target.toString(), action).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.i(Remote.class.getSimpleName(),"Send command to target");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                catchException(Remote.class.getSimpleName(), throwable);
+            }
+        });
     }
 
     /**
@@ -319,7 +336,7 @@ public class Remote extends Fragment implements LoaderCallbacks<List<String>>, R
 
     public interface OnTargetsChangedListener {
 
-        void targetsChanged(String title, List<String> tragets);
+        void targetsChanged(String title, List<DVBTarget> tragets);
 
         Object getSelectedTarget();
 

@@ -80,7 +80,7 @@ open class RecyclerViewFragment : BaseFragment() {
      * @param tag for logging
      * @param e   the Excetpion to catch
      */
-    override fun catchException(tag: String, e: Exception?) {
+    override fun catchException(tag: String, e: Throwable?) {
         if (context == null) {
             return
         }

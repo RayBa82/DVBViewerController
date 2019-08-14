@@ -36,12 +36,12 @@ import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
+import org.dvbviewer.controller.data.remote.RemoteRepository
 import org.dvbviewer.controller.data.version.TimerRepository
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.EpgEntry
 import org.dvbviewer.controller.entities.IEPG
 import org.dvbviewer.controller.entities.Timer
-import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.base.EpgLoader
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
@@ -52,7 +52,6 @@ import org.dvbviewer.controller.utils.UIUtils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.MessageFormat
 import java.util.*
 
 /**
@@ -77,13 +76,11 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
     private var lastRefresh: Date? = null
     private var header: View? = null
     private lateinit var timerRepository: TimerRepository
+    private lateinit var remoteRepository: RemoteRepository
 
     override val layoutRessource: Int
         get() = R.layout.fragment_channel_epg
 
-    /* (non-Javadoc)
-     * @see com.actionbarsherlock.app.SherlockFragment#onAttach(android.app.Activity)
-     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is EpgDateInfo) {
@@ -97,6 +94,7 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         timerRepository = TimerRepository(getDmsInterface())
+        remoteRepository = RemoteRepository(getDmsInterface())
     }
 
     /* (non-Javadoc)
@@ -419,11 +417,16 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
             }
             R.id.menuSwitch -> {
                 val prefs = DVBViewerPreferences(context!!)
-                val cid = ":$channelId"
-                val switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid)
-                val command = DVBViewerCommand(context, switchRequest)
-                val exexuterTHread = Thread(command)
-                exexuterTHread.start()
+                val target = prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
+                remoteRepository.switchChannel(target, channelId.toString()).enqueue(object : Callback<ResponseBody> {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        sendMessage(R.string.timer_deleted)
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        sendMessage(R.string.error_common)
+                    }
+                })
                 return true
             }
             else -> {

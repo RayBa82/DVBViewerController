@@ -42,11 +42,11 @@ import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts
 import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
+import org.dvbviewer.controller.data.remote.RemoteRepository
 import org.dvbviewer.controller.data.version.TimerRepository
 import org.dvbviewer.controller.entities.Channel
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.Timer
-import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
@@ -55,7 +55,6 @@ import org.dvbviewer.controller.utils.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.MessageFormat
 import java.util.*
 
 /**
@@ -73,6 +72,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
     private lateinit var mAdapter: ChannelAdapter
     private lateinit var mChannelPagedOberserver: ChannelPagedObserver
     private lateinit var timerRepository: TimerRepository
+    private lateinit var remoteRepository: RemoteRepository
 
     /*
      * (non-Javadoc)
@@ -85,6 +85,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
         showFavs = prefs.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
         mAdapter = ChannelAdapter(context)
         timerRepository = TimerRepository(getDmsInterface())
+        remoteRepository = RemoteRepository(getDmsInterface())
         getExtras(savedInstanceState)
         registerObserver()
     }
@@ -256,12 +257,16 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
 
     private fun switchChannel(c: Cursor) {
         val chan = cursorToChannel(c)
-        val cid = StringBuilder(":").append(chan.channelID)
-        val url = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND
-        val switchRequest = MessageFormat.format(url, prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid)
-        val command = DVBViewerCommand(context, switchRequest)
-        val executerThread = Thread(command)
-        executerThread.start()
+        val target = prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
+        remoteRepository.switchChannel(target, chan.channelID.toString()).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                sendMessage(R.string.timer_deleted)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                sendMessage(R.string.error_common)
+            }
+        })
     }
 
     private fun recordChannel(c: Cursor) {

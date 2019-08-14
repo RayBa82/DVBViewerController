@@ -77,7 +77,7 @@ open class BaseFragment : Fragment() {
      * @param tag for logging
      * @param e   the Excetpion to catch
      */
-    protected open fun catchException(tag: String, e: Exception?) {
+    protected open fun catchException(tag: String, e: Throwable?) {
         if (context == null) {
             return
         }

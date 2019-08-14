@@ -35,6 +35,7 @@ import androidx.fragment.app.FragmentTransaction;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
 import org.dvbviewer.controller.data.media.MediaFile;
+import org.dvbviewer.controller.entities.DVBTarget;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
@@ -316,7 +317,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	}
 
 	@Override
-	public void targetsChanged(String title, List<String> spinnerData) {
+	public void targetsChanged(String title, List<DVBTarget> spinnerData) {
 		setTitle(title);
 		if (mClientSpinner != null){
 			String[] arr = new String[spinnerData.size()];

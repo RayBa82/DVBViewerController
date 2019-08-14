@@ -33,8 +33,11 @@ interface DMSInterface {
     @GET(TASK_API)
     fun executeTask(@Query("action") action: String): Call<ResponseBody>
 
-    @GET(REC_DEL_API)
-    fun deleteRecording(@Query("recid") id: Long, @Query("delfile") delete: Int): Call<ResponseBody>
+    @GET(RECORDING_LIST)
+    fun getRecordings(): Call<List<Recording>>
+
+    @GET(RECORDING_DELETE)
+    fun deleteRecording(@Query("recid") recid: String): Call<ResponseBody>
 
     @GET(TIMER_LIST)
     fun getTimer(): Call<List<Timer>>
@@ -54,6 +57,12 @@ interface DMSInterface {
     @GET(STATUS2)
     fun getStatus2(): Call<Status>
 
+    @GET(TARGETS)
+    fun getTargets(): Call<List<DVBTarget>>
+
+    @GET(TARGETS)
+    fun sendCommand(@Query("target") target: String, @Query("cmd") command: String): Call<ResponseBody>
+
     @GET(MEDIA_DIRS)
     fun getMediaDir(@Query("dirid") id: Long): Call<VideoDirsFiles>
 
@@ -72,7 +81,9 @@ interface DMSInterface {
 
         const val EPG = "$API/epg.html?utf8=1&lvl=2"
 
-        const val REC_DEL_API = "$API/recdelete.html"
+        const val RECORDING_LIST = "$API/recordings.html?utf8=1&images=1"
+
+        const val RECORDING_DELETE = "$API/recdelete.html"
 
         const val TIMER_LIST = "$API/timerlist.html?utf8=2"
 
@@ -85,6 +96,8 @@ interface DMSInterface {
         const val STATUS = "$API/status.html"
 
         const val STATUS2 = "$API/status2.html"
+
+        const val TARGETS = "$API/dvbcommand.html"
 
         const val MEDIA_DIRS = "$API/mediafiles.html?content=3&recursive=0&thumbs=1"
 
