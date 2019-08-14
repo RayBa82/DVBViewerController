@@ -44,7 +44,6 @@
     <string name="recordings">Nagrania</string>
     <string name="no_recordings">Brak nagrań</string>
     <string name="recording_deleted">Usunięto %1$s nagranie</string>
-    <string name="recordings_deleted">Usunięto %1$d nagrań</string>
     <!-- Medias -->
     <string name="medias">Media</string>
     <!-- Timer -->

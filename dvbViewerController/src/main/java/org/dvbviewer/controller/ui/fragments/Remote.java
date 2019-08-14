@@ -202,9 +202,19 @@ public class Remote extends BaseFragment implements LoaderCallbacks<List<DVBTarg
             public List<DVBTarget> loadInBackground() {
                 List<DVBTarget> result = null;
                 try {
-                    result = getDVBViewerClients();
+                    result =  repository.getTargets();
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+                if (CollectionUtils.isNotEmpty(result)) {
+                    SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
+                    prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, gson.toJson(result));
+                    prefEditor.apply();
+                } else {
+                    final String prefValue = prefs.getPrefs().getString(DVBViewerPreferences.KEY_RS_CLIENTS, "");
+                    if (StringUtils.isNotBlank(prefValue)) {
+                        result = gson.fromJson(prefValue, type);
+                    }
                 }
                 return result;
             }
@@ -238,25 +248,11 @@ public class Remote extends BaseFragment implements LoaderCallbacks<List<DVBTarg
         loader.reset();
     }
 
-    private List<DVBTarget> getDVBViewerClients() {
-        List<DVBTarget> result =  repository.getTargets();
-        if (CollectionUtils.isNotEmpty(result)) {
-            SharedPreferences.Editor prefEditor = prefs.getPrefs().edit();
-            prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, gson.toJson(result));
-            prefEditor.apply();
-        } else {
-            final String prefValue = prefs.getPrefs().getString(DVBViewerPreferences.KEY_RS_CLIENTS, "");
-            if (StringUtils.isNotBlank(prefValue)) {
-                result = gson.fromJson(prefValue, type);
-            }
-        }
-        return result;
-    }
-
     @Override
     public void OnRemoteButtonClick(String action) {
         final Object target = onTargetsChangedListener != null ? onTargetsChangedListener.getSelectedTarget() : mClientSpinner.getSelectedItem();
         if (target == null) {
+            sendMessage(R.string.no_remote_target);
             return;
         }
         repository.sendCommand(target.toString(), action).enqueue(new Callback<ResponseBody>() {

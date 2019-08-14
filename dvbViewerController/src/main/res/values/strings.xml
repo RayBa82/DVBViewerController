@@ -146,6 +146,8 @@
     <!-- Remote -->
     <string name="remote_control">Control</string>
     <string name="remote_numbers">Numbers</string>
+    <string name="channel_switched">Channel switched</string>
+    <string name="no_remote_target">No DVBViewer client available</string>
     <string name="timer_saved">Timer saved</string>
     <string name="timer_deleted">Timer deleted</string>
     <string name="epg_monitoring">EPG monitoring</string>

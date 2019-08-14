@@ -260,7 +260,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
         val target = prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
         remoteRepository.switchChannel(target, chan.channelID.toString()).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                sendMessage(R.string.timer_deleted)
+                sendMessage(R.string.channel_switched)
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
