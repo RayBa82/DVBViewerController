@@ -44,7 +44,7 @@
     <!-- Recordings -->
     <string name="recordings">Aufnahmen</string>
     <string name="no_recordings">Keine Aufnahmen gefunden</string>
-    <string name="recording_deleted">Aufnahme %1$s gelöscht</string>
+    <string name="recording_deleted">Aufnahme(n) gelöscht</string>
     <!-- Medias -->
     <string name="medias">Medien</string>
     <!-- Timer -->
@@ -141,7 +141,6 @@
     <string name="quick_stream_hint_title">Sender streamen</string>
     <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
     <string name="version_unsupported_text">Ihre Server Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
-    <string name="version_unsupported_title">Version nicht mehr unterstützt</string>
     <string name="recording_folder">Aufnahmeordner</string>
     <!-- Remote -->
     <string name="remote_control">Steuerung</string>

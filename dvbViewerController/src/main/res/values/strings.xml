@@ -141,7 +141,6 @@
     <string name="quick_stream_hint_title">Stream channel</string>
     <string name="quick_stream_hint_text">Start a stream by clicking on the channel logo</string>
     <string name="version_unsupported_text">Your server version is unsupported. Version {0} or higher is required.</string>
-    <string name="version_unsupported_title">Version unsupported</string>
     <string name="recording_folder">Recording directory</string>
     <!-- Remote -->
     <string name="remote_control">Control</string>

@@ -139,7 +139,6 @@
     <string name="quick_stream_hint_title">Transmituj kanał</string>
     <string name="quick_stream_hint_text">Umożliwia rozpoczęcie transmisji kanału po naciśnięciu logo kanału</string>
     <string name="version_unsupported_text">Ta wersja serwera nie jest obsługiwana. Wymagana jest wersja {0} lub nowsza.</string>
-    <string name="version_unsupported_title">Nieobsługiwana wersja</string>
     <string name="recording_folder">Folder nagrań</string>
     <!-- Remote -->
     <string name="remote_control">Sterowanie</string>
