@@ -255,7 +255,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 				if (multiContainer != null) {
 					enableDrawer = false;
 					final Bundle b = new Bundle();
-					b.putLong(MediaList.KEY_PARENT_ID, 1);
+					b.putLong(MediaList.Companion.getKEY_PARENT_ID(), 1);
 					final MediaList mediaList = new MediaList();
 					mediaList.setArguments(b);
 					FragmentTransaction tran = fm.beginTransaction();
@@ -371,7 +371,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 
 			final MediaList mediaList = new MediaList();
 			final Bundle b = new Bundle();
-			b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getDirId());
+			b.putLong(MediaList.Companion.getKEY_PARENT_ID(), mediaFile.getDirId());
 			mediaList.setArguments(b);
 			FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
 			tran.replace(multiContainer.getId(), mediaList);
