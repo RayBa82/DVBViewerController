@@ -152,7 +152,7 @@ if (propFile.canRead()) {
     android.buildTypes.release.signingConfig = null
 }
 
-apply plugin: 'com.google.gms.google-services'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+apply plugin: 'com.google.gms.google-services'

@@ -66,11 +66,12 @@ class ChannelGroupViewModel(private val prefs: DVBViewerPreferences, private val
                             .edit()
                             .putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true)
                             .apply()
+                    getGroupList(fav, true)
                 } catch (e: Exception) {
                     Log.e(javaClass.simpleName, "Error syncing channels", e)
                 }
             }
-            getGroupList(fav, true)
+
         }
     }
 

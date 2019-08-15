@@ -144,8 +144,8 @@ class MediaList : RecyclerViewFragment() {
                 infoText.text = text
                 setListShown(true)
             }
-        } else {
-            sendMessage(response.message!!)
+        } else if (response.status == ERROR){
+            catchException(javaClass.simpleName, response.e)
             setListShown(true)
         }
     }
