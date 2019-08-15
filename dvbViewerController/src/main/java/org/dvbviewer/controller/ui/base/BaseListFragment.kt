@@ -32,7 +32,6 @@ import androidx.core.content.ContextCompat
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.io.exception.AuthenticationException
 import org.dvbviewer.controller.io.exception.DefaultHttpException
-import org.dvbviewer.controller.utils.UIUtils
 import org.xml.sax.SAXException
 
 /**
@@ -276,12 +275,7 @@ open class BaseListFragment : BaseFragment() {
         } catch (e: Exception) {
             return
         }
-
-        if (UIUtils.isFroyo()) {
-            mList!!.smoothScrollToPosition(position)
-        } else {
-            mList!!.setSelection(position)
-        }
+        mList?.setSelection(position)
     }
 
     /**
