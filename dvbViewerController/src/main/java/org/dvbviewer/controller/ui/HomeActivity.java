@@ -107,9 +107,9 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
                 chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
                 Bundle bundle = new Bundle();
-                bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
+                bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), getGroupIndex());
                 chans.setArguments(bundle);
-				tran.add(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
+				tran.add(multiContainer.getId(), chans, Companion.getCHANNEL_PAGER_TAG());
 				tran.commit();
 				setTitle(R.string.channelList);
 			}
@@ -122,7 +122,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 				prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, false).commit();
 			}
 		}else{
-			Fragment frag = getSupportFragmentManager().findFragmentByTag(CHANNEL_PAGER_TAG);
+			Fragment frag = getSupportFragmentManager().findFragmentByTag(Companion.getCHANNEL_PAGER_TAG());
 			if (frag != null && frag instanceof ChannelPager) {
 				chans = (ChannelPager) frag;
 			}
@@ -195,9 +195,9 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 					chans = new ChannelPager();
 					chans.setHasOptionsMenu(true);
 					Bundle bundle = new Bundle();
-					bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
+					bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), getGroupIndex());
 					chans.setArguments(bundle);
-					tran.replace(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
+					tran.replace(multiContainer.getId(), chans, Companion.getCHANNEL_PAGER_TAG());
 					tran.commit();
 					setTitle(R.string.channelList);
 				} else {
