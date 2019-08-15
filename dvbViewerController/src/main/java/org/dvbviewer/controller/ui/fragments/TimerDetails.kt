@@ -205,15 +205,15 @@ class TimerDetails : BaseDialogFragment(), OnDateSetListener, OnClickListener, O
         val f: DateDialogFragment
         when (v.id) {
             R.id.dateField -> {
-                f = DateDialogFragment.newInstance(context, this@TimerDetails, dateField!!.date)
+                f = DateDialogFragment.newInstance(this@TimerDetails, dateField!!.date)
                 f.show(activity!!.supportFragmentManager, "datepicker")
             }
             R.id.startField -> {
-                f = DateDialogFragment.newInstance(context, startTimeSetListener, startField!!.date)
+                f = DateDialogFragment.newInstance(startTimeSetListener!!, startField!!.date)
                 f.show(activity!!.supportFragmentManager, "startTimePicker")
             }
             R.id.stopField -> {
-                f = DateDialogFragment.newInstance(context, stopTimeSetListener, stopField!!.date)
+                f = DateDialogFragment.newInstance(stopTimeSetListener!!, stopField!!.date)
                 f.show(activity!!.supportFragmentManager, "stopTimePicker")
             }
             R.id.buttonCancel -> {
