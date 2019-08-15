@@ -17,6 +17,7 @@ package org.dvbviewer.controller.io.data
 
 import android.sax.RootElement
 import android.util.Xml
+import org.dvbviewer.controller.entities.DVBTarget
 import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 import java.io.IOException
@@ -31,7 +32,7 @@ import java.util.*
  */
 class TargetHandler : DefaultHandler() {
 
-    private val targets = ArrayList<String>()
+    private val targets = ArrayList<DVBTarget>()
 
     /**
      * Parses the xml String targets
@@ -42,11 +43,15 @@ class TargetHandler : DefaultHandler() {
      * @date 11.01.2015
      */
     @Throws(SAXException::class, IOException::class)
-    fun parse(xml: InputStream): MutableList<String> {
+    fun parse(xml: InputStream): MutableList<DVBTarget> {
         val root = RootElement("targets")
         val targetElement = root.getChild("target")
 
-        targetElement.setEndTextElementListener { body -> targets.add(body) }
+        targetElement.setEndTextElementListener { body ->
+            val target = DVBTarget()
+            target.name = body
+            targets.add(target)
+        }
 
         Xml.parse(xml, Xml.Encoding.UTF_8, root.contentHandler)
         return targets

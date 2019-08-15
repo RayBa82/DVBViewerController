@@ -4,7 +4,7 @@ import okhttp3.ResponseBody
 import org.dvbviewer.controller.data.media.xml.VideoDirsFiles
 import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.data.version.xml.Version
-import org.dvbviewer.controller.entities.FFMpegPresetList
+import org.dvbviewer.controller.entities.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -15,6 +15,17 @@ interface DMSInterface {
     @get:GET(VERSION)
     val version: Call<Version>
 
+    @GET(CHANNEL_LIST)
+    fun getChannelList(): Call<List<ChannelRoot>>
+
+    @GET(FAV_LIST)
+    fun getFavList(): Call<List<ChannelRoot>>
+
+    @GET(EPG)
+    fun getProgramm(@Query("start") start: String, @Query("end") stop: String): Call<List<EpgEntry>>
+
+    @GET(EPG)
+    fun getChannelProgramm(@Query("channel") epgId: String, @Query("start") start: String, @Query("end") stop: String): Call<List<EpgEntry>>
 
     @GET(TASK_API)
     fun getTaskList(@Query("all") all: Int): Call<TaskList>
@@ -22,14 +33,35 @@ interface DMSInterface {
     @GET(TASK_API)
     fun executeTask(@Query("action") action: String): Call<ResponseBody>
 
-    @GET(REC_DEL_API)
-    fun deleteRecording(@Query("recid") id: Long, @Query("delfile") delete: Int): Call<ResponseBody>
+    @GET(RECORDING_LIST)
+    fun getRecordings(): Call<List<Recording>>
+
+    @GET(RECORDING_DELETE)
+    fun deleteRecording(@Query("recid") recid: String): Call<ResponseBody>
+
+    @GET(TIMER_LIST)
+    fun getTimer(): Call<List<Timer>>
 
     @GET(TIMER_ADD_API)
     fun addTimer(@QueryMap params: Map<String, String>): Call<ResponseBody>
 
-    @GET(TIMER_EDIT_API)
+    @GET(TIMER_EDIT)
     fun editTimer(@QueryMap params: Map<String, String>): Call<ResponseBody>
+
+    @GET(TIMER_DELETE)
+    fun deleteTimer(@Query("id") id: String): Call<ResponseBody>
+
+    @GET(STATUS)
+    fun getStatus(): Call<Status>
+
+    @GET(STATUS2)
+    fun getStatus2(): Call<Status>
+
+    @GET(TARGETS)
+    fun getTargets(): Call<List<DVBTarget>>
+
+    @GET(TARGETS)
+    fun sendCommand(@Query("target") target: String, @Query("cmd") command: String): Call<ResponseBody>
 
     @GET(MEDIA_DIRS)
     fun getMediaDir(@Query("dirid") id: Long): Call<VideoDirsFiles>
@@ -41,13 +73,31 @@ interface DMSInterface {
 
         const val API = "/api"
 
+        const val CHANNEL_LIST = "$API/getchannelsxml.html?logo=1"
+
+        const val FAV_LIST = "$API/getchannelsxml.html?logo=1&favonly=1"
+
         const val TASK_API = "$API/tasks.html"
 
-        const val REC_DEL_API = "$API/recdelete.html"
+        const val EPG = "$API/epg.html?utf8=1&lvl=2"
+
+        const val RECORDING_LIST = "$API/recordings.html?utf8=1&images=1"
+
+        const val RECORDING_DELETE = "$API/recdelete.html"
+
+        const val TIMER_LIST = "$API/timerlist.html?utf8=2"
 
         const val TIMER_ADD_API = "$API/timeradd.html"
 
-        const val TIMER_EDIT_API = "$API/timeredit.html"
+        const val TIMER_EDIT = "$API/timeredit.html"
+
+        const val TIMER_DELETE = "$API/timerdelete.html"
+
+        const val STATUS = "$API/status.html"
+
+        const val STATUS2 = "$API/status2.html"
+
+        const val TARGETS = "$API/dvbcommand.html"
 
         const val MEDIA_DIRS = "$API/mediafiles.html?content=3&recursive=0&thumbs=1"
 

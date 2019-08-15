@@ -9,7 +9,8 @@
     android:foreground="?attr/selectableItemBackground"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="true"
+    android:focusable="true">
 
 
     <androidx.appcompat.widget.AppCompatImageView

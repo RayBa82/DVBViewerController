@@ -17,40 +17,33 @@ package org.dvbviewer.controller.ui.fragments
 
 import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
-import androidx.loader.app.LoaderManager.LoaderCallbacks
-import androidx.loader.content.Loader
-import org.apache.commons.lang3.StringUtils
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.ApiResponse
+import org.dvbviewer.controller.data.status.StatusViewModel
+import org.dvbviewer.controller.data.status.StatusViewModelFactory
+import org.dvbviewer.controller.data.version.VersionRepository
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.Status
 import org.dvbviewer.controller.entities.Status.Folder
 import org.dvbviewer.controller.entities.Status.StatusItem
-import org.dvbviewer.controller.io.RecordingService
-import org.dvbviewer.controller.io.ServerRequest
-import org.dvbviewer.controller.io.data.Status1Handler
-import org.dvbviewer.controller.io.data.Status2Handler
-import org.dvbviewer.controller.io.data.StatusHandler
-import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseListFragment
-import org.dvbviewer.controller.utils.*
-import java.text.MessageFormat
+import org.dvbviewer.controller.utils.ArrayListAdapter
+import org.dvbviewer.controller.utils.CategoryAdapter
+import org.dvbviewer.controller.utils.DateUtils
+import org.dvbviewer.controller.utils.FileUtils
 
-/**
- * The Class StatusList.
- *
- * @author RayBa
- * @date 05.07.2012
- */
-class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
+class StatusList : BaseListFragment() {
 
     private lateinit var mAdapter: CategoryAdapter
     private lateinit var mRes: Resources
+    private lateinit var versionRepository: VersionRepository
+    private lateinit var prefs: DVBViewerPreferences
+    private lateinit var statusViewModel: StatusViewModel
     private var mStatusAdapter: StatusAdapter? = null
 
     /* (non-Javadoc)
@@ -63,6 +56,8 @@ class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
         mStatusAdapter = StatusAdapter()
         mAdapter = CategoryAdapter(context)
         mRes = resources
+        prefs = DVBViewerPreferences(activity!!.applicationContext)
+        versionRepository = VersionRepository(activity!!.applicationContext, getDmsInterface())
     }
 
     /*
@@ -72,56 +67,41 @@ class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
      */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mRes = resources
-        val loader = loaderManager.initLoader(0, savedInstanceState, this)
-        setListShown(!(!isResumed || loader.isStarted))
+        val statusObserver = Observer<ApiResponse<Status>> { response -> onStatusLoaded(response!!) }
+        val statusViewModelFactory = StatusViewModelFactory(prefs, versionRepository)
+        statusViewModel = ViewModelProvider(this, statusViewModelFactory)
+                .get(StatusViewModel::class.java)
+        statusViewModel.getStatus().observe(this, statusObserver)
+        setListShown(isResumed)
     }
 
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onCreateLoader(int, android.os.Bundle)
-     */
-    override fun onCreateLoader(arg0: Int, arg1: Bundle?): Loader<Status> {
-        return object : AsyncLoader<Status>(context!!) {
-
-            override fun loadInBackground(): Status {
-                try {
-                    val version = RecordingService.getVersionString()
-                    if (!Config.isRSVersionSupported(version)) {
-                        showToast(context, MessageFormat.format(getStringSafely(R.string.version_unsupported_text), Config.SUPPORTED_RS_VERSION))
-                        return Status()
-                    }
-                    return getStatus(DVBViewerPreferences(context), version)
-                } catch (e: Exception) {
-                    catchException(javaClass.simpleName, e)
-                }
-
-                return Status()
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoadFinished(android.support.v4.content.Loader, java.lang.Object)
-     */
-    override fun onLoadFinished(loader: Loader<Status>, status: Status?) {
-        if (status != null) {
-            mStatusAdapter!!.items = status.items
+    private fun onStatusLoaded(apiResponse: ApiResponse<Status>) {
+        if (apiResponse.status == org.dvbviewer.controller.data.Status.SUCCESS) {
+            mStatusAdapter!!.items = apiResponse.data?.items
             val folderAdapter = FolderAdapter()
-            folderAdapter.items = status.folders
+            folderAdapter.items = apiResponse.data?.folders
             mAdapter.addSection(getString(R.string.status), mStatusAdapter)
             mAdapter.addSection(getString(R.string.recording_folder), folderAdapter)
             mAdapter.notifyDataSetChanged()
+        } else if (apiResponse.status == org.dvbviewer.controller.data.Status.ERROR) {
+            catchException(TAG, apiResponse.e)
         }
         listAdapter = mAdapter
         setListShown(true)
     }
 
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoaderReset(android.support.v4.content.Loader)
-     */
-    override fun onLoaderReset(arg0: Loader<Status>) {
-        if (isVisible) {
-            setListShown(true)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.status, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menuRefresh -> {
+                refresh()
+                true
+            }
+            else -> false
         }
     }
 
@@ -170,20 +150,8 @@ class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
 
     }
 
-    /**
-     * The Class StatusAdapter.
-     *
-     * @author RayBa
-     * @date 05.07.2012
-     */
     inner class StatusAdapter
-    /**
-     * Instantiates a new status adapter.
-     *
-     * @param context the context
-     * @author RayBa
-     * @date 05.07.2012
-     */
+
         : ArrayListAdapter<StatusItem>() {
 
         /*
@@ -229,62 +197,9 @@ class StatusList : BaseListFragment(), LoaderCallbacks<Status> {
 
     }
 
-    /**
-     * Refresh.
-     *
-     * @author RayBa
-     * @date 05.07.2012
-     */
     private fun refresh() {
-        loaderManager.restartLoader(0, arguments, this)
+        statusViewModel.getStatus(true)
         setListShown(false)
-    }
-
-    companion object {
-
-        @Throws(Exception::class)
-        fun getStatus(prefs: DVBViewerPreferences, version: String?): Status {
-            val result: Status = requestStatusFromServer(ServerConsts.URL_STATUS2, Status2Handler())
-            addVersionItem(result, version)
-            val prefEditor = prefs.prefs.edit()
-            prefEditor.putString(DVBViewerPreferences.KEY_RS_VERSION, version)
-            val jsonClients = RecordingService.getDvbViewerTargets()
-            if (StringUtils.isNotBlank(jsonClients)) {
-                prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, jsonClients)
-            }
-            val oldStatus = requestStatusFromServer(ServerConsts.URL_STATUS, Status1Handler())
-            result!!.items.addAll(oldStatus.items)
-            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, oldStatus.epgBefore)
-            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, oldStatus.epgAfter)
-            prefEditor.putInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, oldStatus.defAfterRecord)
-            prefEditor.apply()
-            return result
-        }
-
-        @Throws(Exception::class)
-        private fun requestStatusFromServer(url: String, handler: StatusHandler): Status {
-            try {
-                val statusXml = ServerRequest.getInputStream(ServerConsts.REC_SERVICE_URL + url)
-                statusXml.use {
-                    return handler.parse(it)
-                }
-            } catch (e: java.lang.Exception) {
-                Log.e(javaClass.simpleName, "Error getting status", e)
-            }
-            return Status()
-        }
-
-        private fun addVersionItem(status: Status?, version: String?): Status {
-            var status = status
-            if (status == null) {
-                status = Status()
-            }
-            val versionItem = StatusItem()
-            versionItem.nameRessource = R.string.status_server_version
-            versionItem.value = version
-            status.items.add(0, versionItem)
-            return status
-        }
     }
 
 }

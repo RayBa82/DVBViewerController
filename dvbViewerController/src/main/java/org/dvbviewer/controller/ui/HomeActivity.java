@@ -35,6 +35,7 @@ import androidx.fragment.app.FragmentTransaction;
 import org.dvbviewer.controller.R;
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity;
 import org.dvbviewer.controller.data.media.MediaFile;
+import org.dvbviewer.controller.entities.DVBTarget;
 import org.dvbviewer.controller.entities.DVBViewerPreferences;
 import org.dvbviewer.controller.entities.IEPG;
 import org.dvbviewer.controller.ui.adapter.MediaAdapter;
@@ -106,9 +107,9 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
                 chans = new ChannelPager();
 				chans.setHasOptionsMenu(true);
                 Bundle bundle = new Bundle();
-                bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
+                bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), getGroupIndex());
                 chans.setArguments(bundle);
-				tran.add(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
+				tran.add(multiContainer.getId(), chans, Companion.getCHANNEL_PAGER_TAG());
 				tran.commit();
 				setTitle(R.string.channelList);
 			}
@@ -121,7 +122,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 				prefs.getPrefs().edit().putBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, false).commit();
 			}
 		}else{
-			Fragment frag = getSupportFragmentManager().findFragmentByTag(CHANNEL_PAGER_TAG);
+			Fragment frag = getSupportFragmentManager().findFragmentByTag(Companion.getCHANNEL_PAGER_TAG());
 			if (frag != null && frag instanceof ChannelPager) {
 				chans = (ChannelPager) frag;
 			}
@@ -194,9 +195,9 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 					chans = new ChannelPager();
 					chans.setHasOptionsMenu(true);
 					Bundle bundle = new Bundle();
-					bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), groupIndex);
+					bundle.putInt(ChannelPager.Companion.getKEY_GROUP_INDEX(), getGroupIndex());
 					chans.setArguments(bundle);
-					tran.replace(multiContainer.getId(), chans, CHANNEL_PAGER_TAG);
+					tran.replace(multiContainer.getId(), chans, Companion.getCHANNEL_PAGER_TAG());
 					tran.commit();
 					setTitle(R.string.channelList);
 				} else {
@@ -254,7 +255,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 				if (multiContainer != null) {
 					enableDrawer = false;
 					final Bundle b = new Bundle();
-					b.putLong(MediaList.KEY_PARENT_ID, 1);
+					b.putLong(MediaList.Companion.getKEY_PARENT_ID(), 1);
 					final MediaList mediaList = new MediaList();
 					mediaList.setArguments(b);
 					FragmentTransaction tran = fm.beginTransaction();
@@ -316,7 +317,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 	}
 
 	@Override
-	public void targetsChanged(String title, List<String> spinnerData) {
+	public void targetsChanged(String title, List<DVBTarget> spinnerData) {
 		setTitle(title);
 		if (mClientSpinner != null){
 			String[] arr = new String[spinnerData.size()];
@@ -370,7 +371,7 @@ public class HomeActivity extends GroupDrawerActivity implements OnClickListener
 
 			final MediaList mediaList = new MediaList();
 			final Bundle b = new Bundle();
-			b.putLong(MediaList.KEY_PARENT_ID, mediaFile.getDirId());
+			b.putLong(MediaList.Companion.getKEY_PARENT_ID(), mediaFile.getDirId());
 			mediaList.setArguments(b);
 			FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
 			tran.replace(multiContainer.getId(), mediaList);

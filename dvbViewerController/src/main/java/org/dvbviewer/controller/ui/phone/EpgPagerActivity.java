@@ -47,24 +47,24 @@ public class EpgPagerActivity extends GroupDrawerActivity {
 
 	private void initFragments(Bundle savedInstanceState) {
 		if (savedInstanceState == null) {
-				mEpgPager = new EpgPager();
-				mEpgPager.setArguments(BaseActivity.Companion.intentToFragmentArguments(getIntent()));
+				setMEpgPager(new EpgPager());
+				getMEpgPager().setArguments(BaseActivity.Companion.intentToFragmentArguments(getIntent()));
 				getSupportFragmentManager().beginTransaction()
-						.add(R.id.left_content, mEpgPager, EPG_PAGER_TAG)
+						.add(R.id.left_content, getMEpgPager(), Companion.getEPG_PAGER_TAG())
 						.commit();
 		}else {
-				mEpgPager = (EpgPager) getSupportFragmentManager().findFragmentByTag(EPG_PAGER_TAG);
+				setMEpgPager((EpgPager) getSupportFragmentManager().findFragmentByTag(Companion.getEPG_PAGER_TAG()));
 		}
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		super.onItemClick(parent, view, position, id);
-		final Cursor c = mDrawerAdapter.getCursor();
-		if (mEpgPager != null && c != null && c.getCount() >= position){
-			mDrawerAdapter.getCursor().moveToPosition(position);
+		final Cursor c = getMDrawerAdapter().getCursor();
+		if (getMEpgPager() != null && c != null && c.getCount() >= position){
+			getMDrawerAdapter().getCursor().moveToPosition(position);
 			long groupId = c.getLong(c.getColumnIndex(ProviderConsts.GroupTbl._ID));
-			mEpgPager.refresh(groupId, 0);
+			getMEpgPager().refresh(groupId, 0);
 		}
 	}
 

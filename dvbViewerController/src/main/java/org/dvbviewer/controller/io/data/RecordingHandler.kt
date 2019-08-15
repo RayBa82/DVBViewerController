@@ -34,7 +34,7 @@ import java.util.*
  */
 class RecordingHandler : DefaultHandler() {
 
-    private val recordingList = ArrayList<Recording>()
+    private lateinit var recordingList: LinkedList<Recording>
     private var currentRecording: Recording? = null
 
     private val contentHandler: ContentHandler
@@ -46,6 +46,10 @@ class RecordingHandler : DefaultHandler() {
             val infoElement = recordingElement.getChild("info")
             val descElement = recordingElement.getChild("desc")
             val imageElement = recordingElement.getChild("image")
+
+            root.setStartElementListener {
+                recordingList = LinkedList()
+            }
 
             recordingElement.setStartElementListener { attributes ->
                 currentRecording = Recording()

@@ -42,10 +42,11 @@ import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts
 import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
+import org.dvbviewer.controller.data.remote.RemoteRepository
+import org.dvbviewer.controller.data.version.TimerRepository
 import org.dvbviewer.controller.entities.Channel
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.Timer
-import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
@@ -54,7 +55,6 @@ import org.dvbviewer.controller.utils.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.MessageFormat
 import java.util.*
 
 /**
@@ -67,10 +67,12 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
     private var mGroupIndex = -1
     private var mChannelIndex = -1
     private var showFavs: Boolean = false
-    private var prefs: DVBViewerPreferences? = null
-    private var mAdapter: ChannelAdapter? = null
     private var mCHannelSelectedListener: OnChannelSelectedListener? = null
-    private var mChannelPagedOberserver: ChannelPagedObserver? = null
+    private lateinit var prefs: DVBViewerPreferences
+    private lateinit var mAdapter: ChannelAdapter
+    private lateinit var mChannelPagedOberserver: ChannelPagedObserver
+    private lateinit var timerRepository: TimerRepository
+    private lateinit var remoteRepository: RemoteRepository
 
     /*
      * (non-Javadoc)
@@ -80,8 +82,10 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         prefs = DVBViewerPreferences(context!!)
-        showFavs = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
+        showFavs = prefs.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
         mAdapter = ChannelAdapter(context)
+        timerRepository = TimerRepository(getDmsInterface())
+        remoteRepository = RemoteRepository(getDmsInterface())
         getExtras(savedInstanceState)
         registerObserver()
     }
@@ -106,7 +110,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
         val handler = Handler()
         val contentUri = BASE_CONTENT_URI.buildUpon().appendPath(mGroupId.toString()).appendQueryParameter("index", mChannelIndex.toString()).build()
         mChannelPagedOberserver = ChannelPagedObserver(handler)
-        context!!.contentResolver.registerContentObserver(contentUri, true, mChannelPagedOberserver!!)
+        context?.contentResolver?.registerContentObserver(contentUri, true, mChannelPagedOberserver)
     }
 
     /*
@@ -226,7 +230,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             val chan = cursorToChannel(c)
             val videoIntent = StreamUtils.getDirectUrl(chan.channelID, chan.name, FileType.CHANNEL)
             activity!!.startActivity(videoIntent)
-            prefs!!.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply()
+            prefs.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply()
             AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)
@@ -241,7 +245,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             val chan = cursorToChannel(c)
             val videoIntent = StreamUtils.getTranscodedUrl(context, chan.channelID, chan.name, FileType.CHANNEL)
             activity!!.startActivity(videoIntent)
-            prefs!!.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply()
+            prefs.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply()
             AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)
@@ -253,17 +257,21 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
 
     private fun switchChannel(c: Cursor) {
         val chan = cursorToChannel(c)
-        val cid = StringBuilder(":").append(chan.channelID)
-        val url = ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND
-        val switchRequest = MessageFormat.format(url, prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid)
-        val command = DVBViewerCommand(context, switchRequest)
-        val executerThread = Thread(command)
-        executerThread.start()
+        val target = prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
+        remoteRepository.switchChannel(target, chan.channelID.toString()).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                sendMessage(R.string.channel_switched)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                sendMessage(R.string.error_common)
+            }
+        })
     }
 
     private fun recordChannel(c: Cursor) {
         val timer = cursorToTimer(c)
-        val call = getDmsInterface()!!.addTimer(TimerDetails.getTimerParameters(timer))
+        val call = timerRepository.saveTimer(timer)
         call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 sendMessage(R.string.timer_saved)

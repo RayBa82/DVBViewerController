@@ -63,19 +63,19 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 			mChannelPager = new ChannelPager();
 			mChannelPager.setArguments(BaseActivity.Companion.intentToFragmentArguments(getIntent()));
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.left_content, mChannelPager, CHANNEL_PAGER_TAG)
+					.add(R.id.left_content, mChannelPager, Companion.getCHANNEL_PAGER_TAG())
 					.commit();
 			if (container != null){
-				mEpgPager = new EpgPager();
-				mEpgPager.setArguments(BaseActivity.Companion.intentToFragmentArguments(getIntent()));
+				setMEpgPager(new EpgPager());
+				getMEpgPager().setArguments(BaseActivity.Companion.intentToFragmentArguments(getIntent()));
 				getSupportFragmentManager().beginTransaction()
-						.add(R.id.right_content, mEpgPager, EPG_PAGER_TAG)
+						.add(R.id.right_content, getMEpgPager(), Companion.getEPG_PAGER_TAG())
 						.commit();
 			}
 		}else {
-			mChannelPager = (ChannelPager) getSupportFragmentManager().findFragmentByTag(CHANNEL_PAGER_TAG);
+			mChannelPager = (ChannelPager) getSupportFragmentManager().findFragmentByTag(Companion.getCHANNEL_PAGER_TAG());
 			if (container != null){
-				mEpgPager = (EpgPager) getSupportFragmentManager().findFragmentByTag(EPG_PAGER_TAG);
+				setMEpgPager((EpgPager) getSupportFragmentManager().findFragmentByTag(Companion.getEPG_PAGER_TAG()));
 			}
 		}
 	}
@@ -90,7 +90,7 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 			epgPagerIntent.putExtra(ChannelList.Companion.getKEY_CHANNEL_INDEX(), channelIndex);
 			startActivity(epgPagerIntent);
 		}else{
-			mEpgPager.setPosition(channelIndex);
+			getMEpgPager().setPosition(channelIndex);
 		}
 	}
 
@@ -112,8 +112,8 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 		if (mChannelPager != null){
 			result = mChannelPager.onOptionsItemSelected(item);
 		}
-		if (mEpgPager != null){
-			result = mEpgPager.onOptionsItemSelected(item);
+		if (getMEpgPager() != null){
+			result = getMEpgPager().onOptionsItemSelected(item);
 		}
 		return result;
 	}
@@ -122,11 +122,11 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 		super.onLoadFinished(loader, data);
 		if (container == null){
-			Fragment f = getSupportFragmentManager().findFragmentByTag(CHANNEL_PAGER_TAG);
+			Fragment f = getSupportFragmentManager().findFragmentByTag(Companion.getCHANNEL_PAGER_TAG());
 			if (f == null) {
 				FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
 				mChannelPager = new ChannelPager();
-				tran.add(R.id.content_frame, mChannelPager, CHANNEL_PAGER_TAG);
+				tran.add(R.id.content_frame, mChannelPager, Companion.getCHANNEL_PAGER_TAG());
 				tran.commitAllowingStateLoss();
 			} else {
 				mChannelPager = (ChannelPager) f;
@@ -134,7 +134,7 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 		}
 		if (container != null && groupTypeChanged){
 			data.moveToFirst();
-			mEpgPager.refresh(data.getLong(data.getColumnIndex(ProviderConsts.GroupTbl._ID)), 0);
+			getMEpgPager().refresh(data.getLong(data.getColumnIndex(ProviderConsts.GroupTbl._ID)), 0);
 		}
 		groupTypeChanged = false;
 	}
@@ -142,9 +142,9 @@ public class ChannelListActivity extends GroupDrawerActivity implements ChannelL
 	@Override
 	public void groupTypeChanged(int type) {
 		groupTypeChanged = true;
-		showFavs = prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false);
+		setShowFavs(getPrefs().getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false));
 		getSupportLoaderManager().restartLoader(0, getIntent().getExtras(), this);
-		groupIndex = 0;
+		setGroupIndex(0);
 	}
 
 	@Override

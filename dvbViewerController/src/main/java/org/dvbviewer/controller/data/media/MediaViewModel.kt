@@ -3,8 +3,11 @@ package org.dvbviewer.controller.data.media
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.*
-import kotlinx.coroutines.android.Main
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.DmsViewModel
 
@@ -25,22 +28,21 @@ class MediaViewModel internal constructor(application: Application, private val 
     }
 
     fun fetchMedias(dirid: Long) {
-        if(data == null) {
+        if (data == null) {
             return
         }
-        GlobalScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
-            var mediaList = listOf<MediaFile>()
-            try {
-                async(Dispatchers.Default) {
-                    mediaList = mRepository.getMedias(dirid)
-                }.await()
-                data?.value = ApiResponse.success(mediaList)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error getting mediafiles", e)
-                val message = getErrorMessage(e)
-                data?.value = ApiResponse.error(message, null)
-            }
-
+        viewModelScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
+            var apiResponse: ApiResponse<List<MediaFile>> = ApiResponse.error(null, null)
+            async(Dispatchers.Default) {
+                apiResponse = try {
+                    val mediaList = mRepository.getMedias(dirid)
+                    ApiResponse.success(mediaList)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error getting mediafiles", e)
+                    ApiResponse.error(e, null)
+                }
+            }.await()
+            data?.value = apiResponse
         }
     }
 

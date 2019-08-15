@@ -34,7 +34,7 @@ import java.util.*
  */
 class TimerHandler : DefaultHandler() {
 
-    private val timerList = ArrayList<Timer>()
+    private lateinit var timerList: LinkedList<Timer>
     private var currentTimer: Timer? = null
 
     /**
@@ -57,6 +57,9 @@ class TimerHandler : DefaultHandler() {
         val executableElement = timerElement.getChild("Executeable")
         val recordStatElement = timerElement.getChild("Recordstat")
 
+        root.setStartElementListener {
+            timerList = LinkedList()
+        }
 
         timerElement.setStartElementListener { attributes ->
             currentTimer = Timer()
@@ -120,6 +123,7 @@ class TimerHandler : DefaultHandler() {
             }
         }
         Xml.parse(xml, Xml.Encoding.UTF_8, root.contentHandler)
+        timerList.sort()
         return timerList
     }
 

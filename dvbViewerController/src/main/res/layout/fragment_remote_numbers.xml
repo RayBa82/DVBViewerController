@@ -36,7 +36,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="1"></Button>
+                        android:text="@string/remote_1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -50,7 +50,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:longClickable="true"
-                        android:text="2"></Button>
+                        android:text="@string/remote_2" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -64,7 +64,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="3"></Button>
+                        android:text="@string/remote_3" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -88,7 +88,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:longClickable="true"
-                        android:text="4"></Button>
+                        android:text="@string/remote_4" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -102,7 +102,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:keepScreenOn="true"
-                        android:text="5"></Button>
+                        android:text="@string/remote_5" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -116,7 +116,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:longClickable="true"
-                        android:text="6"></Button>
+                        android:text="@string/remote_6" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -138,7 +138,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="7"></Button>
+                        android:text="@string/remote_7" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -152,7 +152,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:longClickable="true"
-                        android:text="8"></Button>
+                        android:text="@string/remote_8" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -166,14 +166,8 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="9"></Button>
+                        android:text="@string/remote_9" />
 
-                    <EditText
-                        android:id="@+id/EditText01"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="EditText01"
-                        android:visibility="gone"></EditText>
                 </LinearLayout>
             </LinearLayout>
 
@@ -188,14 +182,14 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
                     android:longClickable="true"
-                    android:text="&lt;&lt;&lt;"></Button>
+                    android:text="@string/stepBack" />
 
                 <Button
                     android:id="@+id/ButtonZero"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:text="0"></Button>
+                    android:text="@string/remote_0" />
 
                 <Button
                     android:id="@+id/ButtonStepForward_Numbers"
@@ -203,7 +197,7 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
                     android:longClickable="true"
-                    android:text=">>>"></Button>
+                    android:text="@string/stepForward" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

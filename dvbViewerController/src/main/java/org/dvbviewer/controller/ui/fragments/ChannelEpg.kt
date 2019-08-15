@@ -17,8 +17,6 @@ package org.dvbviewer.controller.ui.fragments
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.database.MatrixCursor
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
@@ -29,31 +27,31 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
-import androidx.cursoradapter.widget.CursorAdapter
-import androidx.loader.app.LoaderManager.LoaderCallbacks
-import androidx.loader.content.Loader
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
-import org.apache.commons.collections4.CollectionUtils
+import okhttp3.ResponseBody
+import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
+import org.dvbviewer.controller.data.epg.ChannelEpgViewModel
+import org.dvbviewer.controller.data.epg.EPGRepository
+import org.dvbviewer.controller.data.epg.EpgViewModelFactory
+import org.dvbviewer.controller.data.remote.RemoteRepository
+import org.dvbviewer.controller.data.version.TimerRepository
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.EpgEntry
 import org.dvbviewer.controller.entities.IEPG
 import org.dvbviewer.controller.entities.Timer
-import org.dvbviewer.controller.io.HTTPUtil
-import org.dvbviewer.controller.io.ServerRequest
-import org.dvbviewer.controller.io.ServerRequest.DVBViewerCommand
-import org.dvbviewer.controller.io.ServerRequest.RecordingServiceGet
-import org.dvbviewer.controller.io.UrlBuilderException
-import org.dvbviewer.controller.io.data.EpgEntryHandler
 import org.dvbviewer.controller.ui.base.BaseListFragment
-import org.dvbviewer.controller.ui.base.EpgLoader
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
+import org.dvbviewer.controller.utils.ArrayListAdapter
 import org.dvbviewer.controller.utils.DateUtils
 import org.dvbviewer.controller.utils.ServerConsts
 import org.dvbviewer.controller.utils.UIUtils
-import java.text.MessageFormat
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 /**
@@ -61,7 +59,7 @@ import java.util.*
  *
  * @author RayBa
  */
-class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener {
+class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener {
     private var mAdapter: ChannelEPGAdapter? = null
     private var clickListener: IEpgDetailsActivity.OnIEPGClickListener? = null
     private var channel: String? = null
@@ -77,13 +75,14 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
     private var mDateInfo: EpgDateInfo? = null
     private var lastRefresh: Date? = null
     private var header: View? = null
+    private lateinit var timerRepository: TimerRepository
+    private lateinit var remoteRepository: RemoteRepository
+    private lateinit var epgRepository: EPGRepository
+    private lateinit var epgViewModel: ChannelEpgViewModel
 
     override val layoutRessource: Int
         get() = R.layout.fragment_channel_epg
 
-    /* (non-Javadoc)
-     * @see com.actionbarsherlock.app.SherlockFragment#onAttach(android.app.Activity)
-     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is EpgDateInfo) {
@@ -94,13 +93,20 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        timerRepository = TimerRepository(getDmsInterface())
+        remoteRepository = RemoteRepository(getDmsInterface())
+        epgRepository = EPGRepository(getDmsInterface())
+    }
+
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
      */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         fillFromBundle(arguments!!)
-        mAdapter = ChannelEPGAdapter(context)
+        mAdapter = ChannelEPGAdapter()
         listAdapter = mAdapter
         setListShown(false)
         listView!!.onItemClickListener = this
@@ -121,71 +127,19 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
         }
 
         setEmptyText(resources.getString(R.string.no_epg))
-        loaderManager.initLoader(0, savedInstanceState, this)
+        val epgObserver = Observer<List<EpgEntry>> { response -> onEpgChanged(response!!) }
+        val epgViewModelFactory = EpgViewModelFactory(epgRepository)
+        epgViewModel = ViewModelProvider(this, epgViewModelFactory)
+                .get(ChannelEpgViewModel::class.java)
+        val now = Date(mDateInfo!!.epgDate)
+        val tommorrow = DateUtils.addDay(now)
+        epgViewModel.getChannelEPG(epgId, now, tommorrow).observe(this, epgObserver)
     }
 
-    private fun fillFromBundle(savedInstanceState: Bundle) {
-        channel = savedInstanceState.getString(KEY_CHANNEL_NAME)
-        channelId = savedInstanceState.getLong(KEY_CHANNEL_ID)
-        epgId = savedInstanceState.getLong(KEY_EPG_ID)
-        logoUrl = savedInstanceState.getString(KEY_CHANNEL_LOGO)
-        channelPos = savedInstanceState.getInt(KEY_CHANNEL_POS)
-        favPos = savedInstanceState.getInt(KEY_FAV_POS)
-    }
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.Fragment#setUserVisibleHint(boolean)
-     */
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser && isVisible) {
-            refreshDate()
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onCreateLoader(int, android.os.Bundle)
-     */
-    override fun onCreateLoader(arg0: Int, arg1: Bundle?): Loader<Cursor> {
-
-        return object : EpgLoader(context!!, mDateInfo!!) {
-
-            override fun loadInBackground(): Cursor {
-                val columnNames = arrayOf(EpgTbl._ID, EpgTbl.EPG_ID, EpgTbl.TITLE, EpgTbl.SUBTITLE, EpgTbl.DESC, EpgTbl.START, EpgTbl.END, EpgTbl.PDC, EpgTbl.EVENT_ID)
-                try {
-                    val now = Date(mDateInfo!!.epgDate)
-                    val nowFloat = DateUtils.getFloatDate(now)
-                    val tommorrow = DateUtils.addDay(now)
-                    val tommorrowFloat = DateUtils.getFloatDate(tommorrow)
-                    val builder = buildBaseEpgUrl()
-                            .addQueryParameter("channel", epgId.toString())
-                            .addQueryParameter("start", nowFloat.toString())
-                            .addQueryParameter("end", tommorrowFloat.toString())
-                    val handler = EpgEntryHandler()
-                    val stream = ServerRequest.getInputStream(builder.build().toString())
-                    stream.use {
-                        val result = handler.parse(it)
-                        if (CollectionUtils.isNotEmpty(result)) {
-                            val cursor = MatrixCursor(columnNames)
-                            for (entry in result) {
-                                cursor.addRow(arrayOf<Any>(entry.id, entry.epgID, entry.title, entry.subTitle, entry.description, entry.start.time, entry.end.time, entry.pdc, entry.eventId))
-                            }
-                            return cursor
-                        }
-                    }
-                } catch (e: Exception) {
-                    catchException(javaClass.simpleName, e)
-                }
-                return MatrixCursor(columnNames)
-            }
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoadFinished(android.support.v4.content.Loader, java.lang.Object)
-     */
-    override fun onLoadFinished(arg0: Loader<Cursor>, cursor: Cursor) {
-        mAdapter!!.changeCursor(cursor)
+    private fun onEpgChanged(response: List<EpgEntry>) {
+        mAdapter = ChannelEPGAdapter()
+        listView?.adapter = mAdapter
+        mAdapter!!.items = response
         mAdapter!!.notifyDataSetChanged()
         setSelection(0)
         val dateText: String
@@ -211,6 +165,25 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
         }
         lastRefresh = Date(mDateInfo!!.epgDate)
         setListShown(true)
+    }
+
+    private fun fillFromBundle(savedInstanceState: Bundle) {
+        channel = savedInstanceState.getString(KEY_CHANNEL_NAME)
+        channelId = savedInstanceState.getLong(KEY_CHANNEL_ID)
+        epgId = savedInstanceState.getLong(KEY_EPG_ID)
+        logoUrl = savedInstanceState.getString(KEY_CHANNEL_LOGO)
+        channelPos = savedInstanceState.getInt(KEY_CHANNEL_POS)
+        favPos = savedInstanceState.getInt(KEY_FAV_POS)
+    }
+
+    /* (non-Javadoc)
+     * @see android.support.v4.app.Fragment#setUserVisibleHint(boolean)
+     */
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser && isVisible) {
+            refreshDate()
+        }
     }
 
     /* (non-Javadoc)
@@ -243,9 +216,7 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
      * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
      */
     override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        val c = mAdapter!!.cursor
-        c.moveToPosition(position)
-        val entry = cursorToEpgEntry(c)
+        val entry = mAdapter!!.getItem(position)
         if (clickListener != null) {
             clickListener!!.onIEPGClick(entry)
             return
@@ -256,24 +227,6 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
     }
 
     /**
-     * Reads the current cursorposition to an EpgEntry.
-     *
-     * @param c the c
-     * @return the iEPG©
-     */
-    private fun cursorToEpgEntry(c: Cursor): IEPG {
-        val entry = EpgEntry()
-        entry.channel = channel
-        entry.description = c.getString(c.getColumnIndex(EpgTbl.DESC))
-        entry.end = Date(c.getLong(c.getColumnIndex(EpgTbl.END)))
-        entry.epgID = epgId
-        entry.start = Date(c.getLong(c.getColumnIndex(EpgTbl.START)))
-        entry.subTitle = c.getString(c.getColumnIndex(EpgTbl.SUBTITLE))
-        entry.title = c.getString(c.getColumnIndex(EpgTbl.TITLE))
-        return entry
-    }
-
-    /**
      * The Class ChannelEPGAdapter.
      *
      * @author RayBa
@@ -281,41 +234,36 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
     inner class ChannelEPGAdapter
     /**
      * Instantiates a new channel epg adapter.
-     *
-     * @param context the context
      */
-    (context: Context?) : CursorAdapter(context, null, FLAG_REGISTER_CONTENT_OBSERVER) {
+        : ArrayListAdapter<EpgEntry>() {
 
-        /* (non-Javadoc)
-         * @see android.support.v4.widget.CursorAdapter#bindView(android.view.View, android.content.Context, android.database.Cursor)
-         */
-        override fun bindView(view: View, context: Context, c: Cursor) {
-            val holder = view.tag as ViewHolder
-            holder.contextMenu!!.tag = c.position
-            val millis = c.getLong(c.getColumnIndex(EpgTbl.START))
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            var convertView = convertView
+            val holder: ViewHolder
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.list_row_epg, parent, false)
+                holder = ViewHolder()
+                holder.startTime = convertView.findViewById(R.id.startTime)
+                holder.title = convertView.findViewById(R.id.title)
+                holder.description = convertView.findViewById(R.id.description)
+                holder.contextMenu = convertView.findViewById(R.id.contextMenu)
+                holder.contextMenu!!.setOnClickListener(this@ChannelEpg)
+                convertView.tag = holder
+            } else {
+                holder = convertView.tag as ViewHolder
+            }
+            val epgEntry = getItem(position)
+            holder.contextMenu!!.tag = position
             val flags = DateUtils.FORMAT_SHOW_TIME
-            val date = DateUtils.formatDateTime(context, millis, flags)
+            val date = DateUtils.formatDateTime(context, epgEntry.start.time, flags)
             holder.startTime!!.text = date
-            holder.title!!.text = c.getString(c.getColumnIndex(EpgTbl.TITLE))
-            val subTitle = c.getString(c.getColumnIndex(EpgTbl.SUBTITLE))
-            val desc = c.getString(c.getColumnIndex(EpgTbl.DESC))
+            holder.title!!.text = epgEntry.title
+            val subTitle = epgEntry.subTitle
+            val desc = epgEntry.description
             holder.description!!.text = if (TextUtils.isEmpty(subTitle)) desc else subTitle
             holder.description!!.visibility = if (TextUtils.isEmpty(holder.description!!.text)) View.GONE else View.VISIBLE
-        }
-
-        /* (non-Javadoc)
-         * @see android.support.v4.widget.CursorAdapter#newView(android.content.Context, android.database.Cursor, android.view.ViewGroup)
-         */
-        override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
-            val view = LayoutInflater.from(context).inflate(R.layout.list_row_epg, parent, false)
-            val holder = ViewHolder()
-            holder.startTime = view.findViewById(R.id.startTime)
-            holder.title = view.findViewById(R.id.title)
-            holder.description = view.findViewById(R.id.description)
-            holder.contextMenu = view.findViewById(R.id.contextMenu)
-            holder.contextMenu!!.setOnClickListener(this@ChannelEpg)
-            view.tag = holder
-            return view
+            return convertView!!
         }
 
     }
@@ -326,7 +274,9 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
      */
     fun refresh() {
         setListShown(false)
-        loaderManager.restartLoader(0, arguments, this).forceLoad()
+        val start = Date(mDateInfo!!.epgDate)
+        val end = DateUtils.addDay(start)
+        epgViewModel.getChannelEPG(epgId, start, end, true)
     }
 
     /**
@@ -381,17 +331,21 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
-        val c = mAdapter!!.cursor
-        c.moveToPosition(selectedPosition)
-        val pos = selectedPosition
+        val c = mAdapter!!.getItem(selectedPosition)
         val timer: Timer
         when (item.itemId) {
             R.id.menuRecord -> {
                 timer = cursorToTimer(c)
-                val url = TimerDetails.buildTimerUrl(timer)
-                val rsGet = RecordingServiceGet(url)
-                val executionThread = Thread(rsGet)
-                executionThread.start()
+                val call = timerRepository.saveTimer(timer)
+                call.enqueue(object : Callback<ResponseBody> {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        sendMessage(R.string.timer_saved)
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        sendMessage(R.string.error_common)
+                    }
+                })
                 return true
             }
             R.id.menuTimer -> {
@@ -411,19 +365,22 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
             }
             R.id.menuDetails -> {
                 val details = Intent(context, IEpgDetailsActivity::class.java)
-                c.moveToPosition(pos)
-                val entry = cursorToEpgEntry(c)
-                details.putExtra(IEPG::class.java.simpleName, entry)
+                details.putExtra(IEPG::class.java.simpleName, c)
                 startActivity(details)
                 return true
             }
             R.id.menuSwitch -> {
                 val prefs = DVBViewerPreferences(context!!)
-                val cid = ":$channelId"
-                val switchRequest = MessageFormat.format(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_SWITCH_COMMAND, prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT), cid)
-                val command = DVBViewerCommand(context, switchRequest)
-                val exexuterTHread = Thread(command)
-                exexuterTHread.start()
+                val target = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
+                remoteRepository.switchChannel(target, channelId.toString()).enqueue(object : Callback<ResponseBody> {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        sendMessage(R.string.channel_switched)
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        sendMessage(R.string.error_common)
+                    }
+                })
                 return true
             }
             else -> {
@@ -445,38 +402,27 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
     }
 
 
-    /* (non-Javadoc)
-     * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoaderReset(android.support.v4.content.Loader)
-     */
-    override fun onLoaderReset(arg0: Loader<Cursor>) {}
-
     /**
      * Cursor to timer.
      *
      * @param c the c
      * @return the timer©
      */
-    private fun cursorToTimer(c: Cursor): Timer {
-        val epgTitle = if (!c.isNull(c.getColumnIndex(EpgTbl.TITLE))) c.getString(c.getColumnIndex(EpgTbl.TITLE)) else channel
-        val epgStart = c.getLong(c.getColumnIndex(EpgTbl.START))
-        val epgEnd = c.getLong(c.getColumnIndex(EpgTbl.END))
+    private fun cursorToTimer(c: EpgEntry): Timer {
+        val epgTitle = if (StringUtils.isNotBlank(c.title)) c.title else channel
         val prefs = DVBViewerPreferences(context!!)
         val epgBefore = prefs.prefs.getInt(DVBViewerPreferences.KEY_TIMER_TIME_BEFORE, DVBViewerPreferences.DEFAULT_TIMER_TIME_BEFORE)
         val epgAfter = prefs.prefs.getInt(DVBViewerPreferences.KEY_TIMER_TIME_AFTER, DVBViewerPreferences.DEFAULT_TIMER_TIME_AFTER)
-        val start = if (epgStart > 0) Date(epgStart) else Date()
-        val end = if (epgEnd > 0) Date(epgEnd) else Date()
-        val eventId = c.getString(c.getColumnIndex(EpgTbl.EVENT_ID))
-        val pdc = c.getString(c.getColumnIndex(EpgTbl.PDC))
         val timer = Timer()
         timer.title = epgTitle
         timer.channelId = channelId
         timer.channelName = channel
-        timer.start = start
-        timer.end = end
+        timer.start = c.start
+        timer.end = c.end
         timer.pre = epgBefore
         timer.post = epgAfter
-        timer.eventId = eventId
-        timer.pdc = pdc
+        timer.eventId = c.eventId
+        timer.pdc = c.pdc
         timer.timerAction = prefs.prefs.getInt(DVBViewerPreferences.KEY_TIMER_DEF_AFTER_RECORD, 0)
         return timer
     }
@@ -491,12 +437,6 @@ class ChannelEpg : BaseListFragment(), LoaderCallbacks<Cursor>, OnItemClickListe
         val KEY_EPG_ID = ChannelEpg::class.java.name + "KEY_EPG_ID"
         val KEY_EPG_DAY = ChannelEpg::class.java.name + "EPG_DAY"
 
-        @Throws(UrlBuilderException::class)
-        fun buildBaseEpgUrl(): HTTPUtil.UrlBuilder {
-            return HTTPUtil.getUrlBuilder(ServerConsts.REC_SERVICE_URL + ServerConsts.URL_EPG)
-                    .addQueryParameter("utf8", "1")
-                    .addQueryParameter("lvl", "2")
-        }
     }
 
 }

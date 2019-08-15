@@ -15,10 +15,12 @@
  */
 package org.dvbviewer.controller.ui.phone;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import org.dvbviewer.controller.entities.Timer;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.TimerDetails;
 import org.dvbviewer.controller.ui.fragments.TimerDetails.OnTimerEditedListener;
@@ -59,9 +61,11 @@ public class TimerDetailsActivity extends BaseSinglePaneActivity implements OnTi
 	 * @see org.dvbviewer.controller.ui.fragments.TimerDetails.OnTimerEditedListener#timerEdited(boolean)
 	 */
 	@Override
-	public void timerEdited(boolean edited) {
-		if (edited) {
-			setResult(TimerDetails.RESULT_CHANGED);
+	public void timerEdited(Timer timer) {
+		if (timer != null) {
+			final Intent intent = new Intent();
+			intent.putExtra("timer", timer);
+			setResult(TimerDetails.Companion.getRESULT_CHANGED(), intent);
 		}
 		finish();
 	}

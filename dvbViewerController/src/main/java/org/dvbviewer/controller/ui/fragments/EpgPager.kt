@@ -48,6 +48,7 @@ class EpgPager : Fragment(), LoaderCallbacks<Cursor>, Toolbar.OnMenuItemClickLis
     private var mPager: ViewPager? = null
     private var mAdapter: PagerAdapter? = null
     private var mOnCHannelChanedListener: OnChannelScrolledListener? = null
+    private var dateInfo: EpgDateInfo? = null
 
 
     /*
@@ -60,6 +61,9 @@ class EpgPager : Fragment(), LoaderCallbacks<Cursor>, Toolbar.OnMenuItemClickLis
         super.onAttach(context)
         if (context is OnChannelScrolledListener) {
             mOnCHannelChanedListener = context
+        }
+        if (context is EpgDateInfo) {
+            dateInfo = context
         }
     }
 
@@ -151,30 +155,29 @@ class EpgPager : Fragment(), LoaderCallbacks<Cursor>, Toolbar.OnMenuItemClickLis
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
         val itemId = item.itemId
-        val info = activity as EpgDateInfo?
         when (itemId) {
             R.id.menuRefresh -> {
-                info!!.epgDate = System.currentTimeMillis()
+                dateInfo!!.epgDate = System.currentTimeMillis()
                 refresh()
             }
             R.id.menuPrev -> {
-                info!!.epgDate = DateUtils.substractDay(Date(info.epgDate)).time
+                dateInfo!!.epgDate = DateUtils.substractDay(Date(dateInfo!!.epgDate)).time
                 refreshOptionsMenu()
             }
             R.id.menuNext -> {
-                info!!.epgDate = DateUtils.addDay(Date(info.epgDate)).time
+                dateInfo!!.epgDate = DateUtils.addDay(Date(dateInfo!!.epgDate)).time
                 refreshOptionsMenu()
             }
             R.id.menuToday -> {
-                info!!.epgDate = Date().time
+                dateInfo!!.epgDate = Date().time
                 refreshOptionsMenu()
             }
             R.id.menuNow -> {
-                info!!.epgDate = DateUtils.setCurrentTime(Date()).time
+                dateInfo!!.epgDate = DateUtils.setCurrentTime(Date()).time
                 refreshOptionsMenu()
             }
             R.id.menuEvening -> {
-                info!!.epgDate = DateUtils.setEveningTime(Date(info.epgDate)).time
+                dateInfo!!.epgDate = DateUtils.setEveningTime(Date(dateInfo!!.epgDate)).time
                 refreshOptionsMenu()
             }
             else -> return false
@@ -202,10 +205,7 @@ class EpgPager : Fragment(), LoaderCallbacks<Cursor>, Toolbar.OnMenuItemClickLis
     }
 
     private fun refreshOptionsMenu() {
-        activity!!.invalidateOptionsMenu()
-        val mCurrent: ChannelEpg
-        mCurrent = mAdapter!!.instantiateItem(mPager!!, mPager!!.currentItem) as ChannelEpg
-        mCurrent.refresh()
+        refresh()
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
@@ -327,8 +327,8 @@ class EpgPager : Fragment(), LoaderCallbacks<Cursor>, Toolbar.OnMenuItemClickLis
 
     private fun resetLoader() {
         mAdapter = PagerAdapter(childFragmentManager)
-        mPager!!.adapter = mAdapter
-        mAdapter!!.notifyDataSetChanged()
+        mPager?.adapter = mAdapter
+        mAdapter?.notifyDataSetChanged()
         loaderManager.destroyLoader(0)
         loaderManager.restartLoader(0, arguments, this)
     }

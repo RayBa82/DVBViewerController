@@ -44,8 +44,7 @@
     <!-- Recordings -->
     <string name="recordings">Recording list</string>
     <string name="no_recordings">No recordings found</string>
-    <string name="recording_deleted">Deleted recording %1$s</string>
-    <string name="recordings_deleted">Deleted %1$d recordings</string>
+    <string name="recording_deleted">Deleted</string>
     <!-- Medias -->
     <string name="medias">Medias</string>
     <!-- Timer -->
@@ -142,11 +141,38 @@
     <string name="quick_stream_hint_title">Stream channel</string>
     <string name="quick_stream_hint_text">Start a stream by clicking on the channel logo</string>
     <string name="version_unsupported_text">Your server version is unsupported. Version {0} or higher is required.</string>
-    <string name="version_unsupported_title">Version unsupported</string>
     <string name="recording_folder">Recording directory</string>
     <!-- Remote -->
     <string name="remote_control">Control</string>
     <string name="remote_numbers">Numbers</string>
+    <string name="channel_switched">Channel switched</string>
+    <string name="no_remote_target">No DVBViewer client available</string>
     <string name="timer_saved">Timer saved</string>
+    <string name="timer_deleted">Timer deleted</string>
     <string name="epg_monitoring">EPG monitoring</string>
+    <string name="stepBack"><![CDATA[<<<]]></string>
+    <string name="moveup">MoveUp</string>
+    <string name="stepForward"><![CDATA[>>>]]></string>
+    <string name="moveleft">MoveLeft</string>
+    <string name="moveright">MoveRight</string>
+    <string name="back">Back</string>
+    <string name="videotext">Text</string>
+    <string name="movedown">MoveDown</string>
+    <string name="menu">Menu</string>
+    <string name="videos">Videos</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="yellow">Yellow</string>
+    <string name="blue">Blue</string>
+    <string name="pause">||</string>
+    <string name="remote_1">1</string>
+    <string name="remote_2">2</string>
+    <string name="remote_3">3</string>
+    <string name="remote_4">4</string>
+    <string name="remote_5">5</string>
+    <string name="remote_6">6</string>
+    <string name="remote_7">7</string>
+    <string name="remote_8">8</string>
+    <string name="remote_9">9</string>
+    <string name="remote_0">0</string>
 </resources>

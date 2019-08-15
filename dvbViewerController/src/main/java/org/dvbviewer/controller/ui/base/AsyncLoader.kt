@@ -20,7 +20,6 @@ import android.content.Context
 
 import androidx.loader.content.AsyncTaskLoader
 
-import org.apache.commons.io.IOUtils
 
 import java.io.Closeable
 
@@ -107,7 +106,7 @@ abstract class AsyncLoader<D>
     private fun closeData(data: D?) {
         if (data != null && data is Closeable) {
             val c = data as Closeable?
-            IOUtils.closeQuietly(c)
+            c?.close()
         }
     }
 

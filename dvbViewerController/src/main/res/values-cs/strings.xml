@@ -133,7 +133,6 @@
     <string name="quick_stream_hint_title">Vysílat kanál</string>
     <string name="quick_stream_hint_text">Spusťte proudové vysílání kliknutím na logo kanálu</string>
     <string name="version_unsupported_text">Verze Vaší nahrávací služby není podporována. Je třeba nainstalovat verzi {0} nebo vyšší.</string>
-    <string name="version_unsupported_title">Nepodporovaná verze</string>
     <string name="recording_folder">Složka pro nahrávání</string>
     <!-- Remote -->
     <string name="remote_control">Dálkový ovladač</string>
