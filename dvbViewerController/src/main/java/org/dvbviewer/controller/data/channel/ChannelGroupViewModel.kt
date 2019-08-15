@@ -28,7 +28,7 @@ class ChannelGroupViewModel(private val prefs: DVBViewerPreferences, private val
             val groupList: MutableList<ChannelGroup> = mutableListOf()
             try {
                 async(Dispatchers.Main) {
-                    if(Config.CHANNELS_SYNCED) {
+                    if (Config.CHANNELS_SYNCED) {
                         groupList.addAll(channelRepository.getGroups(fav))
                         fetchEpg()
                     } else {
@@ -58,20 +58,19 @@ class ChannelGroupViewModel(private val prefs: DVBViewerPreferences, private val
 
     fun syncChannels(fav: Boolean) {
         viewModelScope.launch(Dispatchers.IO, CoroutineStart.DEFAULT) {
-            try {
-                withContext(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
+                try {
                     channelRepository.syncChannels()
                     Config.CHANNELS_SYNCED = true
                     prefs.prefs
                             .edit()
                             .putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true)
                             .apply()
+                } catch (e: Exception) {
+                    Log.e(javaClass.simpleName, "Error syncing channels", e)
                 }
-                getGroupList(fav, true)
-            } catch (e: Exception) {
-                data.value = Collections.emptyList()
             }
-
+            getGroupList(fav, true)
         }
     }
 
