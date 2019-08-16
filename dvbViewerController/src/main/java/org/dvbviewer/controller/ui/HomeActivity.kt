@@ -86,7 +86,9 @@ class HomeActivity : GroupDrawerActivity(), OnClickListener, OnChannelSelectedLi
                 builder.setMessage(resources.getString(R.string.firstStartMessage)).setPositiveButton(R.string.yes, this).setTitle(resources.getString(R.string.firstStartMessageTitle))
                         .setNegativeButton(R.string.no, this).show()
                 prefs = DVBViewerPreferences(this)
-                prefs!!.prefs.edit().putBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, false).commit()
+                prefs.prefs.edit()
+                        .putBoolean(DVBViewerPreferences.KEY_IS_FIRST_START, false)
+                        .apply()
             }
         } else {
             val frag = supportFragmentManager.findFragmentByTag(GroupDrawerActivity.Companion.CHANNEL_PAGER_TAG)
@@ -107,7 +109,9 @@ class HomeActivity : GroupDrawerActivity(), OnClickListener, OnChannelSelectedLi
             mClientSpinner!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                     val selectedClient = mSpinnerAdapter!!.getItem(position) as String?
-                    prefs!!.prefs.edit().putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient).commit()
+                    prefs.prefs.edit()
+                            .putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient)
+                            .apply()
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
