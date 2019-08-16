@@ -324,7 +324,13 @@ class HomeActivity : GroupDrawerActivity(), OnClickListener, OnChannelSelectedLi
     override fun onMediaStreamClick(mediaFile: MediaFile) {
         val videoIntent = StreamUtils.buildQuickUrl(this, mediaFile.id!!, mediaFile.name, FileType.VIDEO)
         startActivity(videoIntent)
-        AnalyticsTracker.trackQuickStream(application)
+        val prefs = DVBViewerPreferences(this).streamPrefs
+        val direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true)
+        val bundle = Bundle()
+        bundle.putString(PARAM_START, START_QUICK)
+        bundle.putString(PARAM_TYPE, if (direct) TYPE_DIRECT else TYPE_TRANSCODED)
+        bundle.putString(PARAM_NAME, mediaFile.name)
+        mFirebaseAnalytics?.logEvent(EVENT_STREAM_MEDIA, bundle)
     }
 
     override fun onMediaContextClick(mediaFile: MediaFile) {

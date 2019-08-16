@@ -1,0 +1,20 @@
+package org.dvbviewer.controller.utils
+
+const val EVENT_STREAM_RECORDING = "STREAM_RECORDING"
+const val EVENT_STREAM_LIVE_TV = "STREAM_TV"
+const val EVENT_STREAM_MEDIA = "STREAM_MEDIA"
+const val EVENT_TIMER_CREATED = "TIMER_CREATED"
+const val EVENT_TIMER_DELETED = "TIMER_DELETED"
+const val EVENT_TIMER_EDITED = "TIMER_EDITED"
+const val EVENT_RECORDING_DELETED = "RECORDING_DELETED"
+
+const val PARAM_NAME = "NAME"
+const val PARAM_TYPE = "TYPE"
+const val PARAM_START = "START"
+
+const val START_QUICK = "QUICK"
+const val START_MENU = "MENU"
+const val START_DIALOG = "DIALOG"
+
+const val TYPE_DIRECT = "DIRECT"
+const val TYPE_TRANSCODED = "TRANSCODED"

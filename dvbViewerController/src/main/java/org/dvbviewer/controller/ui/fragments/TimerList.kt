@@ -41,9 +41,7 @@ import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
 import org.dvbviewer.controller.ui.widget.ClickableRelativeLayout
-import org.dvbviewer.controller.utils.ArrayListAdapter
-import org.dvbviewer.controller.utils.DateUtils
-import org.dvbviewer.controller.utils.UIUtils
+import org.dvbviewer.controller.utils.*
 import retrofit2.Call
 import retrofit2.Response
 import java.util.*
@@ -136,6 +134,7 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     refresh()
                     sendMessage(R.string.timer_saved)
+                    logEvent(EVENT_TIMER_EDITED)
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -363,6 +362,7 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
                         override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                             refresh()
                             sendMessage(R.string.timer_deleted)
+                            logEvent(EVENT_TIMER_DELETED)
                         }
 
                         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

@@ -45,10 +45,7 @@ import org.dvbviewer.controller.entities.Timer
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
-import org.dvbviewer.controller.utils.ArrayListAdapter
-import org.dvbviewer.controller.utils.DateUtils
-import org.dvbviewer.controller.utils.ServerConsts
-import org.dvbviewer.controller.utils.UIUtils
+import org.dvbviewer.controller.utils.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -340,6 +337,7 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
                 call.enqueue(object : Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         sendMessage(R.string.timer_saved)
+                        logEvent(EVENT_TIMER_CREATED)
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

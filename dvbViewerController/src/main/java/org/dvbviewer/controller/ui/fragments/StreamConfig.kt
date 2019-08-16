@@ -49,10 +49,7 @@ import org.dvbviewer.controller.io.UrlBuilderException
 import org.dvbviewer.controller.io.api.APIClient
 import org.dvbviewer.controller.io.api.DMSInterface
 import org.dvbviewer.controller.ui.base.BaseDialogFragment
-import org.dvbviewer.controller.utils.AnalyticsTracker
-import org.dvbviewer.controller.utils.FileType
-import org.dvbviewer.controller.utils.StreamType
-import org.dvbviewer.controller.utils.StreamUtils
+import org.dvbviewer.controller.utils.*
 import java.util.*
 
 /**
@@ -198,11 +195,13 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
                 prefs!!.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply()
                 mStreamType = StreamType.TRANSCODED
                 startStreaming(false, mFileType)
+                logStreaming(TYPE_TRANSCODED)
             }
             R.id.startDirectButton -> {
                 prefs!!.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply()
                 mStreamType = StreamType.DIRECT
                 startStreaming(true, mFileType)
+                logStreaming(TYPE_DIRECT)
             }
 
             else -> {
@@ -210,14 +209,28 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
         }
     }
 
+    private fun logStreaming(type: String) {
+        val bundle = Bundle()
+        bundle.putString(PARAM_START, START_DIALOG)
+        bundle.putString(PARAM_TYPE, type)
+        bundle.putString(PARAM_NAME, mTitle)
+        val event = when (mFileType) {
+            FileType.CHANNEL -> {
+                EVENT_STREAM_LIVE_TV
+            }
+            FileType.RECORDING -> {
+                EVENT_STREAM_RECORDING
+            }
+            else -> {
+                EVENT_STREAM_MEDIA
+            }
+        }
+        logEvent(event, bundle)
+    }
+
     private fun startStreaming(direct: Boolean, fileType: FileType?) {
         try {
             startVideoIntent(fileType)
-            if (direct) {
-                AnalyticsTracker.trackDirectStream(activity!!.application)
-            } else {
-                AnalyticsTracker.trackTranscodedStream(activity!!.application)
-            }
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)
             builder.setMessage(resources.getString(R.string.noFlashPlayerFound)).setPositiveButton(resources.getString(R.string.yes), this).setNegativeButton(resources.getString(R.string.no), this).show()

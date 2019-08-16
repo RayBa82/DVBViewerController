@@ -17,8 +17,6 @@ package org.dvbviewer.controller
 
 import android.util.Log
 import androidx.multidex.MultiDexApplication
-import com.google.android.gms.analytics.GoogleAnalytics
-import com.google.android.gms.analytics.Tracker
 import com.google.android.gms.security.ProviderInstaller
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
@@ -36,8 +34,6 @@ import org.dvbviewer.controller.utils.URLUtil
  * @author RayBa
  */
 class App : MultiDexApplication() {
-
-    private var tracker: Tracker? = null
 
 
     /* (non-Javadoc)
@@ -84,15 +80,6 @@ class App : MultiDexApplication() {
             Log.e(TAG, "Error installing play service features", e)
         }
 
-    }
-
-    @Synchronized
-    fun getTracker(): Tracker? {
-        if (tracker == null) {
-            val analytics = GoogleAnalytics.getInstance(this)
-            tracker = analytics.newTracker(R.xml.app_tracker)
-        }
-        return tracker
     }
 
     companion object {

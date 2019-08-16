@@ -160,4 +160,9 @@ open class BaseFragment : Fragment() {
         const val MESSAGE_ID = "MESSAGE_ID"
     }
 
+    fun logEvent(category: String, bundle: Bundle? = null){
+        val baseActivity = activity as BaseActivity?
+        baseActivity?.mFirebaseAnalytics?.logEvent(category, bundle)
+    }
+
 }

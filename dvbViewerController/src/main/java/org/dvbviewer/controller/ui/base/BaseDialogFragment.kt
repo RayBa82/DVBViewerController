@@ -17,6 +17,7 @@ package org.dvbviewer.controller.ui.base
 
 
 import android.content.Context
+import android.os.Bundle
 import android.text.TextUtils
 import android.widget.Toast
 
@@ -96,6 +97,11 @@ open class BaseDialogFragment : AppCompatDialogFragment() {
 
         }
         return result
+    }
+
+    fun logEvent(category: String, bundle: Bundle?){
+        val baseActivity = activity as BaseActivity?
+        baseActivity?.mFirebaseAnalytics?.logEvent(category, bundle)
     }
 
 }
