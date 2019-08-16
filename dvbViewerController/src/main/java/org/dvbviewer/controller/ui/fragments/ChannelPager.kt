@@ -65,14 +65,14 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
     private var showNowPlayingWifi: Boolean = false
     private var refreshGroupType: Boolean = false
     private var hideFavSwitch = false
-    private var mProgress: View? = null
-    private var mPager: ViewPager? = null
-    private var mNetworkInfo: NetworkInfo? = null
-    private var mAdapter: ChannelPagerAdapter? = null
-    private var mPagerIndicator: PagerTitleStrip? = null
-    private lateinit var prefs: DVBViewerPreferences
     private var mGroupCHangedListener: OnGroupChangedListener? = null
     private var mOnGroupTypeCHangedListener: OnGroupTypeChangedListener? = null
+    private var mNetworkInfo: NetworkInfo? = null
+    private lateinit var mProgress: View
+    private lateinit var mPager: ViewPager
+    private lateinit var mAdapter: ChannelPagerAdapter
+    private lateinit var mPagerIndicator: PagerTitleStrip
+    private lateinit var prefs: DVBViewerPreferences
     private lateinit var versionRepository: VersionRepository
     private lateinit var channelRepository: ChannelRepository
     private lateinit var mDbHelper: DbHelper
@@ -109,11 +109,11 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
         mAdapter = ChannelPagerAdapter(childFragmentManager)
         val connManager = activity!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-        showGroups = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_GROUPS, true)
-        showExtraGroup = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_ALL_AS_GROUP, false)
-        showFavs = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
-        showNowPlaying = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING, true)
-        showNowPlayingWifi = prefs!!.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY, true)
+        showGroups = prefs.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_GROUPS, true)
+        showExtraGroup = prefs.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_ALL_AS_GROUP, false)
+        showFavs = prefs.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_USE_FAVS, false)
+        showNowPlaying = prefs.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING, true)
+        showNowPlayingWifi = prefs.prefs.getBoolean(DVBViewerPreferences.KEY_CHANNELS_SHOW_NOW_PLAYING_WIFI_ONLY, true)
         if (savedInstanceState == null && arguments != null) {
             hideFavSwitch = arguments!!.getBoolean(KEY_HIDE_FAV_SWITCH, false)
             if (arguments!!.containsKey(KEY_GROUP_INDEX)) {
@@ -129,9 +129,7 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
 
     fun setPosition(position: Int) {
         mGroupIndex = position
-        if (mPager != null) {
-            mPager!!.setCurrentItem(mGroupIndex, false)
-        }
+        mPager.setCurrentItem(mGroupIndex, false)
     }
 
     override fun onDestroy() {
@@ -146,10 +144,10 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
 	 */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        activity!!.setTitle(if (showFavs) R.string.favourites else R.string.channelList)
-        mPager!!.adapter = mAdapter
-        mPager!!.pageMargin = UIUtils.dipToPixel(context!!, 25).toInt()
-        mPager!!.addOnPageChangeListener(this)
+        activity?.setTitle(if (showFavs) R.string.favourites else R.string.channelList)
+        mPager.adapter = mAdapter
+        mPager.pageMargin = UIUtils.dipToPixel(context!!, 25).toInt()
+        mPager.addOnPageChangeListener(this)
 
         if (savedInstanceState == null) {
             /**
@@ -159,7 +157,7 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
             } else if (showNowPlaying && !showNowPlayingWifi || showNowPlaying && mNetworkInfo!!.isConnected) {
             }
         }
-        mPager!!.currentItem = mGroupIndex
+        mPager.currentItem = mGroupIndex
         val groupObserver = Observer<List<ChannelGroup>> { response -> onGroupChanged(response!!) }
         val channelGroupViewModelFactory = ChannelGroupViewModelFactory(prefs, channelRepository)
         groupViewModel = ViewModelProvider(this, channelGroupViewModelFactory)
@@ -170,9 +168,9 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
 
 
     fun onGroupChanged(groupList: List<ChannelGroup>) {
-        mAdapter?.groups = groupList
-        mAdapter?.notifyDataSetChanged()
-        mPager?.setCurrentItem(mGroupIndex, false)
+        mAdapter.groups = groupList
+        mAdapter.notifyDataSetChanged()
+        mPager.setCurrentItem(mGroupIndex, false)
         // mPager.setPageTransformer(true, new DepthPageTransformer());
         activity?.invalidateOptionsMenu()
         showProgress(false)
@@ -194,7 +192,7 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
         mProgress = view.findViewById(android.R.id.progress)
         mPager = view.findViewById(R.id.pager)
         mPagerIndicator = view.findViewById(R.id.titles)
-        mPagerIndicator!!.visibility = if (showGroups) View.VISIBLE else View.GONE
+        mPagerIndicator.visibility = if (showGroups) View.VISIBLE else View.GONE
         val c = view.findViewById<View>(R.id.bottom_container)
         if (c != null) {
             c.visibility = View.GONE
@@ -238,22 +236,22 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
                 return true
             }
             R.id.menuSyncChannels -> {
-                mPager?.adapter = null
-                mAdapter?.notifyDataSetChanged()
+                mPager.adapter = null
+                mAdapter.notifyDataSetChanged()
                 mAdapter = ChannelPagerAdapter(childFragmentManager)
-                mPager!!.adapter = mAdapter
-                mAdapter!!.notifyDataSetChanged()
+                mPager.adapter = mAdapter
+                mAdapter.notifyDataSetChanged()
                 persistChannelConfigConfig()
                 mGroupIndex = 0
                 groupViewModel.syncChannels(showFavs)
                 return true
             }
             R.id.menuChannelList, R.id.menuFavourties -> {
-                mPager?.adapter = null
-                mAdapter?.notifyDataSetChanged()
+                mPager.adapter = null
+                mAdapter.notifyDataSetChanged()
                 mAdapter = ChannelPagerAdapter(childFragmentManager)
-                mPager!!.adapter = mAdapter
-                mAdapter!!.notifyDataSetChanged()
+                mPager.adapter = mAdapter
+                mAdapter.notifyDataSetChanged()
                 showFavs = !showFavs
                 persistChannelConfigConfig()
                 mGroupIndex = 0
@@ -355,14 +353,14 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
      */
     fun setChannelSelection(groupId: Long, channelIndex: Int) {
         val uri = ChannelList.BASE_CONTENT_URI.buildUpon().appendPath(groupId.toString()).appendQueryParameter("index", channelIndex.toString()).build()
-        index[mPager!!.currentItem] = channelIndex
+        index[mPager.currentItem] = channelIndex
         context!!.contentResolver.notifyChange(uri, null)
     }
 
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(KEY_GROUP_INDEX, mPager!!.currentItem)
+        outState.putInt(KEY_GROUP_INDEX, mPager.currentItem)
         outState.putSerializable(KEY_INDEX, index)
     }
 
@@ -380,7 +378,7 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
              */
             val macAddress = NetUtils.getMacFromArpCache(ServerConsts.REC_SERVICE_HOST)
             ServerConsts.REC_SERVICE_MAC_ADDRESS = macAddress
-            val prefEditor = prefs!!.prefs.edit()
+            val prefEditor = prefs.prefs.edit()
             prefEditor.putBoolean(DVBViewerPreferences.KEY_CHANNELS_SYNCED, true)
             if (StringUtils.isNotBlank(macAddress)) {
                 prefEditor.putString(DVBViewerPreferences.KEY_RS_MAC_ADDRESS, macAddress)
@@ -392,20 +390,11 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
         }
     }
 
-    /**
-     * Refresh.
-     *
-     * @param id the id
-     */
-    private fun refresh(fav: Boolean) {
-        groupViewModel.fetchEpg()
-    }
-
     private fun showProgress(show: Boolean) {
-        mProgress!!.visibility = if (show) View.VISIBLE else View.GONE
-        mPager!!.visibility = if (show) View.GONE else View.VISIBLE
+        mProgress.visibility = if (show) View.VISIBLE else View.GONE
+        mPager.visibility = if (show) View.GONE else View.VISIBLE
         if (showGroups) {
-            mPagerIndicator!!.visibility = if (show) View.GONE else View.VISIBLE
+            mPagerIndicator.visibility = if (show) View.GONE else View.VISIBLE
         }
     }
 
@@ -445,7 +434,7 @@ class ChannelPager : BaseFragment(), OnPageChangeListener {
     override fun onPageSelected(position: Int) {
         mGroupIndex = position
         if (mGroupCHangedListener != null) {
-            mGroupCHangedListener!!.groupChanged(mAdapter!!.getGroupId(mGroupIndex), mGroupIndex, getChannelIndex(mGroupIndex))
+            mGroupCHangedListener!!.groupChanged(mAdapter.getGroupId(mGroupIndex), mGroupIndex, getChannelIndex(mGroupIndex))
         }
     }
 

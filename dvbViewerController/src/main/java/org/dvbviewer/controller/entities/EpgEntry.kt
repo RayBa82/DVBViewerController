@@ -88,12 +88,8 @@ class EpgEntry : Parcelable, IEPG {
         if (this.epgID != 0L) {
             result.put(EpgTbl.EPG_ID, this.epgID)
         }
-        if (this.start != null) {
-            result.put(EpgTbl.START, this.start!!.time)
-        }
-        if (this.end != null) {
-            result.put(EpgTbl.END, this.end!!.time)
-        }
+        result.put(EpgTbl.START, this.start.time)
+        result.put(EpgTbl.END, this.end.time)
         if (!TextUtils.isEmpty(this.title)) {
             result.put(EpgTbl.TITLE, this.title)
         }
@@ -140,8 +136,8 @@ class EpgEntry : Parcelable, IEPG {
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeLong(this.id)
         dest.writeLong(this.epgID)
-        dest.writeLong(if (this.start == null) -1 else this.start!!.time)
-        dest.writeLong(if (this.end == null) -1 else this.end!!.time)
+        dest.writeLong(this.start.time)
+        dest.writeLong(this.end.time)
         dest.writeString(this.channel)
         dest.writeString(this.title)
         dest.writeString(this.subTitle)
