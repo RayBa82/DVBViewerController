@@ -18,7 +18,8 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
+        app:layout_rowWeight="1"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -51,7 +52,8 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
+        app:layout_rowWeight="1"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -84,7 +86,8 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
+        app:layout_rowWeight="1"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -117,7 +120,8 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
+        app:layout_rowWeight="1"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -150,7 +154,8 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
+        app:layout_rowWeight="1"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -183,7 +188,8 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
+        app:layout_rowWeight="1"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -216,7 +222,8 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
+        app:layout_rowWeight="1"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -249,7 +256,8 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         app:cardUseCompatPadding="true"
         app:layout_columnWeight="1"
-        app:layout_rowWeight="1">
+        app:layout_rowWeight="1"
+        android:focusable="true">
 
         <RelativeLayout
             android:layout_width="match_parent"

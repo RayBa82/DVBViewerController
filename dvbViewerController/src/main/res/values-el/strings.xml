@@ -46,21 +46,15 @@
     <string name="createTimer">Δημιουργία χρονοδιακόπτη</string>
     <string name="editTimer">Επεξεργασία χρονοδιακόπτη</string>
     <string name="date">"Ημερομηνία "</string>
-    <string name="active">"Ενεργός "</string>
     <string name="start">"Έναρξη "</string>
     <string name="stop">"Τερματισμός "</string>
     <string name="channel">"Κανάλι "</string>
     <string name="postTimerAction">"Μετά Εγγραφής "</string>
-    <string name="busyDeleteTimer">Διαγραφή χρονιδιακόπτη</string>
     <string name="no_timer">Δεν βρέθηκε χρονοδιακόπτης</string>
     <!-- Streaming -->
     <string name="streamConfig">Επεξεργασία ροής</string>
-    <string name="stream">Ροή</string>
     <string name="quality">"Ποιότητα "</string>
-    <string name="aspectRatio">"Aspect Ratio "</string>
     <string name="ffmpegpreset">Ταχύτητα κωδικοποίησης</string>
-    <string name="maxHeight">"Μέγιστο Ύψος "</string>
-    <string name="maxWidth">"Μέγιστο Πλάτος "</string>
     <string name="streamStart">Έναρξη ροής</string>
     <string name="streamTranscoded">Επανακωδιδοποιημένη ροή</string>
     <string name="streamDirect">Απευθείας ροή</string>
@@ -72,4 +66,10 @@
     <!-- Preferences -->
     <!-- Error -->
     <!-- Remote -->
+    <string name="active">"Ενεργός "</string>
+    <string name="busyDeleteTimer">Διαγραφή χρονιδιακόπτη</string>
+    <string name="stream">Ροή</string>
+    <string name="aspectRatio">"Aspect Ratio "</string>
+    <string name="maxHeight">"Μέγιστο Ύψος "</string>
+    <string name="maxWidth">"Μέγιστο Πλάτος "</string>
 </resources>

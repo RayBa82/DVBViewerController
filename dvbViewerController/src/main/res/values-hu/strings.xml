@@ -45,21 +45,15 @@
     <string name="createTimer">Timer létesítése</string>
     <string name="editTimer">Timer szerkesztése</string>
     <string name="date">Dátum</string>
-    <string name="active">Aktív</string>
     <string name="start">Indulás</string>
     <string name="stop">Megállás</string>
     <string name="channel">Csatorna</string>
     <string name="postTimerAction">Felvétel után</string>
-    <string name="busyDeleteTimer">Timereket törlöm&#8230;</string>
     <string name="no_timer">Timert nem találtam</string>
     <!-- Streaming -->
     <string name="streamConfig">Stream Konfiguráció</string>
-    <string name="stream">Stream</string>
     <string name="quality">Minőség</string>
-    <string name="aspectRatio">Képarány</string>
     <string name="ffmpegpreset">FFMPEG Preset</string>
-    <string name="maxHeight">Max. magassága</string>
-    <string name="maxWidth">Max. szélessége</string>
     <string name="streamStart">Stream indítása</string>
     <string name="streamTranscoded">Átváltott Stream</string>
     <string name="streamDirect">Változatlan Stream</string>
@@ -82,4 +76,10 @@
     <!-- Preferences -->
     <!-- Error -->
     <!-- Remote -->
+    <string name="active">Aktív</string>
+    <string name="busyDeleteTimer">Timereket törlöm&#8230;</string>
+    <string name="stream">Stream</string>
+    <string name="aspectRatio">Képarány</string>
+    <string name="maxHeight">Max. magassága</string>
+    <string name="maxWidth">Max. szélessége</string>
 </resources>

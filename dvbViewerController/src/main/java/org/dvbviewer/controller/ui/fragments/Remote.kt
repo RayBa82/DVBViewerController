@@ -286,7 +286,7 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
 
     interface OnTargetsChangedListener {
 
-        val selectedTarget: Any
+        var selectedTarget: DVBTarget?
 
         fun targetsChanged(title: String, tragets: List<DVBTarget>?)
 

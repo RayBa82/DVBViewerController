@@ -45,21 +45,15 @@
     <string name="createTimer">Crea Timer</string>
     <string name="editTimer">Modifica Timer</string>
     <string name="date">Data</string>
-    <string name="active">Attivo</string>
     <string name="start">Inizia</string>
     <string name="stop">Ferma</string>
     <string name="channel">Canale</string>
     <string name="postTimerAction">Dopo la registrazione</string>
-    <string name="busyDeleteTimer">Cancellazione Timer&#8230;</string>
     <string name="no_timer">Nessun timer Trovato</string>
     <!-- Streaming -->
     <string name="streamConfig">Configurazione Streaming</string>
-    <string name="stream">Stream</string>
     <string name="quality">Qualità</string>
-    <string name="aspectRatio">Rapporto d\'aspetto</string>
     <string name="ffmpegpreset">Preset FFMPEG</string>
-    <string name="maxHeight">Altezza Max</string>
-    <string name="maxWidth">Larghezza Max</string>
     <string name="streamStart">Inizia Stream</string>
     <string name="streamTranscoded">Stream codificato</string>
     <string name="streamDirect">Streaming Diretto</string>
@@ -112,15 +106,21 @@
     <string name="pref_item_channel_fav_summary">Mostra i preferiti invece che i canali</string>
     <!-- Error -->
     <string name="error_common">Errore</string>
-    <string name="error_unknonwn_host">Host sconosciuto</string>
-    <string name="error_connection_timeout">Timeout Connessione</string>
     <string name="error_parsing_xml">Parsing dati xml fallito</string>
-    <string name="error_invalid_url">URL non valido</string>
     <string name="error_invalid_credentials">Autenticazione fallita</string>
     <string name="support_this_app">Supporta questa App</string>
-    <string name="quick_stream_hint_title">Avvia stream canale</string>
-    <string name="quick_stream_hint_text">Avvia lo stream cliccando sul logo del canale</string>
     <string name="version_unsupported_text">La tua versione del Recording Service non è supportata. Devi utilizzare una versione superiore a {0}.</string>
     <string name="recording_folder">Directory registrazioni</string>
     <!-- Remote -->
+    <string name="active">Attivo</string>
+    <string name="busyDeleteTimer">Cancellazione Timer&#8230;</string>
+    <string name="stream">Stream</string>
+    <string name="aspectRatio">Rapporto d\'aspetto</string>
+    <string name="maxHeight">Altezza Max</string>
+    <string name="maxWidth">Larghezza Max</string>
+    <string name="error_unknonwn_host">Host sconosciuto</string>
+    <string name="error_connection_timeout">Timeout Connessione</string>
+    <string name="error_invalid_url">URL non valido</string>
+    <string name="quick_stream_hint_title">Avvia stream canale</string>
+    <string name="quick_stream_hint_text">Avvia lo stream cliccando sul logo del canale</string>
 </resources>

@@ -52,21 +52,15 @@
     <string name="createTimer">Timer anlegen</string>
     <string name="editTimer">Timer bearbeiten</string>
     <string name="date">Datum</string>
-    <string name="active">Aktiv</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="channel">Sender</string>
     <string name="postTimerAction">Nach Aufnahme</string>
-    <string name="busyDeleteTimer">Timer werden gelöscht&#8230;</string>
     <string name="no_timer">Keine Timer gefunden</string>
     <!-- Streaming -->
     <string name="streamConfig">Stream Konfiguration</string>
-    <string name="stream">Stream</string>
     <string name="quality">Qualität</string>
-    <string name="aspectRatio">Seitenverhältnis</string>
     <string name="ffmpegpreset">Encoder-Geschwindigkeit</string>
-    <string name="maxHeight">Max. Höhe</string>
-    <string name="maxWidth">Max. Breite</string>
     <string name="streamStart">Streaming starten</string>
     <string name="streamTranscoded">Transcodiertes Streaming</string>
     <string name="streamDirect">Direktes Streaming</string>
@@ -132,14 +126,9 @@
     <string name="pref_item_channel_fav_summary">Zeigt die Favoriten anstatt der Sender</string>
     <!-- Error -->
     <string name="error_common">Fehler</string>
-    <string name="error_unknonwn_host">Unbekannter Host</string>
-    <string name="error_connection_timeout">Verbindungs timeout</string>
     <string name="error_parsing_xml">Fehler beim verarbeiten des XMLs</string>
-    <string name="error_invalid_url">Ungültige URL</string>
     <string name="error_invalid_credentials">Authentifizierung fehlgeschlagen</string>
     <string name="support_this_app">Die App unterstützen</string>
-    <string name="quick_stream_hint_title">Sender streamen</string>
-    <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
     <string name="version_unsupported_text">Ihre Server Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
     <string name="recording_folder">Aufnahmeordner</string>
     <!-- Remote -->
@@ -175,4 +164,15 @@
     <string name="remote_8">8</string>
     <string name="remote_9">9</string>
     <string name="remote_0">0</string>
+    <string name="active">Aktiv</string>
+    <string name="busyDeleteTimer">Timer werden gelöscht&#8230;</string>
+    <string name="stream">Stream</string>
+    <string name="aspectRatio">Seitenverhältnis</string>
+    <string name="maxHeight">Max. Höhe</string>
+    <string name="maxWidth">Max. Breite</string>
+    <string name="error_unknonwn_host">Unbekannter Host</string>
+    <string name="error_connection_timeout">Verbindungs timeout</string>
+    <string name="error_invalid_url">Ungültige URL</string>
+    <string name="quick_stream_hint_title">Sender streamen</string>
+    <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
 </resources>

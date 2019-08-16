@@ -49,9 +49,10 @@ import org.dvbviewer.controller.utils.Config
  * [BaseMultiPaneActivity].
  */
 abstract class BaseActivity : AppCompatActivity() {
+
     protected lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
-    private val mMessageReceiver = object : BroadcastReceiver() {
+    open val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // Get extra data included in the Intent
             var message = intent.getStringExtra(BaseFragment.MESSAGE_STRING)

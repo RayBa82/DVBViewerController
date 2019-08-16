@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -59,6 +60,7 @@ open class BaseListFragment : BaseFragment() {
     private var mListContainer: View? = null
     private var mEmptyText: CharSequence? = null
     private var mListShown: Boolean = false
+    private val handler: Handler = Handler(Looper.getMainLooper())
 
     /**
      * Get the position of the currently selected list item.
@@ -454,7 +456,9 @@ open class BaseListFragment : BaseFragment() {
                     + "\n\n"
                     + if (e?.message != null) e.message else e?.javaClass?.name)
         }
-        message?.let { setEmptyText(it)}
+        handler.post {
+            message?.let { setEmptyText(it)}
+        }
     }
 
     companion object {
