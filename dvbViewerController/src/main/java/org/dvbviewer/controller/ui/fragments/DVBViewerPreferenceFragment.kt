@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.ui.phone.ConnectionPreferencesActivity
 
 class DVBViewerPreferenceFragment : PreferenceFragmentCompat() {

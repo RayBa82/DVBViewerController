@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.channel.retrofit
 
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.dvbviewer.controller.entities.ChannelRoot
+import org.dvbviewer.controller.data.entities.ChannelRoot
 import retrofit2.Converter
 
 internal class ChannelRequestBodyConverter : Converter<List<ChannelRoot>, RequestBody> {

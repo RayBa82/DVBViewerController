@@ -30,10 +30,10 @@ import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.FragmentManager
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity
+import org.dvbviewer.controller.data.entities.DVBTarget
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.IEPG
 import org.dvbviewer.controller.data.media.MediaFile
-import org.dvbviewer.controller.entities.DVBTarget
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.IEPG
 import org.dvbviewer.controller.ui.adapter.MediaAdapter
 import org.dvbviewer.controller.ui.fragments.*
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener

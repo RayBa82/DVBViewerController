@@ -24,7 +24,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.entities.IEPG
+import org.dvbviewer.controller.data.entities.IEPG
 import org.dvbviewer.controller.ui.base.BaseDialogFragment
 import org.dvbviewer.controller.utils.DateUtils
 

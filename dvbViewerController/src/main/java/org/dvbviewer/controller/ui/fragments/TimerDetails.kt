@@ -36,7 +36,7 @@ import androidx.appcompat.widget.SwitchCompat
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.entities.Timer
+import org.dvbviewer.controller.data.entities.Timer
 import org.dvbviewer.controller.ui.base.BaseDialogFragment
 import org.dvbviewer.controller.ui.widget.DateField
 import org.dvbviewer.controller.utils.DateUtils

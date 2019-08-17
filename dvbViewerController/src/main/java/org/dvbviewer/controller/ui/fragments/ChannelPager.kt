@@ -38,9 +38,9 @@ import org.dvbviewer.controller.data.DbHelper
 import org.dvbviewer.controller.data.channel.ChannelGroupViewModel
 import org.dvbviewer.controller.data.channel.ChannelGroupViewModelFactory
 import org.dvbviewer.controller.data.channel.ChannelRepository
+import org.dvbviewer.controller.data.entities.ChannelGroup
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.data.version.VersionRepository
-import org.dvbviewer.controller.entities.ChannelGroup
-import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.ui.base.BaseFragment
 import org.dvbviewer.controller.utils.Config
 import org.dvbviewer.controller.utils.UIUtils

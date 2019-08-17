@@ -1,4 +1,4 @@
-package org.dvbviewer.controller.entities;
+package org.dvbviewer.controller.data.entities;
 
 import java.util.Comparator;
 

@@ -1,10 +1,10 @@
 package org.dvbviewer.controller.data.api
 
 import okhttp3.ResponseBody
+import org.dvbviewer.controller.data.entities.*
 import org.dvbviewer.controller.data.media.xml.VideoDirsFiles
 import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.data.version.xml.Version
-import org.dvbviewer.controller.entities.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -19,9 +19,9 @@ import android.sax.RootElement
 import android.util.Xml
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.entities.Status
-import org.dvbviewer.controller.entities.Status.Folder
-import org.dvbviewer.controller.entities.Status.StatusItem
+import org.dvbviewer.controller.data.entities.Status
+import org.dvbviewer.controller.data.entities.Status.Folder
+import org.dvbviewer.controller.data.entities.Status.StatusItem
 import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 import java.io.IOException

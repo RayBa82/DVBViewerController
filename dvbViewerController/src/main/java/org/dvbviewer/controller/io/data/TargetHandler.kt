@@ -17,7 +17,7 @@ package org.dvbviewer.controller.io.data
 
 import android.sax.RootElement
 import android.util.Xml
-import org.dvbviewer.controller.entities.DVBTarget
+import org.dvbviewer.controller.data.entities.DVBTarget
 import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler
 import java.io.IOException

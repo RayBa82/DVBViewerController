@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.timer.retrofit
 
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.dvbviewer.controller.entities.Timer
+import org.dvbviewer.controller.data.entities.Timer
 import retrofit2.Converter
 
 internal class TimerRequestBodyConverter : Converter<List<Timer>, RequestBody> {

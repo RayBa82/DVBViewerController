@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.remote
 
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.data.api.DMSInterface
-import org.dvbviewer.controller.entities.DVBTarget
+import org.dvbviewer.controller.data.entities.DVBTarget
 import retrofit2.Call
 
 class RemoteRepository(private val dmsInterface: DMSInterface) {

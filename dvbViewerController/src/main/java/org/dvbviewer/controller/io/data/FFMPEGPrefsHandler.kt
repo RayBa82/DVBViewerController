@@ -2,8 +2,8 @@ package org.dvbviewer.controller.io.data
 
 
 import org.apache.commons.lang3.StringUtils
-import org.dvbviewer.controller.entities.FFMpegPresetList
-import org.dvbviewer.controller.entities.Preset
+import org.dvbviewer.controller.data.entities.FFMpegPresetList
+import org.dvbviewer.controller.data.entities.Preset
 import org.dvbviewer.controller.utils.INIParser
 import org.dvbviewer.controller.utils.StreamUtils
 

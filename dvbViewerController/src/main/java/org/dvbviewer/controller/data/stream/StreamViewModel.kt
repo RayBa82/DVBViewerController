@@ -10,7 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.DmsViewModel
-import org.dvbviewer.controller.entities.FFMpegPresetList
+import org.dvbviewer.controller.data.entities.FFMpegPresetList
 
 /**
  * Created by rbaun on 02.04.18.

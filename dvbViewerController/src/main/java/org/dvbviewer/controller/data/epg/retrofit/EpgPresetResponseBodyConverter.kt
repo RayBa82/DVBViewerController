@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.epg.retrofit
 
 
 import okhttp3.ResponseBody
-import org.dvbviewer.controller.entities.EpgEntry
+import org.dvbviewer.controller.data.entities.EpgEntry
 import org.dvbviewer.controller.io.data.EpgEntryHandler
 import retrofit2.Converter
 

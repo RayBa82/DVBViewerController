@@ -1,6 +1,6 @@
 package org.dvbviewer.controller.io.data
 
-import org.dvbviewer.controller.entities.Status
+import org.dvbviewer.controller.data.entities.Status
 import org.xml.sax.SAXException
 
 import java.io.IOException

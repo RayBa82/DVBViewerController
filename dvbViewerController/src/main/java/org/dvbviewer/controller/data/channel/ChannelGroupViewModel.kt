@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
-import org.dvbviewer.controller.entities.ChannelGroup
-import org.dvbviewer.controller.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.ChannelGroup
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.utils.Config
 import java.util.*
 

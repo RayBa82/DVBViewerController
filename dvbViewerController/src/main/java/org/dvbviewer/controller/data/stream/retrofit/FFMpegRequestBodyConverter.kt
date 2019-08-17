@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.stream.retrofit
 
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.dvbviewer.controller.entities.FFMpegPresetList
+import org.dvbviewer.controller.data.entities.FFMpegPresetList
 import retrofit2.Converter
 
 internal class FFMpegRequestBodyConverter : Converter<FFMpegPresetList, RequestBody> {

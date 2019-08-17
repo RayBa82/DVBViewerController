@@ -1,7 +1,7 @@
 package org.dvbviewer.controller.io.data;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dvbviewer.controller.entities.FFMpegPresetList;
+import org.dvbviewer.controller.data.entities.FFMpegPresetList;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

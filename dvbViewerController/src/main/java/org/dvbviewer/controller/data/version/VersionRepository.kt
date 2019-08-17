@@ -2,9 +2,9 @@ package org.dvbviewer.controller.data.version
 
 import android.content.Context
 import org.dvbviewer.controller.data.api.DMSInterface
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.Status
 import org.dvbviewer.controller.data.version.xml.Version
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.Status
 
 class VersionRepository(context: Context, private val dmsInterface: DMSInterface) {
 

@@ -18,7 +18,7 @@ package org.dvbviewer.controller.io.data
 import android.sax.RootElement
 import android.util.Xml
 import org.apache.commons.lang3.math.NumberUtils
-import org.dvbviewer.controller.entities.Recording
+import org.dvbviewer.controller.data.entities.Recording
 import org.dvbviewer.controller.utils.DateUtils
 import org.xml.sax.ContentHandler
 import org.xml.sax.SAXException

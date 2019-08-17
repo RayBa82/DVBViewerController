@@ -3,7 +3,7 @@ package org.dvbviewer.controller.data.stream.retrofit
 import com.google.gson.reflect.TypeToken
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import org.dvbviewer.controller.entities.FFMpegPresetList
+import org.dvbviewer.controller.data.entities.FFMpegPresetList
 import retrofit2.Converter
 import retrofit2.Retrofit
 import java.lang.reflect.Type

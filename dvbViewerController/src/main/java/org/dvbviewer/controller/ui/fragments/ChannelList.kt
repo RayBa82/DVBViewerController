@@ -42,11 +42,11 @@ import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts
 import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
+import org.dvbviewer.controller.data.entities.Channel
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.Timer
 import org.dvbviewer.controller.data.remote.RemoteRepository
 import org.dvbviewer.controller.data.timer.TimerRepository
-import org.dvbviewer.controller.entities.Channel
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.Timer
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity

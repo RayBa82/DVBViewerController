@@ -38,10 +38,10 @@ import androidx.loader.content.Loader
 import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.IEPG
+import org.dvbviewer.controller.data.entities.Recording
 import org.dvbviewer.controller.data.recording.RecordingRepository
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.IEPG
-import org.dvbviewer.controller.entities.Recording
 import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity

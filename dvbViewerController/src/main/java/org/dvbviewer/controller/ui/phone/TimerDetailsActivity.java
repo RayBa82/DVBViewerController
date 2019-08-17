@@ -20,7 +20,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import org.dvbviewer.controller.entities.Timer;
+import org.dvbviewer.controller.data.entities.Timer;
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
 import org.dvbviewer.controller.ui.fragments.TimerDetails;
 import org.dvbviewer.controller.ui.fragments.TimerDetails.OnTimerEditedListener;

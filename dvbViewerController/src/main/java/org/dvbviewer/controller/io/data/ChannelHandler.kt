@@ -18,9 +18,9 @@ package org.dvbviewer.controller.io.data
 import android.sax.RootElement
 import android.util.Xml
 import org.apache.commons.lang3.math.NumberUtils
-import org.dvbviewer.controller.entities.Channel
-import org.dvbviewer.controller.entities.ChannelGroup
-import org.dvbviewer.controller.entities.ChannelRoot
+import org.dvbviewer.controller.data.entities.Channel
+import org.dvbviewer.controller.data.entities.ChannelGroup
+import org.dvbviewer.controller.data.entities.ChannelRoot
 import org.xml.sax.ContentHandler
 import org.xml.sax.SAXException
 import org.xml.sax.helpers.DefaultHandler

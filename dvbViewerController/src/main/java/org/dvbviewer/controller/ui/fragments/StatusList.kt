@@ -24,13 +24,13 @@ import androidx.lifecycle.ViewModelProvider
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ApiResponse
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.Status
+import org.dvbviewer.controller.data.entities.Status.Folder
+import org.dvbviewer.controller.data.entities.Status.StatusItem
 import org.dvbviewer.controller.data.status.StatusViewModel
 import org.dvbviewer.controller.data.status.StatusViewModelFactory
 import org.dvbviewer.controller.data.version.VersionRepository
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.Status
-import org.dvbviewer.controller.entities.Status.Folder
-import org.dvbviewer.controller.entities.Status.StatusItem
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.utils.ArrayListAdapter
 import org.dvbviewer.controller.utils.CategoryAdapter

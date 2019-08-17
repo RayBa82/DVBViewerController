@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.api.DMSInterface
-import org.dvbviewer.controller.entities.FFMpegPresetList
+import org.dvbviewer.controller.data.entities.FFMpegPresetList
 import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler
 
 /**

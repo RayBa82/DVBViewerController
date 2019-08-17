@@ -9,8 +9,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.entities.Preset;
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.data.entities.Preset;
 
 import java.util.Arrays;
 

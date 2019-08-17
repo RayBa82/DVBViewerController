@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.remote.retrofit
 
 
 import okhttp3.ResponseBody
-import org.dvbviewer.controller.entities.DVBTarget
+import org.dvbviewer.controller.data.entities.DVBTarget
 import org.dvbviewer.controller.io.data.TargetHandler
 import retrofit2.Converter
 

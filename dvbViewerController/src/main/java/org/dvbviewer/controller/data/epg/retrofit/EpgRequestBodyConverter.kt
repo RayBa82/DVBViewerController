@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.epg.retrofit
 
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.dvbviewer.controller.entities.EpgEntry
+import org.dvbviewer.controller.data.entities.EpgEntry
 import retrofit2.Converter
 
 internal class EpgRequestBodyConverter : Converter<List<EpgEntry>, RequestBody> {

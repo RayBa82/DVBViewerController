@@ -13,7 +13,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceDialogFragmentCompat
 import androidx.preference.PreferenceFragmentCompat
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.ui.base.BaseFragment
 import org.dvbviewer.controller.ui.widget.InputTypePref
 import org.dvbviewer.controller.utils.ServerConsts

@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.entities;
+package org.dvbviewer.controller.data.entities;
 
 import android.content.ContentValues;
 import android.text.TextUtils;
 
 import org.dvbviewer.controller.data.ProviderConsts.GroupTbl;
-import org.dvbviewer.controller.entities.Channel.Fav;
+import org.dvbviewer.controller.data.entities.Channel.Fav;
 
 import java.util.ArrayList;
 import java.util.List;

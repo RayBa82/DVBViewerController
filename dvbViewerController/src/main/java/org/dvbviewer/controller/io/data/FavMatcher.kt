@@ -1,8 +1,8 @@
 package org.dvbviewer.controller.io.data
 
-import org.dvbviewer.controller.entities.Channel
-import org.dvbviewer.controller.entities.ChannelGroup
-import org.dvbviewer.controller.entities.ChannelRoot
+import org.dvbviewer.controller.data.entities.Channel
+import org.dvbviewer.controller.data.entities.ChannelGroup
+import org.dvbviewer.controller.data.entities.ChannelRoot
 import java.util.*
 
 class FavMatcher {

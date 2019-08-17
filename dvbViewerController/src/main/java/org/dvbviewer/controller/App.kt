@@ -20,7 +20,7 @@ import androidx.multidex.MultiDexApplication
 import com.google.android.gms.security.ProviderInstaller
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
-import org.dvbviewer.controller.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.io.HTTPUtil
 import org.dvbviewer.controller.utils.Config
 import org.dvbviewer.controller.utils.NetUtils

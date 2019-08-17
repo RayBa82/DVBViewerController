@@ -20,8 +20,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.data.media.MediaFile
-import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.ui.adapter.MediaAdapter
 import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity
 import org.dvbviewer.controller.ui.fragments.MediaList

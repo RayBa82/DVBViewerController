@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.channel.retrofit
 
 
 import okhttp3.ResponseBody
-import org.dvbviewer.controller.entities.ChannelRoot
+import org.dvbviewer.controller.data.entities.ChannelRoot
 import org.dvbviewer.controller.io.data.ChannelHandler
 import retrofit2.Converter
 
