@@ -6,9 +6,6 @@
         <item>Uśpij</item>
         <item>Hibernuj</item>
     </string-array>
-    <string-array name="ffmpegPresets" translatable="false">
-        <item>Placebo</item>
-    </string-array>
     <string-array name="tracks">
         <item>Ścieżka 1</item>
         <item>Ścieżka 2</item>
