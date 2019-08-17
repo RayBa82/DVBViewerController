@@ -13,37 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.data.task.xml;
+package org.dvbviewer.controller.data.task.xml
 
 
-import com.tickaroo.tikxml.annotation.Attribute;
-import com.tickaroo.tikxml.annotation.Element;
-import com.tickaroo.tikxml.annotation.Xml;
-
-import java.util.List;
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.Xml
 
 @Xml(name = "group")
-public class TaskGroup {
+class TaskGroup {
 
     @Attribute(name = "name")
-    private String name;
+    var name: String? = null
 
-    @Element()
-    private List<Task> tasks;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
+    @Element
+    var tasks: List<Task>? = null
 }

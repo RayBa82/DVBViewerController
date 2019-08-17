@@ -48,7 +48,7 @@ class TaskListFragment : BaseListFragment(), OnClickListener {
 
     lateinit var sAdapter: CategoryAdapter
     private var selectedTask: Task? = null
-    lateinit var mViewModel: TaskViewModel
+    private lateinit var mViewModel: TaskViewModel
 
     /* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -66,19 +66,19 @@ class TaskListFragment : BaseListFragment(), OnClickListener {
         sAdapter = CategoryAdapter(context)
         mViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
         val mediaObserver = Observer<ApiResponse<TaskList>> { response ->
-            if (response!!.status == Status.SUCCESS) {
-                for (taskGroup in response.data!!.groups) {
-                    val adapter = TaskAdapter()
-                    for (task in taskGroup.tasks) {
-                        adapter.addItem(task)
+            when {
+                response?.status == Status.SUCCESS -> {
+                    response.data?.groups?.forEach {
+                        val adapter = TaskAdapter()
+                        it.tasks?.forEach { task ->
+                            adapter.addItem(task)
+                        }
+                        sAdapter.addSection(it.name, adapter)
                     }
-                    sAdapter.addSection(taskGroup.name, adapter)
+                    listAdapter = sAdapter
                 }
-                listAdapter = sAdapter
-            } else if (response.status == Status.NOT_SUPPORTED) {
-                setEmptyText(response.message!!)
-            } else if (response.status == Status.ERROR) {
-                catchException(TaskListFragment::class.java.simpleName, response.e)
+                response.status == Status.NOT_SUPPORTED -> setEmptyText(response.message)
+                response.status == Status.ERROR -> catchException(TaskListFragment::class.java.simpleName, response.e)
             }
             setListShown(true)
         }
@@ -86,16 +86,9 @@ class TaskListFragment : BaseListFragment(), OnClickListener {
     }
 
     /* (non-Javadoc)
-	 * @see android.support.v4.app.ListFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-	 */
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
-    /* (non-Javadoc)
 	 * @see android.support.v4.app.ListFragment#onListItemClick(android.widget.ListView, android.view.View, int, long)
 	 */
-    override fun onListItemClick(parent: ListView, v: View, position: Int, id: Long) {
+    override fun onListItemClick(l: ListView, v: View, position: Int, id: Long) {
         if (context == null) {
             return
         }

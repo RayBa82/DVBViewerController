@@ -13,12 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.data.task.xml;
+package org.dvbviewer.controller.data.task.xml
 
 
-import com.tickaroo.tikxml.annotation.Attribute;
-import com.tickaroo.tikxml.annotation.PropertyElement;
-import com.tickaroo.tikxml.annotation.Xml;
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 
 /**
  * The Class Task.
@@ -27,40 +27,15 @@ import com.tickaroo.tikxml.annotation.Xml;
  * @date 01.07.2012
  */
 @Xml(name = "task")
-public class Task {
+class Task {
 
     @Attribute(name = "type")
-    private String type;
+    var type: String? = null
 
-	@PropertyElement
-	private String name;
-	
     @PropertyElement
-	private String action;
+    var name: String? = null
 
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getAction() {
-		return action;
-	}
-	
-	public void setAction(String action) {
-		this.action = action;
-	}
+    @PropertyElement
+    var action: String? = null
 
 }

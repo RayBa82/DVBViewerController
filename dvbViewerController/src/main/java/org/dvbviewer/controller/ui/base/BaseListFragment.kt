@@ -63,28 +63,6 @@ open class BaseListFragment : BaseFragment() {
     private val handler: Handler = Handler(Looper.getMainLooper())
 
     /**
-     * Get the position of the currently selected list item.
-     *
-     * @return the selected item position
-     */
-    val selectedItemPosition: Int
-        get() {
-            ensureList()
-            return mList!!.selectedItemPosition
-        }
-
-    /**
-     * Get the mCursor row ID of the currently selected list item.
-     *
-     * @return the selected item id
-     */
-    val selectedItemId: Long
-        get() {
-            ensureList()
-            return mList!!.selectedItemId
-        }
-
-    /**
      * Get the activity's list view widget.
      *
      * @return the list view
@@ -113,7 +91,7 @@ open class BaseListFragment : BaseFragment() {
             val hadAdapter = mAdapter != null
             mAdapter = adapter
             if (mList != null) {
-                mList!!.adapter = adapter
+                mList?.adapter = adapter
                 if (!mListShown && !hadAdapter) {
                     setListShown(true, view != null && view!!.windowToken != null)
                 }
@@ -188,8 +166,10 @@ open class BaseListFragment : BaseFragment() {
             pframe.gravity = Gravity.CENTER
 
             val progress = ProgressBar(context)
-            progress.indeterminateDrawable
-                    .setColorFilter(ContextCompat.getColor(getContext()!!, R.color.colorControlActivated), PorterDuff.Mode.SRC_IN)
+            getContext()?.let { ContextCompat.getColor(it, R.color.colorControlActivated) }?.let {
+                progress.indeterminateDrawable
+                        .setColorFilter(it, PorterDuff.Mode.SRC_IN)
+            }
             pframe.addView(progress, FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
 
@@ -287,7 +267,10 @@ open class BaseListFragment : BaseFragment() {
      *
      * @param text the new empty text
      */
-    fun setEmptyText(text: CharSequence) {
+    fun setEmptyText(text: CharSequence?) {
+        if (text == null) {
+            return
+        }
         ensureList()
         if (mStandardEmptyView != null) {
             mStandardEmptyView!!.text = text
@@ -315,16 +298,6 @@ open class BaseListFragment : BaseFragment() {
      */
     fun setListShown(shown: Boolean) {
         setListShown(shown, true)
-    }
-
-    /**
-     * Like [.setListShown], but no animation is used when
-     * transitioning from the previous state.
-     *
-     * @param shown the new list shown no animation
-     */
-    fun setListShownNoAnimation(shown: Boolean) {
-        setListShown(shown, false)
     }
 
     /**
@@ -425,7 +398,7 @@ open class BaseListFragment : BaseFragment() {
             // We are starting without an adapter, so assume we won't
             // have our data right away and start with the progress indicator.
             if (mProgressContainer != null) {
-                setListShown(false, false)
+                setListShown(shown = false, animate = false)
             }
         }
         mHandler.post(mRequestFocus)
@@ -440,32 +413,26 @@ open class BaseListFragment : BaseFragment() {
      * @param e   the Excetpion to catch
      */
     override fun catchException(tag: String, e: Throwable?) {
-        if (context == null) {
+        if (context == null || isDetached) {
             return
         }
         Log.e(tag, "Error loading ListData", e)
-        val message: String?
-        if (e is AuthenticationException) {
-            message = getString(R.string.error_invalid_credentials)
-        } else if (e is DefaultHttpException) {
-            message = e.message
-        } else if (e is SAXException) {
-            message = getString(R.string.error_parsing_xml)
-        } else {
-            message = (getStringSafely(R.string.error_common)
-                    + "\n\n"
-                    + if (e?.message != null) e.message else e?.javaClass?.name)
+        val message = when (e) {
+            is AuthenticationException -> getString(R.string.error_invalid_credentials)
+            is DefaultHttpException -> e.message
+            is SAXException -> getString(R.string.error_parsing_xml)
+            else -> getStringSafely(R.string.error_common) + "\n\n" + if (e?.message != null) e.message else e?.javaClass?.name
         }
         handler.post {
-            message?.let { setEmptyText(it)}
+            message?.let { setEmptyText(it) }
         }
     }
 
     companion object {
 
-        private val INTERNAL_EMPTY_ID = android.R.id.empty
-        private val INTERNAL_PROGRESS_CONTAINER_ID = android.R.id.progress
-        private val INTERNAL_LIST_CONTAINER_ID = android.R.id.content
+        private const val INTERNAL_EMPTY_ID = android.R.id.empty
+        private const val INTERNAL_PROGRESS_CONTAINER_ID = android.R.id.progress
+        private const val INTERNAL_LIST_CONTAINER_ID = android.R.id.content
     }
 
 }
