@@ -45,7 +45,6 @@ import org.dvbviewer.controller.data.stream.StreamViewModelFactory
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.FFMpegPresetList
 import org.dvbviewer.controller.entities.Preset
-import org.dvbviewer.controller.io.UrlBuilderException
 import org.dvbviewer.controller.io.api.APIClient
 import org.dvbviewer.controller.io.api.DMSInterface
 import org.dvbviewer.controller.ui.base.BaseDialogFragment
@@ -241,8 +240,6 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
     /**
      * starts an [Intent] to play a video stream or throws an Exception if the video url
      * could not be determined.
-     *
-     * @throws UrlBuilderException
      */
     private fun startVideoIntent(fileType: FileType?) {
         val videoIntent: Intent = getVideoIntent(fileType) ?: return
