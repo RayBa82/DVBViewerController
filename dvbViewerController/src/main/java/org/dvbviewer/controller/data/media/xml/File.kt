@@ -13,13 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.data.version.xml;
+package org.dvbviewer.controller.data.media.xml
 
 
-import com.tickaroo.tikxml.annotation.Attribute;
-import com.tickaroo.tikxml.annotation.TextContent;
-import com.tickaroo.tikxml.annotation.Xml;
-
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 
 /**
  * The Class Task.
@@ -27,29 +26,27 @@ import com.tickaroo.tikxml.annotation.Xml;
  * @author RayBa
  * @date 01.07.2012
  */
-@Xml(name = "version")
-public class Version {
+@Xml(name = "file")
+class File {
 
-    @Attribute(name = "iver")
-	private int  internalVersion;
+    @Attribute(name = "name")
+    var name: String? = null
 
-    @TextContent
-	private String version;
+    @Attribute(name = "title")
+    var title: String? = null
 
-    public int getInternalVersion() {
-        return internalVersion;
-    }
+    @Attribute(name = "objid")
+    var objid: Long = 0
 
-    public void setInternalVersion(int internalVersion) {
-        this.internalVersion = internalVersion;
-    }
+    @Attribute(name = "dur")
+    var duration: Int = 0
 
-    public String getVersion() {
-        return version;
-    }
+    @Attribute(name = "hres")
+    var hres: Int = 0
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+    @Attribute(name = "vres")
+    var vres: Int = 0
 
+    @PropertyElement(name = "thumb")
+    var thumb: String? = null
 }

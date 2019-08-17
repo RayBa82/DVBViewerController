@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.entities.NaturalOrderComparator
 import org.dvbviewer.controller.io.api.DMSInterface
 import java.util.*
+import kotlin.math.max
 
 /**
  * Created by rbaun on 02.04.18.
@@ -17,11 +18,11 @@ class MediaRepository(private val dmsInterface: DMSInterface) {
         val mediaFiles = ArrayList<MediaFile>()
         if (CollectionUtils.isNotEmpty(videoDirs!!.dirs)) {
             val dirs = ArrayList<MediaFile>()
-            videoDirs.dirs.forEach { dir ->
+            videoDirs.dirs?.forEach { dir ->
                 val f = MediaFile()
                 f.dirId = dir.dirid
                 val dirArr = StringUtils.split(dir.path, "\\")
-                val index = Math.max(0, dirArr.size - 1)
+                val index = max(0, dirArr.size - 1)
                 f.name = dirArr[index]
                 dirs.add(f)
             }
@@ -30,7 +31,7 @@ class MediaRepository(private val dmsInterface: DMSInterface) {
         }
         if (CollectionUtils.isNotEmpty(videoDirs.files)) {
             val files = ArrayList<MediaFile>()
-            videoDirs.files.forEach { file ->
+            videoDirs.files?.forEach { file ->
                 val f = MediaFile()
                 f.dirId = -1L
                 f.id = file.objid

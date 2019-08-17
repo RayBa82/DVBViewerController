@@ -13,41 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.data.media.xml;
+package org.dvbviewer.controller.data.version.xml
 
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.TextContent
+import com.tickaroo.tikxml.annotation.Xml
 
-import com.tickaroo.tikxml.annotation.Attribute;
-import com.tickaroo.tikxml.annotation.Xml;
+@Xml(name = "version")
+class Version {
 
-/**
- * The Class Task.
- *
- * @author RayBa
- * @date 01.07.2012
- */
-@Xml(name = "dir")
-public class Dir {
+    @Attribute(name = "iver")
+    var internalVersion: Int = 0
 
-	@Attribute(name = "path")
-	private String path;
+    @TextContent
+    var version: String? = null
 
-	@Attribute(name = "dirid")
-	private long dirid;
-
-	public String getPath() {
-		return path;
-	}
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-	public long getDirid() {
-		return dirid;
-	}
-	
-	public void setDirid(long dirid) {
-		this.dirid = dirid;
-	}
-	
 }
