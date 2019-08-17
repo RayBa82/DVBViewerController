@@ -12,9 +12,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_about.*
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ApiResponse
-import org.dvbviewer.controller.data.Status
 import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.ApiStatus
 import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.version.VersionRepository
 import org.dvbviewer.controller.data.version.VersionViewModel
@@ -34,7 +34,7 @@ class AboutFragment : androidx.fragment.app.Fragment() {
         val versionViewModel = ViewModelProviders.of(this, vFac)
                 .get(VersionViewModel::class.java)
         val versionObserver = Observer<ApiResponse<Boolean>> { response ->
-            if (response?.status == Status.SUCCESS && response.data == true) {
+            if (response?.status == ApiStatus.SUCCESS && response.data == true) {
                 donationRow.visibility = View.VISIBLE
             }
         }

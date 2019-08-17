@@ -31,8 +31,8 @@ import android.widget.*
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.io.exception.AuthenticationException
-import org.dvbviewer.controller.io.exception.DefaultHttpException
+import org.dvbviewer.controller.data.api.io.exception.AuthenticationException
+import org.dvbviewer.controller.data.api.io.exception.DefaultHttpException
 import org.xml.sax.SAXException
 
 /**

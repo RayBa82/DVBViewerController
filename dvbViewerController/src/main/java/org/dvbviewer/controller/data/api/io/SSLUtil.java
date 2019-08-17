@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.io;
+package org.dvbviewer.controller.data.api.io;
 
 import android.text.TextUtils;
 import android.util.Log;

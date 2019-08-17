@@ -13,11 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.io
+package org.dvbviewer.controller.data.api.io
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.dvbviewer.controller.io.okhttp3.DMSInterceptor
+import org.dvbviewer.controller.data.api.io.okhttp3.DMSInterceptor
 import java.util.concurrent.TimeUnit
 
 /**

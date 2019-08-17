@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.DmsViewModel
 import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.ApiResponse
 import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.data.version.VersionRepository

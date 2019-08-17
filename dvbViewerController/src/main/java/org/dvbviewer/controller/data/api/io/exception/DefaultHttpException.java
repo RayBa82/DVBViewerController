@@ -1,4 +1,4 @@
-package org.dvbviewer.controller.io.exception;
+package org.dvbviewer.controller.data.api.io.exception;
 
 import java.io.IOException;
 

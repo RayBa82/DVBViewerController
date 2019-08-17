@@ -2,8 +2,8 @@ package org.dvbviewer.controller.data.recording.retrofit
 
 
 import okhttp3.ResponseBody
+import org.dvbviewer.controller.data.api.handler.RecordingHandler
 import org.dvbviewer.controller.data.entities.Recording
-import org.dvbviewer.controller.io.data.RecordingHandler
 import retrofit2.Converter
 
 class RecordingPresetResponseBodyConverter : Converter<ResponseBody, List<Recording>> {

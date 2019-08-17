@@ -28,8 +28,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ApiResponse
-import org.dvbviewer.controller.data.Status
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.ApiStatus
 import org.dvbviewer.controller.data.task.TaskViewModel
 import org.dvbviewer.controller.data.task.xml.Task
 import org.dvbviewer.controller.data.task.xml.TaskList
@@ -67,7 +67,7 @@ class TaskListFragment : BaseListFragment(), OnClickListener {
         mViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
         val mediaObserver = Observer<ApiResponse<TaskList>> { response ->
             when {
-                response?.status == Status.SUCCESS -> {
+                response?.status == ApiStatus.SUCCESS -> {
                     response.data?.groups?.forEach {
                         val adapter = TaskAdapter()
                         it.tasks?.forEach { task ->
@@ -77,8 +77,8 @@ class TaskListFragment : BaseListFragment(), OnClickListener {
                     }
                     listAdapter = sAdapter
                 }
-                response.status == Status.NOT_SUPPORTED -> setEmptyText(response.message)
-                response.status == Status.ERROR -> catchException(TaskListFragment::class.java.simpleName, response.e)
+                response.status == ApiStatus.NOT_SUPPORTED -> setEmptyText(response.message)
+                response.status == ApiStatus.ERROR -> catchException(TaskListFragment::class.java.simpleName, response.e)
             }
             setListShown(true)
         }

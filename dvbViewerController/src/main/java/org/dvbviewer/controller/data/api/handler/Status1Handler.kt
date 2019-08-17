@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.io.data
+package org.dvbviewer.controller.data.api.handler
 
 import android.sax.RootElement
 import android.util.Xml

@@ -38,8 +38,8 @@ import kotlinx.android.synthetic.main.fragment_stream_config.*
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.ApiResponse
 import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.data.entities.FFMpegPresetList

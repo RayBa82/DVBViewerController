@@ -2,8 +2,8 @@ package org.dvbviewer.controller.data.timer.retrofit
 
 
 import okhttp3.ResponseBody
+import org.dvbviewer.controller.data.api.handler.TimerHandler
 import org.dvbviewer.controller.data.entities.Timer
-import org.dvbviewer.controller.io.data.TimerHandler
 import retrofit2.Converter
 
 class TimerPresetResponseBodyConverter : Converter<ResponseBody, List<Timer>> {

@@ -25,9 +25,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.apache.commons.lang3.BooleanUtils
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ApiResponse
-import org.dvbviewer.controller.data.Status.ERROR
-import org.dvbviewer.controller.data.Status.SUCCESS
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.ApiStatus.ERROR
+import org.dvbviewer.controller.data.api.ApiStatus.SUCCESS
 import org.dvbviewer.controller.data.media.MediaFile
 import org.dvbviewer.controller.data.media.MediaRepository
 import org.dvbviewer.controller.data.media.MediaViewModel

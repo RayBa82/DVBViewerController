@@ -2,8 +2,8 @@ package org.dvbviewer.controller.data.status.retrofit
 
 
 import okhttp3.ResponseBody
+import org.dvbviewer.controller.data.api.handler.Status2Handler
 import org.dvbviewer.controller.data.entities.Status
-import org.dvbviewer.controller.io.data.Status2Handler
 import retrofit2.Converter
 
 class StatusPresetResponseBodyConverter : Converter<ResponseBody, Status> {

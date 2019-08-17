@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.data;
+package org.dvbviewer.controller.data.api;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -25,6 +25,8 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
+import org.dvbviewer.controller.data.DbHelper;
+import org.dvbviewer.controller.data.ProviderConsts;
 import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl;
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl;
 import org.dvbviewer.controller.data.ProviderConsts.FavTbl;
@@ -42,7 +44,7 @@ import java.util.HashMap;
  */
 public class DvbProvider extends ContentProvider {
 
-	private static DbHelper			dbHelper;
+	private static DbHelper dbHelper;
 
 	private static final int		CHANNELS				= 100;
 	

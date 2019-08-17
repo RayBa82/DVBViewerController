@@ -2,8 +2,8 @@ package org.dvbviewer.controller.data.channel.retrofit
 
 
 import okhttp3.ResponseBody
+import org.dvbviewer.controller.data.api.handler.ChannelHandler
 import org.dvbviewer.controller.data.entities.ChannelRoot
-import org.dvbviewer.controller.io.data.ChannelHandler
 import retrofit2.Converter
 
 class ChannelRootPresetResponseBodyConverter : Converter<ResponseBody, List<ChannelRoot>> {

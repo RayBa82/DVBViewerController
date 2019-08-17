@@ -1,12 +1,12 @@
-package org.dvbviewer.controller.io.okhttp3;
+package org.dvbviewer.controller.data.api.io.okhttp3;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dvbviewer.controller.io.exception.AuthenticationException;
-import org.dvbviewer.controller.io.exception.DefaultHttpException;
-import org.dvbviewer.controller.io.exception.FileLockedException;
-import org.dvbviewer.controller.io.exception.InvalidHostException;
-import org.dvbviewer.controller.io.exception.NoHostException;
-import org.dvbviewer.controller.io.exception.UnsuccessfullHttpException;
+import org.dvbviewer.controller.data.api.io.exception.AuthenticationException;
+import org.dvbviewer.controller.data.api.io.exception.DefaultHttpException;
+import org.dvbviewer.controller.data.api.io.exception.FileLockedException;
+import org.dvbviewer.controller.data.api.io.exception.InvalidHostException;
+import org.dvbviewer.controller.data.api.io.exception.NoHostException;
+import org.dvbviewer.controller.data.api.io.exception.UnsuccessfullHttpException;
 import org.dvbviewer.controller.utils.URLUtil;
 
 import java.io.IOException;

@@ -83,7 +83,7 @@
         <activity android:name=".ui.phone.MedialistActivity" />
 
         <provider
-            android:name=".data.DvbProvider"
+            android:name=".data.api.DvbProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false" />
 

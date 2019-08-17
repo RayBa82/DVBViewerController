@@ -1,4 +1,4 @@
-package org.dvbviewer.controller.io.data;
+package org.dvbviewer.controller.data.api.handler;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dvbviewer.controller.data.entities.FFMpegPresetList;

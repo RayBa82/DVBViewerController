@@ -1,17 +1,17 @@
-package org.dvbviewer.controller.data;
+package org.dvbviewer.controller.data.api;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static org.dvbviewer.controller.data.Status.ERROR;
-import static org.dvbviewer.controller.data.Status.LOADING;
-import static org.dvbviewer.controller.data.Status.NOT_SUPPORTED;
-import static org.dvbviewer.controller.data.Status.SUCCESS;
+import static org.dvbviewer.controller.data.api.ApiStatus.ERROR;
+import static org.dvbviewer.controller.data.api.ApiStatus.LOADING;
+import static org.dvbviewer.controller.data.api.ApiStatus.NOT_SUPPORTED;
+import static org.dvbviewer.controller.data.api.ApiStatus.SUCCESS;
 
 public class ApiResponse<T>{
 
     @NonNull
-    public final Status status;
+    public final ApiStatus status;
 
     @Nullable
     public final String message;
@@ -22,7 +22,7 @@ public class ApiResponse<T>{
     @Nullable
     public final T data;
 
-    public ApiResponse(@NonNull Status status, @Nullable T data, @Nullable String message, @Nullable Exception e) {
+    public ApiResponse(@NonNull ApiStatus status, @Nullable T data, @Nullable String message, @Nullable Exception e) {
         this.status = status;
         this.data = data;
         this.message = message;

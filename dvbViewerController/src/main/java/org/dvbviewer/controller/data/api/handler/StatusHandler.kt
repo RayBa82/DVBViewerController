@@ -1,4 +1,4 @@
-package org.dvbviewer.controller.io.data
+package org.dvbviewer.controller.data.api.handler
 
 import org.dvbviewer.controller.data.entities.Status
 import org.xml.sax.SAXException
