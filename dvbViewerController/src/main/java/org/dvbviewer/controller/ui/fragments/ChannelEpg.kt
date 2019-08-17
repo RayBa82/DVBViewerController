@@ -37,7 +37,7 @@ import org.dvbviewer.controller.data.epg.ChannelEpgViewModel
 import org.dvbviewer.controller.data.epg.EPGRepository
 import org.dvbviewer.controller.data.epg.EpgViewModelFactory
 import org.dvbviewer.controller.data.remote.RemoteRepository
-import org.dvbviewer.controller.data.version.TimerRepository
+import org.dvbviewer.controller.data.timer.TimerRepository
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.EpgEntry
 import org.dvbviewer.controller.entities.IEPG
@@ -171,16 +171,6 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
         logoUrl = savedInstanceState.getString(KEY_CHANNEL_LOGO)
         channelPos = savedInstanceState.getInt(KEY_CHANNEL_POS)
         favPos = savedInstanceState.getInt(KEY_FAV_POS)
-    }
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.Fragment#setUserVisibleHint(boolean)
-     */
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser && isVisible) {
-            refreshDate()
-        }
     }
 
     /* (non-Javadoc)

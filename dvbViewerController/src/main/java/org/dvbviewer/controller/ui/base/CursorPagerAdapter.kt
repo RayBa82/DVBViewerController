@@ -31,7 +31,7 @@ abstract class CursorPagerAdapter
  * @param fm the fm
  * @param cursor the cursor
  */
-@JvmOverloads constructor(fm: FragmentManager, cursor: Cursor? = null) : FragmentStatePagerAdapter(fm) {
+@JvmOverloads constructor(fm: FragmentManager, cursor: Cursor? = null) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     /**
      * Gets the cursor.

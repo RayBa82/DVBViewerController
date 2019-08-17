@@ -71,7 +71,7 @@ interface DMSInterface {
 
     companion object {
 
-        const val API = "/api"
+        private const val API = "/api"
 
         const val CHANNEL_LIST = "$API/getchannelsxml.html?logo=1"
 
