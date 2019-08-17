@@ -33,10 +33,10 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.timer.TimerRepository
 import org.dvbviewer.controller.entities.Timer
-import org.dvbviewer.controller.io.api.APIClient
-import org.dvbviewer.controller.io.api.DMSInterface
 import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity

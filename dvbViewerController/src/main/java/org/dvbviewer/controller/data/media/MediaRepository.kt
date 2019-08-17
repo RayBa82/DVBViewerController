@@ -2,8 +2,8 @@ package org.dvbviewer.controller.data.media
 
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.entities.NaturalOrderComparator
-import org.dvbviewer.controller.io.api.DMSInterface
 import java.util.*
 import kotlin.math.max
 

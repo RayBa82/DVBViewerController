@@ -14,11 +14,11 @@ import kotlinx.android.synthetic.main.fragment_about.*
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.Status
+import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.version.VersionRepository
 import org.dvbviewer.controller.data.version.VersionViewModel
 import org.dvbviewer.controller.data.version.VersionViewModelFactory
-import org.dvbviewer.controller.io.api.APIClient
-import org.dvbviewer.controller.io.api.DMSInterface
 import java.util.regex.Pattern
 
 

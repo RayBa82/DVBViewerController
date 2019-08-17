@@ -1,4 +1,4 @@
-package org.dvbviewer.controller.io.api
+package org.dvbviewer.controller.data.api
 
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.data.media.xml.VideoDirsFiles

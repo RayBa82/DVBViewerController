@@ -1,4 +1,4 @@
-package org.dvbviewer.controller.io.api
+package org.dvbviewer.controller.data.api
 
 import com.tickaroo.tikxml.TikXml
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory

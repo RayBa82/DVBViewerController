@@ -28,8 +28,8 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.io.api.APIClient
-import org.dvbviewer.controller.io.api.DMSInterface
+import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.io.exception.AuthenticationException
 import org.dvbviewer.controller.io.exception.DefaultHttpException
 import org.xml.sax.SAXException

@@ -2,8 +2,8 @@ package org.dvbviewer.controller.data.timer
 
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.entities.Timer
-import org.dvbviewer.controller.io.api.DMSInterface
 import org.dvbviewer.controller.utils.DateUtils
 import retrofit2.Call
 import java.util.*

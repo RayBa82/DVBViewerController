@@ -39,14 +39,14 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ApiResponse
+import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.stream.StreamRepository
 import org.dvbviewer.controller.data.stream.StreamViewModel
 import org.dvbviewer.controller.data.stream.StreamViewModelFactory
 import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.entities.FFMpegPresetList
 import org.dvbviewer.controller.entities.Preset
-import org.dvbviewer.controller.io.api.APIClient
-import org.dvbviewer.controller.io.api.DMSInterface
 import org.dvbviewer.controller.ui.base.BaseDialogFragment
 import org.dvbviewer.controller.utils.*
 import java.util.*
