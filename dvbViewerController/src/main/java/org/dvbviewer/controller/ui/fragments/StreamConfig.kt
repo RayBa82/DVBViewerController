@@ -63,7 +63,7 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
     private var mStreamType: StreamType? = null
     private var mFileType: FileType? = null
     private var mFileId: Long = -1
-    private var prefs: SharedPreferences? = null
+    private lateinit var prefs: SharedPreferences
     private lateinit var dmsInterface: DMSInterface
 
 
@@ -108,7 +108,7 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
         startHours.clearFocus()
         collapsable.visibility = View.GONE
         qualitySpinner.onItemSelectedListener = this
-        val encodingSpeed = StreamUtils.getEncodingSpeedIndex(context!!, prefs!!)
+        val encodingSpeed = StreamUtils.getEncodingSpeedIndex(context!!, prefs)
         encodingSpeedSpinner.setSelection(encodingSpeed)
         encodingSpeedSpinner.onItemSelectedListener = this
         audioSpinner.onItemSelectedListener = this
@@ -150,9 +150,9 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
         val mediaFac = StreamViewModelFactory(activity!!.application, streamRepository)
         val streamViewModel = ViewModelProviders.of(this, mediaFac)
                 .get(StreamViewModel::class.java)
-        val mediaObserver = Observer<ApiResponse<FFMpegPresetList>> { response ->
+        val configObserver = Observer<ApiResponse<FFMpegPresetList>> { response ->
             val presets = response!!.data
-            if (presets != null && !presets.presets.isEmpty()) {
+            if (presets != null && presets.presets.isNotEmpty()) {
                 val dataAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, presets.presets)
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 val pos = presets.presets.indexOf(StreamUtils.getDefaultPreset(prefs))
@@ -166,15 +166,14 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
                 collapsable.visibility = View.VISIBLE
             }
         }
-        streamViewModel.getFFMpegPresets().observe(this@StreamConfig, mediaObserver)
+        streamViewModel.getFFMpegPresets().observe(this@StreamConfig, configObserver)
     }
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_stream_config, container, false)
-        return v
+        return inflater.inflate(R.layout.fragment_stream_config, container, false)
     }
 
     /* (non-Javadoc)
@@ -297,7 +296,7 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        val editor = prefs!!.edit()
+        val editor = prefs.edit()
         val p = qualitySpinner.selectedItem as Preset
         when (parent.id) {
             R.id.encodingSpeedSpinner -> p.encodingSpeed = position

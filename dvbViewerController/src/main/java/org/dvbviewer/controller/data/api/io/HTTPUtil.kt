@@ -20,19 +20,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.dvbviewer.controller.data.api.io.okhttp3.DMSInterceptor
 import java.util.concurrent.TimeUnit
 
-/**
- * Here is
- *
- *
- * Created by RayBa
- */
 object HTTPUtil {
 
     private var httpClient: OkHttpClient? = null
 
     fun getHttpClient(): OkHttpClient {
         if (httpClient == null) {
-            val trustManager = SSLUtil.getTrustAllTrustManager()
+            val trustManager = SSLUtil.trustAllTrustManager
             val dmsInterceptor = DMSInterceptor()
             val loggingInterceptor = HttpLoggingInterceptor()
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
