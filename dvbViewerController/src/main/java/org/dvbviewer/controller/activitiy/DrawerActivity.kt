@@ -31,16 +31,14 @@ abstract class DrawerActivity : BaseActivity(), OnItemClickListener {
 	 * org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android
 	 * .os.Bundle)
 	 */
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    public override fun onCreate(arg0: Bundle?) {
+        super.onCreate(arg0)
         mDrawerLayout = findViewById<View>(R.id.drawer_layout) as DrawerLayout
         mDrawerLayout.setDrawerShadow(android.R.color.white, GravityCompat.END)
         mDrawerList = findViewById<View>(R.id.left_drawer) as ListView
         mDrawerList.onItemClickListener = this
-        val mToolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        if (mToolbar != null) {
-            setSupportActionBar(mToolbar)
-        }
+        val mToolbar = findViewById<Toolbar>(R.id.toolbar)
+        mToolbar?.let { setSupportActionBar(it) }
         mDrawerToggle = ActionBarDrawerToggle(
                 this, mDrawerLayout, mToolbar,
                 R.string.app_name, R.string.app_name

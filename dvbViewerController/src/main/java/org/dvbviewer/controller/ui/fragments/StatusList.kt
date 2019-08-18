@@ -40,6 +40,7 @@ import org.dvbviewer.controller.utils.FileUtils
 
 class StatusList : BaseListFragment() {
 
+    private val TAG = "StatusList"
     private lateinit var mAdapter: CategoryAdapter
     private lateinit var mRes: Resources
     private lateinit var versionRepository: VersionRepository

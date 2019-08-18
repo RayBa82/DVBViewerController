@@ -34,6 +34,7 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
 import androidx.viewpager.widget.ViewPager
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import okhttp3.ResponseBody
 import org.apache.commons.collections4.CollectionUtils
@@ -59,6 +60,7 @@ import java.util.*
  */
 class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.OnRemoteButtonClickListener {
 
+    private val TAG = "Remote"
     private var mToolbar: Toolbar? = null
     private var mSpinnerAdapter: ArrayAdapter<*>? = null
     private var mClientSpinner: AppCompatSpinner? = null
@@ -70,7 +72,7 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
     }.type
     private var mPager: ViewPager? = null
     private var onTargetsChangedListener: OnTargetsChangedListener? = null
-    private var repository: RemoteRepository? = null
+    private lateinit var repository: RemoteRepository
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -175,9 +177,9 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
             override fun loadInBackground(): List<DVBTarget>? {
                 var result: List<DVBTarget>? = null
                 try {
-                    result = repository!!.getTargets()
+                    result = repository.getTargets()
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    Log.e(TAG, "Error getting Targets vom repository", e)
                 }
 
                 if (CollectionUtils.isNotEmpty(result)) {
@@ -187,7 +189,11 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
                 } else {
                     val prefValue = prefs!!.prefs.getString(DVBViewerPreferences.KEY_RS_CLIENTS, "")
                     if (StringUtils.isNotBlank(prefValue)) {
-                        result = gson.fromJson<List<DVBTarget>>(prefValue, type)
+                        try {
+                            result = gson.fromJson<List<DVBTarget>>(prefValue, type)
+                        } catch (e: JsonSyntaxException) {
+                            Log.e(TAG, "Error reading Targets vom prefs", e)
+                        }
                     }
                 }
                 return result

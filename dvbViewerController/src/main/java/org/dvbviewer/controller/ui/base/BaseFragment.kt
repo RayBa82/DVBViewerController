@@ -42,7 +42,7 @@ import org.xml.sax.SAXException
  */
 open class BaseFragment : Fragment() {
 
-    protected val TAG = this.javaClass.name
+    private val TAG = this.javaClass.name
 
     private lateinit var dmsInterface: DMSInterface
 

@@ -36,6 +36,8 @@ import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.utils.ArrayListAdapter
 import org.dvbviewer.controller.utils.CategoryAdapter
+import org.dvbviewer.controller.utils.EVENT_TASK_EXECUTED
+import org.dvbviewer.controller.utils.PARAM_NAME
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -131,6 +133,9 @@ class TaskListFragment : BaseListFragment(), OnClickListener {
                         val resMsg = getString(R.string.task_executed)
                         val msg = MessageFormat.format(resMsg, name)
                         sendMessage(msg)
+                        val bundle = Bundle()
+                        bundle.putString(PARAM_NAME, name)
+                        logEvent(EVENT_TASK_EXECUTED, bundle)
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
