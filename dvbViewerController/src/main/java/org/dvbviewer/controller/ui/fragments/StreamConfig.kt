@@ -190,13 +190,13 @@ class StreamConfig : BaseDialogFragment(), OnClickListener, DialogInterface.OnCl
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.startTranscodedButton -> {
-                prefs!!.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply()
+                prefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply()
                 mStreamType = StreamType.TRANSCODED
                 startStreaming(false, mFileType)
                 logStreaming(TYPE_TRANSCODED)
             }
             R.id.startDirectButton -> {
-                prefs!!.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply()
+                prefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply()
                 mStreamType = StreamType.DIRECT
                 startStreaming(true, mFileType)
                 logStreaming(TYPE_DIRECT)
