@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import org.dvbviewer.controller.entities.EpgEntry
+import org.dvbviewer.controller.data.entities.EpgEntry
 import java.util.*
 
 class ChannelEpgViewModel(private val repository: EPGRepository) : ViewModel() {

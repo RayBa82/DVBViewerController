@@ -18,7 +18,7 @@ package org.dvbviewer.controller.utils;
 import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

@@ -39,9 +39,9 @@ import okhttp3.ResponseBody
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.entities.DVBTarget
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.data.remote.RemoteRepository
-import org.dvbviewer.controller.entities.DVBTarget
-import org.dvbviewer.controller.entities.DVBViewerPreferences
 import org.dvbviewer.controller.ui.base.AbstractRemote
 import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseFragment

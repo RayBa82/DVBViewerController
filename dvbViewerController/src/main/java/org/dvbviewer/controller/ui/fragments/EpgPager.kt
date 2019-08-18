@@ -30,7 +30,7 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl
-import org.dvbviewer.controller.entities.Channel
+import org.dvbviewer.controller.data.entities.Channel
 import org.dvbviewer.controller.ui.base.CursorPagerAdapter
 import org.dvbviewer.controller.ui.fragments.ChannelEpg.EpgDateInfo
 import org.dvbviewer.controller.ui.widget.ActionToolbar

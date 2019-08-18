@@ -33,22 +33,19 @@ import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
 import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.EpgEntry
+import org.dvbviewer.controller.data.entities.IEPG
+import org.dvbviewer.controller.data.entities.Timer
 import org.dvbviewer.controller.data.epg.ChannelEpgViewModel
 import org.dvbviewer.controller.data.epg.EPGRepository
 import org.dvbviewer.controller.data.epg.EpgViewModelFactory
 import org.dvbviewer.controller.data.remote.RemoteRepository
-import org.dvbviewer.controller.data.version.TimerRepository
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.EpgEntry
-import org.dvbviewer.controller.entities.IEPG
-import org.dvbviewer.controller.entities.Timer
+import org.dvbviewer.controller.data.timer.TimerRepository
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
-import org.dvbviewer.controller.utils.ArrayListAdapter
-import org.dvbviewer.controller.utils.DateUtils
-import org.dvbviewer.controller.utils.ServerConsts
-import org.dvbviewer.controller.utils.UIUtils
+import org.dvbviewer.controller.utils.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -174,16 +171,6 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
         logoUrl = savedInstanceState.getString(KEY_CHANNEL_LOGO)
         channelPos = savedInstanceState.getInt(KEY_CHANNEL_POS)
         favPos = savedInstanceState.getInt(KEY_FAV_POS)
-    }
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.Fragment#setUserVisibleHint(boolean)
-     */
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser && isVisible) {
-            refreshDate()
-        }
     }
 
     /* (non-Javadoc)
@@ -340,6 +327,7 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
                 call.enqueue(object : Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         sendMessage(R.string.timer_saved)
+                        logEvent(EVENT_TIMER_CREATED)
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

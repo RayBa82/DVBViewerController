@@ -3,7 +3,7 @@ package org.dvbviewer.controller.data.remote.retrofit
 
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.dvbviewer.controller.entities.DVBTarget
+import org.dvbviewer.controller.data.entities.DVBTarget
 import retrofit2.Converter
 
 class TargetResponseBodyConverter : Converter<List<DVBTarget>, RequestBody> {

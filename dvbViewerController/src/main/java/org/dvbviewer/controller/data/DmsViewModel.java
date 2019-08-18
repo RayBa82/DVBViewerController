@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.io.exception.AuthenticationException;
-import org.dvbviewer.controller.io.exception.DefaultHttpException;
+import org.dvbviewer.controller.data.api.io.exception.AuthenticationException;
+import org.dvbviewer.controller.data.api.io.exception.DefaultHttpException;
 import org.xml.sax.SAXException;
 
 public abstract class DmsViewModel extends AndroidViewModel {

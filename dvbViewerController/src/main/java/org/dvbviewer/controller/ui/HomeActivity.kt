@@ -30,10 +30,10 @@ import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.FragmentManager
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity
+import org.dvbviewer.controller.data.entities.DVBTarget
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.IEPG
 import org.dvbviewer.controller.data.media.MediaFile
-import org.dvbviewer.controller.entities.DVBTarget
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.IEPG
 import org.dvbviewer.controller.ui.adapter.MediaAdapter
 import org.dvbviewer.controller.ui.fragments.*
 import org.dvbviewer.controller.ui.fragments.ChannelList.OnChannelSelectedListener
@@ -324,7 +324,13 @@ class HomeActivity : GroupDrawerActivity(), OnClickListener, OnChannelSelectedLi
     override fun onMediaStreamClick(mediaFile: MediaFile) {
         val videoIntent = StreamUtils.buildQuickUrl(this, mediaFile.id!!, mediaFile.name, FileType.VIDEO)
         startActivity(videoIntent)
-        AnalyticsTracker.trackQuickStream(application)
+        val prefs = DVBViewerPreferences(this).streamPrefs
+        val direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true)
+        val bundle = Bundle()
+        bundle.putString(PARAM_START, START_QUICK)
+        bundle.putString(PARAM_TYPE, if (direct) TYPE_DIRECT else TYPE_TRANSCODED)
+        bundle.putString(PARAM_NAME, mediaFile.name)
+        mFirebaseAnalytics?.logEvent(EVENT_STREAM_MEDIA, bundle)
     }
 
     override fun onMediaContextClick(mediaFile: MediaFile) {

@@ -28,10 +28,10 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.io.api.APIClient
-import org.dvbviewer.controller.io.api.DMSInterface
-import org.dvbviewer.controller.io.exception.AuthenticationException
-import org.dvbviewer.controller.io.exception.DefaultHttpException
+import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.DMSInterface
+import org.dvbviewer.controller.data.api.io.exception.AuthenticationException
+import org.dvbviewer.controller.data.api.io.exception.DefaultHttpException
 import org.xml.sax.SAXException
 
 /**
@@ -158,6 +158,11 @@ open class BaseFragment : Fragment() {
         val CONNECTION_EVENT = "CONNECTION_EVENT"
         const val MESSAGE_STRING = "MESSAGE_STRING"
         const val MESSAGE_ID = "MESSAGE_ID"
+    }
+
+    fun logEvent(category: String, bundle: Bundle? = null){
+        val baseActivity = activity as BaseActivity?
+        baseActivity?.mFirebaseAnalytics?.logEvent(category, bundle)
     }
 
 }

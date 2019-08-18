@@ -23,9 +23,6 @@
         android:fullBackupContent="@xml/backup_descriptor"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <meta-data
-            android:name="com.google.android.gms.analytics.globalConfigResource"
-            android:resource="@xml/analytics_global_config" />
 
         <activity
             android:name=".ui.HomeActivity"
@@ -86,22 +83,8 @@
         <activity android:name=".ui.phone.MedialistActivity" />
 
         <provider
-            android:name=".data.DvbProvider"
+            android:name=".data.api.DvbProvider"
             android:authorities="${applicationId}.provider"
-            android:exported="false" />
-
-        <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
-             dispatching on non-Google Play devices -->
-        <receiver
-            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
-            </intent-filter>
-        </receiver>
-        <service
-            android:name="com.google.android.gms.analytics.AnalyticsService"
-            android:enabled="true"
             android:exported="false" />
 
     </application>

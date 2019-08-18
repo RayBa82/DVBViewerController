@@ -1,7 +1,7 @@
 package org.dvbviewer.controller.data.epg
 
-import org.dvbviewer.controller.entities.EpgEntry
-import org.dvbviewer.controller.io.api.DMSInterface
+import org.dvbviewer.controller.data.api.DMSInterface
+import org.dvbviewer.controller.data.entities.EpgEntry
 import org.dvbviewer.controller.utils.DateUtils
 import java.util.*
 

@@ -2,7 +2,7 @@ package org.dvbviewer.controller.data.recording.retrofit
 
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.dvbviewer.controller.entities.Recording
+import org.dvbviewer.controller.data.entities.Recording
 import retrofit2.Converter
 
 internal class RecordingRequestBodyConverter : Converter<List<Recording>, RequestBody> {

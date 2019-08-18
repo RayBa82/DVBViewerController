@@ -20,23 +20,20 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.apache.commons.lang3.StringUtils
-import org.dvbviewer.controller.App
 import org.dvbviewer.controller.BuildConfig
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.utils.Config
@@ -50,7 +47,7 @@ import org.dvbviewer.controller.utils.Config
  */
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected lateinit var mFirebaseAnalytics: FirebaseAnalytics
+    var mFirebaseAnalytics: FirebaseAnalytics? = null
 
     open val mMessageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -67,7 +64,7 @@ abstract class BaseActivity : AppCompatActivity() {
             val snackbar = Snackbar
                     .make(view, message, Snackbar.LENGTH_LONG)
             val snackBarView = snackbar.view
-            snackBarView.setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
+            snackBarView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
             snackbar.show()
         }
     }
@@ -80,27 +77,6 @@ abstract class BaseActivity : AppCompatActivity() {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         if (!BuildConfig.DEBUG) {
             mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-            (application as App).getTracker()
-        }
-    }
-
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onStart()
-	 */
-    public override fun onStart() {
-        super.onStart()
-        if (!BuildConfig.DEBUG) {
-            GoogleAnalytics.getInstance(this).reportActivityStart(this)
-        }
-    }
-
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onStop()
-	 */
-    public override fun onStop() {
-        super.onStop()
-        if (!BuildConfig.DEBUG) {
-            GoogleAnalytics.getInstance(this).reportActivityStop(this)
         }
     }
 
@@ -138,32 +114,6 @@ abstract class BaseActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    /**
-     * The Interface AsyncCallback.
-     *
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    interface AsyncCallback {
-
-        /**
-         * On async action start.
-         *
-         * @author RayBa
-         * @date 07.04.2013
-         */
-        fun onAsyncActionStart()
-
-        /**
-         * On async action stop.
-         *
-         * @author RayBa
-         * @date 07.04.2013
-         */
-        fun onAsyncActionStop()
-
-    }
-
     /* (non-Javadoc)
 	 * @see com.actionbarsherlock.app.SherlockFragmentActivity#onOptionsItemSelected(android.view.MenuItem)
 	 */
@@ -177,32 +127,6 @@ abstract class BaseActivity : AppCompatActivity() {
             }
         }
         return false
-    }
-
-    /**
-     * The Class ErrorToastRunnable.
-     *
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    class ErrorToastRunnable
-    /**
-     * Instantiates a new error toast runnable.
-     *
-     * @param context the context
-     * @param errorString the error string
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    (internal var mContext: Context, internal var errorString: String) : Runnable {
-
-        /* (non-Javadoc)
-		 * @see java.lang.Runnable#run()
-		 */
-        override fun run() {
-            Toast.makeText(mContext, errorString, Toast.LENGTH_LONG).show()
-        }
-
     }
 
     /**
@@ -291,7 +215,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     companion object {
 
-        val DATA = "_uri"
+        const val DATA = "_uri"
 
         /**
          * Converts an intent into a [Bundle] suitable for use as fragment
@@ -321,29 +245,6 @@ abstract class BaseActivity : AppCompatActivity() {
             return arguments
         }
 
-        /**
-         * Converts a fragment arguments bundle into an intent.
-         *
-         * @param arguments the arguments
-         * @return the intent©
-         * @author RayBa
-         * @date 07.04.2013
-         */
-        fun fragmentArgumentsToIntent(arguments: Bundle?): Intent {
-            val intent = Intent()
-            if (arguments == null) {
-                return intent
-            }
-
-            val data = arguments.getParcelable<Uri>("_uri")
-            if (data != null) {
-                intent.data = data
-            }
-
-            intent.putExtras(arguments)
-            intent.removeExtra("_uri")
-            return intent
-        }
     }
 
 }

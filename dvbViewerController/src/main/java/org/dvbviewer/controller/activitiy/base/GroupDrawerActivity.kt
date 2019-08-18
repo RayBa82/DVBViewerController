@@ -10,8 +10,8 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import org.dvbviewer.controller.activitiy.DrawerActivity
 import org.dvbviewer.controller.data.ProviderConsts
-import org.dvbviewer.controller.entities.ChannelGroup
-import org.dvbviewer.controller.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.ChannelGroup
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.ui.fragments.ChannelEpg
 import org.dvbviewer.controller.ui.fragments.ChannelPager
 import org.dvbviewer.controller.ui.fragments.EpgPager

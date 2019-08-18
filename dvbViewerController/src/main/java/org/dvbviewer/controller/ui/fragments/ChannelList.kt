@@ -42,11 +42,11 @@ import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.ProviderConsts
 import org.dvbviewer.controller.data.ProviderConsts.ChannelTbl
 import org.dvbviewer.controller.data.ProviderConsts.EpgTbl
+import org.dvbviewer.controller.data.entities.Channel
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.Timer
 import org.dvbviewer.controller.data.remote.RemoteRepository
-import org.dvbviewer.controller.data.version.TimerRepository
-import org.dvbviewer.controller.entities.Channel
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.Timer
+import org.dvbviewer.controller.data.timer.TimerRepository
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
@@ -231,7 +231,11 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             val videoIntent = StreamUtils.getDirectUrl(chan.channelID, chan.name, FileType.CHANNEL)
             activity!!.startActivity(videoIntent)
             prefs.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true).apply()
-            AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
+            val bundle = Bundle()
+            bundle.putString(PARAM_START, START_MENU)
+            bundle.putString(PARAM_TYPE, TYPE_DIRECT)
+            bundle.putString(PARAM_NAME, chan.name)
+            logEvent(EVENT_STREAM_LIVE_TV, bundle)
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)
             builder.setMessage(resources.getString(R.string.noFlashPlayerFound)).setPositiveButton(resources.getString(R.string.yes), null).setNegativeButton(resources.getString(R.string.no), null).show()
@@ -246,7 +250,11 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             val videoIntent = StreamUtils.getTranscodedUrl(context, chan.channelID, chan.name, FileType.CHANNEL)
             activity!!.startActivity(videoIntent)
             prefs.streamPrefs.edit().putBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, false).apply()
-            AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
+            val bundle = Bundle()
+            bundle.putString(PARAM_START, START_MENU)
+            bundle.putString(PARAM_TYPE, TYPE_TRANSCODED)
+            bundle.putString(PARAM_NAME, chan.name)
+            logEvent(EVENT_STREAM_LIVE_TV, bundle)
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)
             builder.setMessage(resources.getString(R.string.noFlashPlayerFound)).setPositiveButton(resources.getString(R.string.yes), null).setNegativeButton(resources.getString(R.string.no), null).show()
@@ -275,6 +283,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
         call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 sendMessage(R.string.timer_saved)
+                logEvent(EVENT_TIMER_CREATED)
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 sendMessage(R.string.error_common)
@@ -502,7 +511,12 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
 
                 val videoIntent = StreamUtils.buildQuickUrl(context, chan.channelID, chan.name, FileType.CHANNEL)
                 activity!!.startActivity(videoIntent)
-                AnalyticsTracker.trackQuickStream(activity!!.application)
+                val direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true)
+                val bundle = Bundle()
+                bundle.putString(PARAM_START, START_MENU)
+                bundle.putString(PARAM_TYPE, if (direct) TYPE_DIRECT else TYPE_TRANSCODED)
+                bundle.putString(PARAM_NAME, chan.name)
+                logEvent(EVENT_STREAM_LIVE_TV, bundle)
             } catch (e: ActivityNotFoundException) {
                 val builder = AlertDialog.Builder(context!!)
                 builder.setMessage(resources.getString(R.string.noFlashPlayerFound)).setPositiveButton(resources.getString(R.string.yes), null).setNegativeButton(resources.getString(R.string.no), null).show()

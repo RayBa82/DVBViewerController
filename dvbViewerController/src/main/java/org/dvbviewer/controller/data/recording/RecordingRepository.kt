@@ -1,8 +1,8 @@
 package org.dvbviewer.controller.data.recording
 
 import okhttp3.ResponseBody
-import org.dvbviewer.controller.entities.Recording
-import org.dvbviewer.controller.io.api.DMSInterface
+import org.dvbviewer.controller.data.api.DMSInterface
+import org.dvbviewer.controller.data.entities.Recording
 import retrofit2.Call
 
 class RecordingRepository(private val dmsInterface: DMSInterface) {

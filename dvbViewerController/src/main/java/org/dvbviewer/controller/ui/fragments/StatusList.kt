@@ -23,14 +23,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import org.apache.commons.lang3.math.NumberUtils
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ApiResponse
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.ApiStatus
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.Status
+import org.dvbviewer.controller.data.entities.Status.Folder
+import org.dvbviewer.controller.data.entities.Status.StatusItem
 import org.dvbviewer.controller.data.status.StatusViewModel
 import org.dvbviewer.controller.data.status.StatusViewModelFactory
 import org.dvbviewer.controller.data.version.VersionRepository
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.Status
-import org.dvbviewer.controller.entities.Status.Folder
-import org.dvbviewer.controller.entities.Status.StatusItem
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.utils.ArrayListAdapter
 import org.dvbviewer.controller.utils.CategoryAdapter
@@ -76,14 +77,14 @@ class StatusList : BaseListFragment() {
     }
 
     private fun onStatusLoaded(apiResponse: ApiResponse<Status>) {
-        if (apiResponse.status == org.dvbviewer.controller.data.Status.SUCCESS) {
+        if (apiResponse.status == ApiStatus.SUCCESS) {
             mStatusAdapter!!.items = apiResponse.data?.items
             val folderAdapter = FolderAdapter()
             folderAdapter.items = apiResponse.data?.folders
             mAdapter.addSection(getString(R.string.status), mStatusAdapter)
             mAdapter.addSection(getString(R.string.recording_folder), folderAdapter)
             mAdapter.notifyDataSetChanged()
-        } else if (apiResponse.status == org.dvbviewer.controller.data.Status.ERROR) {
+        } else if (apiResponse.status == ApiStatus.ERROR) {
             catchException(TAG, apiResponse.e)
         }
         listAdapter = mAdapter

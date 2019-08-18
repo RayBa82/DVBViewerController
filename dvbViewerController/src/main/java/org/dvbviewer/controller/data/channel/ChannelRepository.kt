@@ -3,9 +3,9 @@ package org.dvbviewer.controller.data.channel
 import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.data.DbHelper
 import org.dvbviewer.controller.data.ProviderConsts
-import org.dvbviewer.controller.entities.ChannelGroup
-import org.dvbviewer.controller.entities.ChannelRoot
-import org.dvbviewer.controller.io.api.DMSInterface
+import org.dvbviewer.controller.data.api.DMSInterface
+import org.dvbviewer.controller.data.entities.ChannelGroup
+import org.dvbviewer.controller.data.entities.ChannelRoot
 import org.dvbviewer.controller.utils.DateUtils
 import java.util.*
 

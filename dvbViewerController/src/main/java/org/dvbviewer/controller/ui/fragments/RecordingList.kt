@@ -38,9 +38,10 @@ import androidx.loader.content.Loader
 import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.IEPG
+import org.dvbviewer.controller.data.entities.Recording
 import org.dvbviewer.controller.data.recording.RecordingRepository
-import org.dvbviewer.controller.entities.IEPG
-import org.dvbviewer.controller.entities.Recording
 import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
@@ -191,7 +192,11 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
         try {
             val videoIntent = StreamUtils.getDirectUrl(recording.id, recording.title, FileType.RECORDING)
             activity!!.startActivity(videoIntent)
-            AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
+            val bundle = Bundle()
+            bundle.putString(PARAM_START, START_QUICK)
+            bundle.putString(PARAM_TYPE, TYPE_DIRECT)
+            bundle.putString(PARAM_NAME, recording.title)
+            logEvent(EVENT_STREAM_RECORDING, bundle)
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)
             builder.setMessage(resources.getString(R.string.noFlashPlayerFound)).setPositiveButton(resources.getString(R.string.yes), null).setNegativeButton(resources.getString(R.string.no), null).show()
@@ -204,7 +209,11 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
         try {
             val videoIntent = StreamUtils.getTranscodedUrl(context, recording.id, recording.title, FileType.RECORDING)
             activity!!.startActivity(videoIntent)
-            AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
+            val bundle = Bundle()
+            bundle.putString(PARAM_START, START_QUICK)
+            bundle.putString(PARAM_TYPE, TYPE_TRANSCODED)
+            bundle.putString(PARAM_NAME, recording.title)
+            logEvent(EVENT_STREAM_RECORDING, bundle)
         } catch (e: ActivityNotFoundException) {
             val builder = AlertDialog.Builder(context!!)
             builder.setMessage(resources.getString(R.string.noFlashPlayerFound)).setPositiveButton(resources.getString(R.string.yes), null).setNegativeButton(resources.getString(R.string.no), null).show()
@@ -481,6 +490,7 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         sendMessage(getString(R.string.recording_deleted))
                         refresh()
+                        logEvent(EVENT_RECORDING_DELETED)
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -525,7 +535,13 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
                 val recording = mAdapter!!.getItem(selectedPosition)
                 val videoIntent = StreamUtils.buildQuickUrl(context, recording.id, recording.title, FileType.RECORDING)
                 activity!!.startActivity(videoIntent)
-                AnalyticsTracker.trackQuickRecordingStream(activity!!.application)
+                val prefs = DVBViewerPreferences(context).streamPrefs
+                val direct = prefs.getBoolean(DVBViewerPreferences.KEY_STREAM_DIRECT, true)
+                val bundle = Bundle()
+                bundle.putString(PARAM_START, START_QUICK)
+                bundle.putString(PARAM_TYPE, if (direct) TYPE_DIRECT else TYPE_TRANSCODED)
+                bundle.putString(PARAM_NAME, recording.title)
+                logEvent(EVENT_STREAM_RECORDING, bundle)
             } catch (e: ActivityNotFoundException) {
                 val builder = AlertDialog.Builder(context!!)
                 builder.setMessage(resources.getString(R.string.noFlashPlayerFound)).setPositiveButton(resources.getString(R.string.yes), null).setNegativeButton(resources.getString(R.string.no), null).show()

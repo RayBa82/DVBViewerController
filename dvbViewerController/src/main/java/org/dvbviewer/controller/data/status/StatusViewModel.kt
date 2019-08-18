@@ -10,11 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ApiResponse
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences
+import org.dvbviewer.controller.data.entities.Status
 import org.dvbviewer.controller.data.version.VersionRepository
 import org.dvbviewer.controller.data.version.xml.Version
-import org.dvbviewer.controller.entities.DVBViewerPreferences
-import org.dvbviewer.controller.entities.Status
 
 class StatusViewModel internal constructor(private val prefs: DVBViewerPreferences, private val repo: VersionRepository) : ViewModel() {
 

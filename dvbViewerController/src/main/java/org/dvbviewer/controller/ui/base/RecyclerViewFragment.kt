@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recycler_view.view.*
 import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.io.exception.AuthenticationException
-import org.dvbviewer.controller.io.exception.DefaultHttpException
+import org.dvbviewer.controller.data.api.io.exception.AuthenticationException
+import org.dvbviewer.controller.data.api.io.exception.DefaultHttpException
 import org.xml.sax.SAXException
 
 open class RecyclerViewFragment : BaseFragment() {
