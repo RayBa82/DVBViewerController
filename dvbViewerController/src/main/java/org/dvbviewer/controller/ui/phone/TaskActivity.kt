@@ -13,54 +13,45 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.ui.phone;
+package org.dvbviewer.controller.ui.phone
 
-import android.os.Bundle;
-import android.view.MenuItem;
+import android.os.Bundle
+import android.view.MenuItem
 
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.Fragment
 
-import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
-import org.dvbviewer.controller.ui.fragments.StatusList;
+import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity
+import org.dvbviewer.controller.ui.fragments.TaskListFragment
 
-/**
- * Phone Activity for {@link StatusFragment}
- *
- * @author RayBa
- * @date 25.07.2012
- */
-public class StatusActivity extends BaseSinglePaneActivity {
-	
-	/* (non-Javadoc)
+class TaskActivity : BaseSinglePaneActivity() {
+
+    /* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
 	 */
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setDisplayHomeAsUpEnabled(true);
-	}
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setDisplayHomeAsUpEnabled(true)
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseActivity#onOptionsItemSelected(com.actionbarsherlock.view.MenuItem)
 	 */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		switch (id) {
-		case android.R.id.home:
-			onBackPressed();
-			return true;
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
 
-		default:
-			return false;
-		}
-	}
+            else -> false
+        }
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreatePane()
 	 */
-	@Override
-	protected Fragment onCreatePane() {
-		return new StatusList();
-	}
+    override fun onCreatePane(): Fragment {
+        return TaskListFragment()
+    }
 
 }

@@ -13,25 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.ui.phone;
+package org.dvbviewer.controller.ui.phone
 
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.Fragment
 
-import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
-import org.dvbviewer.controller.ui.fragments.DVBViewerPreferenceFragment;
+import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity
+import org.dvbviewer.controller.ui.fragments.ConnectionPreferenceFragment
 
-/**
- * The Class PreferencesActivity.
- * 
- * @author RayBa
- * @date 13.04.2012
- */
-public class PreferencesActivity extends BaseSinglePaneActivity{
+class ConnectionPreferencesActivity : BaseSinglePaneActivity() {
 
-	@Override
-	protected Fragment onCreatePane() {
-		return new DVBViewerPreferenceFragment();
-	}
-	
+
+    override fun onCreatePane(): Fragment {
+        return ConnectionPreferenceFragment()
+    }
 
 }
