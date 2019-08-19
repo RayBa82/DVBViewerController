@@ -15,7 +15,6 @@
  */
 package org.dvbviewer.controller.ui.fragments
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
 import android.content.Intent
@@ -29,13 +28,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.view.ActionMode.Callback
-import androidx.loader.app.LoaderManager.LoaderCallbacks
-import androidx.loader.content.Loader
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.ApiStatus
 import org.dvbviewer.controller.data.entities.Timer
+import org.dvbviewer.controller.data.stream.TimerViewModel
+import org.dvbviewer.controller.data.stream.TimerViewModelFactory
 import org.dvbviewer.controller.data.timer.TimerRepository
-import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
 import org.dvbviewer.controller.ui.widget.ClickableRelativeLayout
@@ -51,21 +53,25 @@ import java.util.*
  * @author RayBa
  * @date 07.04.2013
  */
-class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, OnClickListener, TimerDetails.OnTimerEditedListener, AdapterView.OnItemLongClickListener {
+class TimerList : BaseListFragment(), Callback, OnClickListener, TimerDetails.OnTimerEditedListener, AdapterView.OnItemLongClickListener {
 
     private lateinit var mAdapter: TimerAdapter
     private var mode: ActionMode? = null
     private var actionMode: Boolean = false
     private lateinit var repository: TimerRepository
+    private lateinit var viewModel: TimerViewModel
 
     /* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
 	 */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mAdapter = TimerAdapter(context)
+        mAdapter = TimerAdapter()
         setHasOptionsMenu(true)
         repository = TimerRepository(getDmsInterface())
+        val vFac = TimerViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, vFac)
+                .get(TimerViewModel::class.java)
 
     }
 
@@ -75,8 +81,6 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         listAdapter = mAdapter
-        val loader = loaderManager.initLoader(0, savedInstanceState, this)
-        setListShown(!(!isResumed || loader.isStarted))
         listView!!.choiceMode = ListView.CHOICE_MODE_MULTIPLE
         listView!!.onItemLongClickListener = this
         setEmptyText(resources.getString(R.string.no_timer))
@@ -87,41 +91,18 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
         } else {
             activity!!.setTitle(R.string.timer)
         }
+        val timerObserver = Observer<ApiResponse<List<Timer>>> { response -> onTimerLoaded(response!!) }
+        viewModel.getTimerList().observe(this, timerObserver)
+        setListShown(false)
     }
 
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onCreateLoader(int, android.os.Bundle)
-	 */
-    override fun onCreateLoader(arg0: Int, arg1: Bundle?): Loader<List<Timer>> {
-        return object : AsyncLoader<List<Timer>>(context!!) {
-
-            override fun loadInBackground(): List<Timer> {
-                try {
-                    return repository.getTimer()!!
-                } catch (e: Exception) {
-                    catchException(javaClass.simpleName, e)
-                }
-                return Collections.emptyList()
-            }
+    private fun onTimerLoaded(response: ApiResponse<List<Timer>>?) {
+        if(response?.status == ApiStatus.SUCCESS) {
+            mAdapter.items = response.data
+        } else if(response?.status == ApiStatus.ERROR) {
+            catchException(TAG, response.e)
         }
-    }
-
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoadFinished(android.support.v4.content.Loader, java.lang.Object)
-	 */
-    override fun onLoadFinished(arg0: Loader<List<Timer>>, arg1: List<Timer>) {
-        mAdapter.items = arg1
         setListShown(true)
-    }
-
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoaderReset(android.support.v4.content.Loader)
-	 */
-    override fun onLoaderReset(arg0: Loader<List<Timer>>) {
-        arg0.reset()
-        if (isVisible) {
-            setListShown(true)
-        }
     }
 
     override fun timerEdited(timer: Timer?) {
@@ -171,7 +152,7 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
      * @date 04.06.2010
      * @description Instantiates a new recording adapter.
      */
-    (context: Context?) : ArrayListAdapter<Timer>() {
+        : ArrayListAdapter<Timer>() {
 
         /*
 		 * (non-Javadoc)
@@ -399,7 +380,7 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
      * @date 07.04.2013
      */
     private fun refresh() {
-        loaderManager.restartLoader(0, arguments, this)
+        viewModel.getTimerList(true)
         setListShown(false)
     }
 
@@ -420,7 +401,8 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
 
     companion object {
 
-        val ACTION_MODE = "action_mode"
-        val CHECKED_ITEM_COUNT = "checked_item_count"
+        const val TAG = "TimerList"
+        const val ACTION_MODE = "action_mode"
+        const val CHECKED_ITEM_COUNT = "checked_item_count"
     }
 }

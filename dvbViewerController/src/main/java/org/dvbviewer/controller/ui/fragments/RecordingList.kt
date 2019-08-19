@@ -33,16 +33,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.PopupMenu
-import androidx.loader.app.LoaderManager.LoaderCallbacks
-import androidx.loader.content.Loader
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.ApiStatus
 import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.data.entities.IEPG
 import org.dvbviewer.controller.data.entities.Recording
 import org.dvbviewer.controller.data.recording.RecordingRepository
-import org.dvbviewer.controller.ui.base.AsyncLoader
+import org.dvbviewer.controller.data.stream.RecordingViewModel
+import org.dvbviewer.controller.data.stream.RecordingViewModelFactory
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity
@@ -53,13 +56,7 @@ import retrofit2.Response
 import java.util.*
 
 
-/**
- * The Class RecordingList.
- *
- * @author RayBa
- * @date 07.04.2013
- */
-class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnClickListener, ActionMode.Callback, OnCheckedChangeListener, View.OnClickListener, AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
+class RecordingList : BaseListFragment(), OnClickListener, ActionMode.Callback, OnCheckedChangeListener, View.OnClickListener, AdapterView.OnItemLongClickListener, PopupMenu.OnMenuItemClickListener {
 
     private var mAdapter: RecordingAdapter? = null
     private var mode: ActionMode? = null
@@ -68,6 +65,8 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
     private var clickListener: IEpgDetailsActivity.OnIEPGClickListener? = null
     private var recordings: MutableList<Recording>? = null
     private lateinit var recordingRepo: RecordingRepository
+    private lateinit var viewModel: RecordingViewModel
+
 
     /* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -78,6 +77,9 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
         setHasOptionsMenu(true)
         retainInstance = true
         recordingRepo = RecordingRepository(getDmsInterface())
+        val vFac = RecordingViewModelFactory(recordingRepo)
+        viewModel = ViewModelProvider(this, vFac)
+                .get(RecordingViewModel::class.java)
     }
 
     /* (non-Javadoc)
@@ -86,57 +88,32 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         listAdapter = mAdapter
-        listView!!.itemsCanFocus = false
-        val loader = loaderManager.initLoader(0, savedInstanceState, this)
-        setListShown(!(!isResumed || loader.isStarted))
+        listView?.itemsCanFocus = false
         setEmptyText(resources.getString(R.string.no_recordings))
-        listView!!.onItemLongClickListener = this
+        listView?.onItemLongClickListener = this
         if (savedInstanceState != null && savedInstanceState.getBoolean(ACTION_MODE, false)) {
             val activity = activity as AppCompatActivity?
             mode = activity!!.startSupportActionMode(this)
             updateActionModeTitle(savedInstanceState.getInt(CHECKED_ITEM_COUNT))
         }
-        activity!!.setTitle(R.string.recordings)
+        activity?.setTitle(R.string.recordings)
+        val recordingListObserver = Observer<ApiResponse<List<Recording>>> { response -> onRecordingListLoaded(response) }
+        viewModel.getRecordingList().observe(this, recordingListObserver)
+        setListShown(false)
     }
 
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onCreateLoader(int, android.os.Bundle)
-	 */
-    override fun onCreateLoader(arg0: Int, arg1: Bundle?): Loader<List<Recording>> {
-        return object : AsyncLoader<List<Recording>>(context!!) {
-
-            override fun loadInBackground(): List<Recording>? {
-                try {
-                    return recordingRepo.getRecordingList()
-                } catch (e: Exception) {
-                    catchException(javaClass.simpleName, e)
-                }
-                return Collections.emptyList()
-            }
+    private fun onRecordingListLoaded(observable: ApiResponse<List<Recording>>?) {
+        if(observable?.status == ApiStatus.SUCCESS) {
+            mAdapter?.items = observable.data
+        } else if(observable?.status == ApiStatus.ERROR) {
+            catchException(TimerList.TAG, observable.e)
         }
-    }
-
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoadFinished(android.support.v4.content.Loader, java.lang.Object)
-	 */
-    override fun onLoadFinished(arg0: Loader<List<Recording>>, arg1: List<Recording>) {
-        mAdapter!!.items = arg1
         setListShown(true)
     }
 
-    /* (non-Javadoc)
-	 * @see android.support.v4.app.LoaderManager.LoaderCallbacks#onLoaderReset(android.support.v4.content.Loader)
-	 */
-    override fun onLoaderReset(arg0: Loader<List<Recording>>) {
-        if (isVisible) {
-            setListShown(true)
-        }
-    }
-
-
     override fun onItemLongClick(parent: AdapterView<*>, view: View, position: Int, id: Long): Boolean {
-        listView!!.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-        listView!!.setItemChecked(position, true)
+        listView?.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        listView?.setItemChecked(position, true)
         val count = checkedItemCount
         if (actionMode == false) {
             actionMode = true
@@ -264,11 +241,7 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
      */
     (context: Context?) : ArrayListAdapter<Recording>() {
 
-        internal val placeHolder: Drawable?
-
-        init {
-            placeHolder = context?.let { AppCompatResources.getDrawable(it, R.drawable.ic_play_white_40dp) }
-        }
+        private val placeHolder: Drawable? = context?.let { AppCompatResources.getDrawable(it, R.drawable.ic_play_white_40dp) }
 
         /*
 		 * (non-Javadoc)
@@ -456,14 +429,13 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
 	 * @see com.actionbarsherlock.app.SherlockFragment#onOptionsItemSelected(android.view.MenuItem)
 	 */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
-        when (itemId) {
+        return when (item.itemId) {
             R.id.menuRefresh -> {
                 refresh()
-                return true
+                true
             }
 
-            else -> return false
+            else -> false
         }
     }
 
@@ -474,7 +446,7 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
      * @date 07.04.2013
      */
     private fun refresh() {
-        loaderManager.restartLoader(0, arguments, this)
+        viewModel.getRecordingList(true)
         setListShown(false)
     }
 
@@ -563,8 +535,8 @@ class RecordingList : BaseListFragment(), LoaderCallbacks<List<Recording>>, OnCl
 
     companion object {
 
-        val ACTION_MODE = "action_mode"
-        val CHECKED_ITEM_COUNT = "checked_item_count"
+        const val ACTION_MODE = "action_mode"
+        const val CHECKED_ITEM_COUNT = "checked_item_count"
     }
 
 }
