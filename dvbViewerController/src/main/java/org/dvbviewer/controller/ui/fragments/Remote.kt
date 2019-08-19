@@ -30,20 +30,20 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.loader.app.LoaderManager.LoaderCallbacks
-import androidx.loader.content.Loader
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import okhttp3.ResponseBody
 import org.apache.commons.collections4.CollectionUtils
-import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.ApiStatus
 import org.dvbviewer.controller.data.entities.DVBTarget
 import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.data.remote.RemoteRepository
+import org.dvbviewer.controller.data.remote.RemoteViewModel
+import org.dvbviewer.controller.data.remote.RemoteViewModelFactory
 import org.dvbviewer.controller.ui.base.AbstractRemote
-import org.dvbviewer.controller.ui.base.AsyncLoader
 import org.dvbviewer.controller.ui.base.BaseFragment
 import org.dvbviewer.controller.utils.UIUtils
 import retrofit2.Call
@@ -57,28 +57,28 @@ import java.util.*
  * @author RayBa
  * @date 07.04.2013
  */
-class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.OnRemoteButtonClickListener {
+class Remote : BaseFragment(), AbstractRemote.OnRemoteButtonClickListener {
 
     private var mToolbar: Toolbar? = null
     private var mSpinnerAdapter: ArrayAdapter<*>? = null
     private var mClientSpinner: AppCompatSpinner? = null
     private var spinnerPosition: Int = 0
-    private var prefs: DVBViewerPreferences? = null
-    private val gson = Gson()
-    private val type = object : TypeToken<List<DVBTarget>>() {
-
-    }.type
-    private var mPager: ViewPager? = null
     private var onTargetsChangedListener: OnTargetsChangedListener? = null
-    private var repository: RemoteRepository? = null
+    private lateinit var prefs: DVBViewerPreferences
+    private lateinit var mPager: ViewPager
+    private lateinit var repository: RemoteRepository
+    private lateinit var viewModel: RemoteViewModel
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainInstance = true
         repository = RemoteRepository(getDmsInterface())
+        prefs = DVBViewerPreferences(activity?.applicationContext)
+        val vFac = RemoteViewModelFactory(repository, prefs)
+        viewModel = ViewModelProvider(this, vFac)
+                .get(RemoteViewModel::class.java)
     }
 
     /* (non-Javadoc)
@@ -90,17 +90,40 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
             (activity as AppCompatActivity).setSupportActionBar(mToolbar)
         }
         initActionBar()
-        prefs = DVBViewerPreferences(context!!)
         if (savedInstanceState != null) {
             spinnerPosition = savedInstanceState.getInt(KEY_SPINNER_POS, 0)
         }
-        mPager!!.adapter = PagerAdapter(childFragmentManager)
+        mPager.adapter = PagerAdapter(childFragmentManager)
+        val targetObserver = Observer<ApiResponse<List<DVBTarget>>> { response -> onTargetsLoaded(response) }
+        viewModel.getTargets().observe(this, targetObserver)
     }
+
+    private fun onTargetsLoaded(observable: ApiResponse<List<DVBTarget>>?) {
+        if (observable?.status == ApiStatus.SUCCESS) {
+            if (onTargetsChangedListener != null) {
+                onTargetsChangedListener?.targetsChanged(getString(R.string.remote), observable.data)
+            } else if (CollectionUtils.isNotEmpty(observable.data)) {
+                val clients = LinkedList<String>()
+                observable.data?.map { it.name }?.let { clients.addAll(it) }
+                mSpinnerAdapter = ArrayAdapter(context!!, R.layout.support_simple_spinner_dropdown_item, clients.toTypedArray())
+                mSpinnerAdapter!!.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
+                mClientSpinner?.adapter = mSpinnerAdapter
+                val activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
+                val index = clients.indexOf(activeClient)
+                spinnerPosition = if (index > Spinner.INVALID_POSITION) index else Spinner.INVALID_POSITION
+                mClientSpinner?.setSelection(spinnerPosition)
+                mClientSpinner?.visibility = View.VISIBLE
+            }
+        } else if (observable?.status == ApiStatus.ERROR) {
+            catchException(TimerList.TAG, observable.e)
+        }
+    }
+
 
     private fun initActionBar() {
         val ab = (activity as AppCompatActivity).supportActionBar
         ab?.setDisplayHomeAsUpEnabled(true)
-        mToolbar!!.visibility = if (onTargetsChangedListener == null) View.VISIBLE else View.GONE
+        mToolbar?.visibility = if (onTargetsChangedListener == null) View.VISIBLE else View.GONE
     }
 
     override fun onAttach(context: Context) {
@@ -118,18 +141,20 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
         mToolbar = v.findViewById(R.id.toolbar)
 
         // Set an OnMenuItemClickListener to handle menu item clicks
-        mToolbar!!.setOnMenuItemClickListener {
+        mToolbar?.setOnMenuItemClickListener {
             // Handle the menu item
             true
         }
 
-        mToolbar!!.setTitle(R.string.remote)
+        mToolbar?.setTitle(R.string.remote)
         mClientSpinner = v.findViewById(R.id.clientSpinner)
-        mClientSpinner!!.visibility = View.GONE
-        mClientSpinner!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        mClientSpinner?.visibility = View.GONE
+        mClientSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedClient = mSpinnerAdapter!!.getItem(position) as String?
-                prefs!!.prefs.edit().putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient).commit()
+                prefs.prefs.edit()
+                        .putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient)
+                        .apply()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -151,15 +176,9 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(KEY_SPINNER_POS, mClientSpinner!!.selectedItemPosition)
+        mClientSpinner?.selectedItemPosition?.let { outState.putInt(KEY_SPINNER_POS, it) }
         super.onSaveInstanceState(outState)
     }
-
-    override fun onResume() {
-        super.onResume()
-        loaderManager.initLoader(0, null, this)
-    }
-
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#toString()
@@ -168,61 +187,13 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
         return "Remote"
     }
 
-
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<DVBTarget>> {
-        return object : AsyncLoader<List<DVBTarget>>(context!!) {
-
-            override fun loadInBackground(): List<DVBTarget>? {
-                var result: List<DVBTarget>? = null
-                try {
-                    result = repository!!.getTargets()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-                if (CollectionUtils.isNotEmpty(result)) {
-                    val prefEditor = prefs!!.prefs.edit()
-                    prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, gson.toJson(result))
-                    prefEditor.apply()
-                } else {
-                    val prefValue = prefs!!.prefs.getString(DVBViewerPreferences.KEY_RS_CLIENTS, "")
-                    if (StringUtils.isNotBlank(prefValue)) {
-                        result = gson.fromJson<List<DVBTarget>>(prefValue, type)
-                    }
-                }
-                return result
-            }
-        }
-    }
-
-    override fun onLoadFinished(loader: Loader<List<DVBTarget>>, data: List<DVBTarget>?) {
-        if (onTargetsChangedListener != null) {
-            onTargetsChangedListener!!.targetsChanged(getString(R.string.remote), data)
-        } else if (data != null && !data.isEmpty()) {
-            val clients = LinkedList<String>()
-            clients.addAll(data.map { it.name })
-            mSpinnerAdapter = ArrayAdapter(context!!, R.layout.support_simple_spinner_dropdown_item, clients.toTypedArray())
-            mSpinnerAdapter!!.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-            mClientSpinner!!.adapter = mSpinnerAdapter
-            val activeClient = prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
-            val index = clients.indexOf(activeClient)
-            spinnerPosition = if (index > Spinner.INVALID_POSITION) index else Spinner.INVALID_POSITION
-            mClientSpinner!!.setSelection(spinnerPosition)
-            mClientSpinner!!.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onLoaderReset(loader: Loader<List<DVBTarget>>) {
-        loader.reset()
-    }
-
     override fun OnRemoteButtonClick(action: String) {
         val target = if (onTargetsChangedListener != null) onTargetsChangedListener!!.selectedTarget else mClientSpinner!!.selectedItem
         if (target == null) {
             sendMessage(R.string.no_remote_target)
             return
         }
-        repository!!.sendCommand(target.toString(), action).enqueue(object : Callback<ResponseBody> {
+        repository.sendCommand(target.toString(), action).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.i(Remote::class.java.simpleName, "Send command to target")
             }
@@ -233,21 +204,7 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
         })
     }
 
-    /**
-     * The Class PagerAdapter.
-     *
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    internal inner class PagerAdapter
-    /**
-     * Instantiates a new pager adapter.
-     *
-     * @param fm the fm
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    (fm: FragmentManager) : FragmentPagerAdapter(fm) {
+    internal inner class PagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         /*
          * (non-Javadoc)
@@ -257,19 +214,19 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> {
-                    instantiate(context!!, RemoteControl::class.java.name) as RemoteControl
+                    fragmentManager!!.fragmentFactory.instantiate(javaClass.classLoader!!, RemoteControl::class.java.name)
                 }
                 else -> {
-                    instantiate(context!!, RemoteNumbers::class.java.name) as RemoteNumbers
+                    fragmentManager!!.fragmentFactory.instantiate(javaClass.classLoader!!, RemoteNumbers::class.java.name)
                 }
             }
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
-            when (position) {
-                0 -> return getString(R.string.remote_control)
-                1 -> return getString(R.string.remote_numbers)
-                else -> return ""
+            return when (position) {
+                0 -> getString(R.string.remote_control)
+                1 -> getString(R.string.remote_numbers)
+                else -> ""
             }
         }
 

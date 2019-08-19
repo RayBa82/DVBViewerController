@@ -48,14 +48,13 @@ class MedialistActivity : BaseSinglePaneActivity(), MediaAdapter.OnMediaClickLis
 	 * @see org.dvbviewer.controller.ui.base.BaseActivity#onOptionsItemSelected(com.actionbarsherlock.view.MenuItem)
 	 */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        when (id) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
-                return true
+                true
             }
 
-            else -> return false
+            else -> false
         }
     }
 

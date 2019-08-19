@@ -13,52 +13,38 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.ui.phone;
+package org.dvbviewer.controller.ui.phone
 
-import android.os.Bundle;
+import android.os.Bundle
 
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.Fragment
 
-import org.dvbviewer.controller.data.entities.IEPG;
-import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
-import org.dvbviewer.controller.ui.fragments.EPGDetails;
+import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity
+import org.dvbviewer.controller.ui.fragments.Remote
 
 /**
- * The Class IEpgDetailsActivity.
+ * The Class RemoteActivity.
  *
  * @author RayBa
  * @date 07.04.2013
  */
-public class IEpgDetailsActivity extends BaseSinglePaneActivity {
-	
-	
-	/* (non-Javadoc)
+class RemoteActivity : BaseSinglePaneActivity() {
+
+    /* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
 	 */
-	@Override
-	protected void onCreate(Bundle arg0) {
-		super.onCreate(arg0);
-		setDisplayHomeAsUpEnabled(true);
-		
-	}
-	
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (supportActionBar != null) {
+            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        }
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreatePane()
 	 */
-	@Override
-	protected Fragment onCreatePane() {
-		Bundle bundle = Companion.intentToFragmentArguments(getIntent());
-		EPGDetails details = new EPGDetails();
-		details.setArguments(bundle);
-		return details ;
-	}
-
-
-	public interface OnIEPGClickListener {
-
-		void onIEPGClick(final IEPG iepg);
-
-	}
+    override fun onCreatePane(): Fragment {
+        return Remote()
+    }
 
 }

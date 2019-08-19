@@ -13,39 +13,36 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dvbviewer.controller.ui.phone;
+package org.dvbviewer.controller.ui.phone
 
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity;
-import org.dvbviewer.controller.ui.fragments.Remote;
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import org.dvbviewer.controller.ui.base.BaseSinglePaneActivity
+import org.dvbviewer.controller.ui.fragments.StreamConfig
 
 /**
- * The Class RemoteActivity.
+ * The Class StreamConfigActivity.
  *
  * @author RayBa
  * @date 07.04.2013
  */
-public class RemoteActivity extends BaseSinglePaneActivity {
-	
-	/* (non-Javadoc)
+class StreamConfigActivity : BaseSinglePaneActivity() {
+
+    /* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
 	 */
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-	}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setDisplayHomeAsUpEnabled(true)
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreatePane()
 	 */
-	@Override
-	protected Fragment onCreatePane() {
-		return new Remote();
-	}
+    override fun onCreatePane(): Fragment {
+        val cfg = StreamConfig()
+        cfg.arguments = intentToFragmentArguments(intent)
+        return cfg
+    }
 
 }

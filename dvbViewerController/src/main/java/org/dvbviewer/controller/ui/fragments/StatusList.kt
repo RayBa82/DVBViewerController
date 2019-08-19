@@ -40,6 +40,7 @@ import org.dvbviewer.controller.utils.FileUtils
 
 class StatusList : BaseListFragment() {
 
+    private val TAG = "StatusList"
     private lateinit var mAdapter: CategoryAdapter
     private lateinit var mRes: Resources
     private lateinit var versionRepository: VersionRepository
@@ -53,7 +54,6 @@ class StatusList : BaseListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        retainInstance = true
         mStatusAdapter = StatusAdapter()
         mAdapter = CategoryAdapter(context)
         mRes = resources

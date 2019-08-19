@@ -104,8 +104,8 @@ class TimerDetails : BaseDialogFragment(), OnDateSetListener, OnClickListener, O
             val start = if (create) timer!!.start else DateUtils.addMinutes(timer!!.start, timer!!.pre)
             val stop = if (create) timer!!.end else DateUtils.addMinutes(timer!!.end, timer!!.post * -1)
             activeBox!!.isChecked = !timer!!.isFlagSet(Timer.FLAG_DISABLED)
-            startField!!.setTime(start)
-            stopField!!.setTime(stop)
+            start?.let { startField!!.setTime(it) }
+            stop?.let { stopField!!.setTime(it) }
             preField!!.setText(timer!!.pre.toString())
             postField!!.setText(timer!!.post.toString())
             val invalidindex = timer!!.timerAction >= postRecordSpinner!!.count
@@ -205,15 +205,15 @@ class TimerDetails : BaseDialogFragment(), OnDateSetListener, OnClickListener, O
         val f: DateDialogFragment
         when (v.id) {
             R.id.dateField -> {
-                f = DateDialogFragment.newInstance(this@TimerDetails, dateField!!.date)
+                f = DateDialogFragment.newInstance(this@TimerDetails, dateField!!.date!!)
                 f.show(activity!!.supportFragmentManager, "datepicker")
             }
             R.id.startField -> {
-                f = DateDialogFragment.newInstance(startTimeSetListener!!, startField!!.date)
+                f = DateDialogFragment.newInstance(startTimeSetListener!!, startField!!.date!!)
                 f.show(activity!!.supportFragmentManager, "startTimePicker")
             }
             R.id.stopField -> {
-                f = DateDialogFragment.newInstance(stopTimeSetListener!!, stopField!!.date)
+                f = DateDialogFragment.newInstance(stopTimeSetListener!!, stopField!!.date!!)
                 f.show(activity!!.supportFragmentManager, "stopTimePicker")
             }
             R.id.buttonCancel -> {
