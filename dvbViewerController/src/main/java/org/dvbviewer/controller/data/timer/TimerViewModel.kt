@@ -1,4 +1,4 @@
-package org.dvbviewer.controller.data.stream
+package org.dvbviewer.controller.data.timer
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -10,7 +10,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.dvbviewer.controller.data.api.ApiResponse
 import org.dvbviewer.controller.data.entities.Timer
-import org.dvbviewer.controller.data.timer.TimerRepository
 
 
 class TimerViewModel internal constructor(private val mRepository: TimerRepository) : ViewModel() {

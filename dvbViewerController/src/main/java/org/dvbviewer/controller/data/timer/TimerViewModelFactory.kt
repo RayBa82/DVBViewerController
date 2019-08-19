@@ -1,8 +1,7 @@
-package org.dvbviewer.controller.data.stream
+package org.dvbviewer.controller.data.timer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import org.dvbviewer.controller.data.timer.TimerRepository
 
 class TimerViewModelFactory(private val mRepo: TimerRepository) : ViewModelProvider.NewInstanceFactory() {
 

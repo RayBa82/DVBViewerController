@@ -44,8 +44,8 @@ import org.dvbviewer.controller.data.entities.DVBViewerPreferences
 import org.dvbviewer.controller.data.entities.IEPG
 import org.dvbviewer.controller.data.entities.Recording
 import org.dvbviewer.controller.data.recording.RecordingRepository
-import org.dvbviewer.controller.data.stream.RecordingViewModel
-import org.dvbviewer.controller.data.stream.RecordingViewModelFactory
+import org.dvbviewer.controller.data.recording.RecordingViewModel
+import org.dvbviewer.controller.data.recording.RecordingViewModelFactory
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.IEpgDetailsActivity
 import org.dvbviewer.controller.ui.phone.StreamConfigActivity

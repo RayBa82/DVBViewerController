@@ -35,9 +35,9 @@ import org.dvbviewer.controller.R
 import org.dvbviewer.controller.data.api.ApiResponse
 import org.dvbviewer.controller.data.api.ApiStatus
 import org.dvbviewer.controller.data.entities.Timer
-import org.dvbviewer.controller.data.stream.TimerViewModel
-import org.dvbviewer.controller.data.stream.TimerViewModelFactory
 import org.dvbviewer.controller.data.timer.TimerRepository
+import org.dvbviewer.controller.data.timer.TimerViewModel
+import org.dvbviewer.controller.data.timer.TimerViewModelFactory
 import org.dvbviewer.controller.ui.base.BaseListFragment
 import org.dvbviewer.controller.ui.phone.TimerDetailsActivity
 import org.dvbviewer.controller.ui.widget.ClickableRelativeLayout
@@ -147,7 +147,6 @@ class TimerList : BaseListFragment(), Callback, OnClickListener, TimerDetails.On
     /**
      * The Constructor.
      *
-     * @param context the context
      * @author RayBa
      * @date 04.06.2010
      * @description Instantiates a new recording adapter.
@@ -200,9 +199,9 @@ class TimerList : BaseListFragment(), Callback, OnClickListener, TimerDetails.On
     /* (non-Javadoc)
      * @see org.dvbviewer.controller.ui.base.BaseListFragment#onListItemClick(android.widget.ListView, android.view.View, int, long)
      */
-    override fun onListItemClick(parent: ListView, view: View, position: Int, id: Long) {
+    override fun onListItemClick(l: ListView, v: View, position: Int, id: Long) {
         if (actionMode) {
-            view.isSelected = !view.isSelected
+            v.isSelected = !v.isSelected
             val count = checkedItemCount
             updateActionModeTitle(count)
             if (checkedItemCount == 0) {
@@ -360,7 +359,7 @@ class TimerList : BaseListFragment(), Callback, OnClickListener, TimerDetails.On
     override fun onItemLongClick(parent: AdapterView<*>, view: View, position: Int, id: Long): Boolean {
         listView!!.setItemChecked(position, true)
         val count = checkedItemCount
-        if (actionMode == false) {
+        if (!actionMode) {
             actionMode = true
             val activty = activity as AppCompatActivity?
             mode = activty?.startSupportActionMode(this@TimerList)
@@ -388,14 +387,13 @@ class TimerList : BaseListFragment(), Callback, OnClickListener, TimerDetails.On
 	 * @see com.actionbarsherlock.app.SherlockFragment#onOptionsItemSelected(android.view.MenuItem)
 	 */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val itemId = item.itemId
-        when (itemId) {
+        return when (item.itemId) {
             R.id.menuRefresh -> {
                 refresh()
-                return true
+                true
             }
 
-            else -> return false
+            else -> false
         }
     }
 
