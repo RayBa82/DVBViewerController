@@ -305,7 +305,7 @@ class HomeActivity : GroupDrawerActivity(), OnClickListener, OnChannelSelectedLi
             mediaList.arguments = b
             val tran = supportFragmentManager.beginTransaction()
             tran.replace(multiContainer!!.id, mediaList)
-            tran.addToBackStack(MediaList::class.java.name + mediaFile.id!!)
+            tran.addToBackStack(MediaList::class.java.name + mediaFile.dirId!!)
             tran.commit()
 
         } else {
@@ -346,7 +346,7 @@ class HomeActivity : GroupDrawerActivity(), OnClickListener, OnChannelSelectedLi
 
     companion object {
 
-        val ENABLE_DRAWER = "ENABLE_DRAWER"
-        val TITLE = "title"
+        const val ENABLE_DRAWER = "ENABLE_DRAWER"
+        const val TITLE = "title"
     }
 }
