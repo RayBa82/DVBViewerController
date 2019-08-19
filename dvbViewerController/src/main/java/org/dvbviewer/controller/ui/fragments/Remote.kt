@@ -34,7 +34,6 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
 import androidx.viewpager.widget.ViewPager
 import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import okhttp3.ResponseBody
 import org.apache.commons.collections4.CollectionUtils
@@ -65,13 +64,13 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
     private var mSpinnerAdapter: ArrayAdapter<*>? = null
     private var mClientSpinner: AppCompatSpinner? = null
     private var spinnerPosition: Int = 0
-    private var prefs: DVBViewerPreferences? = null
+    private lateinit var prefs: DVBViewerPreferences
     private val gson = Gson()
     private val type = object : TypeToken<List<DVBTarget>>() {
 
     }.type
-    private var mPager: ViewPager? = null
     private var onTargetsChangedListener: OnTargetsChangedListener? = null
+    private lateinit var mPager: ViewPager
     private lateinit var repository: RemoteRepository
 
     /* (non-Javadoc)
@@ -96,13 +95,13 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
         if (savedInstanceState != null) {
             spinnerPosition = savedInstanceState.getInt(KEY_SPINNER_POS, 0)
         }
-        mPager!!.adapter = PagerAdapter(childFragmentManager)
+        mPager.adapter = PagerAdapter(childFragmentManager)
     }
 
     private fun initActionBar() {
         val ab = (activity as AppCompatActivity).supportActionBar
         ab?.setDisplayHomeAsUpEnabled(true)
-        mToolbar!!.visibility = if (onTargetsChangedListener == null) View.VISIBLE else View.GONE
+        mToolbar?.visibility = if (onTargetsChangedListener == null) View.VISIBLE else View.GONE
     }
 
     override fun onAttach(context: Context) {
@@ -120,18 +119,20 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
         mToolbar = v.findViewById(R.id.toolbar)
 
         // Set an OnMenuItemClickListener to handle menu item clicks
-        mToolbar!!.setOnMenuItemClickListener {
+        mToolbar?.setOnMenuItemClickListener {
             // Handle the menu item
             true
         }
 
-        mToolbar!!.setTitle(R.string.remote)
+        mToolbar?.setTitle(R.string.remote)
         mClientSpinner = v.findViewById(R.id.clientSpinner)
-        mClientSpinner!!.visibility = View.GONE
-        mClientSpinner!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        mClientSpinner?.visibility = View.GONE
+        mClientSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val selectedClient = mSpinnerAdapter!!.getItem(position) as String?
-                prefs!!.prefs.edit().putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient).commit()
+                prefs.prefs.edit()
+                        .putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient)
+                        .apply()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -153,7 +154,7 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(KEY_SPINNER_POS, mClientSpinner!!.selectedItemPosition)
+        mClientSpinner?.selectedItemPosition?.let { outState.putInt(KEY_SPINNER_POS, it) }
         super.onSaveInstanceState(outState)
     }
 
@@ -183,15 +184,15 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
                 }
 
                 if (CollectionUtils.isNotEmpty(result)) {
-                    val prefEditor = prefs!!.prefs.edit()
+                    val prefEditor = prefs.prefs.edit()
                     prefEditor.putString(DVBViewerPreferences.KEY_RS_CLIENTS, gson.toJson(result))
                     prefEditor.apply()
                 } else {
-                    val prefValue = prefs!!.prefs.getString(DVBViewerPreferences.KEY_RS_CLIENTS, "")
+                    val prefValue = prefs.prefs.getString(DVBViewerPreferences.KEY_RS_CLIENTS, "")
                     if (StringUtils.isNotBlank(prefValue)) {
                         try {
                             result = gson.fromJson<List<DVBTarget>>(prefValue, type)
-                        } catch (e: JsonSyntaxException) {
+                        } catch (e: Exception) {
                             Log.e(TAG, "Error reading Targets vom prefs", e)
                         }
                     }
@@ -203,18 +204,18 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
 
     override fun onLoadFinished(loader: Loader<List<DVBTarget>>, data: List<DVBTarget>?) {
         if (onTargetsChangedListener != null) {
-            onTargetsChangedListener!!.targetsChanged(getString(R.string.remote), data)
-        } else if (data != null && !data.isEmpty()) {
+            onTargetsChangedListener?.targetsChanged(getString(R.string.remote), data)
+        } else if (CollectionUtils.isNotEmpty(data)) {
             val clients = LinkedList<String>()
-            clients.addAll(data.map { it.name })
+            data?.map { it.name }?.let { clients.addAll(it) }
             mSpinnerAdapter = ArrayAdapter(context!!, R.layout.support_simple_spinner_dropdown_item, clients.toTypedArray())
             mSpinnerAdapter!!.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-            mClientSpinner!!.adapter = mSpinnerAdapter
-            val activeClient = prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
+            mClientSpinner?.adapter = mSpinnerAdapter
+            val activeClient = prefs.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
             val index = clients.indexOf(activeClient)
             spinnerPosition = if (index > Spinner.INVALID_POSITION) index else Spinner.INVALID_POSITION
-            mClientSpinner!!.setSelection(spinnerPosition)
-            mClientSpinner!!.visibility = View.VISIBLE
+            mClientSpinner?.setSelection(spinnerPosition)
+            mClientSpinner?.visibility = View.VISIBLE
         }
     }
 
@@ -228,7 +229,7 @@ class Remote : BaseFragment(), LoaderCallbacks<List<DVBTarget>>, AbstractRemote.
             sendMessage(R.string.no_remote_target)
             return
         }
-        repository!!.sendCommand(target.toString(), action).enqueue(object : Callback<ResponseBody> {
+        repository.sendCommand(target.toString(), action).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Log.i(Remote::class.java.simpleName, "Send command to target")
             }

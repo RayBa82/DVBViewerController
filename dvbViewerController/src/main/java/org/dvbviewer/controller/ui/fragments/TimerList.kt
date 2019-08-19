@@ -33,8 +33,6 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks
 import androidx.loader.content.Loader
 import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.api.APIClient
-import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.entities.Timer
 import org.dvbviewer.controller.data.timer.TimerRepository
 import org.dvbviewer.controller.ui.base.AsyncLoader
@@ -67,8 +65,7 @@ class TimerList : BaseListFragment(), LoaderCallbacks<List<Timer>>, Callback, On
         super.onCreate(savedInstanceState)
         mAdapter = TimerAdapter(context)
         setHasOptionsMenu(true)
-        val dmsInterface = APIClient.client.create(DMSInterface::class.java)
-        repository = TimerRepository(dmsInterface)
+        repository = TimerRepository(getDmsInterface())
 
     }
 

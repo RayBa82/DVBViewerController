@@ -25,7 +25,8 @@ class DMSInterceptor : Interceptor {
                 .newBuilder()
                 .url(modifiedUrl)
                 .addHeader(HEADER_AUTHORIZATION, credentials)
-                .addHeader(HEADER_CONNECTION, "keep-alive")
+                .addHeader(HEADER_CONNECTION, "close")
+                .addHeader(HEADER_USER_AGENT, "DVBViewer Controller")
                 .build()
 
         val response = chain.proceed(modifiedRequest)
@@ -45,6 +46,7 @@ class DMSInterceptor : Interceptor {
 
 
         const val HEADER_AUTHORIZATION = "Authorization"
+        const val HEADER_USER_AGENT = "User-Agent"
         const val HEADER_CONNECTION = "Connection"
     }
 
