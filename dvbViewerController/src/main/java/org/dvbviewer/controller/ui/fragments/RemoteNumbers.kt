@@ -19,42 +19,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-
+import kotlinx.android.synthetic.main.fragment_remote_numbers.*
+import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.ui.base.AbstractRemote
 import org.dvbviewer.controller.utils.ActionID
 
-/**
- * The Class Remote.
- *
- * @author RayBa
- * @date 07.04.2013
- */
+
 class RemoteNumbers : AbstractRemote() {
-
-    // Number Buttons
-    private var btnOne: Button? = null
-    private var btnTwo: Button? = null
-    private var btnThree: Button? = null
-    private var btnFour: Button? = null
-    private var btnFive: Button? = null
-    private var btnSix: Button? = null
-    private var btnSeven: Button? = null
-    private var btnEight: Button? = null
-    private var btnNine: Button? = null
-    private var btnZero: Button? = null
-    private var btnNumberBack: Button? = null
-    private var btnNumberForward: Button? = null
-
-    private var content: View? = null
-
-    /* (non-Javadoc)
-     * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
-     */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
@@ -68,8 +40,7 @@ class RemoteNumbers : AbstractRemote() {
          * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
          */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        content = inflater.inflate(R.layout.fragment_remote_numbers, container, false)
-        return content
+        return inflater.inflate(R.layout.fragment_remote_numbers, container, false)
     }
 
 
@@ -79,31 +50,18 @@ class RemoteNumbers : AbstractRemote() {
      * @date 07.04.2013
      */
     private fun inititalize() {
-        // Number Buttons
-        btnOne = content!!.findViewById<View>(R.id.ButtonOne) as Button
-        btnOne!!.setOnClickListener(this)
-        btnTwo = content!!.findViewById<View>(R.id.ButtonTwo) as Button
-        btnTwo!!.setOnClickListener(this)
-        btnThree = content!!.findViewById<View>(R.id.ButtonThree) as Button
-        btnThree!!.setOnClickListener(this)
-        btnFour = content!!.findViewById<View>(R.id.ButtonFour) as Button
-        btnFour!!.setOnClickListener(this)
-        btnFive = content!!.findViewById<View>(R.id.ButtonFive) as Button
-        btnFive!!.setOnClickListener(this)
-        btnSix = content!!.findViewById<View>(R.id.ButtonSix) as Button
-        btnSix!!.setOnClickListener(this)
-        btnSeven = content!!.findViewById<View>(R.id.ButtonSeven) as Button
-        btnSeven!!.setOnClickListener(this)
-        btnEight = content!!.findViewById<View>(R.id.ButtonEight) as Button
-        btnEight!!.setOnClickListener(this)
-        btnNine = content!!.findViewById<View>(R.id.ButtonNine) as Button
-        btnNine!!.setOnClickListener(this)
-        btnZero = content!!.findViewById<View>(R.id.ButtonZero) as Button
-        btnZero!!.setOnClickListener(this)
-        btnNumberBack = content!!.findViewById<View>(R.id.ButtonStepBack_Numbers) as Button
-        btnNumberBack!!.setOnClickListener(this)
-        btnNumberForward = content!!.findViewById<View>(R.id.ButtonStepForward_Numbers) as Button
-        btnNumberForward!!.setOnClickListener(this)
+        btnOne.setOnClickListener(this)
+        btnTwo.setOnClickListener(this)
+        btnThree.setOnClickListener(this)
+        btnFour.setOnClickListener(this)
+        btnFive.setOnClickListener(this)
+        btnSix.setOnClickListener(this)
+        btnSeven.setOnClickListener(this)
+        btnEight.setOnClickListener(this)
+        btnNine.setOnClickListener(this)
+        btnZero.setOnClickListener(this)
+        btnStepBack.setOnClickListener(this)
+        btnStepForward.setOnClickListener(this)
     }
 
 
@@ -116,25 +74,23 @@ class RemoteNumbers : AbstractRemote() {
 
 
     override fun getCommand(v: View): String {
-        var command = ""
-        when (v.id) {
-            R.id.ButtonOne -> command = ActionID.CMD_REMOTE_1
-            R.id.ButtonTwo -> command = ActionID.CMD_REMOTE_2
-            R.id.ButtonThree -> command = ActionID.CMD_REMOTE_3
-            R.id.ButtonFour -> command = ActionID.CMD_REMOTE_4
-            R.id.ButtonFive -> command = ActionID.CMD_REMOTE_5
-            R.id.ButtonSix -> command = ActionID.CMD_REMOTE_6
-            R.id.ButtonSeven -> command = ActionID.CMD_REMOTE_7
-            R.id.ButtonEight -> command = ActionID.CMD_REMOTE_8
-            R.id.ButtonNine -> command = ActionID.CMD_REMOTE_9
-            R.id.ButtonZero -> command = ActionID.CMD_REMOTE_0
-            R.id.ButtonStepBack_Numbers -> command = ActionID.CMD_MOVE_LEFT
-            R.id.ButtonStepForward_Numbers -> command = ActionID.CMD_MOVE_RIGHT
-
+        return when (v.id) {
+            R.id.btnOne -> ActionID.CMD_REMOTE_1
+            R.id.btnTwo -> ActionID.CMD_REMOTE_2
+            R.id.btnThree -> ActionID.CMD_REMOTE_3
+            R.id.btnFour -> ActionID.CMD_REMOTE_4
+            R.id.btnFive -> ActionID.CMD_REMOTE_5
+            R.id.btnSix -> ActionID.CMD_REMOTE_6
+            R.id.btnSeven -> ActionID.CMD_REMOTE_7
+            R.id.btnEight -> ActionID.CMD_REMOTE_8
+            R.id.btnNine -> ActionID.CMD_REMOTE_9
+            R.id.btnZero -> ActionID.CMD_REMOTE_0
+            R.id.btnStepBack -> ActionID.CMD_MOVE_LEFT
+            R.id.btnStepForward -> ActionID.CMD_MOVE_RIGHT
             else -> {
+                StringUtils.EMPTY
             }
         }
-        return command
     }
 
 }

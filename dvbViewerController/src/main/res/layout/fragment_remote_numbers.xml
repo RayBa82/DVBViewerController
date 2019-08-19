@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clickable="true"
@@ -12,7 +13,8 @@
         android:focusableInTouchMode="true"
         android:hapticFeedbackEnabled="true"
         android:orientation="vertical"
-        android:padding="5dip">
+        android:padding="5dip"
+        tools:ignore="UselessParent">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -29,12 +31,13 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="NestedWeights">
 
                     <Button
-                        android:id="@+id/ButtonOne"
+                        android:id="@+id/btnOne"
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="@string/remote_1" />
                 </LinearLayout>
@@ -46,7 +49,7 @@
                     android:orientation="vertical">
 
                     <Button
-                        android:id="@+id/ButtonTwo"
+                        android:id="@+id/btnTwo"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:longClickable="true"
@@ -60,9 +63,9 @@
                     android:orientation="vertical">
 
                     <Button
-                        android:id="@+id/ButtonThree"
+                        android:id="@+id/btnThree"
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="@string/remote_3" />
                 </LinearLayout>
@@ -75,16 +78,18 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                tools:ignore="DisableBaselineAlignment">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="NestedWeights">
 
                     <Button
-                        android:id="@+id/ButtonFour"
+                        android:id="@+id/btnFour"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:longClickable="true"
@@ -98,7 +103,7 @@
                     android:orientation="vertical">
 
                     <Button
-                        android:id="@+id/ButtonFive"
+                        android:id="@+id/btnFive"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:keepScreenOn="true"
@@ -112,7 +117,7 @@
                     android:orientation="vertical">
 
                     <Button
-                        android:id="@+id/ButtonSix"
+                        android:id="@+id/btnSix"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:longClickable="true"
@@ -125,18 +130,20 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="NestedWeights">
 
                     <Button
-                        android:id="@+id/ButtonSeven"
+                        android:id="@+id/btnSeven"
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="@string/remote_7" />
                 </LinearLayout>
@@ -148,7 +155,7 @@
                     android:orientation="vertical">
 
                     <Button
-                        android:id="@+id/ButtonEight"
+                        android:id="@+id/btnEight"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:longClickable="true"
@@ -162,9 +169,9 @@
                     android:orientation="vertical">
 
                     <Button
-                        android:id="@+id/ButtonNine"
+                        android:id="@+id/btnNine"
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="@string/remote_9" />
 
@@ -177,27 +184,30 @@
                 android:layout_weight="1">
 
                 <Button
-                    android:id="@+id/ButtonStepBack_Numbers"
+                    android:id="@+id/btnStepBack"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
                     android:longClickable="true"
-                    android:text="@string/stepBack" />
+                    android:text="@string/stepBack"
+                    tools:ignore="ButtonStyle,NestedWeights" />
 
                 <Button
-                    android:id="@+id/ButtonZero"
+                    android:id="@+id/btnZero"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:text="@string/remote_0" />
+                    android:text="@string/remote_0"
+                    tools:ignore="ButtonStyle" />
 
                 <Button
-                    android:id="@+id/ButtonStepForward_Numbers"
+                    android:id="@+id/btnStepForward"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
                     android:longClickable="true"
-                    android:text="@string/stepForward" />
+                    android:text="@string/stepForward"
+                    tools:ignore="ButtonStyle" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

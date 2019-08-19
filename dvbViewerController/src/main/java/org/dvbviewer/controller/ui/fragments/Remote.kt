@@ -151,7 +151,7 @@ class Remote : BaseFragment(), AbstractRemote.OnRemoteButtonClickListener {
         mClientSpinner = v.findViewById(R.id.clientSpinner)
         mClientSpinner?.visibility = View.GONE
         mClientSpinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedClient = mSpinnerAdapter!!.getItem(position) as String?
                 prefs.prefs.edit()
                         .putString(DVBViewerPreferences.KEY_SELECTED_CLIENT, selectedClient)

@@ -19,37 +19,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-
+import kotlinx.android.synthetic.main.fragment_remote_control.*
+import org.apache.commons.lang3.StringUtils
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.ui.base.AbstractRemote
 import org.dvbviewer.controller.utils.ActionID
 
 class RemoteControl : AbstractRemote() {
 
-    // Controller Buttons
-    private var btnMoveUp: Button? = null
-    private var btnMoveDown: Button? = null
-    private var btnMoveRight: Button? = null
-    private var btnMoveLeft: Button? = null
-    private var btnOk: Button? = null
-    private var btnBack: Button? = null
-    private var btnMenu: Button? = null
-    private var btnVideos: Button? = null
-    private var btnStepFoward: Button? = null
-    private var btnStepBack: Button? = null
-    private var btnText: Button? = null
-    private var btnPause: Button? = null
-    private var btnStop: Button? = null
-    private var btnRed: Button? = null
-    private var btnGreen: Button? = null
-    private var btnYellow: Button? = null
-    private var btnBlue: Button? = null
-
-    // Number Buttons
-
-
-    private var content: View? = null
 
     /* (non-Javadoc)
      * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
@@ -63,50 +40,26 @@ class RemoteControl : AbstractRemote() {
      * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
      */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        content = inflater.inflate(R.layout.fragment_remote_control, container, false)
-        return content
+        return inflater.inflate(R.layout.fragment_remote_control, container, false)
     }
 
-    /**
-     * Inititalize.
-     *
-     * @author RayBa
-     * @date 07.04.2013
-     */
     private fun inititalize() {
-        btnMoveDown = content!!.findViewById<View>(R.id.ButtonMoveDown) as Button
         btnMoveDown!!.setOnClickListener(this)
-        btnMoveUp = content!!.findViewById<View>(R.id.ButtonMoveUp) as Button
         btnMoveUp!!.setOnClickListener(this)
-        btnOk = content!!.findViewById<View>(R.id.ButtonOK) as Button
-        btnOk!!.setOnClickListener(this)
-        btnMoveLeft = content!!.findViewById<View>(R.id.ButtonMoveLeft) as Button
+        btnOK!!.setOnClickListener(this)
         btnMoveLeft!!.setOnClickListener(this)
-        btnMoveRight = content!!.findViewById<View>(R.id.ButtonMoveRight) as Button
         btnMoveRight!!.setOnClickListener(this)
-        btnBack = content!!.findViewById<View>(R.id.ButtonBack) as Button
         btnBack!!.setOnClickListener(this)
-        btnMenu = content!!.findViewById<View>(R.id.ButtonMenu) as Button
         btnMenu!!.setOnClickListener(this)
-        btnVideos = content!!.findViewById<View>(R.id.ButtonVideos) as Button
         btnVideos!!.setOnClickListener(this)
-        btnStepFoward = content!!.findViewById<View>(R.id.ButtonStepForward) as Button
-        btnStepFoward!!.setOnClickListener(this)
-        btnStepBack = content!!.findViewById<View>(R.id.ButtonStepBack) as Button
+        btnStepForward!!.setOnClickListener(this)
         btnStepBack!!.setOnClickListener(this)
-        btnText = content!!.findViewById<View>(R.id.ButtonText) as Button
         btnText!!.setOnClickListener(this)
-        btnPause = content!!.findViewById<View>(R.id.ButtonPause) as Button
         btnPause!!.setOnClickListener(this)
-        btnStop = content!!.findViewById<View>(R.id.ButtonStop) as Button
         btnStop!!.setOnClickListener(this)
-        btnRed = content!!.findViewById<View>(R.id.ButtonRed) as Button
         btnRed!!.setOnClickListener(this)
-        btnGreen = content!!.findViewById<View>(R.id.ButtonGreen) as Button
         btnGreen!!.setOnClickListener(this)
-        btnYellow = content!!.findViewById<View>(R.id.ButtonYellow) as Button
         btnYellow!!.setOnClickListener(this)
-        btnBlue = content!!.findViewById<View>(R.id.ButtonBlue) as Button
         btnBlue!!.setOnClickListener(this)
     }
 
@@ -119,32 +72,28 @@ class RemoteControl : AbstractRemote() {
     }
 
     override fun getCommand(v: View): String {
-        var command = ""
-        when (v.id) {
-            R.id.ButtonMoveUp -> command = ActionID.CMD_MOVE_UP
-            R.id.ButtonMoveDown -> command = ActionID.CMD_MOVE_DOWN
-            R.id.ButtonMoveRight -> command = ActionID.CMD_MOVE_RIGHT
-            R.id.ButtonMoveLeft -> command = ActionID.CMD_MOVE_LEFT
-            R.id.ButtonOK -> command = ActionID.CMD_SELECT_ITEM
-            R.id.ButtonBack -> command = ActionID.CMD_PREVIOUS_MENU
-            R.id.ButtonMenu -> command = ActionID.CMD_SHOW_OSD
-            R.id.ButtonVideos -> command = ActionID.CMD_SHOW_VIDEO
-            R.id.ButtonStepForward -> command = ActionID.CMD_STEP_FORWARD
-            R.id.ButtonStepBack -> command = ActionID.CMD_STEP_BACK
-            R.id.ButtonText -> command = ActionID.CMD_SHOW_TELETEXT
-            R.id.ButtonPause -> command = ActionID.CMD_PAUSE
-            R.id.ButtonStop -> command = ActionID.CMD_STOP
-            R.id.ButtonRed -> command = ActionID.CMD_RED
-            R.id.ButtonGreen -> command = ActionID.CMD_GREEN
-            R.id.ButtonYellow -> command = ActionID.CMD_YELLOW
-            R.id.ButtonBlue -> command = ActionID.CMD_BLUE
-            R.id.ButtonStepBack_Numbers -> command = ActionID.CMD_MOVE_LEFT
-            R.id.ButtonStepForward_Numbers -> command = ActionID.CMD_MOVE_RIGHT
-
+        return when (v.id) {
+            R.id.btnMoveUp -> ActionID.CMD_MOVE_UP
+            R.id.btnMoveDown -> ActionID.CMD_MOVE_DOWN
+            R.id.btnMoveRight -> ActionID.CMD_MOVE_RIGHT
+            R.id.btnMoveLeft -> ActionID.CMD_MOVE_LEFT
+            R.id.btnOK -> ActionID.CMD_SELECT_ITEM
+            R.id.btnBack -> ActionID.CMD_PREVIOUS_MENU
+            R.id.btnMenu -> ActionID.CMD_SHOW_OSD
+            R.id.btnVideos -> ActionID.CMD_SHOW_VIDEO
+            R.id.btnStepForward -> ActionID.CMD_STEP_FORWARD
+            R.id.btnStepBack -> ActionID.CMD_STEP_BACK
+            R.id.btnText -> ActionID.CMD_SHOW_TELETEXT
+            R.id.btnPause -> ActionID.CMD_PAUSE
+            R.id.btnStop -> ActionID.CMD_STOP
+            R.id.btnRed -> ActionID.CMD_RED
+            R.id.btnGreen -> ActionID.CMD_GREEN
+            R.id.btnYellow -> ActionID.CMD_YELLOW
+            R.id.btnBlue -> ActionID.CMD_BLUE
             else -> {
+                StringUtils.EMPTY
             }
         }
-        return command
     }
 
 }
