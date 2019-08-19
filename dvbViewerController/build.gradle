@@ -91,8 +91,8 @@ android {
         implementation 'androidx.cardview:cardview:1.0.0'
         implementation 'androidx.gridlayout:gridlayout:1.0.0'
         implementation 'androidx.annotation:annotation:1.1.0'
-        implementation 'com.google.firebase:firebase-core:17.0.1'
-        implementation 'com.google.firebase:firebase-analytics:17.0.1'
+        implementation 'com.google.firebase:firebase-core:17.1.0'
+        implementation 'com.google.firebase:firebase-analytics:17.1.0'
         //noinspection GradleDependency
         implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.3'
         //noinspection GradleDependency
