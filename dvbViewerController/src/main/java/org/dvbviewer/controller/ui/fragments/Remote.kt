@@ -74,7 +74,6 @@ class Remote : BaseFragment(), AbstractRemote.OnRemoteButtonClickListener {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainInstance = true
         repository = RemoteRepository(getDmsInterface())
         prefs = DVBViewerPreferences(activity?.applicationContext)
         val vFac = RemoteViewModelFactory(repository, prefs)

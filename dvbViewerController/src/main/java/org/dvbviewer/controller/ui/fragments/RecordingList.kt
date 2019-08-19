@@ -75,7 +75,6 @@ class RecordingList : BaseListFragment(), OnClickListener, ActionMode.Callback, 
         super.onCreate(savedInstanceState)
         mAdapter = RecordingAdapter(context)
         setHasOptionsMenu(true)
-        retainInstance = true
         recordingRepo = RecordingRepository(getDmsInterface())
         val vFac = RecordingViewModelFactory(recordingRepo)
         viewModel = ViewModelProvider(this, vFac)

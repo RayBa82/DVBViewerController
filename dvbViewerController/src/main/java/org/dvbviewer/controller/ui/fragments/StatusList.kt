@@ -54,7 +54,6 @@ class StatusList : BaseListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        retainInstance = true
         mStatusAdapter = StatusAdapter()
         mAdapter = CategoryAdapter(context)
         mRes = resources
