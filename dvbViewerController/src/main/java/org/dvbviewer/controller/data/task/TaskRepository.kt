@@ -1,7 +1,7 @@
 package org.dvbviewer.controller.data.task
 
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.task.xml.TaskList
-import org.dvbviewer.controller.io.api.DMSInterface
 
 /**
  * Created by rbaun on 02.04.18.

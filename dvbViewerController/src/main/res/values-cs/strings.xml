@@ -47,21 +47,15 @@
     <string name="createTimer">Vytvořit časovač</string>
     <string name="editTimer">Upravit časovač</string>
     <string name="date">Datum</string>
-    <string name="active">Aktivní</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="channel">Kanál</string>
     <string name="postTimerAction">Po nahrávání</string>
-    <string name="busyDeleteTimer">Mazání časovače&#8230;</string>
     <string name="no_timer">Nenalezen žádný časovač</string>
     <!-- Streaming -->
     <string name="streamConfig">Konfigurace proudového vysílání</string>
-    <string name="stream">Proudové vysílání</string>
     <string name="quality">Kvalita</string>
-    <string name="aspectRatio">Poměr stran</string>
     <string name="ffmpegpreset">Rychlost kódování</string>
-    <string name="maxHeight">Maximální výška</string>
-    <string name="maxWidth">Maximální šířka</string>
     <string name="streamStart">Zahájit proudové vysílání</string>
     <string name="streamTranscoded">Překódované vysílání</string>
     <string name="streamDirect">Přímé vysílání</string>
@@ -124,18 +118,23 @@
     <string name="pref_item_channel_fav_summary">Místo seznamu všech kanálů zobrazovat pouze oblíbené</string>
     <!-- Error -->
     <string name="error_common">Chyba</string>
-    <string name="error_unknonwn_host">Neznámý server</string>
-    <string name="error_connection_timeout">Vypršel časový limit připojení</string>
     <string name="error_parsing_xml">Chyba parsování dat XML</string>
-    <string name="error_invalid_url">Chybné URL</string>
     <string name="error_invalid_credentials">Ověření se nezdařilo</string>
     <string name="support_this_app">Podpořte nás</string>
-    <string name="quick_stream_hint_title">Vysílat kanál</string>
-    <string name="quick_stream_hint_text">Spusťte proudové vysílání kliknutím na logo kanálu</string>
     <string name="version_unsupported_text">Verze Vaší nahrávací služby není podporována. Je třeba nainstalovat verzi {0} nebo vyšší.</string>
-    <string name="version_unsupported_title">Nepodporovaná verze</string>
     <string name="recording_folder">Složka pro nahrávání</string>
     <!-- Remote -->
     <string name="remote_control">Dálkový ovladač</string>
     <string name="remote_numbers">Číselník</string>
+    <string name="active">Aktivní</string>
+    <string name="busyDeleteTimer">Mazání časovače&#8230;</string>
+    <string name="stream">Proudové vysílání</string>
+    <string name="aspectRatio">Poměr stran</string>
+    <string name="maxHeight">Maximální výška</string>
+    <string name="maxWidth">Maximální šířka</string>
+    <string name="error_unknonwn_host">Neznámý server</string>
+    <string name="error_connection_timeout">Vypršel časový limit připojení</string>
+    <string name="error_invalid_url">Chybné URL</string>
+    <string name="quick_stream_hint_title">Vysílat kanál</string>
+    <string name="quick_stream_hint_text">Spusťte proudové vysílání kliknutím na logo kanálu</string>
 </resources>

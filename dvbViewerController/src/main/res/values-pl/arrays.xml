@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="postRecoridngActions">
-        <item>Nic nie rób</item>
-        <item>Wyłącz komp.</item>
-        <item>Uśpienie</item>
-        <item>Hibernacja</item>
+        <item>Brak akcji</item>
+        <item>Zamknij</item>
+        <item>Uśpij</item>
+        <item>Hibernuj</item>
+    </string-array>
+    <string-array name="tracks">
+        <item>Ścieżka 1</item>
+        <item>Ścieżka 2</item>
+        <item>Ścieżka 3</item>
+        <item>Ścieżka 4</item>
+        <item>Ścieżka 5</item>
+        <item>Ścieżka 6</item>
+        <item>Ścieżka 7</item>
+        <item>Ścieżka 8</item>
+        <item>Ścieżka 9</item>
+        <item>Ścieżka 10</item>
+    </string-array>
+    <string-array name="epgMonitoring">
+        <item>Brak</item>
+        <item>Aktualizacja czasu rozpoczęcia/końca z przewodnika</item>
+        <item>Rozpoczęcie/Koniec wg stanu trwania w przewodniku</item>
     </string-array>
 </resources>

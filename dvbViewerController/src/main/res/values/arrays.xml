@@ -7,11 +7,12 @@
         <item>Hibernate</item>
     </string-array>
     <string-array name="ffmpegPresets" translatable="false">
-        <item>fast</item>
-        <item>faster</item>
-        <item>veryfast</item>
-        <item>superfast</item>
         <item>ultrafast</item>
+        <item>superfast</item>
+        <item>veryfast</item>
+        <item>faster</item>
+        <item>fast</item>
+        <item>medium</item>
         <item>slow</item>
         <item>slower</item>
         <item>veryslow</item>

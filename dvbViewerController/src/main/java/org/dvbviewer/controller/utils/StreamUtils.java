@@ -9,8 +9,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.dvbviewer.controller.R;
-import org.dvbviewer.controller.entities.DVBViewerPreferences;
-import org.dvbviewer.controller.entities.Preset;
+import org.dvbviewer.controller.data.entities.DVBViewerPreferences;
+import org.dvbviewer.controller.data.entities.Preset;
 
 import java.util.Arrays;
 
@@ -46,7 +46,8 @@ public class StreamUtils {
     }
 
     public static int getEncodingSpeedIndex(final Context context, final SharedPreferences prefs) {
-        int encodingSpeed = prefs.getInt(DVBViewerPreferences.KEY_STREAM_ENCODING_SPEED, 4);
+        final Preset preset = getDefaultPreset(prefs);
+        int encodingSpeed = preset.getEncodingSpeed();
         String[] availableSpeeds = context.getResources().getStringArray(R.array.ffmpegPresets);
         if (encodingSpeed < 0 || encodingSpeed >= availableSpeeds.length){
             encodingSpeed = Arrays.asList(availableSpeeds).indexOf(DEFAULT_ENCODING_SPEED);

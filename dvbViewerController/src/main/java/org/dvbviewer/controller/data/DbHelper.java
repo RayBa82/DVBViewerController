@@ -26,10 +26,10 @@ import org.dvbviewer.controller.data.ProviderConsts.GroupTbl;
 import org.dvbviewer.controller.data.ProviderConsts.MediaTbl;
 import org.dvbviewer.controller.data.ProviderConsts.NowTbl;
 import org.dvbviewer.controller.data.ProviderConsts.RootTbl;
-import org.dvbviewer.controller.entities.Channel;
-import org.dvbviewer.controller.entities.ChannelGroup;
-import org.dvbviewer.controller.entities.ChannelRoot;
-import org.dvbviewer.controller.entities.EpgEntry;
+import org.dvbviewer.controller.data.entities.Channel;
+import org.dvbviewer.controller.data.entities.ChannelGroup;
+import org.dvbviewer.controller.data.entities.ChannelRoot;
+import org.dvbviewer.controller.data.entities.EpgEntry;
 
 import java.util.List;
 
@@ -160,7 +160,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		if (epgEntries == null || epgEntries.size() <= 0) {
 			return;
 		}
-		SQLiteDatabase db = getWritableDatabase();
+		final SQLiteDatabase db = getWritableDatabase();
 		db.beginTransaction();
 		db.execSQL("DELETE FROM " + NowTbl.TABLE_NAME);
 		try {

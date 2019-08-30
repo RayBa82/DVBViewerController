@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <android.support.v7.widget.AppCompatEditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/titleField"
                     style="@style/centeredText"
                     android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                     android:inputType="text"
                     android:maxLines="2" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/activeBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:gravity="center|right"
+                    android:gravity="center|end"
                     android:orientation="vertical">
 
                 </LinearLayout>
@@ -128,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/status_epg_before" />
 
-                    <android.support.v7.widget.AppCompatEditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/pre"
                         style="@style/centeredText"
                         android:layout_width="match_parent"
@@ -177,7 +177,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/status_epg_after" />
 
-                    <android.support.v7.widget.AppCompatEditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         style="@style/centeredText"
                         android:id="@+id/post"
                         android:layout_width="match_parent"

@@ -1,19 +1,20 @@
 package org.dvbviewer.controller.data.task
 
 import android.app.Application
-import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.data.ApiResponse
 import org.dvbviewer.controller.data.DmsViewModel
+import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.task.xml.TaskList
 import org.dvbviewer.controller.data.version.VersionRepository
-import org.dvbviewer.controller.io.api.APIClient
-import org.dvbviewer.controller.io.api.DMSInterface
 import java.text.MessageFormat
 
 /**
@@ -25,7 +26,7 @@ class TaskViewModel(application: Application) : DmsViewModel(application) {
     private val versionRepo: VersionRepository
 
     init {
-        val dmsInterface = APIClient.getClient().create(DMSInterface::class.java)
+        val dmsInterface = APIClient.client.create(DMSInterface::class.java)
         taskRepo = TaskRepository(dmsInterface)
         versionRepo = VersionRepository(application, dmsInterface)
     }
@@ -43,33 +44,45 @@ class TaskViewModel(application: Application) : DmsViewModel(application) {
 
 
     private fun fetchTaskList() {
-        if(data == null) {
+        if (data == null) {
             return
         }
-        launch(UI) {
+        viewModelScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
             var mediaList = TaskList()
-            try {
-                var isSupported = false
-                async(CommonPool) {
+            var isSupported = false
+            var exception: java.lang.Exception? = null
+            async(Dispatchers.Default) {
+                try {
                     isSupported = versionRepo.isSupported(MIN_VERSION)
-                }.await()
-
-                if(!isSupported) {
-                    val res = getApplication<Application>().resources
-                    data?.value = ApiResponse.notSupported(MessageFormat.format(res.getString(R.string.version_unsupported_text), MIN_VERSION))
-                    return@launch
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error checking support", e)
+                    exception = e
                 }
+            }.await()
+            if (exception != null) {
+                data?.value = ApiResponse.error(exception, mediaList)
+                return@launch
+            }
 
-                async(CommonPool) {
+            if (!isSupported) {
+                val res = getApplication<Application>().resources
+                data?.value = ApiResponse.notSupported(MessageFormat.format(res.getString(R.string.version_unsupported_text), MIN_VERSION))
+                return@launch
+            }
+
+            async(Dispatchers.Default) {
+                try {
                     mediaList = taskRepo.taskList
-                }.await()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error getting tasks", e)
+                    exception = e
+                }
+            }.await()
 
+            if (exception != null) {
+                data?.value = ApiResponse.error(exception, mediaList)
+            } else {
                 data?.value = ApiResponse.success(mediaList)
-
-            } catch (e: Exception) {
-                Log.e(TAG, "Error getting tasks", e)
-                val message = getErrorMessage(e)
-                data?.value = ApiResponse.error(message, null)
             }
 
         }

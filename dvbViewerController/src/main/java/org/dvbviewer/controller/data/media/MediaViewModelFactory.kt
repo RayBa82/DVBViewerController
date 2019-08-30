@@ -1,8 +1,8 @@
 package org.dvbviewer.controller.data.media
 
 import android.app.Application
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
 class MediaViewModelFactory(private val mApplication: Application, private val mRepo: MediaRepository) : ViewModelProvider.NewInstanceFactory() {
 

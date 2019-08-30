@@ -2,11 +2,10 @@ package org.dvbviewer.controller.data.stream
 
 import android.content.Context
 import android.util.Log
-import org.apache.commons.io.IOUtils
 import org.dvbviewer.controller.R
-import org.dvbviewer.controller.entities.FFMpegPresetList
-import org.dvbviewer.controller.io.api.DMSInterface
-import org.dvbviewer.controller.io.data.FFMPEGPrefsHandler
+import org.dvbviewer.controller.data.api.DMSInterface
+import org.dvbviewer.controller.data.api.handler.FFMPEGPrefsHandler
+import org.dvbviewer.controller.data.entities.FFMpegPresetList
 
 /**
  * Created by rbaun on 02.04.18.
@@ -41,10 +40,12 @@ class StreamRepository(private val dmsInterface: DMSInterface) {
         try {
             val res = context.resources
             val stream = res.openRawResource(defaults)
-            val b = ByteArray(stream.available())
-            stream.read(b)
-            IOUtils.closeQuietly(stream)
-            return handler.parse(String(b))
+            stream.use {
+                val b = ByteArray(it.available())
+                stream.read(b)
+                return handler.parse(String(b))
+            }
+
         } catch (e: Exception) {
             Log.e(TAG, "Error reading default presets", e)
         }

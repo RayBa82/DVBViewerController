@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/infoText"
         android:visibility="visible"
         android:layout_width="wrap_content"
-        android:padding="48dp"
+        android:padding="8dp"
         android:gravity="center"
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
@@ -21,7 +21,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_gravity="center" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

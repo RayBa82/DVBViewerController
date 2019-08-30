@@ -6,7 +6,6 @@
             android:key="KEY_RS_SETTINGS"
             android:summary="@string/pref_item_rs_conn_summary"
             android:title="@string/pref_item_rs_conn">
-            <intent android:action="org.dvbviewer.controller.DMSConnectionPreferences" />
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_seperator_channel" >

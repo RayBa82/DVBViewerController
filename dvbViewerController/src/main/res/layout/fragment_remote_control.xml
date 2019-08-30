@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -13,7 +14,8 @@
             android:focusableInTouchMode="true"
             android:hapticFeedbackEnabled="true"
             android:orientation="vertical"
-            android:padding="2dip">
+            android:padding="2dip"
+            tools:ignore="UselessParent">
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -25,29 +27,31 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    tools:ignore="DisableBaselineAlignment">
 
                     <LinearLayout
                         android:id="@+id/top_left_container"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        tools:ignore="NestedWeights">
 
                         <Button
-                            android:id="@+id/ButtonPause"
+                            android:id="@+id/btnPause"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="||"></Button>
+                            android:text="@string/pause" />
 
                         <Button
-                            android:id="@+id/ButtonStepBack"
+                            android:id="@+id/btnStepBack"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
                             android:longClickable="true"
-                            android:text="&lt;&lt;&lt;"></Button>
+                            android:text="@string/stepBack" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -58,11 +62,11 @@
                         android:orientation="vertical">
 
                         <Button
-                            android:id="@+id/ButtonMoveUp"
+                            android:id="@+id/btnMoveUp"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:longClickable="true"
-                            android:text="MoveUp"></Button>
+                            android:text="@string/moveup" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -73,19 +77,19 @@
                         android:orientation="vertical">
 
                         <Button
-                            android:id="@+id/ButtonStop"
+                            android:id="@+id/btnStop"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Stop"></Button>
+                            android:text="@string/stop" />
 
                         <Button
-                            android:id="@+id/ButtonStepForward"
+                            android:id="@+id/btnStepForward"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
                             android:longClickable="true"
-                            android:text=">>>"></Button>
+                            android:text="@string/stepForward" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -96,21 +100,23 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    tools:ignore="DisableBaselineAlignment">
 
                     <LinearLayout
                         android:id="@+id/center_left_container"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        tools:ignore="NestedWeights">
 
                         <Button
-                            android:id="@+id/ButtonMoveLeft"
+                            android:id="@+id/btnMoveLeft"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:longClickable="true"
-                            android:text="MoveLeft"></Button>
+                            android:text="@string/moveleft" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -121,11 +127,11 @@
                         android:orientation="vertical">
 
                         <Button
-                            android:id="@+id/ButtonOK"
+                            android:id="@+id/btnOK"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:keepScreenOn="true"
-                            android:text="OK"></Button>
+                            android:text="@string/ok" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -136,11 +142,11 @@
                         android:orientation="vertical">
 
                         <Button
-                            android:id="@+id/ButtonMoveRight"
+                            android:id="@+id/btnMoveRight"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:longClickable="true"
-                            android:text="MoveRight"></Button>
+                            android:text="@string/moveright" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -149,28 +155,30 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    tools:ignore="DisableBaselineAlignment">
 
                     <LinearLayout
                         android:id="@+id/bottom_left_container"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        tools:ignore="NestedWeights">
 
                         <Button
-                            android:id="@+id/ButtonBack"
+                            android:id="@+id/btnBack"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Back"></Button>
+                            android:text="@string/back" />
 
                         <Button
-                            android:id="@+id/ButtonText"
+                            android:id="@+id/btnText"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Text"></Button>
+                            android:text="@string/videotext" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -181,11 +189,11 @@
                         android:orientation="vertical">
 
                         <Button
-                            android:id="@+id/ButtonMoveDown"
+                            android:id="@+id/btnMoveDown"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:longClickable="true"
-                            android:text="MoveDown"></Button>
+                            android:text="@string/movedown" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -196,18 +204,18 @@
                         android:orientation="vertical">
 
                         <Button
-                            android:id="@+id/ButtonMenu"
+                            android:id="@+id/btnMenu"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Menu"></Button>
+                            android:text="@string/menu" />
 
                         <Button
-                            android:id="@+id/ButtonVideos"
+                            android:id="@+id/btnVideos"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:layout_weight="1"
-                            android:text="Videos"></Button>
+                            android:text="@string/videos" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -219,32 +227,36 @@
                     android:layout_weight="1">
 
                     <Button
-                        android:id="@+id/ButtonRed"
+                        android:id="@+id/btnRed"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="Red"></Button>
+                        android:text="@string/red"
+                        tools:ignore="ButtonStyle,NestedWeights" />
 
                     <Button
-                        android:id="@+id/ButtonGreen"
+                        android:id="@+id/btnGreen"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="Green"></Button>
+                        android:text="@string/green"
+                        tools:ignore="ButtonStyle" />
 
                     <Button
-                        android:id="@+id/ButtonYellow"
+                        android:id="@+id/btnYellow"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="Yellow"></Button>
+                        android:text="@string/yellow"
+                        tools:ignore="ButtonStyle" />
 
                     <Button
-                        android:id="@+id/ButtonBlue"
+                        android:id="@+id/btnBlue"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:text="Blue"></Button>
+                        android:text="@string/blue"
+                        tools:ignore="ButtonStyle" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

@@ -19,6 +19,7 @@
     <string name="common_colon">:&#160;</string>
     <string name="about_app">Über DVBViewer Controller</string>
     <string name="version">App Version:</string>
+    <string name="privacy_policy">Datenschutzrichtlinie</string>
     <string name="common_all">Alle</string>
     <string name="delete">Löschen</string>
     <string name="none">Keine</string>
@@ -43,8 +44,7 @@
     <!-- Recordings -->
     <string name="recordings">Aufnahmen</string>
     <string name="no_recordings">Keine Aufnahmen gefunden</string>
-    <string name="recording_deleted">Aufnahme %1$s gelöscht</string>
-    <string name="recordings_deleted">%1$d Aufnahmen  gelöscht</string>
+    <string name="recording_deleted">Aufnahme(n) gelöscht</string>
     <!-- Medias -->
     <string name="medias">Medien</string>
     <!-- Timer -->
@@ -52,21 +52,15 @@
     <string name="createTimer">Timer anlegen</string>
     <string name="editTimer">Timer bearbeiten</string>
     <string name="date">Datum</string>
-    <string name="active">Aktiv</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="channel">Sender</string>
     <string name="postTimerAction">Nach Aufnahme</string>
-    <string name="busyDeleteTimer">Timer werden gelöscht&#8230;</string>
     <string name="no_timer">Keine Timer gefunden</string>
     <!-- Streaming -->
     <string name="streamConfig">Stream Konfiguration</string>
-    <string name="stream">Stream</string>
     <string name="quality">Qualität</string>
-    <string name="aspectRatio">Seitenverhältnis</string>
     <string name="ffmpegpreset">Encoder-Geschwindigkeit</string>
-    <string name="maxHeight">Max. Höhe</string>
-    <string name="maxWidth">Max. Breite</string>
     <string name="streamStart">Streaming starten</string>
     <string name="streamTranscoded">Transcodiertes Streaming</string>
     <string name="streamDirect">Direktes Streaming</string>
@@ -132,20 +126,53 @@
     <string name="pref_item_channel_fav_summary">Zeigt die Favoriten anstatt der Sender</string>
     <!-- Error -->
     <string name="error_common">Fehler</string>
-    <string name="error_unknonwn_host">Unbekannter Host</string>
-    <string name="error_connection_timeout">Verbindungs timeout</string>
     <string name="error_parsing_xml">Fehler beim verarbeiten des XMLs</string>
-    <string name="error_invalid_url">Ungültige URL</string>
     <string name="error_invalid_credentials">Authentifizierung fehlgeschlagen</string>
     <string name="support_this_app">Die App unterstützen</string>
-    <string name="quick_stream_hint_title">Sender streamen</string>
-    <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
     <string name="version_unsupported_text">Ihre Server Version wird nicht unterstützt. Version {0} oder höher ist erforderlich</string>
-    <string name="version_unsupported_title">Version nicht mehr unterstützt</string>
     <string name="recording_folder">Aufnahmeordner</string>
     <!-- Remote -->
     <string name="remote_control">Steuerung</string>
     <string name="remote_numbers">Ziffern</string>
+    <string name="channel_switched">Sender eingestellt</string>
+    <string name="no_remote_target">Kein DVBViewer client verfügbar</string>
     <string name="timer_saved">Timer gespeichert</string>
+    <string name="timer_deleted">Timer gelöscht</string>
     <string name="epg_monitoring">EPG-Überwachung</string>
+    <string name="stepBack"><![CDATA[<<<]]></string>
+    <string name="moveup">Hoch</string>
+    <string name="stepForward"><![CDATA[>>>]]></string>
+    <string name="moveleft">Links</string>
+    <string name="moveright">Rechts</string>
+    <string name="back">Zurück</string>
+    <string name="videotext">Videotext</string>
+    <string name="movedown">Runter</string>
+    <string name="menu">Menü</string>
+    <string name="videos">Videos</string>
+    <string name="red">Rot</string>
+    <string name="green">Grün</string>
+    <string name="yellow">Gelb</string>
+    <string name="blue">Blau</string>
+    <string name="pause">||</string>
+    <string name="remote_1">1</string>
+    <string name="remote_2">2</string>
+    <string name="remote_3">3</string>
+    <string name="remote_4">4</string>
+    <string name="remote_5">5</string>
+    <string name="remote_6">6</string>
+    <string name="remote_7">7</string>
+    <string name="remote_8">8</string>
+    <string name="remote_9">9</string>
+    <string name="remote_0">0</string>
+    <string name="active">Aktiv</string>
+    <string name="busyDeleteTimer">Timer werden gelöscht&#8230;</string>
+    <string name="stream">Stream</string>
+    <string name="aspectRatio">Seitenverhältnis</string>
+    <string name="maxHeight">Max. Höhe</string>
+    <string name="maxWidth">Max. Breite</string>
+    <string name="error_unknonwn_host">Unbekannter Host</string>
+    <string name="error_connection_timeout">Verbindungs timeout</string>
+    <string name="error_invalid_url">Ungültige URL</string>
+    <string name="quick_stream_hint_title">Sender streamen</string>
+    <string name="quick_stream_hint_text">Starte einen Stream indem du auf das Senderlogo clickst</string>
 </resources>

@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center_vertical"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/epg_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:paddingRight="?android:attr/scrollbarSize" >
+        android:paddingEnd="?android:attr/scrollbarSize"
+        android:paddingRight="?android:attr/scrollbarSize"
+        tools:ignore="RtlSymmetry">
 
         <TextView
             android:id="@+id/position"
             style="@style/commonSubTitle"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp" />
 
         <LinearLayout
             android:id="@+id/iconContainer"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:background="@drawable/bg_channel_logo" >
+            android:background="@drawable/bg_channel_logo">
 
             <include layout="@layout/common_icon" />
         </LinearLayout>
@@ -31,11 +35,13 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dip"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="6dip"
             android:layout_marginTop="6dip"
-            android:layout_weight="1" >
+            android:layout_marginEnd="6dip"
+            android:layout_marginRight="6dip"
+            android:layout_marginBottom="6dip"
+            android:layout_weight="1">
 
             <TextView
                 android:id="@+id/title"
@@ -50,8 +56,9 @@
                 android:id="@+id/dayIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/title"
                 android:layout_below="@+id/title"
+                android:layout_alignStart="@+id/title"
+                android:layout_alignLeft="@+id/title"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="?android:attr/textColorSecondary" />
@@ -59,7 +66,7 @@
     </LinearLayout>
 
     <ImageView style="@style/VerticalDivider" />
-    
-   <include layout="@layout/list" />
+
+    <include layout="@layout/list" />
 
 </LinearLayout>

@@ -44,7 +44,6 @@
     <string name="recordings">Nagrania</string>
     <string name="no_recordings">Brak nagrań</string>
     <string name="recording_deleted">Usunięto %1$s nagranie</string>
-    <string name="recordings_deleted">Usunięto %1$d nagrań</string>
     <!-- Medias -->
     <string name="medias">Media</string>
     <!-- Timer -->
@@ -52,21 +51,15 @@
     <string name="createTimer">Utwórz zadanie</string>
     <string name="editTimer">Edytuj zadanie</string>
     <string name="date">Data</string>
-    <string name="active">Aktywny</string>
     <string name="start">Początek</string>
     <string name="stop">Koniec</string>
     <string name="channel">Kanał</string>
     <string name="postTimerAction">Po nagraniu</string>
-    <string name="busyDeleteTimer">Usuwanie nagrania&#8230;</string>
     <string name="no_timer">Brak zadań</string>
     <!-- Streaming -->
     <string name="streamConfig">Konfiguracja transmisji</string>
-    <string name="stream">Transmituj</string>
     <string name="quality">Jakość</string>
-    <string name="aspectRatio">Proporcje</string>
     <string name="ffmpegpreset">Prędkość kodowania</string>
-    <string name="maxHeight">Max. wysokość</string>
-    <string name="maxWidth">Max. szerokość</string>
     <string name="streamStart">Transmituj</string>
     <string name="streamTranscoded">Transmisja transkodowana</string>
     <string name="streamDirect">Transmisja bezpośrednia</string>
@@ -131,20 +124,25 @@
     <string name="pref_item_channel_fav_summary">Umożliwia używanie ulubionych kanałów zamiast wszystkich kanałów</string>
     <!-- Error -->
     <string name="error_common">Błąd</string>
-    <string name="error_unknonwn_host">Nieznany adres</string>
-    <string name="error_connection_timeout">Limit czasu połączenia</string>
     <string name="error_parsing_xml">Nieudane przetwarzanie danych XML</string>
-    <string name="error_invalid_url">Niewłaściwy adres URL</string>
     <string name="error_invalid_credentials">Nieudana uwierzytelenienie</string>
     <string name="support_this_app">Wesprzyj rozwój aplikacji</string>
-    <string name="quick_stream_hint_title">Transmituj kanał</string>
-    <string name="quick_stream_hint_text">Umożliwia rozpoczęcie transmisji kanału po naciśnięciu logo kanału</string>
     <string name="version_unsupported_text">Ta wersja serwera nie jest obsługiwana. Wymagana jest wersja {0} lub nowsza.</string>
-    <string name="version_unsupported_title">Nieobsługiwana wersja</string>
     <string name="recording_folder">Folder nagrań</string>
     <!-- Remote -->
     <string name="remote_control">Sterowanie</string>
     <string name="remote_numbers">Cyfry</string>
     <string name="timer_saved">Zadanie zapisane</string>
     <string name="epg_monitoring">Monitorowanie przewodnika</string>
+    <string name="active">Aktywny</string>
+    <string name="busyDeleteTimer">Usuwanie nagrania&#8230;</string>
+    <string name="stream">Transmituj</string>
+    <string name="aspectRatio">Proporcje</string>
+    <string name="maxHeight">Max. wysokość</string>
+    <string name="maxWidth">Max. szerokość</string>
+    <string name="error_unknonwn_host">Nieznany adres</string>
+    <string name="error_connection_timeout">Limit czasu połączenia</string>
+    <string name="error_invalid_url">Niewłaściwy adres URL</string>
+    <string name="quick_stream_hint_title">Transmituj kanał</string>
+    <string name="quick_stream_hint_text">Umożliwia rozpoczęcie transmisji kanału po naciśnięciu logo kanału</string>
 </resources>

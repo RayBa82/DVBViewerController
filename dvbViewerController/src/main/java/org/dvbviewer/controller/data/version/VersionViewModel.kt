@@ -1,14 +1,15 @@
 package org.dvbviewer.controller.data.version
 
 import android.app.Application
-import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
-import org.dvbviewer.controller.data.ApiResponse
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.dvbviewer.controller.data.DmsViewModel
+import org.dvbviewer.controller.data.api.ApiResponse
 
 /**
  * Created by rbaun on 02.04.18.
@@ -30,17 +31,18 @@ class VersionViewModel internal constructor(application: Application, private va
         if(data == null) {
             return
         }
-        launch(UI) {
-            var apiResponse = ApiResponse.error("", false)
-            try {
-                async(CommonPool) {
-                    apiResponse = ApiResponse.success(vRepo.isSupported(minVersion))
+        viewModelScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
+            var apiResponse = ApiResponse.error(null, false)
+
+                async(Dispatchers.Default) {
+                    apiResponse = try {
+                        ApiResponse.success(vRepo.isSupported(minVersion))
+                    } catch (e: Exception) {
+                        Log.e(TAG , "Error getting version", e)
+                        ApiResponse.error(e, false)
+                    }
                 }.await()
-            } catch (e: Exception) {
-                Log.e(TAG , "Error getting version", e)
-                val message = getErrorMessage(e)
-                apiResponse = ApiResponse.error(message, false)
-            }
+
             data?.value = apiResponse
         }
     }

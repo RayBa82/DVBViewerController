@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <org.dvbviewer.controller.ui.widget.ClickableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/checkable"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -8,30 +9,33 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:padding="4dp"
     android:paddingEnd="4dp"
-    android:paddingRight="4dp">
+    android:paddingRight="4dp"
+    tools:ignore="RtlSymmetry">
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/recIndicator"
         android:layout_width="wrap_content"
-        app:srcCompat="@drawable/ic_record_24dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/date"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:paddingRight="2dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="2dp"
         android:paddingEnd="2dp"
-        android:paddingTop="2dp" />
+        android:paddingRight="2dp"
+        app:srcCompat="@drawable/ic_record_24dp" />
 
     <TextView
         android:id="@+id/date"
         style="@style/commonSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/contextMenu"
         android:layout_toLeftOf="@+id/contextMenu"
+        android:layout_toEndOf="@+id/recIndicator"
         android:layout_toRightOf="@+id/recIndicator"
         android:ellipsize="marquee"
-        android:maxLines="1" />
+        android:singleLine="true" />
 
     <TextView
         android:id="@+id/title"
@@ -40,7 +44,9 @@
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/date"
+        android:layout_toStartOf="@+id/contextMenu"
         android:layout_toLeftOf="@+id/contextMenu"
+        android:layout_toEndOf="@id/checkIndicator"
         android:layout_toRightOf="@id/checkIndicator"
         android:gravity="center_vertical"
         android:maxLines="2"
@@ -49,10 +55,11 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/title"
         android:layout_below="@+id/title"
+        android:layout_alignLeft="@+id/title"
         android:gravity="center_vertical"
-        android:paddingBottom="5dp">
+        android:paddingBottom="5dp"
+        android:layout_alignStart="@+id/title">
 
         <TextView
             android:id="@+id/channelName"
@@ -60,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
-            android:maxLines="1" />
+            android:singleLine="true" />
     </LinearLayout>
 
 </org.dvbviewer.controller.ui.widget.ClickableRelativeLayout>

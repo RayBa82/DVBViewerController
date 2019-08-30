@@ -1,5 +1,6 @@
 <org.dvbviewer.controller.ui.widget.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,9 +10,11 @@
     android:foreground="?attr/selectableItemBackground"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="true"
+    android:focusable="true"
+    tools:targetApi="m">
 
-    <android.support.v7.widget.AppCompatImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +31,8 @@
         android:layout_margin="4dp"
         android:background="@drawable/selectable_background"
         android:clickable="true"
-        android:padding="1dp">
+        android:padding="1dp"
+        android:focusable="true">
 
         <ImageView
             android:id="@+id/thumbNail"
@@ -61,7 +65,7 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <android.support.v7.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/contextMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
