@@ -14,8 +14,8 @@ class DVBViewerPreferenceFragment : PreferenceFragmentCompat() {
         val prefMgr = preferenceManager
         prefMgr.sharedPreferencesName = DVBViewerPreferences.PREFS
         addPreferencesFromResource(R.xml.preferences)
-        val preference = preferenceScreen.findPreference(KEY_RS_SETTINGS)
-        preference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        val preference = preferenceScreen.findPreference<Preference>(KEY_RS_SETTINGS)
+        preference?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             val settings = Intent(context, ConnectionPreferencesActivity::class.java)
             startActivity(settings)
             false

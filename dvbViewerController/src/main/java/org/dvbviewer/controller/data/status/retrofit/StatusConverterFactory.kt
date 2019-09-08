@@ -20,14 +20,14 @@ class StatusConverterFactory private constructor() : Converter.Factory() {
 
     override fun responseBodyConverter(type: Type, annotations: Array<Annotation>?,
                                        retrofit: Retrofit?): Converter<ResponseBody, Status>? {
-        return if (type == statusType) {
+        return if (statusType == type) {
             StatusPresetResponseBodyConverter()
         } else null
     }
 
     override fun requestBodyConverter(type: Type,
                                       parameterAnnotations: Array<Annotation>?, methodAnnotations: Array<Annotation>?, retrofit: Retrofit?): Converter<Status, RequestBody>? {
-        return if (type == statusType) {
+        return if (statusType == type) {
             StatusRequestBodyConverter()
         } else null
     }

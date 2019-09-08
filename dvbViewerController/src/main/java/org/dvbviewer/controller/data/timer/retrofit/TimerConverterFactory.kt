@@ -27,14 +27,14 @@ class TimerConverterFactory private constructor() : Converter.Factory() {
 
     override fun responseBodyConverter(type: Type, annotations: Array<Annotation>?,
                                        retrofit: Retrofit?): Converter<ResponseBody, List<Timer>>? {
-        return if (type == timerList) {
+        return if (timerList == type) {
             TimerPresetResponseBodyConverter()
         } else null
     }
 
     override fun requestBodyConverter(type: Type,
                                       parameterAnnotations: Array<Annotation>?, methodAnnotations: Array<Annotation>?, retrofit: Retrofit?): Converter<List<Timer>, RequestBody>? {
-        return if (type == timerList) {
+        return if (timerList == type) {
             TimerRequestBodyConverter()
         } else null
     }

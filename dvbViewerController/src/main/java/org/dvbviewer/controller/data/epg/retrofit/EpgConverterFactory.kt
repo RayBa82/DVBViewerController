@@ -27,14 +27,14 @@ class EpgConverterFactory private constructor() : Converter.Factory() {
 
     override fun responseBodyConverter(type: Type, annotations: Array<Annotation>?,
                                        retrofit: Retrofit?): Converter<ResponseBody, List<EpgEntry>>? {
-        return if (type == epgType) {
+        return if (epgType == type) {
             EpgPresetResponseBodyConverter()
         } else null
     }
 
     override fun requestBodyConverter(type: Type,
                                       parameterAnnotations: Array<Annotation>?, methodAnnotations: Array<Annotation>?, retrofit: Retrofit?): Converter<List<EpgEntry>, RequestBody>? {
-        return if (type == epgType) {
+        return if (epgType == type) {
             EpgRequestBodyConverter()
         } else null
     }
