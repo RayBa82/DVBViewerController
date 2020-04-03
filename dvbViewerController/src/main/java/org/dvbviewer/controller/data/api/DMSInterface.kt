@@ -83,7 +83,7 @@ interface DMSInterface {
 
         const val RECORDING_LIST = "$API/recordings.html?utf8=1&images=1"
 
-        const val RECORDING_DELETE = "$API/recdelete.html"
+        const val RECORDING_DELETE = "$API/recdelete.html?delfile=1"
 
         const val TIMER_LIST = "$API/timerlist.html?utf8=2"
 
