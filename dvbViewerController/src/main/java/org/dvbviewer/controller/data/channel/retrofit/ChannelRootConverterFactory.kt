@@ -27,14 +27,14 @@ class ChannelRootConverterFactory private constructor() : Converter.Factory() {
 
     override fun responseBodyConverter(type: Type, annotations: Array<Annotation>?,
                                        retrofit: Retrofit?): Converter<ResponseBody, List<ChannelRoot>>? {
-        return if (type == channelRootType) {
+        return if (channelRootType == type) {
             ChannelRootPresetResponseBodyConverter()
         } else null
     }
 
     override fun requestBodyConverter(type: Type,
                                       parameterAnnotations: Array<Annotation>?, methodAnnotations: Array<Annotation>?, retrofit: Retrofit?): Converter<List<ChannelRoot>, RequestBody>? {
-        return if (type == channelRootType) {
+        return if (channelRootType == type) {
             ChannelRequestBodyConverter()
         } else null
     }

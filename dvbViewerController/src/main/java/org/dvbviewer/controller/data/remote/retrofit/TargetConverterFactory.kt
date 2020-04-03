@@ -27,14 +27,14 @@ class TargetConverterFactory private constructor() : Converter.Factory() {
 
     override fun responseBodyConverter(type: Type, annotations: Array<Annotation>?,
                                        retrofit: Retrofit?): Converter<ResponseBody, List<DVBTarget>>? {
-        return if (type == targetType) {
+        return if (targetType == type) {
             TargetPresetResponseBodyConverter()
         } else null
     }
 
     override fun requestBodyConverter(type: Type,
                                       parameterAnnotations: Array<Annotation>?, methodAnnotations: Array<Annotation>?, retrofit: Retrofit?): Converter<List<DVBTarget>, RequestBody>? {
-        return if (type == targetType) {
+        return if (targetType == type) {
             TargetResponseBodyConverter()
         } else null
     }

@@ -302,7 +302,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             val timerIntent = Intent(context, TimerDetailsActivity::class.java)
             val extras = TimerDetails.buildBundle(timer)
             timerIntent.putExtras(extras)
-            startActivity(timerIntent)
+            startActivityForResult(timerIntent, TimerDetails.TIMER_RESULT)
         }
     }
 
@@ -328,6 +328,23 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
         arguments.putInt(StreamConfig.EXTRA_DIALOG_TITLE_RES, R.string.streamConfig)
         arguments.putString(StreamConfig.EXTRA_TITLE, chan.name)
         return arguments
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == TimerDetails.RESULT_CHANGED) {
+            val timer: Timer? = data?.getSerializableExtra("timer") as Timer?
+            val call = timer?.let { timerRepository.saveTimer(it) }
+            call?.enqueue(object: Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    sendMessage(R.string.timer_saved)
+                    logEvent(EVENT_TIMER_CREATED)
+                }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    sendMessage(R.string.error_common)
+                }
+            })
+        }
     }
 
     /**

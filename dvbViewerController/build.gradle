@@ -85,27 +85,28 @@ android {
     useLibrary 'android.test.mock'
 
     dependencies {
-        implementation 'androidx.appcompat:appcompat:1.0.2'
-        implementation 'com.google.android.material:material:1.1.0-alpha09'
-        implementation 'androidx.preference:preference:1.0.0'
+        implementation 'androidx.appcompat:appcompat:1.1.0'
+        implementation 'com.google.android.material:material:1.2.0-alpha05'
+        implementation 'androidx.preference:preference:1.1.0'
         implementation 'androidx.cardview:cardview:1.0.0'
         implementation 'androidx.gridlayout:gridlayout:1.0.0'
         implementation 'androidx.annotation:annotation:1.1.0'
-        implementation 'com.google.firebase:firebase-core:17.1.0'
-        implementation 'com.google.firebase:firebase-analytics:17.1.0'
+        implementation 'com.google.firebase:firebase-core:17.3.0'
+        implementation 'com.google.firebase:firebase-analytics:17.3.0'
         //noinspection GradleDependency
         implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.3'
         //noinspection GradleDependency
         implementation 'com.squareup.okhttp3:logging-interceptor:3.12.3'
         implementation 'com.google.code.gson:gson:2.8.5'
-        implementation 'org.apache.commons:commons-lang3:3.7'
-        implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.2'
-        implementation 'com.squareup.retrofit2:retrofit:2.6.1'
-        implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha03"
-        implementation "androidx.lifecycle:lifecycle-extensions:2.2.0-alpha03"
-        annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.2.0-alpha03"
-        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
-        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
+        implementation 'org.apache.commons:commons-lang3:3.9'
+        implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.3'
+        implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+        implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha01"
+        implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+        implementation group: 'androidx.lifecycle', name: 'lifecycle-common-java8', version: '2.3.0-alpha01'
+
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
+        implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0'
         implementation('com.squareup.picasso:picasso:2.71828') {
             exclude group: 'com.android.support'
             exclude module: ['exifinterface', 'support-annotations']
@@ -150,6 +151,6 @@ if (propFile.canRead()) {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 apply plugin: 'com.google.gms.google-services'

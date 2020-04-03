@@ -27,14 +27,14 @@ class FFMpegConverterFactory private constructor() : Converter.Factory() {
 
     override fun responseBodyConverter(type: Type, annotations: Array<Annotation>?,
                                        retrofit: Retrofit?): Converter<ResponseBody, FFMpegPresetList>? {
-        return if (type == ffmpegType) {
+        return if (ffmpegType == type) {
             FFMpegPresetResponseBodyConverter()
         } else null
     }
 
     override fun requestBodyConverter(type: Type,
                                       parameterAnnotations: Array<Annotation>?, methodAnnotations: Array<Annotation>?, retrofit: Retrofit?): Converter<FFMpegPresetList, RequestBody>? {
-        return if (type == ffmpegType) {
+        return if (ffmpegType == type) {
             FFMpegRequestBodyConverter()
         } else null
     }

@@ -26,110 +26,12 @@ import java.util.*
  */
 class Timer : Comparable<Timer>, Serializable {
 
-    /**
-     * Gets the id.
-     *
-     * @return the id
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    /**
-     * Sets the id.
-     *
-     * @param id the new id
-     * @author RayBa
-     * @date 07.04.2013
-     */
     var id: Long = -1
-    /**
-     * Gets the channel id.
-     *
-     * @return the channel id
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    /**
-     * Sets the channel id.
-     *
-     * @param channelId the new channel id
-     * @author RayBa
-     * @date 07.04.2013
-     */
     var channelId: Long = 0
-    /**
-     * Gets the channel name.
-     *
-     * @return the channel name
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    /**
-     * Sets the channel name.
-     *
-     * @param channelName the new channel name
-     * @author RayBa
-     * @date 07.04.2013
-     */
     var channelName: String? = null
-    /**
-     * Gets the title.
-     *
-     * @return the title
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    /**
-     * Sets the title.
-     *
-     * @param description the new title
-     * @author RayBa
-     * @date 07.04.2013
-     */
     var title: String? = null
-    /**
-     * Gets the start.
-     *
-     * @return the start
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    /**
-     * Sets the start.
-     *
-     * @param start the new start
-     * @author RayBa
-     * @date 07.04.2013
-     */
     var start: Date? = null
-    /**
-     * Gets the end.
-     *
-     * @return the end
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    /**
-     * Sets the end.
-     *
-     * @param end the new end
-     * @author RayBa
-     * @date 07.04.2013
-     */
     var end: Date? = null
-    /**
-     * Gets the timer action.
-     *
-     * @return the timer action
-     * @author RayBa
-     * @date 07.04.2013
-     */
-    /**
-     * Sets the timer action.
-     *
-     * @param timerAction the new timer action
-     * @author RayBa
-     * @date 07.04.2013
-     */
     var timerAction: Int = 0
     var pre: Int = 0
     var post: Int = 0
