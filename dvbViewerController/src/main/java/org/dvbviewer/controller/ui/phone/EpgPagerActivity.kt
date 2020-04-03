@@ -15,13 +15,26 @@
  */
 package org.dvbviewer.controller.ui.phone
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import okhttp3.ResponseBody
 import org.dvbviewer.controller.R
 import org.dvbviewer.controller.activitiy.base.GroupDrawerActivity
 import org.dvbviewer.controller.data.ProviderConsts
+import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.DMSInterface
+import org.dvbviewer.controller.data.entities.Timer
+import org.dvbviewer.controller.data.timer.TimerRepository
 import org.dvbviewer.controller.ui.fragments.EpgPager
+import org.dvbviewer.controller.ui.fragments.TimerDetails
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * The Class EpgPagerActivity.
@@ -30,13 +43,14 @@ import org.dvbviewer.controller.ui.fragments.EpgPager
  */
 class EpgPagerActivity : GroupDrawerActivity() {
 
-
+    private lateinit var timerRepository: TimerRepository
     /* (non-Javadoc)
 	 * @see org.dvbviewer.controller.ui.base.BaseSinglePaneActivity#onCreate(android.os.Bundle)
 	 */
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_drawer)
         super.onCreate(savedInstanceState)
+        timerRepository = TimerRepository(APIClient.client.create(DMSInterface::class.java))
         initFragments(savedInstanceState)
     }
 
@@ -65,6 +79,36 @@ class EpgPagerActivity : GroupDrawerActivity() {
 
     override fun groupChanged(groupId: Long, groupIndex: Int, channelIndex: Int) {
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == TimerDetails.RESULT_CHANGED) {
+            val timer: Timer? = data?.getSerializableExtra("timer") as Timer?
+            val call = timer?.let { timerRepository.saveTimer(it) }
+            call?.enqueue(object: Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    var message = getString(R.string.timer_saved)
+                    Log.d("receiver", "Got message: " + message!!)
+                    val view = window.decorView.findViewById<View>(android.R.id.content)
+                    val snackbar = Snackbar
+                            .make(view, message, Snackbar.LENGTH_LONG)
+                    val snackBarView = snackbar.view
+                    snackBarView.setBackgroundColor(ContextCompat.getColor(this@EpgPagerActivity, R.color.colorPrimary))
+                    snackbar.show()
+                }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    var message = getString(R.string.error_common)
+                    Log.d("receiver", "Got message: " + message!!)
+                    val view = window.decorView.findViewById<View>(android.R.id.content)
+                    val snackbar = Snackbar
+                            .make(view, message, Snackbar.LENGTH_LONG)
+                    val snackBarView = snackbar.view
+                    snackBarView.setBackgroundColor(ContextCompat.getColor(this@EpgPagerActivity, R.color.colorPrimary))
+                    snackbar.show()
+                }
+            })
+        }
     }
 
 }

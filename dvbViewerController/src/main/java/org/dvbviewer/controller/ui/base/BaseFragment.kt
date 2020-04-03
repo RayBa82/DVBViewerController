@@ -146,7 +146,7 @@ open class BaseFragment : Fragment() {
         Log.d(TAG, "Broadcasting message")
         val intent = Intent(MESSAGE_EVENT)
         intent.putExtra(MESSAGE_ID, id)
-        LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
+        context?.let { LocalBroadcastManager.getInstance(it).sendBroadcast(intent) }
     }
 
     protected fun initializeDMSInterface() {

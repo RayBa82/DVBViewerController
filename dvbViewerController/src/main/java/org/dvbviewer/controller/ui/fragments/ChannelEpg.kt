@@ -347,7 +347,7 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
                     val timerIntent = Intent(context, TimerDetailsActivity::class.java)
                     val extras = TimerDetails.buildBundle(timer)
                     timerIntent.putExtras(extras)
-                    startActivity(timerIntent)
+                    startActivityForResult(timerIntent, TimerDetails.TIMER_RESULT)
                 }
                 return true
             }
