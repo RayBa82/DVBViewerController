@@ -7,6 +7,10 @@ import retrofit2.Call
 
 class RecordingRepository(private val dmsInterface: DMSInterface) {
 
+    fun getRecording(id: Long): Recording? {
+        return dmsInterface.getRecording(id).execute().body()
+    }
+
     fun getRecordingList(): List<Recording>? {
         return dmsInterface.getRecordings().execute().body()
     }

@@ -22,9 +22,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 
 import org.dvbviewer.controller.R
+import org.dvbviewer.controller.data.api.APIClient
+import org.dvbviewer.controller.data.api.ApiResponse
+import org.dvbviewer.controller.data.api.ApiStatus
+import org.dvbviewer.controller.data.api.DMSInterface
 import org.dvbviewer.controller.data.entities.IEPG
+import org.dvbviewer.controller.data.entities.Recording
+import org.dvbviewer.controller.data.recording.RecordingRepository
+import org.dvbviewer.controller.data.recording.RecordingViewModel
+import org.dvbviewer.controller.data.recording.RecordingViewModelFactory
 import org.dvbviewer.controller.ui.base.BaseDialogFragment
 import org.dvbviewer.controller.utils.DateUtils
 
@@ -47,6 +57,9 @@ class EPGDetails : BaseDialogFragment() {
     private var subTitle: TextView? = null
     private var desc: TextView? = null
 
+    private lateinit var recordingRepo: RecordingRepository
+    private lateinit var viewModel: RecordingViewModel
+
 
     /* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreate(android.os.Bundle)
@@ -55,6 +68,10 @@ class EPGDetails : BaseDialogFragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         epg = arguments!!.getParcelable(IEPG::class.java.simpleName)
+        recordingRepo = RecordingRepository(APIClient.client.create(DMSInterface::class.java))
+        val vFac = RecordingViewModelFactory(recordingRepo)
+        viewModel = ViewModelProvider(this, vFac)
+                .get(RecordingViewModel::class.java)
     }
 
     /* (non-Javadoc)
@@ -62,24 +79,38 @@ class EPGDetails : BaseDialogFragment() {
 	 */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (epg != null) {
-            var dateString = DateUtils.getDateInLocalFormat(epg!!.start)
-            if (DateUtils.isToday(epg!!.start.time)) {
+        epg?.let {
+            var dateString = DateUtils.getDateInLocalFormat(it.start)
+            if (DateUtils.isToday(it.start.time)) {
                 dateString = resources.getString(R.string.today)
-            } else if (DateUtils.isTomorrow(epg!!.start.time)) {
+            } else if (DateUtils.isTomorrow(it.start.time)) {
                 dateString = resources.getString(R.string.tomorrow)
             }
-            val start = DateUtils.getTimeInLocalFormat(context, epg!!.start)
-            val end = DateUtils.getTimeInLocalFormat(context, epg!!.end)
-            date!!.text = "$dateString  $start - $end"
-            channel!!.text = epg!!.channel
-            title!!.text = epg!!.title
-            if (TextUtils.isEmpty(epg!!.subTitle)) {
-                subTitle!!.visibility = View.GONE
+            val start = DateUtils.getTimeInLocalFormat(context, it.start)
+            val end = DateUtils.getTimeInLocalFormat(context, it.end)
+            date?.text = "$dateString  $start - $end"
+            channel?.text = it.channel
+            title?.text = it.title
+            if (TextUtils.isEmpty(it.subTitle)) {
+                subTitle?.visibility = View.GONE
             } else {
-                subTitle!!.text = epg!!.subTitle
+                subTitle?.text = it.subTitle
             }
-            desc!!.text = epg!!.description
+            desc?.text = it.description
+            if(it is Recording) {
+                val recordingListObserver = Observer<ApiResponse<Recording>> { response -> onDetailsLoaded(response) }
+                viewModel.getRecordingDetail(it.id).observe(viewLifecycleOwner, recordingListObserver)
+            }
+        }
+    }
+
+    private fun onDetailsLoaded(observable: ApiResponse<Recording>?) {
+        if(observable?.status == ApiStatus.SUCCESS) {
+            desc?.text = observable.data?.description
+        } else if(observable?.status == ApiStatus.ERROR) {
+            observable.e?.let {
+                catchException(it)
+            }
         }
     }
 

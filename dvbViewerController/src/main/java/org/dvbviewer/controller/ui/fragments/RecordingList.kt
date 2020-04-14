@@ -97,7 +97,7 @@ class RecordingList : BaseListFragment(), OnClickListener, ActionMode.Callback, 
         }
         activity?.setTitle(R.string.recordings)
         val recordingListObserver = Observer<ApiResponse<List<Recording>>> { response -> onRecordingListLoaded(response) }
-        viewModel.getRecordingList().observe(this, recordingListObserver)
+        viewModel.getRecordingList().observe(viewLifecycleOwner, recordingListObserver)
         setListShown(false)
     }
 
