@@ -86,7 +86,7 @@ android {
 
     dependencies {
         implementation 'androidx.appcompat:appcompat:1.1.0'
-        implementation 'com.google.android.material:material:1.2.0-alpha05'
+        implementation 'com.google.android.material:material:1.2.0-alpha06'
         implementation 'androidx.preference:preference:1.1.0'
         implementation 'androidx.cardview:cardview:1.0.0'
         implementation 'androidx.gridlayout:gridlayout:1.0.0'
@@ -94,10 +94,10 @@ android {
         implementation 'com.google.firebase:firebase-core:17.3.0'
         implementation 'com.google.firebase:firebase-analytics:17.3.0'
         //noinspection GradleDependency
-        implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.3'
+        implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.12.10'
         //noinspection GradleDependency
-        implementation 'com.squareup.okhttp3:logging-interceptor:3.12.3'
-        implementation 'com.google.code.gson:gson:2.8.5'
+        implementation 'com.squareup.okhttp3:logging-interceptor:3.12.10'
+        implementation 'com.google.code.gson:gson:2.8.6'
         implementation 'org.apache.commons:commons-lang3:3.9'
         implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.3'
         implementation 'com.squareup.retrofit2:retrofit:2.6.2'
