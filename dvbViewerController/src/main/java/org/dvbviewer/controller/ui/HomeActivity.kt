@@ -269,6 +269,7 @@ class HomeActivity : GroupDrawerActivity(), OnClickListener, OnChannelSelectedLi
             val activeClient = prefs!!.getString(DVBViewerPreferences.KEY_SELECTED_CLIENT)
             val index = clients.indexOf(activeClient)
             val spinnerPosition = if (index > Spinner.INVALID_POSITION) index else Spinner.INVALID_POSITION
+            selectedTarget = spinnerData?.get(spinnerPosition)
             mClientSpinner!!.setSelection(spinnerPosition)
             mClientSpinner!!.visibility = View.VISIBLE
         }
