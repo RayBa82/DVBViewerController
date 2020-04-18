@@ -56,7 +56,7 @@ import java.util.*
  *
  * @author RayBa
  */
-class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener {
+class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, PopupMenu.OnMenuItemClickListener, TimerDetails.OnTimerEditedListener {
     private var mAdapter: ChannelEPGAdapter? = null
     private var clickListener: IEpgDetailsActivity.OnIEPGClickListener? = null
     private var channel: String? = null
@@ -130,7 +130,7 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
                 .get(ChannelEpgViewModel::class.java)
         val now = Date(mDateInfo!!.epgDate)
         val tommorrow = DateUtils.addDay(now)
-        epgViewModel.getChannelEPG(epgId, now, tommorrow).observe(this, epgObserver)
+        epgViewModel.getChannelEPG(epgId, now, tommorrow).observe(viewLifecycleOwner, epgObserver)
     }
 
     private fun onEpgChanged(response: List<EpgEntry>) {
@@ -323,17 +323,7 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
         when (item.itemId) {
             R.id.menuRecord -> {
                 timer = cursorToTimer(c)
-                val call = timerRepository.saveTimer(timer)
-                call.enqueue(object : Callback<ResponseBody> {
-                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        sendMessage(R.string.timer_saved)
-                        logEvent(EVENT_TIMER_CREATED)
-                    }
-
-                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        sendMessage(R.string.error_common)
-                    }
-                })
+                createTimer(timer)
                 return true
             }
             R.id.menuTimer -> {
@@ -342,7 +332,7 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
                     val timerdetails = TimerDetails.newInstance()
                     val args = TimerDetails.buildBundle(timer)
                     timerdetails.arguments = args
-                    timerdetails.show(activity!!.supportFragmentManager, TimerDetails::class.java.name)
+                    timerdetails.show(childFragmentManager, TimerDetails::class.java.name)
                 } else {
                     val timerIntent = Intent(context, TimerDetailsActivity::class.java)
                     val extras = TimerDetails.buildBundle(timer)
@@ -375,6 +365,20 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
             }
         }
         return false
+    }
+
+    private fun createTimer(timer: Timer) {
+        val call = timerRepository.saveTimer(timer)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                sendMessage(R.string.timer_saved)
+                logEvent(EVENT_TIMER_CREATED)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                sendMessage(R.string.error_common)
+            }
+        })
     }
 
 
@@ -425,6 +429,12 @@ class ChannelEpg : BaseListFragment(), OnItemClickListener, OnClickListener, Pop
         val KEY_EPG_ID = ChannelEpg::class.java.name + "KEY_EPG_ID"
         val KEY_EPG_DAY = ChannelEpg::class.java.name + "EPG_DAY"
 
+    }
+
+    override fun timerEdited(timer: Timer?) {
+        timer?.let {
+            createTimer(it)
+        }
     }
 
 }
