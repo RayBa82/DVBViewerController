@@ -36,6 +36,9 @@ interface DMSInterface {
     @GET(RECORDING_LIST)
     fun getRecordings(): Call<List<Recording>>
 
+    @GET(RECORDING)
+    fun getRecording(@Query("id") id: Long): Call<Recording>
+
     @GET(RECORDING_DELETE)
     fun deleteRecording(@Query("recid") recid: String): Call<ResponseBody>
 
@@ -81,7 +84,9 @@ interface DMSInterface {
 
         const val EPG = "$API/epg.html?utf8=1&lvl=2"
 
-        const val RECORDING_LIST = "$API/recordings.html?utf8=1&images=1"
+        const val RECORDING_LIST = "$API/recordings.html?utf8=1&images=1&nodesc=1"
+
+        const val RECORDING = "$API/recordings.html?utf8=1&images=0"
 
         const val RECORDING_DELETE = "$API/recdelete.html?delfile=1"
 

@@ -87,6 +87,8 @@ class TimerDetails : BaseDialogFragment(), OnDateSetListener, OnClickListener, O
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        if(parentFragment != null && parentFragment is OnTimerEditedListener)
+            mOntimeredEditedListener = parentFragment as OnTimerEditedListener
         if (context is OnTimerEditedListener) {
             mOntimeredEditedListener = context
         }

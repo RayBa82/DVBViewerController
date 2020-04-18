@@ -15,12 +15,20 @@ import org.dvbviewer.controller.data.entities.Recording
 class RecordingViewModel internal constructor(private val mRepository: RecordingRepository) : ViewModel() {
 
     private var data: MutableLiveData<ApiResponse<List<Recording>>> = MutableLiveData()
+    private var detail: MutableLiveData<ApiResponse<Recording>> = MutableLiveData()
 
     fun getRecordingList(force: Boolean = false): MutableLiveData<ApiResponse<List<Recording>>> {
         if (data.value == null || force) {
             fetchRecordingList()
         }
         return data
+    }
+
+    fun getRecordingDetail(id: Long): MutableLiveData<ApiResponse<Recording>> {
+        if (detail.value == null) {
+            fetchDetails(id)
+        }
+        return detail
     }
 
     fun fetchRecordingList() {
@@ -35,6 +43,23 @@ class RecordingViewModel internal constructor(private val mRepository: Recording
                 }
             }.await()
             data.value = apiResponse
+
+
+        }
+    }
+
+    fun fetchDetails(id: Long) {
+        viewModelScope.launch(Dispatchers.Main, CoroutineStart.DEFAULT) {
+            var apiResponse: ApiResponse<Recording> = ApiResponse.error(null, null)
+            async(Dispatchers.Default) {
+                apiResponse = try {
+                    ApiResponse.success(mRepository.getRecording(id))
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error getting recording list", e)
+                    ApiResponse.error(e, null)
+                }
+            }.await()
+            detail.value = apiResponse
 
 
         }

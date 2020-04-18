@@ -62,7 +62,7 @@ import java.util.*
  *
  * @author RayBa
  */
-class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener, PopupMenu.OnMenuItemClickListener {
+class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener, PopupMenu.OnMenuItemClickListener, TimerDetails.OnTimerEditedListener {
     private var mGroupId: Long = -1
     private var mGroupIndex = -1
     private var mChannelIndex = -1
@@ -297,7 +297,7 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             val timerdetails = TimerDetails.newInstance()
             val args = TimerDetails.buildBundle(timer)
             timerdetails.arguments = args
-            timerdetails.show(activity!!.supportFragmentManager, TimerDetails::class.java.name)
+            timerdetails.show(childFragmentManager, TimerDetails::class.java.name)
         } else {
             val timerIntent = Intent(context, TimerDetailsActivity::class.java)
             val extras = TimerDetails.buildBundle(timer)
@@ -334,17 +334,22 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == TimerDetails.RESULT_CHANGED) {
             val timer: Timer? = data?.getSerializableExtra("timer") as Timer?
-            val call = timer?.let { timerRepository.saveTimer(it) }
-            call?.enqueue(object: Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    sendMessage(R.string.timer_saved)
-                    logEvent(EVENT_TIMER_CREATED)
-                }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    sendMessage(R.string.error_common)
-                }
-            })
+            saveTimer(timer)
         }
+    }
+
+    private fun saveTimer(timer: Timer?) {
+        val call = timer?.let { timerRepository.saveTimer(it) }
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                sendMessage(R.string.timer_saved)
+                logEvent(EVENT_TIMER_CREATED)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                sendMessage(R.string.error_common)
+            }
+        })
     }
 
     /**
@@ -659,5 +664,9 @@ class ChannelList : BaseListFragment(), LoaderCallbacks<Cursor>, OnClickListener
             channel.favPosition = c.getInt(c.getColumnIndex(ChannelTbl.FAV_POSITION))
             return channel
         }
+    }
+
+    override fun timerEdited(timer: Timer?) {
+        saveTimer(timer)
     }
 }
